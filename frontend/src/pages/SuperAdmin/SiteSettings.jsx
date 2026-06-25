@@ -1,0 +1,448 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
+import { Save, Image as ImageIcon, Globe, Type, Mail, Settings as SettingsIcon, Plus, Trash2, ArrowUp, ArrowDown, Link as LinkIcon, Lock } from 'lucide-react';
+import { useGetSettingsQuery, useUpdateSettingsMutation } from '../../features/settings/settingsApiSlice';
+import ImageUpload from '../../components/ImageUpload';
+import { toast } from 'react-hot-toast';
+
+const SiteSettings = () => {
+  const navigate = useNavigate();
+  const { data: settingsRes, isLoading } = useGetSettingsQuery();
+  const [updateSettings, { isLoading: isUpdating }] = useUpdateSettingsMutation();
+
+  const [formData, setFormData] = useState({
+    siteName: '',
+    logo: '',
+    favicon: '',
+    metaTitle: '',
+    metaDescription: '',
+    keywords: '',
+    defaultOgImage: '',
+    heroBackground: '',
+    contactEmail: '',
+    supportEmail: '',
+    businessEmail: '',
+    legalEmail: '',
+    aboutUsText: '',
+    footerText: '',
+    copyrightText: '',
+    theme: 'royal-purple',
+    ownerDp: '',
+    maintenanceMode: false,
+    socialLinks: { facebook: '', twitter: '', instagram: '', youtube: '', discord: '', telegram: '', whatsapp: '' },
+    quickLinks: [{ label: '', url: '' }],
+    authSettings: {
+      captchaEnabled: true,
+      captchaDifficulty: 'easy',
+      captchaRefreshCount: 3
+    }
+  });
+
+  useEffect(() => {
+    if (settingsRes?.data) {
+      setFormData({
+        siteName: settingsRes.data.siteName || '',
+        logo: settingsRes.data.logo || '',
+        favicon: settingsRes.data.favicon || '',
+        metaTitle: settingsRes.data.metaTitle || '',
+        metaDescription: settingsRes.data.metaDescription || '',
+        keywords: settingsRes.data.keywords || '',
+        defaultOgImage: settingsRes.data.defaultOgImage || '',
+        heroBackground: settingsRes.data.heroBackground || '',
+        contactEmail: settingsRes.data.contactEmail || '',
+        supportEmail: settingsRes.data.supportEmail || '',
+        businessEmail: settingsRes.data.businessEmail || '',
+        legalEmail: settingsRes.data.legalEmail || '',
+        aboutUsText: settingsRes.data.aboutUsText || '',
+        footerText: settingsRes.data.footerText || '',
+        copyrightText: settingsRes.data.copyrightText || '',
+        theme: settingsRes.data.theme || 'royal-purple',
+        ownerDp: settingsRes.data.ownerDp || '',
+        maintenanceMode: settingsRes.data.maintenanceMode || false,
+        paymentSettings: {
+          upiId: settingsRes.data.paymentSettings?.upiId || '',
+          upiQrUrl: settingsRes.data.paymentSettings?.upiQrUrl || '',
+          bankDetails: settingsRes.data.paymentSettings?.bankDetails || '',
+          cryptoWallets: settingsRes.data.paymentSettings?.cryptoWallets || '',
+          paymentInstructions: settingsRes.data.paymentSettings?.paymentInstructions || 'Please transfer the amount and upload the screenshot.'
+        },
+        socialLinks: {
+          facebook: settingsRes.data.socialLinks?.facebook || '',
+          twitter: settingsRes.data.socialLinks?.twitter || '',
+          instagram: settingsRes.data.socialLinks?.instagram || '',
+          youtube: settingsRes.data.socialLinks?.youtube || '',
+          discord: settingsRes.data.socialLinks?.discord || '',
+          telegram: settingsRes.data.socialLinks?.telegram || '',
+          whatsapp: settingsRes.data.socialLinks?.whatsapp || '',
+        },
+        quickLinks: settingsRes.data.quickLinks?.length > 0 ? settingsRes.data.quickLinks : [{ label: 'Home', url: '/' }],
+        authSettings: {
+          captchaEnabled: settingsRes.data.authSettings?.captchaEnabled ?? true,
+          captchaDifficulty: settingsRes.data.authSettings?.captchaDifficulty || 'easy',
+          captchaRefreshCount: settingsRes.data.authSettings?.captchaRefreshCount || 3
+        }
+      });
+    }
+  }, [settingsRes]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name.startsWith('social_')) {
+      const socialKey = name.split('_')[1];
+      setFormData({ ...formData, socialLinks: { ...formData.socialLinks, [socialKey]: value } });
+    } else {
+      setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
+    }
+  };
+
+  const handleSave = async (preventRedirect = false) => {
+    try {
+      await updateSettings(formData).unwrap();
+      toast.success(preventRedirect ? 'Changes applied successfully' : 'Settings updated successfully');
+      if (!preventRedirect) {
+        setTimeout(() => navigate('/superadmin'), 1000);
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || 'Error updating settings');
+    }
+  };
+
+  if (isLoading) return <div className="text-center mt-20">Loading settings...</div>;
+  return (
+    <div className="space-y-6 pb-20">
+      <Helmet>
+        <title>Site Settings - Super Admin</title>
+      </Helmet>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold dark:text-white">Site Settings</h1>
+          <p className="text-slate-500 text-sm mt-1">Configure global application details and preferences.</p>
+        </div>
+        <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
+          <button 
+            type="button"
+            disabled={isUpdating}
+            onClick={() => navigate('/superadmin')}
+            className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-xl transition"
+          >
+            Cancel
+          </button>
+          <button 
+            type="button"
+            disabled={isUpdating}
+            onClick={() => handleSave(true)}
+            className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-400 text-sm font-semibold rounded-xl flex items-center gap-2 transition"
+          >
+            Apply Changes
+          </button>
+          <button 
+            type="button"
+            disabled={isUpdating} 
+            onClick={() => handleSave(false)} 
+            className="premium-btn w-max disabled:opacity-50"
+          >
+            <Save className="w-5 h-5" /> Save & Close
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* General Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Globe className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold dark:text-white">General Settings</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Website Name</label>
+              <input type="text" name="siteName" value={formData.siteName} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Contact Email</label>
+              <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Support Email</label>
+              <input type="email" name="supportEmail" value={formData.supportEmail} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Business Email</label>
+              <input type="email" name="businessEmail" value={formData.businessEmail} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Legal/DMCA Email</label>
+              <input type="email" name="legalEmail" value={formData.legalEmail} onChange={handleChange} className="premium-input w-full" />
+            </div>
+
+            <div className="pt-4 border-t border-slate-200 dark:border-night-border">
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">About Us Content</label>
+              <textarea name="aboutUsText" value={formData.aboutUsText} onChange={handleChange} rows="3" className="premium-input w-full"></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Footer Description</label>
+              <textarea name="footerText" value={formData.footerText} onChange={handleChange} rows="2" className="premium-input w-full"></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Copyright Text</label>
+              <input type="text" name="copyrightText" value={formData.copyrightText} onChange={handleChange} className="premium-input w-full" />
+            </div>
+
+            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200 dark:border-night-border">
+              <input type="checkbox" name="maintenanceMode" checked={formData.maintenanceMode} onChange={handleChange} id="maintenance" className="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-night-bg focus:ring-2 dark:bg-night-bg dark:border-night-border" />
+              <label htmlFor="maintenance" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Maintenance Mode</label>
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-night-border">
+              <label className="block text-sm font-semibold mb-3 dark:text-slate-300">Website Theme Color</label>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {[
+                  { id: 'royal-purple', name: 'Royal Purple', color: '#7C3AED' },
+                  { id: 'midnight-blue', name: 'Midnight Blue', color: '#3B82F6' },
+                  { id: 'pure-white', name: 'Pure White', color: '#FFFFFF' },
+                  { id: 'deep-black', name: 'Deep Black', color: '#111111' },
+                  { id: 'sunset-orange', name: 'Sunset Orange', color: '#EA580C' }
+                ].map(theme => (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, theme: theme.id })}
+                    className={`flex flex-col items-center gap-2 p-2 rounded-xl border-2 transition-all ${formData.theme === theme.id ? 'border-primary shadow-glow bg-primary/5' : 'border-slate-200 dark:border-night-border hover:border-slate-300 dark:hover:border-slate-600'}`}
+                  >
+                    <div className="w-8 h-8 rounded-full border shadow-sm" style={{ backgroundColor: theme.color, borderColor: theme.color === '#FFFFFF' ? '#e2e8f0' : theme.color }}></div>
+                    <span className="text-xs font-semibold text-center">{theme.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Branding Assets */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <ImageIcon className="w-5 h-5 text-accent" />
+            <h2 className="text-lg font-bold dark:text-white">Branding Assets</h2>
+          </div>
+          
+          <div className="space-y-6">
+            <div>
+              <ImageUpload 
+                type="logo" 
+                label="Website Logo" 
+                value={formData.logo} 
+                onChange={(url) => setFormData({ ...formData, logo: url })} 
+              />
+            </div>
+            <div>
+              <ImageUpload 
+                type="logo" 
+                label="Favicon" 
+                value={formData.favicon} 
+                onChange={(url) => setFormData({ ...formData, favicon: url })} 
+              />
+            </div>
+            <div>
+              <ImageUpload 
+                type="logo" 
+                label="Footer Profile Photo (DP)" 
+                value={formData.ownerDp} 
+                onChange={(url) => setFormData({ ...formData, ownerDp: url })} 
+              />
+            </div>
+            <div>
+              <ImageUpload 
+                type="image" 
+                label="Homepage Hero Background" 
+                value={formData.heroBackground} 
+                onChange={(url) => setFormData({ ...formData, heroBackground: url })} 
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* SEO Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-2 glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Type className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold dark:text-white">Default SEO Configuration</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Default Meta Title</label>
+                <input type="text" name="metaTitle" value={formData.metaTitle} onChange={handleChange} className="premium-input w-full" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Default Meta Keywords</label>
+                <input type="text" name="keywords" value={formData.keywords} onChange={handleChange} className="premium-input w-full" />
+              </div>
+              <div>
+                <ImageUpload 
+                  type="image" 
+                  label="Default OG Image" 
+                  value={formData.defaultOgImage} 
+                  onChange={(url) => setFormData({ ...formData, defaultOgImage: url })} 
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Default Meta Description</label>
+              <textarea rows="4" name="metaDescription" value={formData.metaDescription} onChange={handleChange} className="premium-input w-full resize-none"></textarea>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Social Links */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Globe className="w-5 h-5 text-accent" />
+            <h2 className="text-lg font-bold dark:text-white">Social Links</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Facebook URL</label>
+              <input type="text" name="social_facebook" value={formData.socialLinks.facebook} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Twitter URL</label>
+              <input type="text" name="social_twitter" value={formData.socialLinks.twitter} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Instagram URL</label>
+              <input type="text" name="social_instagram" value={formData.socialLinks.instagram} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">YouTube URL</label>
+              <input type="text" name="social_youtube" value={formData.socialLinks.youtube} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Discord URL</label>
+              <input type="text" name="social_discord" value={formData.socialLinks.discord} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Telegram URL</label>
+              <input type="text" name="social_telegram" value={formData.socialLinks.telegram} onChange={handleChange} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">WhatsApp Channel URL</label>
+              <input type="text" name="social_whatsapp" value={formData.socialLinks.whatsapp} onChange={handleChange} className="premium-input w-full" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Authentication Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Lock className="w-5 h-5 text-indigo-500" />
+            <h2 className="text-lg font-bold dark:text-white">Authentication & CAPTCHA</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4">
+              <input type="checkbox" name="authSettings_captchaEnabled" checked={formData.authSettings.captchaEnabled} onChange={(e) => setFormData({...formData, authSettings: {...formData.authSettings, captchaEnabled: e.target.checked}})} id="captchaEnabled" className="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-night-bg focus:ring-2 dark:bg-night-bg dark:border-night-border" />
+              <label htmlFor="captchaEnabled" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Math CAPTCHA on Login</label>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">CAPTCHA Difficulty</label>
+              <select name="authSettings_captchaDifficulty" value={formData.authSettings.captchaDifficulty} onChange={(e) => setFormData({...formData, authSettings: {...formData.authSettings, captchaDifficulty: e.target.value}})} className="premium-input w-full">
+                <option value="easy">Easy (Addition 1-20)</option>
+                <option value="medium">Medium (Add/Sub 1-50)</option>
+                <option value="hard">Hard (Add, Sub, Mult, Div 1-100)</option>
+              </select>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Payment Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <SettingsIcon className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold dark:text-white">Payment Settings</h2>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">UPI ID</label>
+              <input type="text" name="payment_upiId" value={formData.paymentSettings?.upiId || ''} onChange={(e) => setFormData({...formData, paymentSettings: {...formData.paymentSettings, upiId: e.target.value}})} className="premium-input w-full" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Bank Details</label>
+              <textarea rows="3" name="payment_bankDetails" value={formData.paymentSettings?.bankDetails || ''} onChange={(e) => setFormData({...formData, paymentSettings: {...formData.paymentSettings, bankDetails: e.target.value}})} className="premium-input w-full resize-none"></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Crypto Wallets</label>
+              <textarea rows="3" name="payment_cryptoWallets" value={formData.paymentSettings?.cryptoWallets || ''} onChange={(e) => setFormData({...formData, paymentSettings: {...formData.paymentSettings, cryptoWallets: e.target.value}})} className="premium-input w-full resize-none"></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Payment Instructions</label>
+              <textarea rows="3" name="payment_instructions" value={formData.paymentSettings?.paymentInstructions || ''} onChange={(e) => setFormData({...formData, paymentSettings: {...formData.paymentSettings, paymentInstructions: e.target.value}})} className="premium-input w-full resize-none"></textarea>
+            </div>
+          </div>
+        </motion.div>
+
+      </div>
+
+      {/* Quick Links Configuration */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="glass-card p-6 border border-slate-200 dark:border-night-border mt-6">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+          <div className="flex items-center gap-2">
+            <LinkIcon className="w-5 h-5 text-green-500" />
+            <h2 className="text-lg font-bold dark:text-white">Footer Quick Links</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, quickLinks: [...formData.quickLinks, { label: '', url: '' }] })}
+            className="text-xs flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary hover:text-white transition"
+          >
+            <Plus className="w-4 h-4" /> Add Link
+          </button>
+        </div>
+        <div className="space-y-4">
+          {formData.quickLinks.map((link, index) => (
+            <div key={index} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="flex flex-col gap-1">
+                <button type="button" disabled={index === 0} onClick={() => {
+                  const newLinks = [...formData.quickLinks];
+                  const temp = newLinks[index - 1];
+                  newLinks[index - 1] = newLinks[index];
+                  newLinks[index] = temp;
+                  setFormData({ ...formData, quickLinks: newLinks });
+                }} className="p-1 text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><ArrowUp className="w-4 h-4" /></button>
+                <button type="button" disabled={index === formData.quickLinks.length - 1} onClick={() => {
+                  const newLinks = [...formData.quickLinks];
+                  const temp = newLinks[index + 1];
+                  newLinks[index + 1] = newLinks[index];
+                  newLinks[index] = temp;
+                  setFormData({ ...formData, quickLinks: newLinks });
+                }} className="p-1 text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><ArrowDown className="w-4 h-4" /></button>
+              </div>
+              <div className="grid grid-cols-2 gap-3 flex-1">
+                <input type="text" placeholder="Label (e.g. Home)" value={link.label} onChange={(e) => {
+                  const newLinks = [...formData.quickLinks];
+                  newLinks[index].label = e.target.value;
+                  setFormData({ ...formData, quickLinks: newLinks });
+                }} className="premium-input py-2 text-sm" />
+                <input type="text" placeholder="URL (e.g. /)" value={link.url} onChange={(e) => {
+                  const newLinks = [...formData.quickLinks];
+                  newLinks[index].url = e.target.value;
+                  setFormData({ ...formData, quickLinks: newLinks });
+                }} className="premium-input py-2 text-sm" />
+              </div>
+              <button type="button" onClick={() => {
+                const newLinks = formData.quickLinks.filter((_, i) => i !== index);
+                setFormData({ ...formData, quickLinks: newLinks.length > 0 ? newLinks : [{ label: '', url: '' }] });
+              }} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition"><Trash2 className="w-4 h-4" /></button>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default SiteSettings;

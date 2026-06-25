@@ -1,0 +1,89 @@
+import Notification from '../models/Notification.js';
+
+export const getNotifications = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const startIndex = (page - 1) * limit;
+
+    const query = { user: req.user._id };
+    if (req.query.unreadOnly === 'true') {
+      query.isRead = false;
+    }
+    
+    // Support filtering by multiple types (e.g. types=SYSTEM,COMMENT)
+    if (req.query.types) {
+      const typesArray = req.query.types.split(',');
+      query.type = { $in: typesArray };
+    }
+    
+    // Support search by title or message
+    if (req.query.search) {
+      query.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { message: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+
+    const total = await Notification.countDocuments(query);
+    const notifications = await Notification.find(query)
+      .sort('-createdAt')
+      .skip(startIndex)
+      .limit(limit);
+
+    res.status(200).json({ 
+      success: true, 
+      data: notifications,
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getUnreadNotificationsCount = async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({ user: req.user._id, isRead: false });
+    res.status(200).json({ success: true, count });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const markAsRead = async (req, res) => {
+  try {
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
+      { isRead: true },
+      { new: true }
+    );
+    res.status(200).json({ success: true, data: notification });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const markAllAsRead = async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { user: req.user._id, isRead: false },
+      { isRead: true }
+    );
+    res.status(200).json({ success: true, message: 'All notifications marked as read' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteNotification = async (req, res) => {
+  try {
+    await Notification.findOneAndDelete({ _id: req.params.id, user: req.user._id });
+    res.status(200).json({ success: true, data: {} });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

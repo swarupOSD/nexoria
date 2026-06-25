@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --color-primary: #00D4FF; /* Electric Blue */
+  --color-secondary: #1B1140; /* Deep Indigo */
+  --color-accent: #7B2FF7; /* Violet */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #F43F5E;
+  --color-primary-alpha: rgba(0, 212, 255, 0.15);
+  --color-accent-alpha: rgba(123, 47, 247, 0.15);
+}
+
+:root[data-theme="royal-purple"] {
+  --color-primary: #7C3AED;
+  --color-secondary: #8B5CF6;
+  --color-accent: #A855F7;
+  --color-primary-alpha: rgba(124, 58, 237, 0.15);
+  --color-accent-alpha: rgba(168, 85, 247, 0.15);
+}
+
+:root[data-theme="midnight-blue"] {
+  --color-primary: #3B82F6;
+  --color-secondary: #2563EB;
+  --color-accent: #60A5FA;
+  --color-primary-alpha: rgba(59, 130, 246, 0.15);
+  --color-accent-alpha: rgba(96, 165, 250, 0.15);
+}
+
+:root[data-theme="pure-white"] {
+  --color-primary: #475569;
+  --color-secondary: #64748B;
+  --color-accent: #94A3B8;
+  --color-primary-alpha: rgba(71, 85, 105, 0.15);
+  --color-accent-alpha: rgba(148, 163, 184, 0.15);
+}
+
+:root[data-theme="deep-black"] {
+  --color-primary: #171717;
+  --color-secondary: #262626;
+  --color-accent: #404040;
+  --color-primary-alpha: rgba(23, 23, 23, 0.15);
+  --color-accent-alpha: rgba(64, 64, 64, 0.15);
+}
+
+:root[data-theme="sunset-orange"] {
+  --color-primary: #F97316;
+  --color-secondary: #EA580C;
+  --color-accent: #FB923C;
+  --color-primary-alpha: rgba(249, 115, 22, 0.15);
+  --color-accent-alpha: rgba(251, 146, 60, 0.15);
+}
+
+:root[data-theme="cyberpunk"] {
+  --color-primary: #FF00FF; /* Neon Magenta */
+  --color-secondary: #00FFFF; /* Cyan */
+  --color-accent: #FFFF00; /* Neon Yellow */
+  --color-primary-alpha: rgba(255, 0, 255, 0.15);
+  --color-accent-alpha: rgba(0, 255, 255, 0.15);
+}
+
+body[data-theme="cyberpunk"] {
+  background-color: #0d0221 !important;
+  color: #00FFFF !important;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+body[data-theme="cyberpunk"] * {
+  border-color: rgba(255, 0, 255, 0.3) !important;
+}
+
+body[data-theme="cyberpunk"] a:hover, 
+body[data-theme="cyberpunk"] button:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.5) !important;
+  transition: all 0.2s ease-in-out;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-500 min-h-screen relative overflow-x-hidden font-sans;
+    background-image: 
+      radial-gradient(circle at 15% 50%, var(--color-primary-alpha), transparent 50%),
+      radial-gradient(circle at 85% 30%, var(--color-accent-alpha), transparent 50%);
+    background-size: 200% 200%;
+    animation: backgroundShift 15s ease infinite alternate;
+    background-attachment: fixed;
+  }
+  
+  .dark body {
+    @apply bg-[#0F172A] text-slate-100;
+    background-image: 
+      radial-gradient(circle at 15% 50%, var(--color-primary-alpha), transparent 50%),
+      radial-gradient(circle at 85% 30%, var(--color-accent-alpha), transparent 50%);
+    background-size: 200% 200%;
+    animation: backgroundShift 15s ease infinite alternate;
+    background-attachment: fixed;
+  }
+
+  @keyframes backgroundShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+
+  /* Custom scrollbar for premium feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-700/50 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary dark:bg-primary;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-3xl bg-white/80 dark:bg-[#030303]/80 border-b border-black/5 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)] transition-all duration-300;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-2xl bg-white/80 dark:bg-[#0A0A0A]/80 border border-slate-200/50 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] rounded-3xl transition-all duration-300 ease-out;
+  }
+  
+  .glass-card:hover {
+    @apply shadow-2xl border-slate-300 dark:border-white/20;
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .glass-panel {
+    @apply backdrop-blur-3xl bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300;
+  }
+
+  /* Global Button Polish */
+  .premium-btn, button {
+    @apply transition-all duration-300 ease-out relative overflow-hidden;
+  }
+  
+  .premium-btn {
+    @apply bg-black dark:bg-white text-white dark:text-black font-bold rounded-xl px-6 py-2.5 transition-all shadow-md flex items-center justify-center z-10 hover:scale-105 active:scale-95;
+  }
+
+  .premium-btn:hover {
+    @apply shadow-lg dark:shadow-white/20;
+  }
+  
+  .premium-btn:active {
+    @apply shadow-sm;
+  }
+
+  /* Universal Image Zoom */
+  .zoom-image {
+    @apply transition-transform duration-700 ease-out;
+  }
+  .glass-card:hover .zoom-image, .group:hover .zoom-image {
+    @apply scale-[1.08];
+  }
+
+  /* Animated Underline for Footer / Nav */
+  .hover-underline-animation {
+    @apply relative inline-block;
+  }
+  .hover-underline-animation::after {
+    content: '';
+    @apply absolute w-full transform scale-x-0 h-0.5 bottom-0 left-0 bg-primary origin-bottom-right transition-transform duration-300 ease-out;
+  }
+  .hover-underline-animation:hover::after {
+    @apply scale-x-100 origin-bottom-left;
+  }
+
+  .premium-input {
+    @apply w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all backdrop-blur-sm text-sm text-slate-800 dark:text-slate-200;
+  }
+  
+  .font-jakarta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Hide Google Translate Default UI */
+.VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
+.skiptranslate > iframe.skiptranslate { display: none !important; }
+body { top: 0 !important; }
+

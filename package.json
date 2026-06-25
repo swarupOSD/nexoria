@@ -1,0 +1,23 @@
+{
+  "name": "mods_apps",
+  "version": "1.0.0",
+  "description": "A complete production-ready MERN Stack application featuring a modern glassmorphism UI, advanced admin panel, SEO optimization, TipTap rich text editor, MongoDB Atlas Search, Redis caching, and robust security.",
+  "main": "playwright.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  },
+  "dependencies": {
+    "form-data": "^4.0.5",
+    "mongodb": "^7.2.0",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^25.1.0",
+    "socket.io-client": "^4.8.3"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "mods-apps-backend",
+  "version": "1.0.0",
+  "description": "MERN Stack API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "data:import": "node seeder.js",
+    "data:destroy": "node seeder.js -d",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "validate:user": "node scripts/validate_user.js",
+    "validate:admin": "node scripts/validate_admin.js",
+    "validate:superadmin": "node scripts/validate_superadmin.js",
+    "validate:technical": "node scripts/validate_technical.js"
+  },
+  "dependencies": {
+    "axios": "^1.18.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.10.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csrf-sync": "^4.2.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.2.0",
+    "express-slow-down": "^2.0.1",
+    "express-validator": "^7.3.2",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.1",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.10",
+    "puppeteer": "^25.1.0",
+    "socket.io": "^4.8.3",
+    "streamifier": "^0.1.1",
+    "web-push": "^3.6.7",
+    "winston": "^3.12.0",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.6.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^6.3.4"
+  }
+}

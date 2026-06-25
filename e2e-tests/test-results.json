@@ -1,0 +1,5 @@
+{
+  "errors": [
+    "page.waitForTimeout is not a function"
+  ]
+}
