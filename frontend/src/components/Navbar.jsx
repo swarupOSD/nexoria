@@ -315,6 +315,10 @@ const Navbar = () => {
               FM
             </Link>
 
+            <Link to="/nexoria-arena" className={`font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
+              🎮 Arena
+            </Link>
+
             <Link to="/premium" className={`font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
               Premium
             </Link>

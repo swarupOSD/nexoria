@@ -53,6 +53,7 @@ import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
 import PrivateRoute from './components/PrivateRoute';
 import Games from './pages/Games';
+import NexoriaArena from './pages/NexoriaArena';
 
 import { useEffect, Suspense, lazy } from 'react';
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
@@ -240,12 +241,14 @@ function App() {
               <Route path="movies" element={<MovieBrowse type="movies" />} />
               <Route path="animation" element={<MovieBrowse type="animation" />} />
               <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
+              <Route path="games" element={<Games />} />
               <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
               <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
               <Route path="fm-download" element={<Navigate to="/sound" replace />} />
-              <Route path="games" element={<Games />} />
             </Route>
           </Route>
+          
+          <Route path="nexoria-arena" element={<NexoriaArena />} />
 
 
 
