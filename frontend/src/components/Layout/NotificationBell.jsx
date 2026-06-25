@@ -160,8 +160,8 @@ const NotificationBell = () => {
           </div>
         }
       >
-        <div className="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/50">
-          <h3 className="font-semibold text-white">Notifications</h3>
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+          <h3 className="font-semibold text-slate-900 dark:text-white">Notifications</h3>
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAll}
@@ -174,18 +174,18 @@ const NotificationBell = () => {
 
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400">
               <Bell className="w-8 h-8 mx-auto mb-3 opacity-20" />
               <p>No notifications yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-700/50">
+            <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
               {notifications.map((notification) => (
                 <div
                   key={notification._id}
                   onClick={() => handleNotificationClick(notification)}
-                  className={`p-4 hover:bg-slate-700/50 transition-colors cursor-pointer flex gap-4 ${
-                    !notification.isRead ? 'bg-indigo-500/5' : ''
+                  className={`p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors cursor-pointer flex gap-4 ${
+                    !notification.isRead ? 'bg-indigo-50 dark:bg-indigo-500/5' : ''
                   }`}
                 >
                   <div className="flex-shrink-0 mt-1">
@@ -193,7 +193,7 @@ const NotificationBell = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className={`text-sm font-medium truncate ${!notification.isRead ? 'text-white' : 'text-slate-300'}`}>
+                      <p className={`text-sm font-medium truncate ${!notification.isRead ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}>
                         {notification.title}
                       </p>
                       {!notification.isRead && (
@@ -213,7 +213,7 @@ const NotificationBell = () => {
           )}
         </div>
 
-        <div className="p-3 border-t border-slate-700 bg-slate-800/50 flex flex-col gap-2">
+        <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col gap-2">
           {pushPermission === 'default' && (
             <button
               onClick={(e) => { e.stopPropagation(); enablePushNotifications(); }}
