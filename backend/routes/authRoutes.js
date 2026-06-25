@@ -1,4 +1,5 @@
 import express from 'express';
+import User from '../models/User.js';
 import { register, login, logout, refresh, getMe, forgotPassword, resetPassword, updatePassword, updateProfile, generateCaptcha } from '../controllers/authController.js';
 import { protect } from '../middlewares/auth.js';
 import { registerValidation, loginValidation } from '../middlewares/validation.js';
