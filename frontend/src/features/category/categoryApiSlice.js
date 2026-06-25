@@ -23,7 +23,7 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: ['Category', 'Post'],
     }),
     updateCategory: builder.mutation({
       query: ({ id, ...data }) => ({
@@ -31,14 +31,14 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: ['Category', 'Post'],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `/categories/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: ['Category', 'Post'],
     }),
   }),
 });

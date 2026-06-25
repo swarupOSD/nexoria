@@ -80,10 +80,15 @@ export const updateAppRequest = async (req, res) => {
     await request.save();
 
     // Notify user of status change
+    let message = `Your request for ${request.appName} is now: ${request.status}`;
+    if (adminNotes) {
+      message += `. Admin Reply: "${adminNotes}"`;
+    }
+
     await sendNotification(
       request.user,
       'App Request Update',
-      `Your request for ${request.appName} is now: ${request.status}`,
+      message,
       'SYSTEM',
       'Info'
     );

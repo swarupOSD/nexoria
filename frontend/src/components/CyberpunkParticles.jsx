@@ -8,8 +8,8 @@ const CyberpunkParticles = () => {
   useEffect(() => {
     if (!isCyberpunk) return;
 
-    // Create 30 random particles
-    const newParticles = Array.from({ length: 30 }).map((_, i) => ({
+    // Create 15 random particles (reduced for performance)
+    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       animationDuration: 5 + Math.random() * 10,
@@ -24,7 +24,7 @@ const CyberpunkParticles = () => {
   if (!isCyberpunk) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden hidden md:block">
       {particles.map((p) => (
         <div
           key={p.id}

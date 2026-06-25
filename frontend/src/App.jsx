@@ -186,63 +186,65 @@ function App() {
             </Route>
 
             <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="forgotpassword" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/post/:slug" element={<SinglePost />} />
-            <Route path="/download-timer" element={<DownloadTimer />} />
-            
-            <Route path="/apps" element={<CategoryPage type="App" />} /> {/* Alias for backward compatibility */}
-            <Route path="support" element={<Support />} />
-            <Route path="requests" element={<FeatureRequests />} />
-            <Route path="contact" element={<Support />} /> {/* Alias for backward compatibility */}
-            <Route path="privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="terms-of-service" element={<TermsOfService />} />
-            <Route path="dmca" element={<DmcaDisclaimer />} />
-            <Route path="about-us" element={<AboutUs />} />
-            <Route path="sitemap" element={<Sitemap />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/sound" element={<NexoriaSound />} />
-            <Route path="/sound/queue" element={<SoundQueue />} />
-            <Route path="/category/:slug" element={<CategoryPage />} />
-            <Route path="categories" element={<AllCategories />} />
-            <Route path="category/:slug" element={<CategoryPage />} />
-            <Route path="search" element={<SearchPage />} />
-            <Route path="requests" element={<FeatureRequests />} />
-            <Route path="post/:slug" element={<SinglePost />} />
-            <Route path="download/:slug" element={<DownloadFlow />} />
-            <Route path="legal/:pageSlug" element={<Legal />} />
-            <Route path="premium" element={<Premium />} />
+              {/* Public Routes */}
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="forgotpassword" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="support" element={<Support />} />
+              <Route path="contact" element={<Support />} />
+              <Route path="privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="terms-of-service" element={<TermsOfService />} />
+              <Route path="dmca" element={<DmcaDisclaimer />} />
+              <Route path="about-us" element={<AboutUs />} />
+              <Route path="sitemap" element={<Sitemap />} />
+              <Route path="legal/:pageSlug" element={<Legal />} />
 
-
-
-            <Route path="" element={<PrivateRoute />}>
-               <Route path="dashboard" element={<UserDashboard />} />
-               <Route path="change-password" element={<ChangePassword />} />
-               <Route path="notifications" element={<Notifications />} />
-               <Route path="activity" element={<UserActivity />} />
+              {/* Protected Routes inside Layout */}
+              <Route element={<PrivateRoute />}>
+                <Route index element={<Home />} />
+                <Route path="/post/:slug" element={<SinglePost />} />
+                <Route path="/download-timer" element={<DownloadTimer />} />
+                <Route path="/apps" element={<CategoryPage type="App" />} />
+                <Route path="requests" element={<FeatureRequests />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/sound" element={<NexoriaSound />} />
+                <Route path="/sound/queue" element={<SoundQueue />} />
+                <Route path="/category/:slug" element={<CategoryPage />} />
+                <Route path="categories" element={<AllCategories />} />
+                <Route path="category/:slug" element={<CategoryPage />} />
+                <Route path="search" element={<SearchPage />} />
+                <Route path="post/:slug" element={<SinglePost />} />
+                <Route path="download/:slug" element={<DownloadFlow />} />
+                <Route path="premium" element={<Premium />} />
+                
+                {/* User Dashboard Routes */}
+                <Route path="dashboard" element={<UserDashboard />} />
+                <Route path="change-password" element={<ChangePassword />} />
+                <Route path="notifications" element={<Notifications />} />
+                <Route path="activity" element={<UserActivity />} />
+              </Route>
             </Route>
-          </Route>
 
           {/* MovieBox Public Routes */}
-          <Route path="moviebox" element={<MovieBoxLayout />}>
-            <Route index element={<Navigate to="games" replace />} />
-            <Route path="movie/:slug" element={<MovieDetail />} />
-            <Route path="category/:slug" element={<MovieCategory />} />
-            <Route path="search" element={<MovieSearch />} />
-            
-            {/* Dynamic type browsing */}
-            <Route path="tv-shows" element={<MovieBrowse type="tv-shows" />} />
-            <Route path="movies" element={<MovieBrowse type="movies" />} />
-            <Route path="animation" element={<MovieBrowse type="animation" />} />
-            <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
-            <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
-            <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
-            <Route path="fm-download" element={<Navigate to="/sound" replace />} />
-            <Route path="games" element={<Games />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="moviebox" element={<MovieBoxLayout />}>
+              <Route index element={<Navigate to="games" replace />} />
+              <Route path="movie/:slug" element={<MovieDetail />} />
+              <Route path="category/:slug" element={<MovieCategory />} />
+              <Route path="search" element={<MovieSearch />} />
+              
+              {/* Dynamic type browsing */}
+              <Route path="tv-shows" element={<MovieBrowse type="tv-shows" />} />
+              <Route path="movies" element={<MovieBrowse type="movies" />} />
+              <Route path="animation" element={<MovieBrowse type="animation" />} />
+              <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
+              <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
+              <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
+              <Route path="fm-download" element={<Navigate to="/sound" replace />} />
+              <Route path="games" element={<Games />} />
+            </Route>
           </Route>
 
 

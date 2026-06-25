@@ -1,4 +1,5 @@
 import Request from '../models/Request.js';
+import { sendNotification } from '../utils/tracker.js';
 
 // @desc    Get all requests
 // @route   GET /api/requests
@@ -107,6 +108,20 @@ export const updateRequest = async (req, res) => {
     if (!request) {
       return res.status(404).json({ success: false, message: 'Request not found' });
     }
+
+    // Notify user of status change and admin response
+    let message = `Your feature request for "${request.title}" is now: ${request.status}.`;
+    if (adminResponse) {
+      message += ` Admin Reply: "${adminResponse}"`;
+    }
+
+    await sendNotification(
+      request.user,
+      'Feature Request Update',
+      message,
+      'SYSTEM',
+      'Info'
+    );
 
     res.status(200).json({ success: true, data: request });
   } catch (err) {

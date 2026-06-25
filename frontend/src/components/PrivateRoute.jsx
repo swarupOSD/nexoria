@@ -29,7 +29,7 @@ const PrivateRoute = () => {
     );
   }
 
-  return activeUser ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />;
+  return activeUser ? <Outlet /> : <Navigate to="/register" replace state={{ from: location }} />;
 };
 
 export default PrivateRoute;

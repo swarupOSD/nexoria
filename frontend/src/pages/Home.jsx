@@ -8,6 +8,7 @@ import HeroDisplay from '../components/HeroDisplay';
 import FallbackImage from '../components/FallbackImage';
 import SEO from '../components/SEO';
 import Leaderboard from '../components/Leaderboard';
+import AdPlacement from '../components/AdPlacement';
 
 const RetryComponent = ({ onRetry, message = "Failed to load content" }) => (
   <div className="flex flex-col items-center justify-center py-12 px-4 text-center border border-white/5 rounded-2xl bg-white/5">
@@ -63,6 +64,7 @@ const Home = () => {
   return (
     <div className="bg-[#050505] min-h-screen text-white pb-20 font-sans">
       <SEO title="Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One" />
+      <AdPlacement location="Header" />
 
       {/* 🚀 Futuristic Nexoria Hero Section */}
       <div className="relative overflow-hidden border-b border-white/5 bg-[#050505] min-h-[85vh] flex items-center justify-center">
@@ -226,6 +228,8 @@ const Home = () => {
           )}
         </section>
 
+        <AdPlacement location="BetweenContent" />
+
         {/* Featured Apps */}
         {featuredRes?.data?.length > 0 && (
           <section>
@@ -262,6 +266,7 @@ const Home = () => {
           </section>
         )}
 
+        <AdPlacement location="Footer" />
       </div>
     </div>
   );

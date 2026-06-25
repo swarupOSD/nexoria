@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, User } from 'lucide-react';
 
 const FallbackImage = ({ 
   src, 
@@ -32,12 +32,9 @@ const FallbackImage = ({
     // Render a generic fallback based on type
     if (fallbackType === 'avatar') {
       return (
-        <img 
-          src="/default-avatar.png" 
-          alt={alt} 
-          className={className} 
-          {...props} 
-        />
+        <div className={`flex items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-400 ${className}`} {...props}>
+          <User className="w-2/3 h-2/3 opacity-60" />
+        </div>
       );
     }
     

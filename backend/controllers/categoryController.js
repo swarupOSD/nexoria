@@ -1,5 +1,6 @@
 import Category from '../models/Category.js';
 import Post from '../models/Post.js';
+import redis from '../config/redis.js';
 import logger from '../middlewares/logger.js';
 
 // @desc    Get all active categories
@@ -74,6 +75,12 @@ export const getCategoryBySlug = async (req, res) => {
 export const createCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
+
+    const keys = await redis.keys('posts:*');
+    const catKeys = await redis.keys('categories:*');
+    if (keys.length > 0) await redis.del(keys);
+    if (catKeys.length > 0) await redis.del(catKeys);
+
     res.status(201).json({ success: true, data: category });
   } catch (error) {
     logger.error(`Create Category Error: ${error.message}`);
@@ -101,6 +108,11 @@ export const updateCategory = async (req, res) => {
     if (!category) {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
+
+    const keys = await redis.keys('posts:*');
+    const catKeys = await redis.keys('categories:*');
+    if (keys.length > 0) await redis.del(keys);
+    if (catKeys.length > 0) await redis.del(catKeys);
     
     res.status(200).json({ success: true, data: category });
   } catch (error) {
@@ -128,6 +140,12 @@ export const deleteCategory = async (req, res) => {
     }
     
     await category.deleteOne();
+
+    const keys = await redis.keys('posts:*');
+    const catKeys = await redis.keys('categories:*');
+    if (keys.length > 0) await redis.del(keys);
+    if (catKeys.length > 0) await redis.del(catKeys);
+
     res.status(200).json({ success: true, message: 'Category deleted' });
   } catch (error) {
     logger.error(`Delete Category Error: ${error.message}`);

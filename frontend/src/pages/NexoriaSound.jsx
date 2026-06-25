@@ -27,11 +27,15 @@ const NexoriaSound = () => {
   const playlists = playlistsRes?.data || [];
   const userPlaylists = userPlaylistsRes?.data || [];
 
-  const handlePlaySong = (song) => {
+  const handlePlaySong = (song, contextArray = [], index = 0) => {
     if (currentSong?._id === song._id) {
       dispatch(togglePlayPause());
     } else {
-      dispatch(playSong(song));
+      if (contextArray.length > 0) {
+        dispatch(playPlaylist({ songs: contextArray, startIndex: index }));
+      } else {
+        dispatch(playSong(song));
+      }
     }
   };
 
@@ -68,8 +72,8 @@ const NexoriaSound = () => {
               <Clock className="w-6 h-6 text-purple-400" /> Continue Listening
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {recentlyPlayed.slice(0, 6).map(song => (
-                <div key={song._id} onClick={() => handlePlaySong(song)} className="bg-slate-800/40 hover:bg-slate-800 p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-purple-500/30">
+              {recentlyPlayed.slice(0, 6).map((song, idx) => (
+                <div key={song._id} onClick={() => handlePlaySong(song, recentlyPlayed.slice(0, 6), idx)} className="bg-slate-800/40 hover:bg-slate-800 p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-purple-500/30">
                   <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg">
                     <FallbackImage src={song.image} alt={song.title} fallbackType="music" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -94,7 +98,7 @@ const NexoriaSound = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {trendingSongs.map((song, idx) => (
-                <div key={song._id} onClick={() => handlePlaySong(song)} className="flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 p-2 sm:p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-pink-500/30">
+                <div key={song._id} onClick={() => handlePlaySong(song, trendingSongs, idx)} className="flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800 p-2 sm:p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-pink-500/30">
                   <div className="w-6 text-center text-slate-500 font-bold">{idx + 1}</div>
                   <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
                     <FallbackImage src={song.image} alt={song.title} fallbackType="music" className="w-full h-full object-cover" />
@@ -171,8 +175,8 @@ const NexoriaSound = () => {
         <section>
           <h2 className="text-2xl font-bold text-white mb-6">Fresh Drops</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-            {latestSongs.map(song => (
-              <div key={song._id} onClick={() => handlePlaySong(song)} className="group cursor-pointer">
+            {latestSongs.map((song, idx) => (
+              <div key={song._id} onClick={() => handlePlaySong(song, latestSongs, idx)} className="group cursor-pointer">
                 <div className="relative aspect-square rounded-2xl overflow-hidden mb-3 shadow-lg">
                   <FallbackImage src={song.image} alt={song.title} fallbackType="music" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">

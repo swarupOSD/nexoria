@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { 
   togglePlayPause, playNext, playPrevious, setVolume, 
-  toggleMute, toggleLoopMode, toggleShuffle, toggleRadioMode, setPlaying, playSong
+  toggleMute, toggleLoopMode, toggleShuffle, toggleRadioMode, setPlaying, playSong, clearQueue
 } from '../features/music/musicSlice';
 import { 
   useToggleFavoriteMutation, 
@@ -24,7 +24,7 @@ import EqualizerModal from './EqualizerModal';
 import ShareCardModal from './ShareCardModal';
 import { useWebAudio } from '../hooks/useWebAudio';
 import { downloadMp3 } from '../utils/downloadMp3';
-import { Sliders } from 'lucide-react';
+import { Sliders, X } from 'lucide-react';
 import FallbackImage from './FallbackImage';
 
 // Sanitize YouTube URL to standard watch?v= format
@@ -519,6 +519,19 @@ const GlobalMusicPlayer = () => {
               className="w-20 h-1.5 bg-slate-700 rounded-full appearance-none cursor-pointer accent-white hover:accent-purple-500 transition-colors"
             />
           </div>
+
+          <button 
+            onClick={() => {
+              dispatch(setPlaying(false));
+              dispatch(clearQueue());
+              // Force next track which handles empty queue gracefully to clear currentSong
+              dispatch(playNext()); 
+            }}
+            className="text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-colors p-2 rounded-full ml-2"
+            title="Close Player"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
       </div>
