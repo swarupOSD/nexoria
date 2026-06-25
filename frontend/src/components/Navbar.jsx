@@ -619,6 +619,9 @@ const Navbar = () => {
                     <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Mic className="w-5 h-5 text-purple-500" /> FM
                     </Link>
+                    <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                      <Gamepad2 className="w-5 h-5 text-red-500" /> Arena
+                    </Link>
                     <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-indigo-500" /> Requests
                     </Link>
