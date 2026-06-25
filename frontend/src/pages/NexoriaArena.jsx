@@ -304,7 +304,7 @@ const NexoriaArena = () => {
                 animate={{ opacity: 1 - idx * 0.2, x: 0 }}
                 className={`py-1 ${idx === 0 ? 'text-white font-bold text-base' : 'text-slate-400'}`}
               >
-                > {log}
+                &gt; {log}
               </motion.div>
             ))}
           </div>
