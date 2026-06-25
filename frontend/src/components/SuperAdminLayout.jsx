@@ -254,7 +254,7 @@ const SuperAdminLayout = () => {
   );
 
   return (
-    <div className="flex h-screen bg-white dark:bg-[#000000] text-slate-800 dark:text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-[100dvh] bg-white dark:bg-[#000000] text-slate-800 dark:text-slate-200 font-sans overflow-hidden">
       
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex z-20">
@@ -303,8 +303,8 @@ const SuperAdminLayout = () => {
               <span className="flex items-center text-rose-500 hover:text-rose-600 transition-colors">
                 SuperAdmin
               </span>
-              <ChevronRight className="w-4 h-4 mx-1" />
-              <span className="text-slate-900 dark:text-white capitalize">
+              <ChevronRight className="w-4 h-4 mx-1 shrink-0" />
+              <span className="text-slate-900 dark:text-white capitalize truncate max-w-[120px] sm:max-w-[200px]">
                 {location.pathname.split('/').pop().replace('-', ' ') || 'Dashboard'}
               </span>
             </div>
