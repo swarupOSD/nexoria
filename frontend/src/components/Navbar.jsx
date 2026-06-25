@@ -466,7 +466,7 @@ const Navbar = () => {
               </div>
             )}
             
-            {user && <NotificationBell />}
+            {user && <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />}
 
             {user ? (
               <DropdownMenu 
@@ -513,9 +513,7 @@ const Navbar = () => {
               <Search className="w-5 h-5" />
             </button>
             {user && (
-              <div className={scrolled ? '' : 'brightness-0 invert'}>
-                <NotificationBell />
-              </div>
+              <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
             )}
             {user && (
               <Link to="/dashboard" className="hidden sm:block ml-1">
