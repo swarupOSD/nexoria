@@ -3,6 +3,7 @@ import { useGetAllSongsAdminQuery, useDeleteSongMutation, useUpdateSongMutation 
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, Edit, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import FallbackImage from '../../../components/FallbackImage';
 
 const SoundSongs = () => {
   const { data, isLoading } = useGetAllSongsAdminQuery();
@@ -67,7 +68,9 @@ const SoundSongs = () => {
               <tr key={song._id} className="border-b border-slate-200 dark:border-slate-700 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <img src={song.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                      <FallbackImage src={song.image} alt="" fallbackType="music" className="w-full h-full object-cover" />
+                    </div>
                     <div>
                       <p className="font-bold text-slate-800 dark:text-white">{song.title}</p>
                       <p className="text-xs text-slate-500">{song.artist}</p>

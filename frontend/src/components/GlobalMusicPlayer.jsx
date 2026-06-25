@@ -25,6 +25,7 @@ import ShareCardModal from './ShareCardModal';
 import { useWebAudio } from '../hooks/useWebAudio';
 import { downloadMp3 } from '../utils/downloadMp3';
 import { Sliders } from 'lucide-react';
+import FallbackImage from './FallbackImage';
 
 // Sanitize YouTube URL to standard watch?v= format
 const sanitizeYouTubeUrl = (url) => {
@@ -370,9 +371,10 @@ const GlobalMusicPlayer = () => {
         {/* Left: Song Info */}
         <div className="flex items-center gap-3 w-full sm:w-1/3 min-w-0">
           <div className="relative group overflow-hidden rounded-lg w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-            <img 
+            <FallbackImage 
               src={currentSong.image} 
-              alt={currentSong.title}
+              alt={currentSong.title} 
+              fallbackType="music"
               className={`w-full h-full object-cover transition-transform duration-700 ${isPlaying ? 'scale-110' : 'scale-100'}`}
             />
             {isPlaying && (

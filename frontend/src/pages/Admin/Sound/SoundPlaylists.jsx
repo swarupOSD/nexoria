@@ -6,6 +6,7 @@ import {
 } from '../../../features/api/musicApiSlice';
 import { Plus, Trash2, Edit, X, ListVideo } from 'lucide-react';
 import toast from 'react-hot-toast';
+import FallbackImage from '../../../components/FallbackImage';
 
 const SoundPlaylists = () => {
   const { data, isLoading } = useGetAllPlaylistsAdminQuery();
@@ -65,7 +66,7 @@ const SoundPlaylists = () => {
         {playlists.map(playlist => (
           <div key={playlist._id} className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden group">
             <div className="relative aspect-square">
-              <img src={playlist.image} alt={playlist.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <FallbackImage src={playlist.image} alt={playlist.name} fallbackType="music" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
               
               <div className="absolute top-3 right-3 flex gap-2">
