@@ -251,7 +251,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-2xl bg-white/70 dark:bg-[#0A0A0A]/70 border-b border-black/5 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)] py-3' : 'bg-transparent py-5'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-2xl bg-white/80 dark:bg-[#0A0A0A]/80 border-b border-black/5 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)] py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
         <div className="container mx-auto px-4 flex items-center justify-between">
           
           {/* Logo */}
@@ -260,7 +260,7 @@ const Navbar = () => {
               <div className="relative">
                 <Logo src={settings.logo} />
               </div>
-              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent hidden sm:block tracking-tight drop-shadow-sm">
+              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent tracking-tight drop-shadow-sm">
                 {settings?.siteName || 'Nexoria'}
               </span>
             </Link>
@@ -507,10 +507,25 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button className="lg:hidden p-2 text-slate-700 dark:text-slate-300" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile Right Icons & Menu */}
+          <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
+            <button onClick={() => setIsMobileMenuOpen(true)} className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}>
+              <Search className="w-5 h-5" />
+            </button>
+            {user && (
+              <div className={scrolled ? '' : 'brightness-0 invert'}>
+                <NotificationBell />
+              </div>
+            )}
+            {user && (
+              <Link to="/dashboard" className="hidden sm:block ml-1">
+                <FallbackImage src={user.profileImage} fallbackType="avatar" className={`w-8 h-8 rounded-full border-2 object-cover ${scrolled ? 'border-primary' : 'border-white'}`} alt="avatar" />
+              </Link>
+            )}
+            <button className={`p-2 ml-1 transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Premium Mobile Drawer */}
