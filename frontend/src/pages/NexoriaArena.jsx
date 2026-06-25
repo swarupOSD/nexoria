@@ -57,9 +57,9 @@ const NexoriaArena = () => {
         </div>
 
         <div className="w-full aspect-video bg-black rounded-2xl overflow-hidden relative">
-          {/* We are embedding "Stickman Fighter: Epic Battle" via GameDistribution API */}
+          {/* We are embedding Smash Karts via GamePix API */}
           <iframe 
-            src="https://html5.gamedistribution.com/b4a4d6f45e8a4a5eb23b0a68d0e41793/" 
+            src="https://play.gamepix.com/smash-karts/embed" 
             className="w-full h-full border-none"
             title="Nexoria Arena Fighter"
             allow="autoplay; fullscreen; focus-without-user-activation *;"
@@ -76,15 +76,15 @@ const NexoriaArena = () => {
         <ul className="space-y-3 text-slate-300 font-medium">
           <li className="flex items-start gap-2">
             <span className="text-red-500 font-black">&gt;</span> 
-            Tap or Click left and right to attack enemies coming towards you.
+            Use W, A, S, D or Arrows to drive your kart.
           </li>
           <li className="flex items-start gap-2">
             <span className="text-red-500 font-black">&gt;</span> 
-            Wait until enemies enter your attack range before striking.
+            Press SPACEBAR to fire weapons and destroy other players!
           </li>
           <li className="flex items-start gap-2">
             <span className="text-red-500 font-black">&gt;</span> 
-            Buy new weapons and upgrades between levels to become stronger.
+            Drive over boxes to collect powerful weapons.
           </li>
           <li className="flex items-start gap-2">
             <span className="text-red-500 font-black">&gt;</span> 
