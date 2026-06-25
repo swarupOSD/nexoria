@@ -62,12 +62,13 @@ const AdBlockDetector = ({ children }) => {
 
   if (isAdBlockActive) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-slate-900/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="bg-slate-800 border border-slate-700/50 rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden"
-        >
+      <div className="fixed inset-0 z-[9999] bg-slate-900/95 backdrop-blur-xl overflow-y-auto">
+        <div className="min-h-[100dvh] flex items-center justify-center p-4 sm:p-6">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-slate-800 border border-slate-700/50 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden my-auto"
+          >
           {/* Glassmorphism accents */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
@@ -136,7 +137,8 @@ const AdBlockDetector = ({ children }) => {
               <span>Premium Users bypass ads and tracking automatically.</span>
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     );
   }
