@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePlayer } from '../context/PlayerContext';
 import FallbackImage from '../components/FallbackImage';
 import { 
   useGetSongsQuery,
