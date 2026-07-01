@@ -10,11 +10,8 @@ const AuraCard = () => {
   const cardRef = useRef(null);
   const [isExporting, setIsExporting] = useState(false);
   const [base64Avatar, setBase64Avatar] = useState(null);
-
-  if (isLoading) return <div className="h-64 flex items-center justify-center"><div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>;
-  if (isError || !auraRes?.data) return <div className="p-6 text-center text-slate-500">Could not load Aura Card.</div>;
-
-  const aura = auraRes.data;
+  
+  const aura = auraRes?.data;
 
   useEffect(() => {
     if (aura?.avatar) {
@@ -35,6 +32,9 @@ const AuraCard = () => {
       setBase64Avatar('/default-avatar.png');
     }
   }, [aura?.avatar]);
+
+  if (isLoading) return <div className="h-64 flex items-center justify-center"><div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>;
+  if (isError || !aura) return <div className="p-6 text-center text-slate-500">Could not load Aura Card.</div>;
 
   const handleExport = async () => {
     if (!cardRef.current) return;
