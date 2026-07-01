@@ -149,6 +149,13 @@ export const musicApiSlice = apiSlice.injectEndpoints({
         body: { action }
       }),
       invalidatesTags: ['Playlist']
+    }),
+    scrapeMusic: builder.mutation({
+      query: (data) => ({
+        url: '/admin/scraper/music',
+        method: 'POST',
+        body: data
+      })
     })
   })
 });
@@ -176,5 +183,6 @@ export const {
   useCreateUserPlaylistMutation,
   useUpdateUserPlaylistMutation,
   useDeleteUserPlaylistMutation,
-  useToggleSongInUserPlaylistMutation
+  useToggleSongInUserPlaylistMutation,
+  useScrapeMusicMutation
 } = musicApiSlice;
