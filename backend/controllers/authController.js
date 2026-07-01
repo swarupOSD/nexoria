@@ -130,7 +130,7 @@ export const register = async (req, res) => {
       const refreshToken = generateRefreshToken(user._id, user.role, user.email);
 
       // Save refresh token to user
-      user.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+      user.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) });
       await user.save();
 
       // Set refresh token in http-only cookie
@@ -138,7 +138,7 @@ export const register = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 365 * 24 * 60 * 60 * 1000,
       });
 
       await logActivity(user._id, 'User Registration', 'Account created successfully', req);
@@ -231,7 +231,7 @@ export const login = async (req, res) => {
 
       // Manage refresh tokens (keep only the last 5 devices)
       user.refreshTokens = user.refreshTokens.filter(rt => rt.expiresAt > Date.now());
-      user.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+      user.refreshTokens.push({ token: refreshToken, expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) });
       if (user.refreshTokens.length > 5) user.refreshTokens.shift();
       
       await user.save();
@@ -240,7 +240,7 @@ export const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 365 * 24 * 60 * 60 * 1000,
       });
 
       await logActivity(user._id, 'User Login', 'Logged in successfully', req);
