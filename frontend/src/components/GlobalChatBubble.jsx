@@ -17,6 +17,12 @@ const GlobalChatBubble = () => {
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
 
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   // Connect on mount
   useEffect(() => {
     if (!socket) {
@@ -51,12 +57,6 @@ const GlobalChatBubble = () => {
       socket.off('newGlobalMessage');
     };
   }, []);
-
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
 
   const handleSend = (e) => {
     e.preventDefault();

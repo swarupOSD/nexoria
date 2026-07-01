@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Bell, Palette, Shield, LogOut, Globe } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useLogoutMutation, useUpdateProfileMutation } from '../../features/auth/authApiSlice';
 import { logout as logoutAction } from '../../features/auth/authSlice';
 import { useSubscribeToPushMutation } from '../../features/user/userApiSlice';
