@@ -1,42 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Zap } from 'lucide-react';
-import { io } from 'socket.io-client';
-import { useSelector } from 'react-redux';
-
-let socket;
+import { useSocket } from '../context/SocketContext';
 
 const AuraSurgeBanner = () => {
   const [surgeEvent, setSurgeEvent] = useState(null);
-  const { token } = useSelector((state) => state.auth);
+  const socket = useSocket();
 
   useEffect(() => {
-    // Setup socket connection
-    const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    socket = io(socketUrl, {
-      auth: { token },
-      withCredentials: true,
-    });
+    if (!socket) return;
 
     socket.on('auraSurge', (data) => {
-      // data: { title, score, image }
       setSurgeEvent(data);
-      
-      // Auto-hide after 8 seconds
-      setTimeout(() => {
-        setSurgeEvent(null);
-      }, 8000);
+      setTimeout(() => setSurgeEvent(null), 8000);
     });
 
     return () => {
-      socket.disconnect();
+      socket.off('auraSurge');
     };
-  }, [token]);
+  }, [socket]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {surgeEvent && (
         <motion.div
+          key="aura-surge-banner"
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
