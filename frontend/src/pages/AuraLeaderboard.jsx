@@ -7,6 +7,8 @@ import { useGetAuraLeaderboardQuery, useVibeVoteMutation } from '../features/aur
 import { useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { AuraScore } from '../components/AuraScore';
+import AuraCard from '../components/AuraCard';
+import WrappedModal from '../components/WrappedModal';
 
 const TABS = [
   { label: 'All', value: 'all', icon: <Flame className="w-4 h-4" /> },
@@ -23,6 +25,7 @@ const RANK_STYLES = [
 
 export default function AuraLeaderboard() {
   const [activeTab, setActiveTab] = useState('all');
+  const [showAuraCard, setShowAuraCard] = useState(false);
   const { data, isLoading, refetch } = useGetAuraLeaderboardQuery(activeTab);
   const [vibeVote] = useVibeVoteMutation();
   const { userInfo } = useSelector((s) => s.auth);
@@ -62,12 +65,23 @@ export default function AuraLeaderboard() {
           <p className="text-slate-400 text-lg max-w-xl mx-auto">
             The most hyped apps, games & songs — ranked live by the Nexoria community
           </p>
-          <Link
-            to="/aura/battle"
-            className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-2xl font-bold text-sm transition-all hover:shadow-lg hover:shadow-purple-500/30 active:scale-95"
-          >
-            <Swords className="w-4 h-4" /> Enter Aura Battle <ChevronRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+            <Link
+              to="/aura/battle"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-2xl font-bold text-sm transition-all hover:shadow-lg hover:shadow-purple-500/30 active:scale-95"
+            >
+              <Swords className="w-4 h-4" /> Enter Aura Battle <ChevronRight className="w-4 h-4" />
+            </Link>
+            
+            {userInfo && (
+              <button
+                onClick={() => setShowAuraCard(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-2xl font-bold text-sm transition-all hover:shadow-lg active:scale-95 text-white"
+              >
+                <Flame className="w-4 h-4 text-amber-500" /> My Aura Card
+              </button>
+            )}
+          </div>
         </motion.div>
       </div>
 
@@ -196,6 +210,10 @@ export default function AuraLeaderboard() {
           </div>
         )}
       </div>
+
+      <WrappedModal isOpen={showAuraCard} onClose={() => setShowAuraCard(false)} title="Your Personal Aura" maxWidth="max-w-md">
+        <AuraCard />
+      </WrappedModal>
     </div>
   );
 }
