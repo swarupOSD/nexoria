@@ -12,6 +12,7 @@ import { useLogoutMutation, useGetMeQuery } from '../features/auth/authApiSlice'
 import { logout as clearCredentials, setCredentials } from '../features/auth/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import BroadcastModal from './BroadcastModal';
 
 const SuperAdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -23,6 +24,7 @@ const SuperAdminLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({ 'Movies': true });
   const [showQuickActions, setShowQuickActions] = useState(false);
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
   
   // Mock state for module maintenance toggles
   const [maintenanceStates, setMaintenanceStates] = useState({
@@ -59,9 +61,6 @@ const SuperAdminLayout = () => {
     toast.success('System cache cleared successfully!');
   };
 
-  const handleBroadcast = () => {
-    toast.success('Broadcast notice sent to all users!');
-  };
   
   const toggleMaintenance = (module) => {
     setMaintenanceStates(prev => ({
@@ -372,7 +371,7 @@ const SuperAdminLayout = () => {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#111] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                      className="absolute right-0 mt-2 w-[280px] max-w-[90vw] origin-top-right bg-white dark:bg-[#111] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
                     >
                       <div className="p-3 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                         <p className="text-xs font-black text-slate-500 uppercase tracking-widest">System Commands</p>
@@ -381,7 +380,7 @@ const SuperAdminLayout = () => {
                         <button onClick={() => { handleClearCache(); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                           <Activity className="w-4 h-4 text-emerald-500" /> Clear System Cache
                         </button>
-                        <button onClick={() => { handleBroadcast(); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
+                        <button onClick={() => { setIsBroadcastModalOpen(true); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                           <Bell className="w-4 h-4 text-indigo-500" /> Broadcast Notice
                         </button>
                       </div>
@@ -429,6 +428,8 @@ const SuperAdminLayout = () => {
           </div>
         </div>
       </main>
+
+      <BroadcastModal isOpen={isBroadcastModalOpen} onClose={() => setIsBroadcastModalOpen(false)} />
     </div>
   );
 };

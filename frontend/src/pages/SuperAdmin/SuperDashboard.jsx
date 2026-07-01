@@ -38,10 +38,10 @@ const SuperDashboard = () => {
   const stats = [
     { title: 'Total Users', value: data?.overview?.totalUsers || 0, isUp: true, icon: <Users className="w-6 h-6" />, color: 'from-indigo-500 to-purple-600' },
     { title: 'Premium Users', value: data?.overview?.totalPremiumUsers || 0, isUp: true, icon: <Crown className="w-6 h-6" />, color: 'from-amber-400 to-orange-500' },
-    { title: 'MRR (Revenue)', value: data?.overview?.revenue || 4250, prefix: '$', isUp: true, icon: <DollarSign className="w-6 h-6" />, color: 'from-emerald-400 to-teal-500' },
-    { title: 'Adblock Rate', value: 12.4, prefix: '', suffix: '%', isUp: false, icon: <Shield className="w-6 h-6" />, color: 'from-rose-400 to-red-500' },
+    { title: 'MRR (Revenue)', value: data?.overview?.revenue || 0, prefix: '$', isUp: true, icon: <DollarSign className="w-6 h-6" />, color: 'from-emerald-400 to-teal-500' },
+    { title: 'Adblock Rate', value: data?.overview?.adblockRate || 0, prefix: '', suffix: '%', isUp: false, icon: <Shield className="w-6 h-6" />, color: 'from-rose-400 to-red-500' },
     { title: 'Total Downloads', value: data?.overview?.totalDownloads || 0, isUp: true, icon: <Download className="w-6 h-6" />, color: 'from-blue-500 to-cyan-500' },
-    { title: 'Churn Rate', value: 2.1, prefix: '', suffix: '%', isUp: false, icon: <UserX className="w-6 h-6" />, color: 'from-slate-600 to-slate-800' },
+    { title: 'Churn Rate', value: data?.overview?.churnRate || 0, prefix: '', suffix: '%', isUp: false, icon: <UserX className="w-6 h-6" />, color: 'from-slate-600 to-slate-800' },
   ];
 
   const systemHealth = [
