@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { toPng } from 'html-to-image';
 import { Download, Flame, Trophy, Share2 } from 'lucide-react';
 import { useGetPersonalAuraQuery } from '../features/aura/auraApiSlice';
@@ -9,11 +9,32 @@ const AuraCard = () => {
   const { data: auraRes, isLoading, isError } = useGetPersonalAuraQuery();
   const cardRef = useRef(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [base64Avatar, setBase64Avatar] = useState(null);
 
   if (isLoading) return <div className="h-64 flex items-center justify-center"><div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>;
   if (isError || !auraRes?.data) return <div className="p-6 text-center text-slate-500">Could not load Aura Card.</div>;
 
   const aura = auraRes.data;
+
+  useEffect(() => {
+    if (aura?.avatar) {
+      const fetchImage = async () => {
+        try {
+          const response = await fetch(aura.avatar);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => setBase64Avatar(reader.result);
+          reader.readAsDataURL(blob);
+        } catch (e) {
+          console.warn("Could not convert avatar to base64", e);
+          setBase64Avatar(aura.avatar); // Fallback to original url
+        }
+      };
+      fetchImage();
+    } else {
+      setBase64Avatar('/default-avatar.png');
+    }
+  }, [aura?.avatar]);
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -72,10 +93,9 @@ const AuraCard = () => {
           <div className="relative mb-4">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-br" style={{ backgroundImage: `linear-gradient(to bottom right, ${aura.color}, transparent)` }}>
               <img 
-                src={aura.avatar || '/default-avatar.png'} 
+                src={base64Avatar || '/default-avatar.png'} 
                 alt={aura.username} 
                 className="w-full h-full rounded-full object-cover border-2 border-black" 
-                crossOrigin="anonymous"
               />
             </div>
             <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/10 flex items-center justify-center">
