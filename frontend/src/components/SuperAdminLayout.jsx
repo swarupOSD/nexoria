@@ -25,14 +25,6 @@ const SuperAdminLayout = () => {
   const [expandedMenus, setExpandedMenus] = useState({ 'Movies': true });
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
-  
-  // Mock state for module maintenance toggles
-  const [maintenanceStates, setMaintenanceStates] = useState({
-    global: false,
-    apps: false,
-    games: false,
-    music: false,
-  });
 
   const { data, isLoading, isFetching } = useGetMeQuery();
 
@@ -59,15 +51,6 @@ const SuperAdminLayout = () => {
 
   const handleClearCache = () => {
     toast.success('System cache cleared successfully!');
-  };
-
-  
-  const toggleMaintenance = (module) => {
-    setMaintenanceStates(prev => ({
-      ...prev,
-      [module]: !prev[module]
-    }));
-    toast.success(`${module.charAt(0).toUpperCase() + module.slice(1)} maintenance mode updated!`);
   };
 
   const activeUser = user || data?.user;
@@ -383,22 +366,6 @@ const SuperAdminLayout = () => {
                         <button onClick={() => { setIsBroadcastModalOpen(true); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                           <Bell className="w-4 h-4 text-indigo-500" /> Broadcast Notice
                         </button>
-                      </div>
-                      <div className="p-3 bg-slate-50 dark:bg-white/5 border-y border-slate-100 dark:border-white/5 mt-1">
-                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Maintenance Control</p>
-                      </div>
-                      <div className="p-2 space-y-1">
-                        {Object.entries(maintenanceStates).map(([module, isEnabled]) => (
-                          <div key={module} className="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">
-                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 capitalize">{module}</span>
-                            <button 
-                              onClick={() => toggleMaintenance(module)}
-                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${isEnabled ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-600'}`}
-                            >
-                              <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${isEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
-                            </button>
-                          </div>
-                        ))}
                       </div>
                     </motion.div>
                   </>
