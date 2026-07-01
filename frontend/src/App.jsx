@@ -29,6 +29,8 @@ import Premium from './pages/Premium';
 import GlobalMusicPlayer from './components/GlobalMusicPlayer';
 import NexoriaSound from './pages/NexoriaSound';
 import SoundQueue from './pages/SoundQueue';
+import AuraLeaderboard from './pages/AuraLeaderboard';
+import AuraBattle from './pages/AuraBattle';
 
 // Admin Sound
 import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
@@ -251,6 +253,8 @@ function App() {
           </Route>
           
           <Route path="nexoria-arena" element={<NexoriaArena />} />
+          <Route path="/aura" element={<AuraLeaderboard />} />
+          <Route path="/aura/battle" element={<AuraBattle />} />
 
 
 

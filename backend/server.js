@@ -144,6 +144,7 @@ import watchHistoryRoutes from './routes/watchHistoryRoutes.js';
 import musicRoutes from './routes/musicRoutes.js';
 import scraperRoutes from './routes/scraperRoutes.js';
 import trashRoutes from './routes/trashRoutes.js';
+import auraRoutes from './routes/auraRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -195,6 +196,7 @@ app.use('/api/requests', requestRoutes);
 app.use('/api/watch-history', watchHistoryRoutes);
 app.use('/api/music', musicRoutes);
 app.use('/api/admin/scraper', scraperRoutes);
+app.use('/api/aura', auraRoutes);
 
 import path from 'path';
 
