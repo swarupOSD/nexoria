@@ -41,6 +41,11 @@ const SiteSettings = () => {
     uiTheme: {
       primaryColor: '#7C3AED',
       cyberpunkEffects: true,
+    },
+    ads: {
+      enabled: true,
+      timerSeconds: 30,
+      downloadClicks: 2
     }
   });
 
@@ -90,6 +95,11 @@ const SiteSettings = () => {
         uiTheme: {
           primaryColor: settingsRes.data.uiTheme?.primaryColor || '#7C3AED',
           cyberpunkEffects: settingsRes.data.uiTheme?.cyberpunkEffects ?? true,
+        },
+        ads: {
+          enabled: settingsRes.data.ads?.enabled ?? true,
+          timerSeconds: settingsRes.data.ads?.timerSeconds || 30,
+          downloadClicks: settingsRes.data.ads?.downloadClicks || 2
         }
       });
     }
@@ -390,6 +400,30 @@ const SiteSettings = () => {
             <div>
               <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Payment Instructions</label>
               <textarea rows="3" name="payment_instructions" value={formData.paymentSettings?.paymentInstructions || ''} onChange={(e) => setFormData({...formData, paymentSettings: {...formData.paymentSettings, paymentInstructions: e.target.value}})} className="premium-input w-full resize-none"></textarea>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Ads & Revenue Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Globe className="w-5 h-5 text-green-500" />
+            <h2 className="text-lg font-bold dark:text-white">Ads & Revenue Manager</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4">
+              <input type="checkbox" name="ads_enabled" checked={formData.ads?.enabled} onChange={(e) => setFormData({...formData, ads: {...formData.ads, enabled: e.target.checked}})} id="adsEnabled" className="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-night-bg focus:ring-2 dark:bg-night-bg dark:border-night-border" />
+              <label htmlFor="adsEnabled" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Global Advertisements</label>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Timer (Seconds)</label>
+              <input type="number" name="ads_timerSeconds" value={formData.ads?.timerSeconds || 30} onChange={(e) => setFormData({...formData, ads: {...formData.ads, timerSeconds: Number(e.target.value)}})} className="premium-input w-full" />
+              <p className="text-xs text-slate-500 mt-1">Users will wait this many seconds before the download starts.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Page Clicks</label>
+              <input type="number" name="ads_downloadClicks" value={formData.ads?.downloadClicks || 2} onChange={(e) => setFormData({...formData, ads: {...formData.ads, downloadClicks: Number(e.target.value)}})} className="premium-input w-full" />
+              <p className="text-xs text-slate-500 mt-1">Number of steps/clicks required to reach the final file.</p>
             </div>
           </div>
         </motion.div>
