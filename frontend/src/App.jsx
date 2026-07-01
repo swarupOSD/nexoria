@@ -31,6 +31,7 @@ import NexoriaSound from './pages/NexoriaSound';
 import SoundQueue from './pages/SoundQueue';
 import AuraLeaderboard from './pages/AuraLeaderboard';
 import AuraBattle from './pages/AuraBattle';
+import AuraSurgeBanner from './components/AuraSurgeBanner';
 
 // Admin Sound
 import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
@@ -180,6 +181,7 @@ function App() {
 
   return (
     <Router>
+      <AuraSurgeBanner />
       <Toaster position="top-right" />
       <KidsModeGuard>
         <Suspense fallback={<PageLoader />}>

@@ -6,6 +6,7 @@ import { useGetAuraBattleQuery, useVoteAuraBattleMutation } from '../features/au
 import { useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { triggerAuraStrike } from '../utils/auraStrike';
 
 const BATTLE_DURATION = 30; // seconds
 
@@ -58,8 +59,13 @@ export default function AuraBattle() {
     setVotes((v) => ({ ...v, [choice]: v[choice] + 1 }));
 
     try {
-      await voteAuraBattle({ winnerId, loserId }).unwrap();
-      toast.success('⚡ Vote counted! Winner aura boosted!');
+      const res = await voteAuraBattle({ winnerId, loserId }).unwrap();
+      if (res.data?.questCompleted) {
+        toast.success(res.message, { icon: '🎁', duration: 5000 });
+      } else {
+        toast.success('⚡ Vote counted! Winner aura boosted!');
+      }
+      triggerAuraStrike();
     } catch {
       toast.error('Vote failed. Try again.');
     }

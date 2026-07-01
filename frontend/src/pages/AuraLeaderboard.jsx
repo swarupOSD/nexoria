@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast';
 import { AuraScore } from '../components/AuraScore';
 import AuraCard from '../components/AuraCard';
 import WrappedModal from '../components/WrappedModal';
+import { triggerAuraStrike } from '../utils/auraStrike';
 
 const TABS = [
   { label: 'All', value: 'all', icon: <Flame className="w-4 h-4" /> },
@@ -37,7 +38,12 @@ export default function AuraLeaderboard() {
     if (!user) return toast.error('Login করুন Vibe দিতে!', { id: 'auth_error' });
     try {
       const res = await vibeVote({ type: item.itemType, id: item.itemId }).unwrap();
-      toast.success(res.message || '🔥 Vibe sent!');
+      if (res.data?.questCompleted) {
+        toast.success(res.message, { icon: '🎁', duration: 5000 });
+      } else {
+        toast.success(res.message || '🔥 Vibe sent!');
+      }
+      triggerAuraStrike();
     } catch (err) {
       toast.error(err?.data?.message || 'Already vibed today!');
     }

@@ -3,6 +3,8 @@ import Aura from '../models/Aura.js';
 import Post from '../models/Post.js';
 import Game from '../models/Game.js';
 import Music from '../models/Music.js';
+import User from '../models/User.js';
+import { getIO } from '../config/socket.js';
 
 // ─── Aura Score Formula ───────────────────────────────────────────────────────
 // Score = (views * 0.01) + (downloads * 0.5) + (rating * 20) + (vibeVotes * 2)
@@ -28,6 +30,45 @@ const getSourceItem = async (itemType, itemId) => {
   if (itemType === 'game') return Game.findById(itemId).select('title logo views downloads rating updatedAt').lean();
   if (itemType === 'music') return Music.findById(itemId).select('title coverImage views playCount averageRating updatedAt').lean();
   return null;
+};
+
+// ─── Process User Aura Vote (Daily Quest & Rank) ──────────────────────────────
+const processUserAuraVote = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) return {};
+
+  const today = new Date();
+  const lastVote = user.lastAuraVoteDate ? new Date(user.lastAuraVoteDate) : null;
+  
+  // Reset daily count if it's a new day
+  if (!lastVote || lastVote.toDateString() !== today.toDateString()) {
+    user.dailyAuraVotes = 0;
+  }
+
+  user.dailyAuraVotes += 1;
+  user.totalAuraVotes += 1;
+  user.lastAuraVoteDate = today;
+
+  let questCompleted = false;
+  let reward = 0;
+
+  // Daily Quest: 5 votes = 100 Reward Points (only awarded once per day)
+  if (user.dailyAuraVotes === 5) {
+    user.rewardPoints += 100;
+    questCompleted = true;
+    reward = 100;
+  }
+
+  // Rank Calculation
+  const total = user.totalAuraVotes;
+  if (total >= 500) user.auraRank = 'Legend';
+  else if (total >= 100) user.auraRank = 'Elite';
+  else if (total >= 50) user.auraRank = 'Pro';
+  else if (total >= 10) user.auraRank = 'Rising';
+  else user.auraRank = 'Rookie';
+
+  await user.save();
+  return { questCompleted, reward, auraRank: user.auraRank, dailyAuraVotes: user.dailyAuraVotes };
 };
 
 // ─── Get Aura Leaderboard ─────────────────────────────────────────────────────
@@ -137,17 +178,35 @@ export const vibeVote = asyncHandler(async (req, res) => {
   });
 
   // Check for surge (900+)
+  let surgeEvent = false;
   if (aura.score >= 900 && !aura.isSurging) {
     aura.isSurging = true;
     aura.surgeTriggeredAt = new Date();
+    surgeEvent = true;
   }
 
   await aura.save();
 
+  // Process User Daily Quest & Rank
+  const questData = await processUserAuraVote(userId);
+
+  // Emit Global Surge Event via Socket.io
+  if (surgeEvent) {
+    try {
+      getIO().emit('auraSurge', {
+        title: item?.title || 'An item',
+        score: aura.score,
+        image: item?.appLogo || item?.logo || item?.coverImage || item?.featuredImage
+      });
+    } catch (err) {
+      console.error('Socket emission failed:', err);
+    }
+  }
+
   res.json({
     success: true,
-    message: '🔥 Vibe sent! The aura is rising!',
-    data: { score: aura.score, vibeVotes: aura.vibeVotes, isSurging: aura.isSurging },
+    message: questData.questCompleted ? `🔥 Vibe sent! Quest Completed: +${questData.reward} Coins!` : '🔥 Vibe sent! The aura is rising!',
+    data: { score: aura.score, vibeVotes: aura.vibeVotes, isSurging: aura.isSurging, ...questData },
   });
 });
 
@@ -211,12 +270,36 @@ export const voteAuraBattle = asyncHandler(async (req, res) => {
     battleWins: winnerAura.battleWins,
     updatedAt: winnerItem?.updatedAt,
   });
+  // Check for surge (900+)
+  let surgeEvent = false;
+  if (winnerAura.score >= 900 && !winnerAura.isSurging) {
+    winnerAura.isSurging = true;
+    winnerAura.surgeTriggeredAt = new Date();
+    surgeEvent = true;
+  }
+
   await winnerAura.save();
+
+  // Process User Daily Quest & Rank
+  const questData = await processUserAuraVote(req.user._id);
+
+  // Emit Global Surge Event via Socket.io
+  if (surgeEvent) {
+    try {
+      getIO().emit('auraSurge', {
+        title: winnerItem?.title || 'An item',
+        score: winnerAura.score,
+        image: winnerItem?.appLogo || winnerItem?.featuredImage
+      });
+    } catch (err) {
+      console.error('Socket emission failed:', err);
+    }
+  }
 
   res.json({
     success: true,
-    message: '⚡ Battle vote counted! Winner aura boosted!',
-    data: { winnerScore: winnerAura.score },
+    message: questData.questCompleted ? `⚡ Battle vote counted! Quest Completed: +${questData.reward} Coins!` : '⚡ Battle vote counted! Winner aura boosted!',
+    data: { winnerScore: winnerAura.score, ...questData },
   });
 });
 
@@ -261,7 +344,7 @@ export const getPersonalAura = asyncHandler(async (req, res) => {
       username: user.username || user.name,
       avatar: user.profileImage,
       personalScore,
-      tier,
+      tier: user.auraRank || tier, // Show actual database rank
       color,
       votedIn,
       topVibes,

@@ -180,6 +180,24 @@ const userSchema = new mongoose.Schema(
     emailVerificationExpire: Date,
     passwordResetToken: String,
     passwordResetExpire: Date,
+    
+    // Aura System Features
+    auraRank: {
+      type: String,
+      enum: ['Rookie', 'Rising', 'Pro', 'Elite', 'Legend'],
+      default: 'Rookie',
+    },
+    dailyAuraVotes: {
+      type: Number,
+      default: 0,
+    },
+    lastAuraVoteDate: {
+      type: Date,
+    },
+    totalAuraVotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

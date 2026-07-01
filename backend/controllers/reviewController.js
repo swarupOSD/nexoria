@@ -9,7 +9,7 @@ import { logActivity } from '../utils/tracker.js';
 export const getPostReviews = async (req, res) => {
   try {
     const reviews = await Review.find({ post: req.params.postId, isApproved: true })
-      .populate('user', 'name username profileImage role')
+      .populate('user', 'name username profileImage role auraRank')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, count: reviews.length, data: reviews });

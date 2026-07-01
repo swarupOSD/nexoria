@@ -24,6 +24,7 @@ import { useSubmitPurchaseRequestMutation, useGetMyRequestsQuery } from '../feat
 import { useGetItemAuraQuery, useVibeVoteMutation } from '../features/aura/auraApiSlice';
 import AuraScore from '../components/AuraScore';
 import { Flame } from 'lucide-react';
+import { triggerAuraStrike } from '../utils/auraStrike';
 
 const renderContentWithEmbeds = (htmlContent) => {
   if (!htmlContent) return '';
@@ -146,10 +147,15 @@ const SinglePost = () => {
   const handleVibeVote = async () => {
     if (!user) return toast.error('You must be logged in to Vibe Vote!', { id: 'auth_error' });
     try {
-      await vibeVote({ type: 'post', id: post._id }).unwrap();
-      toast.success('🔥 Vibe Vote cast successfully!');
+      const res = await vibeVote({ type: 'post', id: post._id }).unwrap();
+      if (res.data?.questCompleted) {
+        toast.success(res.message, { icon: '🎁', duration: 5000 });
+      } else {
+        toast.success('🔥 Vibe Vote cast successfully!');
+      }
+      triggerAuraStrike();
     } catch (err) {
-      toast.error(err?.data?.message || 'Error casting Vibe Vote');
+      toast.error(err?.data?.message || 'You have already vibed today!');
     }
   };
 
@@ -542,9 +548,20 @@ const SinglePost = () => {
                       <div className="flex items-center gap-3">
                         <img src={review.user?.profileImage} fallbackType="avatar" className="w-10 h-10 rounded-full object-cover" />
                         <div>
-                          <span className="font-semibold flex items-center gap-2 text-slate-850 dark:text-white">
+                          <span className="font-semibold flex items-center gap-2 text-slate-850 dark:text-white flex-wrap">
                             {review.user?.name || 'Anonymous'}
                             {review.user && <UserBadge role={review.user.role} />}
+                            {review.user?.auraRank && review.user.auraRank !== 'Rookie' && (
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded font-black tracking-widest uppercase text-white shadow-sm ${
+                                review.user.auraRank === 'Legend' ? 'bg-gradient-to-r from-red-600 to-amber-600' :
+                                review.user.auraRank === 'Elite' ? 'bg-gradient-to-r from-purple-600 to-pink-600' :
+                                review.user.auraRank === 'Pro' ? 'bg-gradient-to-r from-blue-600 to-cyan-500' :
+                                review.user.auraRank === 'Rising' ? 'bg-gradient-to-r from-emerald-500 to-teal-400' :
+                                'bg-slate-500'
+                              }`}>
+                                {review.user.auraRank}
+                              </span>
+                            )}
                           </span>
                           <span className="text-xs text-slate-500">{new Date(review.createdAt).toLocaleDateString()}</span>
                         </div>
