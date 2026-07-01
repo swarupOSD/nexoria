@@ -47,7 +47,7 @@ const AuraCard = () => {
       {/* The Shareable Card */}
       <div 
         ref={cardRef}
-        className="w-full max-w-[400px] relative rounded-[2rem] overflow-hidden p-8 shadow-2xl"
+        className="w-full max-w-[400px] relative rounded-[2rem] overflow-hidden p-6 sm:p-8 shadow-2xl"
         style={{
           background: `linear-gradient(145deg, #111 0%, #050505 100%)`,
           boxShadow: `0 20px 50px -12px ${aura.color}40`,
@@ -70,9 +70,9 @@ const AuraCard = () => {
         </div>
 
         {/* User Profile */}
-        <div className="relative z-10 flex flex-col items-center text-center mb-8">
+        <div className="relative z-10 flex flex-col items-center text-center mb-6 sm:mb-8">
           <div className="relative mb-4">
-            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br" style={{ backgroundImage: `linear-gradient(to bottom right, ${aura.color}, transparent)` }}>
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-br" style={{ backgroundImage: `linear-gradient(to bottom right, ${aura.color}, transparent)` }}>
               <img 
                 src={aura.avatar || '/default-avatar.png'} 
                 alt={aura.username} 
@@ -89,9 +89,9 @@ const AuraCard = () => {
         </div>
 
         {/* Aura Score */}
-        <div className="relative z-10 flex flex-col items-center justify-center py-6 border-y border-white/10 mb-8 bg-black/20 rounded-2xl backdrop-blur-sm">
+        <div className="relative z-10 flex flex-col items-center justify-center py-6 border-y border-white/10 mb-6 sm:mb-8 bg-black/20 rounded-2xl backdrop-blur-sm">
           <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2">Total Aura Power</span>
-          <h1 className="text-6xl font-black tracking-tighter" style={{ 
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter" style={{ 
             color: aura.color, 
             textShadow: `0 0 20px ${aura.color}80`
           }}>

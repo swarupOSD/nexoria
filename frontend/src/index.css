@@ -204,6 +204,14 @@ body[data-theme="cyberpunk"] button:hover {
   .font-jakarta {
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes shimmer {

@@ -88,7 +88,7 @@ export default function AuraLeaderboard() {
       <div className="max-w-4xl mx-auto px-4 pb-16">
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 mb-8 bg-white/5 rounded-2xl p-1.5 w-fit mx-auto">
+        <div className="flex items-center gap-2 mb-8 bg-white/5 rounded-2xl p-1.5 w-fit mx-auto overflow-x-auto max-w-full scrollbar-hide">
           {TABS.map((tab) => (
             <button
               key={tab.value}
