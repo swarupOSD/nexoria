@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import PremiumRequest from '../models/PremiumRequest.js';
 import PurchaseRequest from '../models/PurchaseRequest.js';
 import PremiumPlan from '../models/PremiumPlan.js';

@@ -72,7 +72,7 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
   } catch (error) {
     console.error('Universal App Scraper Error:', error.message);
     res.status(404);
-    throw new Error('Could not fetch app details. Ensure the URL is valid and public.');
+    throw new Error('Could not fetch app details. Ensure the URL is valid and public.', { cause: error });
   }
 });
 
@@ -145,6 +145,6 @@ export const scrapeMusic = asyncHandler(async (req, res) => {
   } catch (error) {
     console.error('Music Scraper Error:', error.message);
     res.status(404);
-    throw new Error('Could not fetch music details. Ensure the URL is valid and public.');
+    throw new Error('Could not fetch music details. Ensure the URL is valid and public.', { cause: error });
   }
 });
