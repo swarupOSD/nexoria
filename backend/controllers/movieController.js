@@ -82,7 +82,7 @@ export const getMovies = async (req, res) => {
       comingSoon
     } = req.query;
 
-    let query = { status: 'Active' };
+    let query = { status: 'Active', isDeleted: { $ne: true } };
 
     if (comingSoon === 'true') {
       query.releaseDate = { $gt: new Date() };
@@ -152,7 +152,7 @@ export const getMovies = async (req, res) => {
 export const getAdminMovies = async (req, res) => {
   try {
     const { page = 1, limit = 20, search, status, movieType } = req.query;
-    let query = {};
+    let query = { isDeleted: { $ne: true } };
 
     if (search) query.title = { $regex: search, $options: 'i' };
     if (status) query.status = status;
@@ -194,7 +194,7 @@ export const getAdminMovies = async (req, res) => {
 // @access  Public
 export const getMovieBySlug = async (req, res) => {
   try {
-    const movie = await Movie.findOne({ slug: req.params.slug })
+    const movie = await Movie.findOne({ slug: req.params.slug, isDeleted: { $ne: true } })
       .populate('category', 'name slug')
       .populate('author', 'name profileImage');
 
@@ -250,7 +250,7 @@ export const createMovie = async (req, res) => {
 // @access  Private/Admin
 export const updateMovie = async (req, res) => {
   try {
-    let movie = await Movie.findById(req.params.id);
+    let movie = await Movie.findOne({ _id: req.params.id, isDeleted: { $ne: true } });
     if (!movie) {
       return res.status(404).json({ success: false, message: 'Movie not found' });
     }
@@ -286,9 +286,12 @@ export const deleteMovie = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Movie not found' });
     }
 
-    await Movie.deleteOne({ _id: req.params.id });
+    movie.isDeleted = true;
+    movie.deletedAt = new Date();
+    await movie.save();
+    
     await redisClient.del('movie_home_sections');
-    res.status(200).json({ success: true, message: 'Movie deleted successfully' });
+    res.status(200).json({ success: true, message: 'Movie moved to trash successfully' });
   } catch (error) {
     logger.error(`Delete Movie Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Server Error' });

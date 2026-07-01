@@ -1,4 +1,37 @@
 import Notification from '../models/Notification.js';
+import User from '../models/User.js';
+
+export const broadcastNotification = async (req, res) => {
+  try {
+    const { title, message, type = 'SYSTEM', actionUrl, icon } = req.body;
+    
+    if (!title || !message) {
+      return res.status(400).json({ success: false, message: 'Title and message are required' });
+    }
+
+    // Insert a notification for every active user
+    // Note: For a very large user base, this should ideally be a background job using a queue
+    const activeUsers = await User.find({ status: 'active' }, '_id');
+    
+    const notifications = activeUsers.map(user => ({
+      user: user._id,
+      title,
+      message,
+      type,
+      actionUrl,
+      icon: icon || 'Bell',
+      isRead: false
+    }));
+
+    if (notifications.length > 0) {
+      await Notification.insertMany(notifications);
+    }
+
+    res.status(200).json({ success: true, message: `Broadcast sent to ${notifications.length} users` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 export const getNotifications = async (req, res) => {
   try {

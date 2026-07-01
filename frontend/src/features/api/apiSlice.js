@@ -38,7 +38,7 @@ export const apiSlice = createApi({
     'User', 'Post', 'Category', 'Comment', 'Settings', 'HeroDisplay', 
     'Movie', 'MovieCategory', 'MoviePurchase', 'MovieSettings',
     'Plans', 'Payments', 'Analytics', 'Activity', 'Notifications',
-    'MovieApproval', 'MovieReview', 'MovieRating', 'MovieReport', 'MovieWatchHistory', 'Games'
+    'MovieApproval', 'MovieReview', 'MovieRating', 'MovieReport', 'MovieWatchHistory', 'Games', 'Trash'
   ],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({}),

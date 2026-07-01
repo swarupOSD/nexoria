@@ -19,7 +19,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   useGetPostByIdQuery, 
   useCreatePostMutation, 
-  useUpdatePostMutation 
+  useUpdatePostMutation,
+  useScrapePlayStoreMutation
 } from "../../features/post/postApiSlice";
 import { useGetCategoriesQuery } from "../../features/category/categoryApiSlice";
 import ImageUpload from "../../components/ImageUpload";
@@ -93,6 +94,7 @@ const CreatePost = () => {
 
   const [createPost, { isLoading: isCreating }] = useCreatePostMutation();
   const [updatePost, { isLoading: isUpdating }] = useUpdatePostMutation();
+  const [scrapePlayStore, { isLoading: isScraping }] = useScrapePlayStoreMutation();
 
   const isEditing = !!id;
 
@@ -141,37 +143,39 @@ const CreatePost = () => {
   const [versions, setVersions] = useState([]);
   const [toc, setToc] = useState([]);
   const [scrapeUrl, setScrapeUrl] = useState('');
-  const [isScraping, setIsScraping] = useState(false);
-  
+
   const handleAutoScrape = async () => {
-    if (!scrapeUrl) return toast.error('Please enter a valid Google Play or GamePix URL');
-    setIsScraping(true);
-    toast.loading('Scraping app details...', { id: 'scrape' });
+    if (!scrapeUrl) return toast.error('Please enter a valid Google Play URL');
     
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+      toast.loading('Scraping app details...', { id: 'scrape' });
+      const response = await scrapePlayStore({ url: scrapeUrl }).unwrap();
+      
       setFormData(prev => ({
         ...prev,
-        title: 'Cyberpunk Ninja Assassin',
-        slug: 'cyberpunk-ninja-assassin',
-        packageName: 'com.nexoria.cyberninja',
-        description: 'An action-packed hack and slash cyberpunk adventure.',
-        featuredImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80',
-        appLogo: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=200&q=80',
-        publisher: 'Nexoria Studios',
-        size: '1.2 GB',
-        category: categories.length > 0 ? categories[0]._id : prev.category,
+        title: response.title || prev.title,
+        slug: response.title ? response.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : prev.slug,
+        description: response.description ? response.description.slice(0, 150) + '...' : prev.description,
+        featuredImage: response.icon || prev.featuredImage,
+        appLogo: response.icon || prev.appLogo,
+        publisher: response.developer || prev.publisher,
+        size: response.size || prev.size,
+        version: response.version || prev.version,
       }));
-      setGalleryImages([
-        'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80',
-        'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80'
-      ]);
-      setModFeatures(['Unlimited Money', 'God Mode', 'All Levels Unlocked']);
+      
+      if (response.screenshots && response.screenshots.length > 0) {
+        setGalleryImages(response.screenshots.slice(0, 5));
+      }
+      
+      if (response.description && editor) {
+        editor.commands.setContent(`<p>${response.description}</p>`);
+      }
       
       toast.success('App details fetched successfully!', { id: 'scrape' });
-      setIsScraping(false);
       setScrapeUrl('');
-    }, 1500);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to scrape app details', { id: 'scrape' });
+    }
   };
   
   const editor = useEditor({

@@ -2,26 +2,32 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useBroadcastNotificationMutation } from '../features/notification/notificationApiSlice';
 
 const BroadcastModal = ({ isOpen, onClose }) => {
   const [message, setMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
+  const [broadcastNotification, { isLoading: isSending }] = useBroadcastNotificationMutation();
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) {
       toast.error('Please enter a message to broadcast.');
       return;
     }
     
-    setIsSending(true);
-    
-    // Simulating API call
-    setTimeout(() => {
-      setIsSending(false);
-      toast.success('Broadcast notice sent to all users!');
+    try {
+      await broadcastNotification({
+        title: 'System Notice',
+        message: message.trim(),
+        type: 'SYSTEM',
+        icon: 'Bell'
+      }).unwrap();
+      
+      toast.success('Broadcast notice sent to all active users!');
       setMessage('');
       onClose();
-    }, 1500);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to send broadcast');
+    }
   };
 
   if (!isOpen) return null;

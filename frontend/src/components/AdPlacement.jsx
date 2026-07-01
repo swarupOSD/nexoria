@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useGetAdvertisementsQuery } from '../features/advertisement/advertisementApiSlice';
+import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 
 const AdPlacement = ({ location, className = '' }) => {
   const { user } = useSelector(state => state.auth);
@@ -9,10 +10,15 @@ const AdPlacement = ({ location, className = '' }) => {
   const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
   const isPremiumUser = user && user.isPremium;
   
-  const { data: adsResponse, isLoading } = useGetAdvertisementsQuery(undefined, { skip: isAdmin || isPremiumUser });
+  const { data: adsResponse, isLoading: isLoadingAds } = useGetAdvertisementsQuery(undefined, { skip: isAdmin || isPremiumUser });
+  const { data: settingsRes, isLoading: isLoadingSettings } = useGetSettingsQuery();
   
   if (isAdmin || isPremiumUser) return null;
-  if (isLoading || !adsResponse?.data) return null;
+  if (isLoadingAds || isLoadingSettings || !adsResponse?.data) return null;
+
+  // Check global ad settings
+  const adsEnabled = settingsRes?.data?.ads?.enabled !== false;
+  if (!adsEnabled) return null;
 
   // Find enabled ads for this specific location
   const ads = adsResponse.data.filter(ad => ad.location === location && ad.enabled);

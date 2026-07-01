@@ -48,6 +48,14 @@ export const notificationApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Notification'],
     }),
+    broadcastNotification: builder.mutation({
+      query: (data) => ({
+        url: '/notifications/broadcast',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Notification'],
+    }),
   }),
 });
 
@@ -57,4 +65,5 @@ export const {
   useMarkAsReadMutation,
   useMarkAllAsReadMutation,
   useDeleteNotificationMutation,
+  useBroadcastNotificationMutation,
 } = notificationApiSlice;

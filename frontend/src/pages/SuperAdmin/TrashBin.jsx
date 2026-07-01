@@ -1,48 +1,73 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, RotateCcw, Search, AlertCircle, FileWarning } from 'lucide-react';
+import { Trash2, RotateCcw, Search, AlertCircle, FileWarning, CheckCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import CustomSearchBar from '../../components/CustomSearchBar';
+import {
+  useGetTrashItemsQuery,
+  useRestoreTrashItemMutation,
+  useDeleteTrashItemMutation,
+  useEmptyTrashMutation
+} from '../../features/trash/trashApiSlice';
 
 const TrashBin = () => {
-  const [isRestoring, setIsRestoring] = useState(false);
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
 
-  // Simulated trash data
-  const [trashItems, setTrashItems] = useState([
-    { id: 1, name: 'Spotify Premium Mod', type: 'App', deletedBy: 'Admin (swarup)', deletedAt: '2026-07-01T10:00:00Z', expiryDays: 29 },
-    { id: 2, name: 'GTA San Andreas', type: 'Game', deletedBy: 'System Auto-Clean', deletedAt: '2026-06-25T14:30:00Z', expiryDays: 24 },
-    { id: 3, name: 'John Doe', type: 'User', deletedBy: 'Admin (swarup)', deletedAt: '2026-06-20T09:15:00Z', expiryDays: 19 },
-    { id: 4, name: 'Top 10 RPGs Banner', type: 'Hero Display', deletedBy: 'Moderator (alex)', deletedAt: '2026-06-15T16:45:00Z', expiryDays: 14 }
-  ]);
+  const { data: trashData, isLoading, isFetching } = useGetTrashItemsQuery({ type: filter, page, limit: 20 });
+  const [restoreItem, { isLoading: isRestoring }] = useRestoreTrashItemMutation();
+  const [deleteItem] = useDeleteTrashItemMutation();
+  const [emptyTrash] = useEmptyTrashMutation();
 
-  const filteredItems = filter === 'All' ? trashItems : trashItems.filter(item => item.type === filter);
-
-  const handleRestore = (id, name) => {
-    setIsRestoring(true);
+  const handleRestore = async (id, name, type) => {
     toast.loading(`Restoring ${name}...`, { id: 'restore' });
-    
-    setTimeout(() => {
-      setTrashItems(trashItems.filter(item => item.id !== id));
+    try {
+      await restoreItem({ type, id }).unwrap();
       toast.success(`${name} has been restored successfully!`, { id: 'restore' });
-      setIsRestoring(false);
-    }, 1200);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to restore item', { id: 'restore' });
+    }
   };
 
-  const handlePermanentDelete = (id, name) => {
+  const handlePermanentDelete = async (id, name, type) => {
     if(window.confirm(`Are you sure you want to permanently delete ${name}? This action CANNOT be undone.`)) {
-      setTrashItems(trashItems.filter(item => item.id !== id));
-      toast.success(`${name} permanently deleted.`);
+      toast.loading(`Deleting ${name}...`, { id: 'delete' });
+      try {
+        await deleteItem({ type, id }).unwrap();
+        toast.success(`${name} permanently deleted.`, { id: 'delete' });
+      } catch (err) {
+        toast.error(err?.data?.message || 'Failed to delete item', { id: 'delete' });
+      }
     }
   };
 
-  const handleEmptyTrash = () => {
-    if(trashItems.length === 0) return toast.error('Trash is already empty.');
+  const handleEmptyTrash = async () => {
+    if(!trashData?.data || trashData.data.length === 0) return toast.error('Trash is already empty.');
     if(window.confirm('Are you absolutely sure you want to empty the trash bin? All items will be permanently erased.')) {
-      setTrashItems([]);
-      toast.success('Trash bin emptied.');
+      toast.loading('Emptying trash...', { id: 'empty' });
+      try {
+        await emptyTrash().unwrap();
+        toast.success('Trash bin emptied.', { id: 'empty' });
+      } catch (err) {
+        toast.error(err?.data?.message || 'Failed to empty trash', { id: 'empty' });
+      }
     }
   };
+
+  const calculateExpiryDays = (deletedAt) => {
+    if (!deletedAt) return 0;
+    const deletedDate = new Date(deletedAt);
+    const expiryDate = new Date(deletedDate.getTime() + (30 * 24 * 60 * 60 * 1000));
+    const now = new Date();
+    const diffTime = Math.abs(expiryDate - now);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 30 ? 30 : diffDays;
+  };
+
+  const filteredItems = (trashData?.data || []).filter(item => {
+    if (search && !item.title?.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-20">
@@ -69,22 +94,23 @@ const TrashBin = () => {
         <div className="p-4 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row gap-4 justify-between bg-slate-50/50 dark:bg-white/[0.02]">
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-            <input type="text" placeholder="Search deleted items..." className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm font-medium dark:text-white" />
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search deleted items..." className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm font-medium dark:text-white" />
           </div>
           <select 
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="w-full sm:w-auto px-4 py-2 bg-white dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium text-sm dark:text-white"
           >
-            <option value="All">All Types</option>
-            <option value="App">Apps</option>
-            <option value="Game">Games</option>
-            <option value="User">Users</option>
-            <option value="Hero Display">Hero Displays</option>
+            <option value="all">All Types</option>
+            <option value="posts">Posts & Games</option>
+            <option value="movies">Movies</option>
+            <option value="users">Users</option>
           </select>
         </div>
 
-        {trashItems.length === 0 ? (
+        {isLoading ? (
+          <div className="py-20 flex justify-center text-slate-500 font-medium">Loading trash items...</div>
+        ) : filteredItems.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-center">
             <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="w-8 h-8 text-emerald-500" />
@@ -105,23 +131,28 @@ const TrashBin = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
-                    <td className="px-6 py-4 font-bold text-sm text-slate-900 dark:text-white">{item.name}</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-black uppercase tracking-widest">{item.type}</span>
+                {filteredItems.map(item => {
+                  const expiryDays = calculateExpiryDays(item.deletedAt);
+                  return (
+                  <tr key={item._id} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-6 py-4 font-bold text-sm text-slate-900 dark:text-white flex items-center gap-3">
+                      {item.image && <img src={item.image} alt="" className="w-8 h-8 rounded bg-slate-200 object-cover" />}
+                      {item.title}
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-500">{item.deletedBy}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-black uppercase tracking-widest">{item.itemType}</span>
+                    </td>
+                    <td className="px-6 py-4 text-xs font-semibold text-slate-500">System / Admin</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <AlertCircle className={`w-4 h-4 ${item.expiryDays < 15 ? 'text-rose-500' : 'text-amber-500'}`} />
-                        <span className={`text-xs font-bold ${item.expiryDays < 15 ? 'text-rose-500' : 'text-amber-500'}`}>{item.expiryDays} days left</span>
+                        <AlertCircle className={`w-4 h-4 ${expiryDays < 15 ? 'text-rose-500' : 'text-amber-500'}`} />
+                        <span className={`text-xs font-bold ${expiryDays < 15 ? 'text-rose-500' : 'text-amber-500'}`}>{expiryDays} days left</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
-                          onClick={() => handleRestore(item.id, item.name)}
+                          onClick={() => handleRestore(item._id, item.title, item.itemType)}
                           disabled={isRestoring}
                           className="p-2 bg-emerald-100 text-emerald-600 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 rounded-lg transition-colors tooltip-trigger relative"
                           title="Restore"
@@ -129,7 +160,7 @@ const TrashBin = () => {
                           <RotateCcw className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handlePermanentDelete(item.id, item.name)}
+                          onClick={() => handlePermanentDelete(item._id, item.title, item.itemType)}
                           className="p-2 bg-rose-100 text-rose-600 hover:bg-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:hover:bg-rose-900/50 rounded-lg transition-colors tooltip-trigger relative"
                           title="Delete Permanently"
                         >
@@ -138,7 +169,7 @@ const TrashBin = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

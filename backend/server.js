@@ -17,6 +17,7 @@ import { logSecurityEvent } from './utils/securityLogger.js';
 import { csrfTokenRoute } from './middlewares/csrf.js';
 import { startPremiumExpiryJob } from './utils/premiumExpiryJob.js';
 import { startUserExpiryJob } from './utils/userExpiryJob.js';
+import { securityGuard } from './middlewares/securityGuard.js';
 
 dotenv.config();
 
@@ -65,6 +66,9 @@ app.use(cors({
   origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, 'http://localhost:5173'] : 'http://localhost:5173',
   credentials: true
 }));
+
+// Apply global security guard for IP banning
+app.use(securityGuard);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -138,6 +142,8 @@ import gameRoutes from './routes/gameRoutes.js';
 import requestRoutes from './routes/requestRoutes.js';
 import watchHistoryRoutes from './routes/watchHistoryRoutes.js';
 import musicRoutes from './routes/musicRoutes.js';
+import scraperRoutes from './routes/scraperRoutes.js';
+import trashRoutes from './routes/trashRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -154,14 +160,15 @@ app.use('/api', (req, res, next) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/ratings', ratingRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/admin/trash', trashRoutes);
 app.use('/api/advertisements', advertisementRoutes);
 app.use('/api/sponsored-content', advertisementRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/system', systemRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/ratings', ratingRoutes);
 app.use('/api/downloads', downloadRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -187,6 +194,7 @@ app.use('/api/games', gameRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/watch-history', watchHistoryRoutes);
 app.use('/api/music', musicRoutes);
+app.use('/api/admin/scraper', scraperRoutes);
 
 import path from 'path';
 

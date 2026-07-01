@@ -5,23 +5,57 @@ import { motion } from 'framer-motion';
 import { ShieldAlert, AlertTriangle, Info, CheckCircle, Search, Filter, Trash2, Loader2 } from 'lucide-react';
 
 import { useGetSecurityLogsQuery, useClearSecurityLogsMutation } from '../../features/system/systemApiSlice';
+import { useGetSettingsQuery, useUpdateSettingsMutation } from '../../features/settings/settingsApiSlice';
 import { toast } from 'react-hot-toast';
 
 const SecurityLogs = () => {
   const [filter, setFilter] = useState('All');
   const [bannedIp, setBannedIp] = useState('');
-  const [underAttackMode, setUnderAttackMode] = useState(false);
-  const [isBanning, setIsBanning] = useState(false);
+  const { data: settingsRes, isLoading: isLoadingSettings } = useGetSettingsQuery();
+  const [updateSettings, { isLoading: isUpdatingSettings }] = useUpdateSettingsMutation();
+  
+  const settings = settingsRes?.data || {};
+  const currentBannedIps = settings.security?.bannedIps || [];
+  const underAttackMode = settings.security?.underAttackMode || false;
 
-  const handleBanIp = (e) => {
+  const handleBanIp = async (e) => {
     e.preventDefault();
     if(!bannedIp) return toast.error('Enter a valid IP Address');
-    setIsBanning(true);
-    setTimeout(() => {
+    
+    if (currentBannedIps.includes(bannedIp)) {
+      return toast.error('IP is already banned.');
+    }
+    
+    try {
+      await updateSettings({
+        ...settings,
+        security: {
+          ...settings.security,
+          bannedIps: [...currentBannedIps, bannedIp]
+        }
+      }).unwrap();
+      
       toast.success(`IP ${bannedIp} has been permanently banned.`);
-      setIsBanning(false);
       setBannedIp('');
-    }, 1000);
+    } catch (error) {
+      toast.error('Failed to ban IP.');
+    }
+  };
+  
+  const handleToggleUnderAttack = async () => {
+    try {
+      await updateSettings({
+        ...settings,
+        security: {
+          ...settings.security,
+          underAttackMode: !underAttackMode
+        }
+      }).unwrap();
+      
+      toast.success(!underAttackMode ? 'Under Attack Mode activated! High security enforced.' : 'Under Attack Mode disabled.');
+    } catch (error) {
+      toast.error('Failed to toggle Under Attack Mode.');
+    }
   };
   
   const { data: logsData, isLoading, refetch } = useGetSecurityLogsQuery(undefined, { pollingInterval: 60000 });
@@ -80,7 +114,7 @@ const SecurityLogs = () => {
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Enables JS Challenges for all visitors</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" checked={underAttackMode} onChange={() => { setUnderAttackMode(!underAttackMode); toast.success(underAttackMode ? 'Under Attack Mode disabled' : 'Under Attack Mode activated! High security enforced.'); }} />
+              <input type="checkbox" className="sr-only peer" checked={underAttackMode} onChange={handleToggleUnderAttack} disabled={isUpdatingSettings} />
               <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-500"></div>
             </label>
           </div>
@@ -97,10 +131,10 @@ const SecurityLogs = () => {
               />
               <button 
                 type="submit"
-                disabled={isBanning}
+                disabled={isUpdatingSettings}
                 className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 transition-all active:scale-95 disabled:opacity-50"
               >
-                {isBanning ? 'Banning...' : 'Ban IP'}
+                {isUpdatingSettings ? 'Banning...' : 'Ban IP'}
               </button>
             </div>
           </form>

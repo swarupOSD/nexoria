@@ -43,6 +43,18 @@ export const ThemeProvider = ({ children }) => {
         document.documentElement.setAttribute('data-theme', 'royal-purple');
       }
     }
+
+    // Apply custom UI Theme settings
+    if (settingsRes?.data?.uiTheme) {
+      const { primaryColor, cyberpunkEffects } = settingsRes.data.uiTheme;
+      if (primaryColor) {
+        document.documentElement.style.setProperty('--color-primary', primaryColor);
+      }
+      if (cyberpunkEffects === false) {
+        // If explicitly disabled globally, override local state
+        setIsCyberpunk(false);
+      }
+    }
   }, [isCyberpunk, settingsRes]);
 
   const toggleTheme = () => setIsDarkMode((prev) => !prev);

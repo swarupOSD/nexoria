@@ -62,6 +62,20 @@ const siteSettingsSchema = new mongoose.Schema(
       glassIntensity: { type: String, default: 'backdrop-blur-2xl' },
       animationEnabled: { type: Boolean, default: true }
     },
+    ads: {
+      enabled: { type: Boolean, default: true },
+      timerSeconds: { type: Number, default: 30 },
+      downloadClicks: { type: Number, default: 2 },
+      adNetworks: [{ name: String, code: String, active: Boolean }]
+    },
+    security: {
+      underAttackMode: { type: Boolean, default: false },
+      bannedIps: [{ type: String }]
+    },
+    uiTheme: {
+      primaryColor: { type: String, default: '#8B5CF6' },
+      cyberpunkEffects: { type: Boolean, default: true }
+    },
     quickLinks: [
       {
         label: { type: String },

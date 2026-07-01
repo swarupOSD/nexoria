@@ -4,9 +4,10 @@ import {
   getUnreadNotificationsCount, 
   markAsRead, 
   markAllAsRead, 
-  deleteNotification 
+  deleteNotification,
+  broadcastNotification
 } from '../controllers/notificationController.js';
-import { protect } from '../middlewares/auth.js';
+import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -14,6 +15,8 @@ router.use(protect); // All routes require auth
 
 router.route('/')
   .get(getNotifications);
+
+router.post('/broadcast', authorize('admin', 'superadmin'), broadcastNotification);
 
 router.get('/unread', getUnreadNotificationsCount);
 router.put('/read-all', markAllAsRead);

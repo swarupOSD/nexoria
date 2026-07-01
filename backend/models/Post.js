@@ -134,6 +134,15 @@ const postSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    // Soft Delete (Trash Bin)
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

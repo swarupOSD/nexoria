@@ -27,7 +27,7 @@ export const getPosts = async (req, res) => {
       }
     }
 
-    let matchStage = { status: { $in: ['Published', 'Active'] } };
+    let matchStage = { status: { $in: ['Published', 'Active'] }, isDeleted: { $ne: true } };
 
     // Filtering by category
     if (req.query.category) {
@@ -172,7 +172,8 @@ export const getPostBySlug = async (req, res) => {
     const post = await Post.findOne({ 
       slug: req.params.slug, 
       status: { $in: ['Published', 'Active', 'Under Development'] },
-      visibilityStatus: { $ne: 'Hidden' }
+      visibilityStatus: { $ne: 'Hidden' },
+      isDeleted: { $ne: true }
     }).populate('category', 'name slug').populate('subCategory', 'name slug');
 
     if (!post) {
@@ -202,7 +203,7 @@ export const getPostBySlug = async (req, res) => {
 // @access  Public
 export const getPostById = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('category', 'name slug');
+    const post = await Post.findOne({ _id: req.params.id, isDeleted: { $ne: true } }).populate('category', 'name slug');
     if (!post) {
       return res.status(404).json({ success: false, message: 'Post not found' });
     }
@@ -243,7 +244,7 @@ export const createPost = async (req, res) => {
 // @access  Private/Admin
 export const updatePost = async (req, res) => {
   try {
-    let post = await Post.findById(req.params.id);
+    let post = await Post.findOne({ _id: req.params.id, isDeleted: { $ne: true } });
 
     if (!post) {
       return res.status(404).json({ success: false, message: 'Post not found' });
@@ -292,12 +293,16 @@ export const deletePost = async (req, res) => {
     }
 
     const slug = post.slug;
-    await post.deleteOne();
+    
+    // SOFT DELETE
+    post.isDeleted = true;
+    post.deletedAt = new Date();
+    await post.save();
     
     // Invalidate cache
     await invalidatePostCache(slug);
     
-    res.status(200).json({ success: true, message: 'Post deleted' });
+    res.status(200).json({ success: true, message: 'Post moved to trash' });
   } catch (error) {
     logger.error(`Delete Post Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Server Error' });
@@ -398,6 +403,7 @@ export const searchPosts = async (req, res) => {
 
     const posts = await Post.find({
       status: 'Published',
+      isDeleted: { $ne: true },
       $or: [
         { title: { $regex: q, $options: 'i' } },
         { tags: { $regex: q, $options: 'i' } },
@@ -426,6 +432,7 @@ export const getRelatedPosts = async (req, res) => {
     const related = await Post.find({
       _id: { $ne: post._id },
       status: 'Published',
+      isDeleted: { $ne: true },
       $or: [
         { category: post.category },
         { tags: { $in: post.tags } },
@@ -467,7 +474,7 @@ export const getAdminPosts = async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 50;
     const skip = (page - 1) * limit;
 
-    let matchStage = {};
+    let matchStage = { isDeleted: { $ne: true } };
     if (req.query.status) {
       matchStage.status = req.query.status;
     }

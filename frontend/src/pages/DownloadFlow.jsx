@@ -4,24 +4,38 @@ import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Download as DownloadIcon, ShieldCheck, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
+import AdPlacement from '../components/AdPlacement';
 
 const DownloadFlow = () => {
   const { slug } = useParams();
   const { data: postRes, isLoading } = useGetPostBySlugQuery(slug);
-  const [countdown, setCountdown] = useState(10); // 10 second countdown
+  const { data: settingsRes, isLoading: isLoadingSettings } = useGetSettingsQuery();
+  
+  // Default to 15 seconds, but use settings if available
+  const initialTimer = settingsRes?.data?.ads?.timerSeconds ?? 15;
+  const [countdown, setCountdown] = useState(initialTimer);
   const [showLinks, setShowLinks] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(false);
+
+  useEffect(() => {
+    if (settingsRes?.data?.ads?.timerSeconds !== undefined && !timerStarted) {
+      setCountdown(settingsRes.data.ads.timerSeconds);
+      setTimerStarted(true);
+    }
+  }, [settingsRes, timerStarted]);
 
   useEffect(() => {
     let timer;
-    if (!isLoading && postRes?.data && countdown > 0) {
+    if (!isLoading && postRes?.data && countdown > 0 && timerStarted) {
       timer = setInterval(() => setCountdown(prev => prev - 1), 1000);
-    } else if (countdown === 0) {
+    } else if (countdown === 0 && timerStarted) {
       setShowLinks(true);
     }
     return () => clearInterval(timer);
-  }, [countdown, isLoading, postRes]);
+  }, [countdown, isLoading, postRes, timerStarted]);
 
-  if (isLoading) return <div className="flex justify-center mt-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div></div>;
+  if (isLoading || isLoadingSettings) return <div className="flex justify-center mt-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div></div>;
 
   const post = postRes?.data;
   if (!post) return <div className="text-center mt-20 text-red-500">Post not found</div>;
@@ -95,9 +109,9 @@ const DownloadFlow = () => {
           )}
         </div>
 
-        {/* Ads Section Placeholder */}
-        <div className="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl text-slate-400 text-sm border border-dashed border-slate-300 dark:border-slate-700">
-          Advertisement Space
+        {/* Ads Section */}
+        <div className="w-full">
+          <AdPlacement location="Download Flow Top" />
         </div>
 
         <div className="pt-6">

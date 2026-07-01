@@ -38,10 +38,9 @@ const SiteSettings = () => {
       captchaDifficulty: 'easy',
       captchaRefreshCount: 3
     },
-    themeSettings: {
+    uiTheme: {
       primaryColor: '#7C3AED',
-      secondaryColor: '#3B82F6',
-      particleDensity: 50,
+      cyberpunkEffects: true,
     }
   });
 
@@ -88,10 +87,9 @@ const SiteSettings = () => {
           captchaDifficulty: settingsRes.data.authSettings?.captchaDifficulty || 'easy',
           captchaRefreshCount: settingsRes.data.authSettings?.captchaRefreshCount || 3
         },
-        themeSettings: {
-          primaryColor: settingsRes.data.themeSettings?.primaryColor || '#7C3AED',
-          secondaryColor: settingsRes.data.themeSettings?.secondaryColor || '#3B82F6',
-          particleDensity: settingsRes.data.themeSettings?.particleDensity || 50,
+        uiTheme: {
+          primaryColor: settingsRes.data.uiTheme?.primaryColor || '#7C3AED',
+          cyberpunkEffects: settingsRes.data.uiTheme?.cyberpunkEffects ?? true,
         }
       });
     }
@@ -220,26 +218,13 @@ const SiteSettings = () => {
                   <div>
                     <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Primary Theme Color</label>
                     <div className="flex gap-3 items-center">
-                      <input type="color" name="themeSettings_primaryColor" value={formData.themeSettings?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, primaryColor: e.target.value}})} className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 cursor-pointer p-1 bg-white dark:bg-[#111]" />
-                      <input type="text" value={formData.themeSettings?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, primaryColor: e.target.value}})} className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
+                      <input type="color" name="uiTheme_primaryColor" value={formData.uiTheme?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, uiTheme: {...formData.uiTheme, primaryColor: e.target.value}})} className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 cursor-pointer p-1 bg-white dark:bg-[#111]" />
+                      <input type="text" value={formData.uiTheme?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, uiTheme: {...formData.uiTheme, primaryColor: e.target.value}})} className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Secondary/Accent Color</label>
-                    <div className="flex gap-3 items-center">
-                      <input type="color" name="themeSettings_secondaryColor" value={formData.themeSettings?.secondaryColor || '#3B82F6'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, secondaryColor: e.target.value}})} className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 cursor-pointer p-1 bg-white dark:bg-[#111]" />
-                      <input type="text" value={formData.themeSettings?.secondaryColor || '#3B82F6'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, secondaryColor: e.target.value}})} className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-col justify-center">
-                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-4">Cyberpunk Particle Density</label>
-                  <input type="range" min="0" max="200" step="10" value={formData.themeSettings?.particleDensity || 50} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, particleDensity: Number(e.target.value)}})} className="w-full accent-indigo-500 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer" />
-                  <div className="flex justify-between items-center mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    <span>Off (0)</span>
-                    <span>Value: {formData.themeSettings?.particleDensity || 50}</span>
-                    <span>Max (200)</span>
+                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200 dark:border-night-border">
+                    <input type="checkbox" name="uiTheme_cyberpunkEffects" checked={formData.uiTheme?.cyberpunkEffects} onChange={(e) => setFormData({...formData, uiTheme: {...formData.uiTheme, cyberpunkEffects: e.target.checked}})} id="cyberpunkEffects" className="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-night-bg focus:ring-2 dark:bg-night-bg dark:border-night-border" />
+                    <label htmlFor="cyberpunkEffects" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Cyberpunk Effects / Particles Globally</label>
                   </div>
                 </div>
               </div>

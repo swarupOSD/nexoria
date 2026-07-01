@@ -120,6 +120,13 @@ export const postApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Post'],
     }),
+    scrapePlayStore: builder.mutation({
+      query: (data) => ({
+        url: '/admin/scraper/playstore',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -139,4 +146,5 @@ export const {
   useDeleteDownloadLinkMutation,
   useToggleDownloadLinkMutation,
   useUpdateLinkPriorityMutation,
+  useScrapePlayStoreMutation,
 } = postApiSlice;
