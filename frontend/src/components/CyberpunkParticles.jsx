@@ -4,9 +4,10 @@ import { useTheme } from '../context/ThemeContext';
 const CyberpunkParticles = () => {
   const { isCyberpunk } = useTheme();
   const [particles, setParticles] = useState([]);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
-    if (!isCyberpunk) return;
+    if (!isCyberpunk || isMobile) return;
 
     // Create 15 random particles (reduced for performance)
     const newParticles = Array.from({ length: 15 }).map((_, i) => ({
@@ -21,7 +22,7 @@ const CyberpunkParticles = () => {
     setParticles(newParticles);
   }, [isCyberpunk]);
 
-  if (!isCyberpunk) return null;
+  if (!isCyberpunk || isMobile) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden hidden md:block">

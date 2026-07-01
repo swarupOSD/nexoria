@@ -56,7 +56,7 @@ const NexoriaArena = () => {
           </button>
         </div>
 
-        <div className="w-full aspect-video bg-black rounded-2xl overflow-hidden relative">
+        <div className="w-full aspect-square md:aspect-video min-h-[350px] bg-black rounded-2xl overflow-hidden relative">
           {/* We are embedding Smash Karts via GamePix API */}
           <iframe 
             src="https://play.gamepix.com/smash-karts/embed" 
