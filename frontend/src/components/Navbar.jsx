@@ -323,6 +323,10 @@ const Navbar = () => {
               🎮 Arena
             </Link>
 
+            <Link to="/aura" className={`font-bold flex items-center gap-1 transition-colors ${location.pathname.startsWith('/aura') ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
+              🔥 Aura
+            </Link>
+
             <Link to="/premium" className={`font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
               Premium
             </Link>
@@ -628,6 +632,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-red-500" /> Arena
+                    </Link>
+                    <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
+                      🔥 Aura Leaderboard
                     </Link>
                     <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-indigo-500" /> Requests

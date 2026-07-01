@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Shield, Key, Settings, 
   MonitorPlay, Database, Activity, FileWarning, 
   LogOut, ShieldAlert, Moon, Sun, Menu, X, Bell, Gamepad2,
-  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo
+  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -124,6 +124,14 @@ const SuperAdminLayout = () => {
         { name: 'Categories', icon: <Database className="w-4 h-4" />, path: '/superadmin/sound/categories' },
       ]
     },
+    {
+      title: '🔥 Nexoria Aura System',
+      items: [
+        { name: 'Aura Leaderboard', icon: <Flame className="w-4 h-4 text-amber-400" />, path: '/aura', external: true },
+        { name: 'Aura Battle', icon: <Swords className="w-4 h-4 text-rose-400" />, path: '/aura/battle', external: true },
+        { name: 'Recalculate Scores', icon: <Trophy className="w-4 h-4 text-purple-400" />, path: '/superadmin/aura-recalc' },
+      ]
+    },
 
     {
       title: 'Marketing & CRM',
@@ -233,21 +241,37 @@ const SuperAdminLayout = () => {
                 }
 
                 const isActive = location.pathname === item.path || (item.path !== '/superadmin' && location.pathname.startsWith(item.path));
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm ${
-                      isActive 
-                        ? 'bg-slate-200/50 dark:bg-white/10 text-slate-900 dark:text-white font-medium' 
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
+                
+                const linkProps = {
+                  key: item.name,
+                  onClick: () => setIsMobileMenuOpen(false),
+                  className: `flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm ${
+                    isActive 
+                      ? 'bg-slate-200/50 dark:bg-white/10 text-slate-900 dark:text-white font-medium' 
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                  }`
+                };
+
+                const content = (
+                  <>
                     <span className={`${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
                       {item.icon}
                     </span>
                     {item.name}
+                  </>
+                );
+
+                if (item.external) {
+                  return (
+                    <a href={item.path} target="_blank" rel="noopener noreferrer" {...linkProps}>
+                      {content}
+                    </a>
+                  );
+                }
+
+                return (
+                  <Link to={item.path} {...linkProps}>
+                    {content}
                   </Link>
                 );
               })}
