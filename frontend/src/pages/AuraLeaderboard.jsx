@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { AuraScore } from '../components/AuraScore';
 import AuraCard from '../components/AuraCard';
-import WrappedModal from '../components/WrappedModal';
 import { triggerAuraStrike } from '../utils/auraStrike';
 
 const TABS = [
@@ -217,9 +216,33 @@ export default function AuraLeaderboard() {
         )}
       </div>
 
-      <WrappedModal isOpen={showAuraCard} onClose={() => setShowAuraCard(false)} title="Your Personal Aura" maxWidth="max-w-md">
-        <AuraCard />
-      </WrappedModal>
+      <AnimatePresence>
+        {showAuraCard && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowAuraCard(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative z-[210] w-full max-w-md"
+            >
+              <button 
+                onClick={() => setShowAuraCard(false)}
+                className="absolute -top-12 right-0 p-2 text-white/50 hover:text-white bg-white/10 rounded-full transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+              <AuraCard />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
