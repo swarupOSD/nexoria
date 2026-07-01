@@ -308,6 +308,10 @@ const Navbar = () => {
               </div>
             </DropdownMenu>
             
+            <Link to="/apps" className={`font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
+              Apps
+            </Link>
+            
             <Link to="/moviebox/games" className={`font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
               Games
             </Link>
@@ -610,8 +614,11 @@ const Navbar = () => {
                     <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-primary" /> Home
                     </Link>
-                    <Link to="/category/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Smartphone className="w-5 h-5 text-blue-500" /> Categories
+                    <Link to="/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                      <Smartphone className="w-5 h-5 text-indigo-500" /> Apps
+                    </Link>
+                    <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                      <LayoutGrid className="w-5 h-5 text-blue-500" /> Categories
                     </Link>
                     <Link to="/moviebox/games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-blue-500" /> Games

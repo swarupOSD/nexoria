@@ -39,7 +39,7 @@ const AppCard = React.memo(({ app }) => {
   );
 });
 
-const CategoryPage = () => {
+const CategoryPage = ({ type }) => {
   const { slug } = useParams();
   
   const { data: categoriesRes } = useGetCategoriesQuery();
@@ -49,13 +49,16 @@ const CategoryPage = () => {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   
-  const { data: postsRes, isLoading, isError } = useGetPostsQuery({
-    category: slug,
+  const queryParams = {
     page,
     limit: 20,
     search: searchTerm
-  }, {
-    skip: !slug,
+  };
+  if (slug) queryParams.category = slug;
+  if (type) queryParams.type = type;
+
+  const { data: postsRes, isLoading, isError } = useGetPostsQuery(queryParams, {
+    skip: !slug && !type,
     refetchOnMountOrArgChange: true
   });
   
@@ -64,29 +67,37 @@ const CategoryPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [slug, page]);
+  }, [slug, type, page]);
+
+  // Determine Title & Description
+  const isAppHub = type === 'App' && !slug;
+  const pageTitle = isAppHub ? 'Nexoria Studio' : (currentCategory ? currentCategory.name : 'Category');
+  const pageDesc = isAppHub ? 'Discover premium modded apps, tools, and utilities.' : (currentCategory?.description || `Browse the best applications and mods.`);
 
   return (
     <div className="bg-[#0A0A0A] min-h-screen text-white pb-20">
-      <SEO title={`${currentCategory ? currentCategory.name : 'Category'} - PremiumApps`} />
+      <SEO title={`${pageTitle} - PremiumApps`} />
       
       {/* Category Banner / Hero */}
       <div className="relative bg-[#111] border-b border-white/5 overflow-hidden mb-10">
-        {currentCategory?.banner && (
+        {currentCategory?.banner && !isAppHub && (
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay" 
             style={{ backgroundImage: `url(${currentCategory.banner})` }}
           />
         )}
+        {isAppHub && (
+           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-purple-900/20 to-[#0A0A0A]"></div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent"></div>
         
         <div className="relative container mx-auto px-4 pt-16 pb-12 text-center max-w-3xl z-10">
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg tracking-tight">
-            {currentCategory ? currentCategory.name : 'Category'}
+          <h1 className={`text-4xl md:text-6xl font-black mb-4 drop-shadow-lg tracking-tight ${isAppHub ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500' : 'text-white'}`}>
+            {pageTitle}
           </h1>
           <p className="text-slate-300 text-lg md:text-xl font-medium drop-shadow-md">
-            {currentCategory?.description || `Browse the best applications and mods in ${slug}.`}
+            {pageDesc}
           </p>
         </div>
       </div>
