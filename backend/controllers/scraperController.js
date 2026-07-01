@@ -53,38 +53,59 @@ export const scrapeMusic = asyncHandler(async (req, res) => {
   }
 
   try {
-    const { data } = await axios.get(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    });
-    
-    // Extract og tags using regex
-    const titleMatch = data.match(/<meta property="og:title" content="([^"]+)"/i) || data.match(/<title>([^<]+)<\/title>/i);
-    const imageMatch = data.match(/<meta property="og:image" content="([^"]+)"/i);
-    const descMatch = data.match(/<meta property="og:description" content="([^"]+)"/i);
-    
-    let title = titleMatch ? titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
+    let title = '';
     let artist = '';
-    
-    // If YouTube video, remove " - YouTube" suffix
-    title = title.replace(/ - YouTube$/i, '');
-    
-    // Attempt to split "Artist - Song Name"
-    if (title.includes(' - ')) {
-      const parts = title.split(' - ');
-      artist = parts[0].trim();
-      title = parts[1].trim();
+    let image = '';
+    let description = '';
+
+    // Check if it's a YouTube URL
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+      const { data } = await axios.get(oembedUrl);
+      
+      title = data.title || '';
+      artist = data.author_name || '';
+      image = data.thumbnail_url || '';
+      description = title; // YouTube oembed doesn't provide desc, use title
+
+      // Attempt to split "Artist - Song Name"
+      if (title.includes(' - ')) {
+        const parts = title.split(' - ');
+        artist = parts[0].trim();
+        title = parts[1].trim();
+      }
     } else {
-      artist = 'Unknown Artist';
+      // Fallback for other URLs like Spotify
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+      });
+      
+      const titleMatch = data.match(/<meta property="og:title" content="([^"]+)"/i) || data.match(/<title>([^<]+)<\/title>/i);
+      const imageMatch = data.match(/<meta property="og:image" content="([^"]+)"/i);
+      const descMatch = data.match(/<meta property="og:description" content="([^"]+)"/i);
+      
+      title = titleMatch ? titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
+      image = imageMatch ? imageMatch[1] : '';
+      description = descMatch ? descMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
+      
+      if (title.includes(' - ')) {
+        const parts = title.split(' - ');
+        artist = parts[0].trim();
+        title = parts[1].trim();
+      } else {
+        artist = 'Unknown Artist';
+      }
     }
     
     res.json({
       title,
       artist,
-      image: imageMatch ? imageMatch[1] : '',
-      description: descMatch ? descMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '',
+      image,
+      description,
     });
   } catch (error) {
+    console.error('Music Scraper Error:', error.message);
     res.status(404);
-    throw new Error('Could not fetch music details. Ensure the URL is public.');
+    throw new Error('Could not fetch music details. Ensure the URL is valid and public.');
   }
 });
