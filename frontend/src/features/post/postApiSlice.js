@@ -63,6 +63,13 @@ export const postApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getForYouRecommendations: builder.query({
+      query: () => ({
+        url: '/posts/recommendations',
+        method: 'GET',
+      }),
+      providesTags: ['Post'],
+    }),
     getAdminPosts: builder.query({
       query: (params) => {
         let url = '/posts/admin/all';
@@ -139,6 +146,7 @@ export const {
   useDeletePostMutation,
   useSearchPostsQuery,
   useGetRelatedPostsQuery,
+  useGetForYouRecommendationsQuery,
   useGetAdminPostsQuery,
   useModeratePostMutation,
   useAddDownloadLinkMutation,

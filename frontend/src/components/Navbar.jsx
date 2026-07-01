@@ -472,9 +472,17 @@ const Navbar = () => {
             </button>
             
             {user && (
-              <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full">
-                <span className="text-amber-500 text-sm">🪙</span>
-                <span className="font-bold text-amber-600 dark:text-amber-500 text-sm">{user.rewardPoints || 0}</span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full" title="Reward Points">
+                  <span className="text-amber-500 text-sm">🪙</span>
+                  <span className="font-bold text-amber-600 dark:text-amber-500 text-sm">{user.rewardPoints || 0}</span>
+                </div>
+                {user.currentStreak > 0 && (
+                  <div className="flex items-center gap-1 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1.5 rounded-full" title="Daily Streak">
+                    <span className="text-orange-500 text-sm">🔥</span>
+                    <span className="font-bold text-orange-600 dark:text-orange-500 text-sm">{user.currentStreak}</span>
+                  </div>
+                )}
               </div>
             )}
             

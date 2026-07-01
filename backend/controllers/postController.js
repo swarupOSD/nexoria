@@ -450,6 +450,105 @@ export const getRelatedPosts = async (req, res) => {
   }
 };
 
+// @desc    Get AI "For You" Recommendations
+// @route   GET /api/posts/recommendations
+// @access  Private
+export const getForYouRecommendations = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // 1. Fetch user's vibe history from Aura collection
+    const mongoose = (await import('mongoose')).default;
+    const Aura = (await import('../models/Aura.js')).default;
+    
+    const vibeHistory = await Aura.find({ 'voters.userId': userId, itemType: 'post' }).lean();
+    
+    let recommendedPosts = [];
+    
+    if (vibeHistory.length > 0) {
+      // 2. Extract item IDs the user vibed to
+      const vibedItemIds = vibeHistory.map(a => a.itemId);
+      
+      // 3. Find categories of these items
+      const vibedPosts = await Post.find({ _id: { $in: vibedItemIds } }).select('category').lean();
+      const categoryIds = [...new Set(vibedPosts.map(p => p.category?.toString()).filter(Boolean))];
+      
+      // 4. Sample posts from these categories that the user HAS NOT vibed to
+      recommendedPosts = await Post.aggregate([
+        { 
+          $match: { 
+            status: 'Published', 
+            isDeleted: { $ne: true },
+            category: { $in: categoryIds.map(id => new mongoose.Types.ObjectId(id)) },
+            _id: { $nin: vibedItemIds.map(id => new mongoose.Types.ObjectId(id)) }
+          }
+        },
+        { $sample: { size: 8 } },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'categoryObj'
+          }
+        },
+        { $unwind: { path: '$categoryObj', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            title: 1, slug: 1, appLogo: 1, downloads: 1, averageRating: 1, isPremium: 1, 'categoryObj.name': 1, 'categoryObj.slug': 1
+          }
+        }
+      ]);
+    }
+    
+    // 5. Fallback: If not enough recommendations, pad with trending posts
+    if (recommendedPosts.length < 8) {
+      const remaining = 8 - recommendedPosts.length;
+      const excludeIds = recommendedPosts.map(p => p._id);
+      if (vibeHistory.length > 0) excludeIds.push(...vibeHistory.map(a => new mongoose.Types.ObjectId(a.itemId)));
+      
+      const trending = await Post.aggregate([
+        {
+          $match: {
+            status: 'Published',
+            isDeleted: { $ne: true },
+            isTrending: true,
+            _id: { $nin: excludeIds }
+          }
+        },
+        { $sample: { size: remaining } },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'categoryObj'
+          }
+        },
+        { $unwind: { path: '$categoryObj', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            title: 1, slug: 1, appLogo: 1, downloads: 1, averageRating: 1, isPremium: 1, 'categoryObj.name': 1, 'categoryObj.slug': 1
+          }
+        }
+      ]);
+      
+      recommendedPosts = [...recommendedPosts, ...trending];
+    }
+
+    // Standardize object structure
+    const formatted = recommendedPosts.map(p => ({
+      ...p,
+      category: p.categoryObj
+    }));
+
+    res.status(200).json({ success: true, data: formatted });
+  } catch (error) {
+    logger.error(`For You Recommendations Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
 // Helper to invalidate cache
 const invalidatePostCache = async (slug = null) => {
   try {

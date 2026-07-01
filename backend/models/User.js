@@ -198,6 +198,26 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    badges: [{
+      type: String,
+      enum: ['first_vibe', 'music_lover', 'aura_legend', 'app_tester', 'social_butterfly', 'streak_master']
+    }],
+    currentStreak: {
+      type: Number,
+      default: 0
+    },
+    longestStreak: {
+      type: Number,
+      default: 0
+    },
+    lastLoginDate: {
+      type: Date
+    },
+    profileTheme: {
+      type: String,
+      enum: ['default', 'cyberpunk', 'synthwave', 'neon'],
+      default: 'default'
+    }
   },
   {
     timestamps: true,

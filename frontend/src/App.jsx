@@ -27,6 +27,7 @@ import KidsModeGuard from './components/KidsModeGuard';
 import AllCategories from './pages/AllCategories';
 import Premium from './pages/Premium';
 import GlobalMusicPlayer from './components/GlobalMusicPlayer';
+import GlobalChatBubble from './components/GlobalChatBubble';
 import NexoriaSound from './pages/NexoriaSound';
 import SoundQueue from './pages/SoundQueue';
 import AuraLeaderboard from './pages/AuraLeaderboard';
@@ -187,6 +188,7 @@ function App() {
       <KidsModeGuard>
         <Suspense fallback={<PageLoader />}>
           <GlobalMusicPlayer />
+          <GlobalChatBubble />
           <CyberpunkParticles />
           <Routes>
             <Route element={<PrivateRoute />}>

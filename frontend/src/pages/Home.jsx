@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
-import { useGetPostsQuery } from '../features/post/postApiSlice';
+import { useGetPostsQuery, useGetForYouRecommendationsQuery } from '../features/post/postApiSlice';
+import { useSelector } from 'react-redux';
 import HeroDisplay from '../components/HeroDisplay';
 import FallbackImage from '../components/FallbackImage';
 import SEO from '../components/SEO';
@@ -60,9 +61,11 @@ const AppCard = React.memo(({ app }) => {
 });
 
 const Home = () => {
+  const { user } = useSelector(state => state.auth);
   const { data: categoriesData, refetch: refetchCats, isError: catError } = useGetCategoriesQuery();
   const categories = categoriesData?.data || [];
 
+  const { data: forYouRes } = useGetForYouRecommendationsQuery(undefined, { skip: !user });
   const { data: trendingRes, refetch: refetchTrend } = useGetPostsQuery({ isTrending: true, limit: 12 });
   const { data: featuredRes, refetch: refetchFeat } = useGetPostsQuery({ isFeatured: true, limit: 12 });
   const { data: editorChoiceRes, refetch: refetchEd } = useGetPostsQuery({ editorChoice: true, limit: 12 });
@@ -183,7 +186,30 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pt-20 space-y-24">
+      <div className="container mx-auto px-4 md:px-6 py-12 lg:py-20 space-y-24 max-w-[1400px]">
+        {/* AI For You Recommendations */}
+        {user && forYouRes?.data?.length > 0 && (
+          <section className="relative">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-gradient-to-tr from-purple-500/20 to-pink-500/20 rounded-2xl border border-purple-500/20">
+                  <Star className="w-7 h-7 text-purple-400" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-black font-heading text-white">Handpicked For Your Aura</h2>
+                  <p className="text-slate-400 font-medium">AI recommendations based on your vibes</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent pr-8">
+              {forYouRes.data.map((app) => (
+                <AppCard key={app._id} app={app} />
+              ))}
+            </div>
+          </section>
+        )}
+
         <Leaderboard />
         
         {/* Categories Section */}

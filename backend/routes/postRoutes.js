@@ -9,6 +9,7 @@ import {
   incrementDownload,
   searchPosts,
   getRelatedPosts,
+  getForYouRecommendations,
   getPostById,
   getAdminPosts,
   moderatePost,
@@ -36,6 +37,7 @@ router.route('/')
   .post(protect, authorize('admin', 'superadmin'), postValidation, createPost);
 
 router.get('/search', searchPosts);
+router.get('/recommendations', protect, getForYouRecommendations);
 router.get('/related/:id', getRelatedPosts);
 router.get('/admin/all', protect, authorize('admin', 'superadmin'), getAdminPosts);
 router.get('/id/:id', getPostById);

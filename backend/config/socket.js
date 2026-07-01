@@ -4,6 +4,7 @@ import User from '../models/User.js';
 import logger from '../middlewares/logger.js';
 import crypto from 'crypto';
 import { registerWatchPartyHandlers } from '../sockets/watchParty.js';
+import { registerGlobalChatHandlers } from '../sockets/globalChat.js';
 
 let io;
 
@@ -94,8 +95,9 @@ export const initSocket = (server) => {
       socket.join('guest');
     }
 
-    // Register watch party specific events
+    // Register specific events
     registerWatchPartyHandlers(io, socket);
+    registerGlobalChatHandlers(io, socket);
 
     broadcastOnlineStats();
 

@@ -96,8 +96,19 @@ const UserDashboard = () => {
     }
   };
 
+  const getThemeClass = (theme) => {
+    switch(theme) {
+      case 'cyberpunk': return 'bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] dark:from-[#000000] dark:via-[#1a0b2e] dark:to-[#000000] text-white';
+      case 'synthwave': return 'bg-gradient-to-br from-[#2a0845] to-[#6441A5] dark:from-[#110122] dark:to-[#311155] text-white';
+      case 'neon': return 'bg-slate-900 dark:bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/40 via-slate-900 to-black text-white';
+      default: return 'bg-slate-50 dark:bg-[#030303] text-slate-900 dark:text-white';
+    }
+  };
+
+  const themeClass = getThemeClass(user?.profileTheme || 'default');
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#030303] pb-12 transition-colors duration-500">
+    <div className={`min-h-screen pb-12 transition-colors duration-500 ${themeClass}`}>
       <Helmet>
         <title>Dashboard - {user?.name}</title>
       </Helmet>

@@ -304,6 +304,37 @@ const ProfileTab = ({ user, token, refetchUser }) => {
               <p className="text-sm text-slate-500">Complete your profile to stand out in the community!</p>
             )}
           </motion.div>
+
+          {/* Badges & Achievements */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6">
+            <h3 className="text-lg font-bold dark:text-white mb-4">Achievements</h3>
+            {user?.badges && user.badges.length > 0 ? (
+              <div className="flex flex-wrap gap-3">
+                {user.badges.includes('first_vibe') && (
+                  <div className="flex flex-col items-center p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl" title="First Vibe - You cast your first vibe!">
+                    <span className="text-2xl mb-1">🎭</span>
+                    <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider text-center">First Vibe</span>
+                  </div>
+                )}
+                {user.badges.includes('aura_legend') && (
+                  <div className="flex flex-col items-center p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)]" title="Aura Legend - 500+ Vibes Cast">
+                    <span className="text-2xl mb-1">👑</span>
+                    <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-center">Legend</span>
+                  </div>
+                )}
+                {user.badges.includes('streak_master') && (
+                  <div className="flex flex-col items-center p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.3)]" title="Streak Master - 7 Day Login Streak">
+                    <span className="text-2xl mb-1">🔥</span>
+                    <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider text-center">Streak Master</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                <p className="text-sm text-slate-500">No badges earned yet. Keep interacting to unlock achievements!</p>
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
 

@@ -166,7 +166,12 @@ export const register = async (req, res) => {
           restrictions: user.restrictions,
           isPremium: user.role === 'superadmin' ? true : user.isPremium,
           premiumType: user.role === 'superadmin' ? 'Lifetime' : user.premiumType,
-          rewardPoints: user.rewardPoints
+          rewardPoints: user.rewardPoints,
+          badges: user.badges || [],
+          currentStreak: user.currentStreak || 0,
+          longestStreak: user.longestStreak || 0,
+          profileTheme: user.profileTheme || 'default',
+          auraRank: user.auraRank || 'Rookie'
         },
       });
     } else {
@@ -217,14 +222,43 @@ export const login = async (req, res) => {
          return res.status(403).json({ success: false, message: `Account is ${user.status}` });
       }
 
-      // Daily Login Reward (10 Coins)
+      // Daily Login Reward (10 Coins) & Streaks
       const now = new Date();
       if (!user.lastLogin || user.lastLogin.toDateString() !== now.toDateString()) {
-        user.rewardPoints += 10;
-        await logActivity(user._id, 'Daily Login Reward', 'Earned 10 coins for logging in today', req);
+        const lastLogin = user.lastLogin ? new Date(user.lastLogin) : null;
+        
+        if (!lastLogin) {
+          user.currentStreak = 1;
+          user.longestStreak = 1;
+          user.rewardPoints += 10;
+        } else {
+          // Calculate difference in days (ignoring time)
+          const yesterday = new Date(now);
+          yesterday.setDate(yesterday.getDate() - 1);
+          
+          if (lastLogin.toDateString() === yesterday.toDateString()) {
+            user.currentStreak += 1;
+            user.rewardPoints += 10;
+            if (user.currentStreak > (user.longestStreak || 0)) {
+               user.longestStreak = user.currentStreak;
+            }
+            if (user.currentStreak === 7 && (!user.badges || !user.badges.includes('streak_master'))) {
+               if(!user.badges) user.badges = [];
+               user.badges.push('streak_master');
+               user.rewardPoints += 100; // Bonus
+               await logActivity(user._id, 'Achievement Unlocked', 'Unlocked Streak Master Badge! Earned 100 bonus coins.', req);
+            }
+          } else {
+            // Missed a day
+            user.currentStreak = 1;
+            user.rewardPoints += 10;
+          }
+        }
+        await logActivity(user._id, 'Daily Login Reward', `Earned 10 coins. Current streak: ${user.currentStreak} days`, req);
       }
 
       user.lastLogin = now;
+      user.lastLoginDate = now;
       
       const accessToken = generateAccessToken(user._id, user.role, user.email);
       const refreshToken = generateRefreshToken(user._id, user.role, user.email);
@@ -259,7 +293,12 @@ export const login = async (req, res) => {
           restrictions: user.restrictions,
           isPremium: user.role === 'superadmin' ? true : user.isPremium,
           premiumType: user.role === 'superadmin' ? 'Lifetime' : user.premiumType,
-          rewardPoints: user.rewardPoints
+          rewardPoints: user.rewardPoints,
+          badges: user.badges || [],
+          currentStreak: user.currentStreak || 0,
+          longestStreak: user.longestStreak || 0,
+          profileTheme: user.profileTheme || 'default',
+          auraRank: user.auraRank || 'Rookie'
         },
       });
     } else {
@@ -504,6 +543,9 @@ export const updateProfile = async (req, res) => {
     if (req.body.bio !== undefined) {
       user.bio = req.body.bio;
     }
+    if (req.body.profileTheme !== undefined) {
+      user.profileTheme = req.body.profileTheme;
+    }
     if (req.body.socialLinks !== undefined) {
       user.socialLinks = { ...user.socialLinks, ...req.body.socialLinks };
     }
@@ -529,6 +571,11 @@ export const updateProfile = async (req, res) => {
         isPremium: user.isPremium,
         premiumType: user.premiumType,
         premiumEndDate: user.premiumEndDate,
+        badges: user.badges || [],
+        currentStreak: user.currentStreak || 0,
+        longestStreak: user.longestStreak || 0,
+        profileTheme: user.profileTheme || 'default',
+        auraRank: user.auraRank || 'Rookie',
         createdAt: user.createdAt
       }
     });

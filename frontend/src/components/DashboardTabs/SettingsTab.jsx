@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Bell, Palette, Shield, LogOut, Globe } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useLogoutMutation } from '../../features/auth/authApiSlice';
+import { useLogoutMutation, useUpdateProfileMutation } from '../../features/auth/authApiSlice';
 import { logout as logoutAction } from '../../features/auth/authSlice';
 import { useSubscribeToPushMutation } from '../../features/user/userApiSlice';
 import { toast } from 'react-hot-toast';
@@ -13,6 +12,7 @@ const SettingsTab = ({ user }) => {
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
   const [subscribeToPush] = useSubscribeToPushMutation();
+  const [updateProfile] = useUpdateProfileMutation();
   const [pushEnabled, setPushEnabled] = useState(false);
 
   useEffect(() => {
@@ -124,6 +124,31 @@ const SettingsTab = ({ user }) => {
               System Default
             </div>
           </div>
+          {(user?.role === 'superadmin' || user?.auraRank === 'Legend' || user?.isPremium) && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+              <div>
+                <p className="font-bold dark:text-white">Profile Theme</p>
+                <p className="text-sm text-slate-500">Custom background for your dashboard (Legend/Premium Only).</p>
+              </div>
+              <select 
+                value={user?.profileTheme || 'default'}
+                onChange={async (e) => {
+                  try {
+                    await updateProfile({ profileTheme: e.target.value }).unwrap();
+                    toast.success('Theme updated! Refresh to see changes fully.');
+                  } catch (err) {
+                    toast.error('Failed to update theme');
+                  }
+                }}
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold text-sm outline-none cursor-pointer transition-colors"
+              >
+                <option value="default">Default Dark</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="synthwave">Synthwave</option>
+                <option value="neon">Neon Glow</option>
+              </select>
+            </div>
+          )}
           <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
             <div>
               <p className="font-bold dark:text-white flex items-center gap-2"><Bell className="w-4 h-4 text-amber-500"/> Push Notifications</p>

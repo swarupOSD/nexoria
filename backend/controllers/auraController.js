@@ -61,11 +61,25 @@ const processUserAuraVote = async (userId) => {
 
   // Rank Calculation
   const total = user.totalAuraVotes;
-  if (total >= 500) user.auraRank = 'Legend';
-  else if (total >= 100) user.auraRank = 'Elite';
-  else if (total >= 50) user.auraRank = 'Pro';
-  else if (total >= 10) user.auraRank = 'Rising';
-  else user.auraRank = 'Rookie';
+  if (!user.badges) user.badges = [];
+  
+  if (total >= 500) {
+    user.auraRank = 'Legend';
+    if (!user.badges.includes('aura_legend')) user.badges.push('aura_legend');
+  } else if (total >= 100) {
+    user.auraRank = 'Elite';
+  } else if (total >= 50) {
+    user.auraRank = 'Pro';
+  } else if (total >= 10) {
+    user.auraRank = 'Rising';
+  } else {
+    user.auraRank = 'Rookie';
+  }
+
+  // First Vibe Badge
+  if (total === 1 && !user.badges.includes('first_vibe')) {
+    user.badges.push('first_vibe');
+  }
 
   await user.save();
   return { questCompleted, reward, auraRank: user.auraRank, dailyAuraVotes: user.dailyAuraVotes };

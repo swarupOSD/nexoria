@@ -25,6 +25,10 @@ export const postApiSlice = apiSlice.injectEndpoints({
       query: (postId) => `/posts/${postId}/comments`,
       providesTags: ['Comment'],
     }),
+    getForYouRecommendations: builder.query({
+      query: () => '/posts/recommendations',
+      providesTags: ['Post'],
+    }),
   }),
 });
 
@@ -33,4 +37,5 @@ export const {
   useGetPostBySlugQuery,
   useAddCommentMutation,
   useGetCommentsQuery,
+  useGetForYouRecommendationsQuery,
 } = postApiSlice;
