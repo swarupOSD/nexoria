@@ -11,7 +11,7 @@ const DownloadTimer = () => {
   const state = location.state;
 
   const [step, setStep] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(15); // 15 seconds timer per step
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer per step
   const [canProceed, setCanProceed] = useState(false);
   const [canDownload, setCanDownload] = useState(false);
   const [trackDownload, { isLoading }] = useTrackDownloadMutation();
@@ -37,7 +37,7 @@ const DownloadTimer = () => {
 
   const handleNextStep = () => {
     setStep(2);
-    setTimeLeft(15);
+    setTimeLeft(30);
     setCanProceed(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -88,7 +88,7 @@ const DownloadTimer = () => {
                 className="fill-none stroke-primary transition-all duration-1000 ease-linear" 
                 strokeWidth="8" 
                 strokeDasharray="283" 
-                strokeDashoffset={283 - (283 * ((15 - timeLeft) / 15))}
+                strokeDashoffset={283 - (283 * ((30 - timeLeft) / 30))}
                 strokeLinecap="round" 
               />
             </svg>
