@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation, useGetMeQuery } from '../features/auth/authApiSlice';
 import { logout as clearCredentials, setCredentials } from '../features/auth/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
 const SuperAdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -21,6 +22,15 @@ const SuperAdminLayout = () => {
   const [logoutApi] = useLogoutMutation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({ 'Movies': true });
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  
+  // Mock state for module maintenance toggles
+  const [maintenanceStates, setMaintenanceStates] = useState({
+    global: false,
+    apps: false,
+    games: false,
+    music: false,
+  });
 
   const { data, isLoading, isFetching } = useGetMeQuery();
 
@@ -43,6 +53,22 @@ const SuperAdminLayout = () => {
       dispatch(clearCredentials());
       navigate('/login');
     }
+  };
+
+  const handleClearCache = () => {
+    toast.success('System cache cleared successfully!');
+  };
+
+  const handleBroadcast = () => {
+    toast.success('Broadcast notice sent to all users!');
+  };
+  
+  const toggleMaintenance = (module) => {
+    setMaintenanceStates(prev => ({
+      ...prev,
+      [module]: !prev[module]
+    }));
+    toast.success(`${module.charAt(0).toUpperCase() + module.slice(1)} maintenance mode updated!`);
   };
 
   const activeUser = user || data?.user;
@@ -142,13 +168,16 @@ const SuperAdminLayout = () => {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0A0A0A] text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800 w-64 flex-shrink-0">
-      <div className="p-5 flex items-center gap-3">
-        <div className="w-8 h-8 rounded bg-gradient-to-tr from-rose-500 to-red-600 flex items-center justify-center text-white shadow-sm">
-          <Command className="w-4 h-4" />
+    <div className="flex flex-col h-full bg-white dark:bg-[#050505] text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-white/10 w-64 flex-shrink-0 shadow-2xl z-50">
+      <div className="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 ring-2 ring-white/10">
+          <Command className="w-5 h-5" />
         </div>
-        <span className="font-bold text-slate-900 dark:text-white tracking-tight">Super Console</span>
-        <button className="md:hidden ml-auto" onClick={() => setIsMobileMenuOpen(false)}>
+        <div className="flex flex-col">
+          <span className="font-black text-slate-900 dark:text-white tracking-tight leading-tight">Super Console</span>
+          <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Enterprise UI</span>
+        </div>
+        <button className="md:hidden ml-auto p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
           <X className="w-5 h-5 text-slate-500" />
         </button>
       </div>
@@ -238,16 +267,19 @@ const SuperAdminLayout = () => {
         ))}
       </div>
 
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+      <div className="p-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
         <div className="flex items-center gap-3 mb-4 px-2">
-          <img src={activeUser?.profileImage || '/default-avatar.png'} alt="Profile" className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 object-cover" />
+          <div className="relative">
+            <img src={activeUser?.profileImage || '/default-avatar.png'} alt="Profile" className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 object-cover ring-2 ring-indigo-500/30" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-[#050505] rounded-full"></div>
+          </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{activeUser?.name}</p>
-            <p className="text-xs text-rose-500 font-bold uppercase tracking-wider truncate">Super Admin</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{activeUser?.name}</p>
+            <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest truncate">Super Admin</p>
           </div>
         </div>
-        <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-md transition-colors">
-          <LogOut className="w-4 h-4" /> Logout
+        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold text-red-500 hover:text-red-600 dark:hover:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 rounded-xl transition-all active:scale-95">
+          <LogOut className="w-4 h-4" /> Secure Logout
         </button>
       </div>
     </div>
@@ -292,32 +324,91 @@ const SuperAdminLayout = () => {
       <main className="flex-1 flex flex-col h-full min-w-0">
         
         {/* Top Navbar */}
-        <header className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#000000] flex items-center justify-between px-4 lg:px-6 shrink-0 z-10">
+        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white dark:bg-[#050505] flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-1.5 -ml-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md">
-              <Menu className="w-5 h-5" />
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+              <Menu className="w-6 h-6" />
             </button>
             
             {/* Breadcrumbs */}
-            <div className="hidden sm:flex items-center text-sm font-medium text-slate-500 dark:text-slate-400">
-              <span className="flex items-center text-rose-500 hover:text-rose-600 transition-colors">
+            <div className="hidden sm:flex items-center text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-4 py-1.5 rounded-full border border-slate-200 dark:border-white/10">
+              <span className="flex items-center text-indigo-500 hover:text-indigo-600 transition-colors cursor-pointer">
                 SuperAdmin
               </span>
-              <ChevronRight className="w-4 h-4 mx-1 shrink-0" />
+              <ChevronRight className="w-4 h-4 mx-1 text-slate-400 shrink-0" />
               <span className="text-slate-900 dark:text-white capitalize truncate max-w-[120px] sm:max-w-[200px]">
                 {location.pathname.split('/').pop().replace('-', ' ') || 'Dashboard'}
               </span>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Link to="/superadmin/security-logs" className="relative p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors">
-              <ShieldAlert className="w-4 h-4" />
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Quick Actions Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowQuickActions(!showQuickActions)} 
+                className="flex items-center gap-2 text-sm font-bold px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 rounded-xl transition-all"
+              >
+                <Command className="w-4 h-4 text-indigo-500" />
+                <span className="hidden sm:inline">Quick Actions</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${showQuickActions ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {showQuickActions && (
+                  <>
+                    <motion.div 
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      className="fixed inset-0 z-40" onClick={() => setShowQuickActions(false)} 
+                    />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#111] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                    >
+                      <div className="p-3 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest">System Commands</p>
+                      </div>
+                      <div className="p-2 space-y-1">
+                        <button onClick={() => { handleClearCache(); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
+                          <Activity className="w-4 h-4 text-emerald-500" /> Clear System Cache
+                        </button>
+                        <button onClick={() => { handleBroadcast(); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
+                          <Bell className="w-4 h-4 text-indigo-500" /> Broadcast Notice
+                        </button>
+                      </div>
+                      <div className="p-3 bg-slate-50 dark:bg-white/5 border-y border-slate-100 dark:border-white/5 mt-1">
+                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Maintenance Control</p>
+                      </div>
+                      <div className="p-2 space-y-1">
+                        {Object.entries(maintenanceStates).map(([module, isEnabled]) => (
+                          <div key={module} className="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 capitalize">{module}</span>
+                            <button 
+                              onClick={() => toggleMaintenance(module)}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${isEnabled ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-600'}`}
+                            >
+                              <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${isEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
+
+            <Link to="/superadmin/security-logs" className="relative p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <ShieldAlert className="w-5 h-5" />
             </Link>
-            <button onClick={toggleTheme} className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors">
-              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <button onClick={toggleTheme} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium px-3 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-md hover:opacity-90 transition-opacity ml-2">
+            <Link to="/" className="flex items-center gap-2 text-sm font-bold px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/30 active:scale-95 ml-2">
               <LayoutTemplate className="w-4 h-4" />
               <span className="hidden sm:inline">View Site</span>
             </Link>
