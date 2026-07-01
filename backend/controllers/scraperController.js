@@ -1,8 +1,9 @@
 import gplay from 'google-play-scraper';
 import asyncHandler from 'express-async-handler';
 import axios from 'axios';
+import * as cheerio from 'cheerio';
 
-// @desc    Scrape app details from Google Play Store
+// @desc    Scrape app details from Google Play Store or any URL
 // @route   POST /api/scraper/playstore
 // @access  Private/Admin
 export const scrapePlayStore = asyncHandler(async (req, res) => {
@@ -10,34 +11,68 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
 
   if (!url) {
     res.status(400);
-    throw new Error('Please provide a Google Play Store URL or App ID');
+    throw new Error('Please provide a valid App URL');
   }
 
   try {
-    // Extract appId from URL if a full URL is provided
-    // e.g. https://play.google.com/store/apps/details?id=com.spotify.music
-    let appId = url;
-    if (url.includes('id=')) {
-      appId = new URL(url).searchParams.get('id');
+    // If it's a play store URL, use gplay
+    if (url.includes('play.google.com')) {
+      let appId = url;
+      if (url.includes('id=')) {
+        appId = new URL(url).searchParams.get('id');
+      }
+
+      const appData = await gplay.app({ appId });
+
+      res.json({
+        title: appData.title,
+        developer: appData.developer,
+        description: appData.description,
+        icon: appData.icon,
+        screenshots: appData.screenshots,
+        version: appData.version || 'Varies with device',
+        size: appData.size || 'Varies with device',
+        category: appData.genre || 'Apps',
+        playStoreUrl: appData.url,
+        updatedAt: appData.updated,
+      });
+    } else {
+      // Fallback universal scraper using cheerio
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+      });
+      
+      const $ = cheerio.load(data);
+      
+      const title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+      const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+      const icon = $('meta[property="og:image"]').attr('content') || $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href') || '';
+      const developer = $('meta[property="og:site_name"]').attr('content') || new URL(url).hostname;
+      
+      // Attempt to resolve absolute URLs for images
+      let finalIcon = icon;
+      if (icon && !icon.startsWith('http')) {
+        const urlObj = new URL(url);
+        finalIcon = `${urlObj.protocol}//${urlObj.host}${icon.startsWith('/') ? '' : '/'}${icon}`;
+      }
+      
+      res.json({
+        title: title,
+        developer: developer,
+        description: description,
+        icon: finalIcon,
+        screenshots: finalIcon ? [finalIcon] : [],
+        version: '1.0.0',
+        size: 'Varies',
+        category: 'Apps',
+        playStoreUrl: url,
+        updatedAt: new Date().toISOString(),
+      });
     }
-
-    const appData = await gplay.app({ appId });
-
-    res.json({
-      title: appData.title,
-      developer: appData.developer,
-      description: appData.description,
-      icon: appData.icon,
-      screenshots: appData.screenshots,
-      version: appData.version || 'Varies with device',
-      size: appData.size || 'Varies with device',
-      category: appData.genre || 'Apps',
-      playStoreUrl: appData.url,
-      updatedAt: appData.updated,
-    });
   } catch (error) {
+    console.error('Universal App Scraper Error:', error.message);
     res.status(404);
-    throw new Error('App not found or invalid Play Store URL');
+    throw new Error('Could not fetch app details. Ensure the URL is valid and public.');
   }
 });
 
@@ -75,25 +110,29 @@ export const scrapeMusic = asyncHandler(async (req, res) => {
         title = parts[1].trim();
       }
     } else {
-      // Fallback for other URLs like Spotify
+      // Universal scraper using cheerio
       const { data } = await axios.get(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
       });
       
-      const titleMatch = data.match(/<meta property="og:title" content="([^"]+)"/i) || data.match(/<title>([^<]+)<\/title>/i);
-      const imageMatch = data.match(/<meta property="og:image" content="([^"]+)"/i);
-      const descMatch = data.match(/<meta property="og:description" content="([^"]+)"/i);
+      const $ = cheerio.load(data);
       
-      title = titleMatch ? titleMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
-      image = imageMatch ? imageMatch[1] : '';
-      description = descMatch ? descMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
+      title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+      image = $('meta[property="og:image"]').attr('content') || '';
+      description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+      
+      // Resolve absolute image URL
+      if (image && !image.startsWith('http')) {
+        const urlObj = new URL(url);
+        image = `${urlObj.protocol}//${urlObj.host}${image.startsWith('/') ? '' : '/'}${image}`;
+      }
       
       if (title.includes(' - ')) {
         const parts = title.split(' - ');
         artist = parts[0].trim();
         title = parts[1].trim();
       } else {
-        artist = 'Unknown Artist';
+        artist = $('meta[property="og:site_name"]').attr('content') || 'Unknown Artist';
       }
     }
     
