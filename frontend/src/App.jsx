@@ -109,6 +109,7 @@ const AppRequestModeration = lazy(() => import('./pages/SuperAdmin/AppRequestMod
 const UserRequestsAdmin = lazy(() => import('./pages/SuperAdmin/UserRequestsAdmin'));
 const PushCampaigns = lazy(() => import('./pages/SuperAdmin/PushCampaigns'));
 const TrashBin = lazy(() => import('./pages/SuperAdmin/TrashBin'));
+const AuraRecalculate = lazy(() => import('./pages/SuperAdmin/AuraRecalculate'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 
 // MovieBox Admin Routes (Lazy Loaded)
@@ -319,6 +320,7 @@ function App() {
             <Route path="user-requests" element={<UserRequestsAdmin />} />
             <Route path="push-campaigns" element={<PushCampaigns />} />
             <Route path="trash-bin" element={<TrashBin />} />
+            <Route path="aura-recalc" element={<AuraRecalculate />} />
             
             {/* Nexoria Sound Admin */}
             <Route path="sound/dashboard" element={<SoundDashboard />} />

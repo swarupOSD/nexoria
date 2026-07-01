@@ -355,11 +355,12 @@ export const getPersonalAura = asyncHandler(async (req, res) => {
 // ─── Recalculate All Aura Scores (Admin/CRON) ─────────────────────────────────
 // @route POST /api/aura/recalculate
 export const recalculateAllAura = asyncHandler(async (req, res) => {
+  // 1. Recalculate Posts
   const posts = await Post.find({ status: 'Published', isDeleted: { $ne: true } })
     .select('_id views downloads averageRating updatedAt')
     .lean();
 
-  let updated = 0;
+  let postsUpdated = 0;
   for (const post of posts) {
     let aura = await Aura.findOne({ itemId: post._id, itemType: 'post' });
     if (!aura) {
@@ -377,8 +378,29 @@ export const recalculateAllAura = asyncHandler(async (req, res) => {
     // Reset surge if score dropped below 900
     if (aura.score < 900) aura.isSurging = false;
     await aura.save();
-    updated++;
+    postsUpdated++;
   }
 
-  res.json({ success: true, message: `Recalculated aura for ${updated} posts` });
+  // 2. Recalculate Users
+  const users = await User.find({}).select('_id totalAuraVotes auraRank');
+  let usersUpdated = 0;
+  for (const user of users) {
+    const total = user.totalAuraVotes || 0;
+    let newRank = 'Rookie';
+    if (total >= 500) newRank = 'Legend';
+    else if (total >= 100) newRank = 'Elite';
+    else if (total >= 50) newRank = 'Pro';
+    else if (total >= 10) newRank = 'Rising';
+    
+    if (user.auraRank !== newRank) {
+      user.auraRank = newRank;
+      await user.save();
+      usersUpdated++;
+    }
+  }
+
+  res.json({ 
+    success: true, 
+    message: `Recalculated aura for ${postsUpdated} posts and updated rank for ${usersUpdated} users.` 
+  });
 });
