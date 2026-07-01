@@ -65,48 +65,8 @@ const NexoriaSound = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 space-y-12 relative z-10">
         
-        {/* Live FM Radio */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Mic2 className="w-6 h-6 text-emerald-400" /> Live FM Radio
-            </h2>
-            <span className="flex items-center gap-2 text-xs font-bold text-red-500 animate-pulse">
-              <span className="w-2 h-2 rounded-full bg-red-500"></span> LIVE
-            </span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { id: 'fm1', name: 'Nexoria Hits 99.5', type: 'Pop & Top 40', img: 'https://images.unsplash.com/photo-1516280440502-861f228b3dc8?auto=format&fit=crop&w=300&q=80', stream: 'https://stream.zeno.fm/f3wvbbqmdg8uv' },
-              { id: 'fm2', name: 'Cyber Beats FM', type: 'Synthwave / EDM', img: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?auto=format&fit=crop&w=300&q=80', stream: 'https://stream.zeno.fm/f3wvbbqmdg8uv' },
-              { id: 'fm3', name: 'Lofi Chill Station', type: 'Study / Relax', img: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80', stream: 'https://stream.zeno.fm/f3wvbbqmdg8uv' },
-            ].map((station, idx) => (
-              <div key={station.id} onClick={() => handlePlaySong({ _id: station.id, title: station.name, artist: station.type, image: station.img, audioUrl: station.stream, isYoutube: false })} className="bg-slate-800/40 hover:bg-slate-800 rounded-3xl p-4 cursor-pointer group transition-all border border-white/5 hover:border-emerald-500/30 overflow-hidden relative">
-                <div className="flex gap-4">
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 relative">
-                    <img src={station.img} alt={station.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      {currentSong?._id === station.id && isPlaying ? <Pause className="w-6 h-6 text-white" /> : <Play className="w-6 h-6 text-white ml-1" />}
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-center flex-1 min-w-0">
-                    <h3 className={`font-bold text-lg truncate mb-1 ${currentSong?._id === station.id ? 'text-emerald-400' : 'text-white'}`}>{station.name}</h3>
-                    <p className="text-sm text-slate-400 truncate flex items-center gap-1"><Radio className="w-3 h-3"/> {station.type}</p>
-                  </div>
-                </div>
-                {currentSong?._id === station.id && isPlaying && (
-                  <div className="absolute bottom-4 right-4 flex items-center gap-1">
-                    <span className="w-1 bg-emerald-500 h-4 animate-[bounce_1s_infinite]"></span>
-                    <span className="w-1 bg-emerald-500 h-6 animate-[bounce_1.2s_infinite]"></span>
-                    <span className="w-1 bg-emerald-500 h-3 animate-[bounce_0.8s_infinite]"></span>
-                    <span className="w-1 bg-emerald-500 h-5 animate-[bounce_1.5s_infinite]"></span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-        
+
+
         {/* Recently Played */}
         {recentlyPlayed.length > 0 && (
           <section>
