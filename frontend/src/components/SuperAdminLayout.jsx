@@ -144,25 +144,32 @@ const SuperAdminLayout = () => {
     },
 
     {
+      title: 'Marketing & CRM',
+      items: [
+        { name: 'Push Campaigns', icon: <Bell className="w-4 h-4" />, path: '/superadmin/push-campaigns' },
+        { name: 'App & Game Purchases', icon: <ShoppingCart className="w-4 h-4" />, path: '/superadmin/purchase-requests' },
+        { name: 'Coupon Manager', icon: <ShoppingCart className="w-4 h-4" />, path: '/superadmin/coupons' },
+      ]
+    },
+    {
       title: 'Payments & Revenue',
       items: [
         { name: 'Premium Users', icon: <Crown className="w-4 h-4" />, path: '/superadmin/premium-users' },
         { name: 'Premium Requests', icon: <Crown className="w-4 h-4" />, path: '/superadmin/premium-requests' },
-        { name: 'App & Game Purchases', icon: <ShoppingCart className="w-4 h-4" />, path: '/superadmin/purchase-requests' },
-        { name: 'Coupon Manager', icon: <ShoppingCart className="w-4 h-4" />, path: '/superadmin/coupons' },
         { name: 'Support Center', icon: <ShieldAlert className="w-4 h-4" />, path: '/superadmin/support-center' },
       ]
     },
     {
       title: 'System & Content',
       items: [
-        { name: 'Hero Displays', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/hero-displays' },
+        { name: 'Security Logs', icon: <ShieldAlert className="w-4 h-4" />, path: '/superadmin/security-logs' },
+        { name: 'Trash Bin', icon: <FileWarning className="w-4 h-4" />, path: '/superadmin/trash-bin' },
         { name: 'System Notices', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/system-notices' },
         { name: 'SEO Manager', icon: <Settings className="w-4 h-4" />, path: '/superadmin/seo' },
         { name: 'Sponsored Content', icon: <MonitorPlay className="w-4 h-4" />, path: '/superadmin/sponsored-content' },
         { name: 'Site Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
+        { name: 'Hero Displays', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/hero-displays' },
         { name: 'Footer Management', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/footer-management' },
-        { name: 'Security Logs', icon: <FileWarning className="w-4 h-4" />, path: '/superadmin/security-logs' },
       ]
     }
   ];

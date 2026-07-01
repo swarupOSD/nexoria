@@ -24,7 +24,14 @@ const SkeletonRow = () => (
 const SponsoredContentManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [formData, setFormData] = useState({ name: '', location: 'Header', adCode: '' });
+  const [formData, setFormData] = useState({ 
+    name: '', 
+    location: 'Header', 
+    adCode: '', 
+    network: 'AdSense', 
+    timerDuration: 0,
+    enablePopunder: false
+  });
 
   const { data: res, isLoading } = useGetAdvertisementsQuery();
   const [createItem] = useCreateAdvertisementMutation();
@@ -37,10 +44,24 @@ const SponsoredContentManager = () => {
   const openModal = (item = null) => {
     if (item) {
       setEditingItem(item);
-      setFormData({ name: item.name, location: item.location, adCode: item.adCode });
+      setFormData({ 
+        name: item.name, 
+        location: item.location, 
+        adCode: item.adCode,
+        network: item.network || 'AdSense',
+        timerDuration: item.timerDuration || 0,
+        enablePopunder: item.enablePopunder || false
+      });
     } else {
       setEditingItem(null);
-      setFormData({ name: '', location: 'Header', adCode: '' });
+      setFormData({ 
+        name: '', 
+        location: 'Header', 
+        adCode: '',
+        network: 'AdSense', 
+        timerDuration: 0,
+        enablePopunder: false
+      });
     }
     setIsModalOpen(true);
   };
@@ -85,8 +106,8 @@ const SponsoredContentManager = () => {
             <Sparkles className="w-5 h-5 text-violet-500" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Sponsored Content</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Manage sponsored content slots and placement scripts.</p>
+            <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Ads & Monetization</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest mt-0.5">Manage Ad Networks, Timers & Scripts</p>
           </div>
         </div>
         <motion.button
@@ -117,11 +138,11 @@ const SponsoredContentManager = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50/70 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
-                  <th className="px-4 py-3 font-semibold">Slot Name</th>
-                  <th className="px-4 py-3 font-semibold">Placement</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold text-right">Actions</th>
+                <tr className="bg-slate-50/70 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-bold">
+                  <th className="px-4 py-3">Slot Name</th>
+                  <th className="px-4 py-3">Network & Setup</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -129,9 +150,14 @@ const SponsoredContentManager = () => {
                   ? [1,2,3].map(i => <SkeletonRow key={i} />)
                   : items.map((item) => (
                     <tr key={item._id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
-                      <td className="px-4 py-3 font-semibold dark:text-white text-sm">{item.name}</td>
+                      <td className="px-4 py-3 font-bold dark:text-white text-sm">{item.name}</td>
                       <td className="px-4 py-3">
-                        <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium">{item.location}</span>
+                        <div className="flex flex-col gap-1">
+                          <span className="px-2.5 py-1 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 rounded-lg text-[10px] font-black uppercase tracking-widest w-max">{item.network || 'AdSense'} • {item.location}</span>
+                          {(item.timerDuration > 0) && (
+                             <span className="text-xs font-bold text-slate-500">Timer: {item.timerDuration}s</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${item.enabled ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
@@ -174,7 +200,7 @@ const SponsoredContentManager = () => {
               <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-violet-500" />
-                  <h3 className="font-bold text-slate-900 dark:text-white">{editingItem ? 'Edit Slot' : 'New Content Slot'}</h3>
+                  <h3 className="font-black tracking-tight text-slate-900 dark:text-white">{editingItem ? 'Edit Ad Configuration' : 'New Ad Configuration'}</h3>
                 </div>
                 <button onClick={() => setIsModalOpen(false)} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                   <X className="w-4 h-4" />
@@ -191,8 +217,29 @@ const SponsoredContentManager = () => {
                     {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
                 </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1.5">Ad Network *</label>
+                    <select value={formData.network} onChange={e => setFormData({...formData, network: e.target.value})} className={inputClass}>
+                      <option value="AdSense">Google AdSense</option>
+                      <option value="GamePix">GamePix Ads</option>
+                      <option value="Custom">Custom Sponsor</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1.5">Download Timer (s)</label>
+                    <input type="number" value={formData.timerDuration} onChange={e => setFormData({...formData, timerDuration: Number(e.target.value)})} placeholder="0 for none" className={inputClass} />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-slate-100 dark:border-white/5">
+                  <input type="checkbox" id="popunder" checked={formData.enablePopunder} onChange={e => setFormData({...formData, enablePopunder: e.target.checked})} className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500" />
+                  <label htmlFor="popunder" className="text-sm font-bold dark:text-white">Enable Popunder (Warning: High churn risk)</label>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1.5">Code / Script *</label>
+                  <label className="block text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-1.5">Code / Script *</label>
                   <textarea required value={formData.adCode} onChange={e => setFormData({...formData, adCode: e.target.value})}
                     rows="5" placeholder="Paste script or image URL..." className={inputClass + ' resize-none font-mono text-xs'} />
                 </div>

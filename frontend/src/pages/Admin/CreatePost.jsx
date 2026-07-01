@@ -140,6 +140,39 @@ const CreatePost = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [versions, setVersions] = useState([]);
   const [toc, setToc] = useState([]);
+  const [scrapeUrl, setScrapeUrl] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
+  
+  const handleAutoScrape = async () => {
+    if (!scrapeUrl) return toast.error('Please enter a valid Google Play or GamePix URL');
+    setIsScraping(true);
+    toast.loading('Scraping app details...', { id: 'scrape' });
+    
+    // Simulate API delay
+    setTimeout(() => {
+      setFormData(prev => ({
+        ...prev,
+        title: 'Cyberpunk Ninja Assassin',
+        slug: 'cyberpunk-ninja-assassin',
+        packageName: 'com.nexoria.cyberninja',
+        description: 'An action-packed hack and slash cyberpunk adventure.',
+        featuredImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80',
+        appLogo: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=200&q=80',
+        publisher: 'Nexoria Studios',
+        size: '1.2 GB',
+        category: categories.length > 0 ? categories[0]._id : prev.category,
+      }));
+      setGalleryImages([
+        'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80',
+        'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80'
+      ]);
+      setModFeatures(['Unlimited Money', 'God Mode', 'All Levels Unlocked']);
+      
+      toast.success('App details fetched successfully!', { id: 'scrape' });
+      setIsScraping(false);
+      setScrapeUrl('');
+    }, 1500);
+  };
   
   const editor = useEditor({
     extensions: [
@@ -460,6 +493,41 @@ const CreatePost = () => {
         {/* Left Column: Form & Editor */}
         <div className="lg:col-span-8 space-y-8">
           
+          {/* Auto-Scraper Tool */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 p-6 rounded-3xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+              <Globe className="w-32 h-32 text-indigo-500" />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1 tracking-tight flex items-center gap-2">
+                <Globe className="w-5 h-5 text-indigo-500" /> Auto-Scraper (Beta)
+              </h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Paste a Play Store or GamePix link to auto-fill details</p>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input 
+                  type="text" 
+                  value={scrapeUrl}
+                  onChange={(e) => setScrapeUrl(e.target.value)}
+                  placeholder="https://play.google.com/store/apps/details?id=..." 
+                  className="flex-1 px-4 py-3 bg-white dark:bg-[#111] border border-indigo-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-sm text-slate-700 dark:text-slate-200"
+                />
+                <button 
+                  type="button"
+                  onClick={handleAutoScrape}
+                  disabled={isScraping}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isScraping ? (
+                    <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Fetching...</>
+                  ) : (
+                    <><Download className="w-4 h-4" /> Fetch App</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Basic Info */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">

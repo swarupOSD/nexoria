@@ -37,6 +37,11 @@ const SiteSettings = () => {
       captchaEnabled: true,
       captchaDifficulty: 'easy',
       captchaRefreshCount: 3
+    },
+    themeSettings: {
+      primaryColor: '#7C3AED',
+      secondaryColor: '#3B82F6',
+      particleDensity: 50,
     }
   });
 
@@ -82,6 +87,11 @@ const SiteSettings = () => {
           captchaEnabled: settingsRes.data.authSettings?.captchaEnabled ?? true,
           captchaDifficulty: settingsRes.data.authSettings?.captchaDifficulty || 'easy',
           captchaRefreshCount: settingsRes.data.authSettings?.captchaRefreshCount || 3
+        },
+        themeSettings: {
+          primaryColor: settingsRes.data.themeSettings?.primaryColor || '#7C3AED',
+          secondaryColor: settingsRes.data.themeSettings?.secondaryColor || '#3B82F6',
+          particleDensity: settingsRes.data.themeSettings?.particleDensity || 50,
         }
       });
     }
@@ -198,26 +208,40 @@ const SiteSettings = () => {
               <label htmlFor="maintenance" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Maintenance Mode</label>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-night-border">
-              <label className="block text-sm font-semibold mb-3 dark:text-slate-300">Website Theme Color</label>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                {[
-                  { id: 'royal-purple', name: 'Royal Purple', color: '#7C3AED' },
-                  { id: 'midnight-blue', name: 'Midnight Blue', color: '#3B82F6' },
-                  { id: 'pure-white', name: 'Pure White', color: '#FFFFFF' },
-                  { id: 'deep-black', name: 'Deep Black', color: '#111111' },
-                  { id: 'sunset-orange', name: 'Sunset Orange', color: '#EA580C' }
-                ].map(theme => (
-                  <button
-                    key={theme.id}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, theme: theme.id })}
-                    className={`flex flex-col items-center gap-2 p-2 rounded-xl border-2 transition-all ${formData.theme === theme.id ? 'border-primary shadow-glow bg-primary/5' : 'border-slate-200 dark:border-night-border hover:border-slate-300 dark:hover:border-slate-600'}`}
-                  >
-                    <div className="w-8 h-8 rounded-full border shadow-sm" style={{ backgroundColor: theme.color, borderColor: theme.color === '#FFFFFF' ? '#e2e8f0' : theme.color }}></div>
-                    <span className="text-xs font-semibold text-center">{theme.name}</span>
-                  </button>
-                ))}
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-night-border">
+              <div className="flex items-center gap-2 mb-4">
+                <SettingsIcon className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-lg font-black dark:text-white tracking-tight">Dynamic Theme Builder</h3>
+              </div>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Customize the visual identity of Nexoria without touching code.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Primary Theme Color</label>
+                    <div className="flex gap-3 items-center">
+                      <input type="color" name="themeSettings_primaryColor" value={formData.themeSettings?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, primaryColor: e.target.value}})} className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 cursor-pointer p-1 bg-white dark:bg-[#111]" />
+                      <input type="text" value={formData.themeSettings?.primaryColor || '#7C3AED'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, primaryColor: e.target.value}})} className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Secondary/Accent Color</label>
+                    <div className="flex gap-3 items-center">
+                      <input type="color" name="themeSettings_secondaryColor" value={formData.themeSettings?.secondaryColor || '#3B82F6'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, secondaryColor: e.target.value}})} className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 cursor-pointer p-1 bg-white dark:bg-[#111]" />
+                      <input type="text" value={formData.themeSettings?.secondaryColor || '#3B82F6'} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, secondaryColor: e.target.value}})} className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-col justify-center">
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-4">Cyberpunk Particle Density</label>
+                  <input type="range" min="0" max="200" step="10" value={formData.themeSettings?.particleDensity || 50} onChange={(e) => setFormData({...formData, themeSettings: {...formData.themeSettings, particleDensity: Number(e.target.value)}})} className="w-full accent-indigo-500 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer" />
+                  <div className="flex justify-between items-center mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    <span>Off (0)</span>
+                    <span>Value: {formData.themeSettings?.particleDensity || 50}</span>
+                    <span>Max (200)</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

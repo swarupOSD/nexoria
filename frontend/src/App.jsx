@@ -104,6 +104,8 @@ const CouponManager = lazy(() => import('./pages/SuperAdmin/CouponManager'));
 const ReviewModeration = lazy(() => import('./pages/SuperAdmin/ReviewModeration'));
 const AppRequestModeration = lazy(() => import('./pages/SuperAdmin/AppRequestModeration'));
 const UserRequestsAdmin = lazy(() => import('./pages/SuperAdmin/UserRequestsAdmin'));
+const PushCampaigns = lazy(() => import('./pages/SuperAdmin/PushCampaigns'));
+const TrashBin = lazy(() => import('./pages/SuperAdmin/TrashBin'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 
 // MovieBox Admin Routes (Lazy Loaded)
@@ -309,6 +311,8 @@ function App() {
             <Route path="reviews" element={<ReviewModeration />} />
             <Route path="app-requests" element={<AppRequestModeration />} />
             <Route path="user-requests" element={<UserRequestsAdmin />} />
+            <Route path="push-campaigns" element={<PushCampaigns />} />
+            <Route path="trash-bin" element={<TrashBin />} />
             
             {/* Nexoria Sound Admin */}
             <Route path="sound/dashboard" element={<SoundDashboard />} />

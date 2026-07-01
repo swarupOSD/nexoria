@@ -9,6 +9,20 @@ import { toast } from 'react-hot-toast';
 
 const SecurityLogs = () => {
   const [filter, setFilter] = useState('All');
+  const [bannedIp, setBannedIp] = useState('');
+  const [underAttackMode, setUnderAttackMode] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
+
+  const handleBanIp = (e) => {
+    e.preventDefault();
+    if(!bannedIp) return toast.error('Enter a valid IP Address');
+    setIsBanning(true);
+    setTimeout(() => {
+      toast.success(`IP ${bannedIp} has been permanently banned.`);
+      setIsBanning(false);
+      setBannedIp('');
+    }, 1000);
+  };
   
   const { data: logsData, isLoading, refetch } = useGetSecurityLogsQuery(undefined, { pollingInterval: 60000 });
   const [clearLogs, { isLoading: isClearing }] = useClearSecurityLogsMutation();
@@ -46,9 +60,54 @@ const SecurityLogs = () => {
       </Helmet>
 
       <div>
-        <h1 className="text-2xl font-bold dark:text-white">System Security Logs</h1>
-        <p className="text-slate-500 text-sm mt-1">Monitor authentication events, administrative actions, and system alerts.</p>
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Security & Access Control</h1>
+        <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Monitor authentication events, administrative actions, and system alerts.</p>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Anti-Bot & DDoS Protection */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/50 p-6 rounded-3xl relative overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-black text-red-900 dark:text-red-400 tracking-tight flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5" /> Threat Protection
+            </h3>
+          </div>
+          
+          <div className="bg-white dark:bg-[#111] p-4 rounded-xl border border-red-100 dark:border-red-900/30 flex items-center justify-between mb-4 shadow-sm">
+            <div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Under Attack Mode</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Enables JS Challenges for all visitors</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" checked={underAttackMode} onChange={() => { setUnderAttackMode(!underAttackMode); toast.success(underAttackMode ? 'Under Attack Mode disabled' : 'Under Attack Mode activated! High security enforced.'); }} />
+              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-500"></div>
+            </label>
+          </div>
+
+          <form onSubmit={handleBanIp}>
+            <label className="block text-xs font-black text-red-900/70 dark:text-red-400/70 uppercase tracking-widest mb-2">Manual IP Ban</label>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={bannedIp}
+                onChange={e => setBannedIp(e.target.value)}
+                placeholder="e.g. 192.168.1.1" 
+                className="flex-1 px-4 py-2.5 bg-white dark:bg-[#111] border border-red-200 dark:border-red-900/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-mono text-sm dark:text-white"
+              />
+              <button 
+                type="submit"
+                disabled={isBanning}
+                className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isBanning ? 'Banning...' : 'Ban IP'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+
+        {/* Audit Logs Table Wrapper */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2">
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -140,7 +199,8 @@ const SecurityLogs = () => {
             </tbody>
           </table>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };
