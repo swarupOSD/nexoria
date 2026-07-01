@@ -38,11 +38,39 @@ const AdPlacement = ({ location, className = '' }) => {
 
   return (
     <div className={`w-full overflow-hidden flex flex-col justify-center items-center my-4 gap-4 ${className}`} ref={containerRef}>
-      {ads.map((ad, idx) => (
-        <div key={ad._id || idx} className="w-full flex justify-center">
-          <div dangerouslySetInnerHTML={{ __html: ad.adCode }} />
-        </div>
-      ))}
+      {ads.map((ad, idx) => {
+        // If it's AdSense or popunders are explicitly enabled, render natively
+        const shouldRenderNatively = ad.network === 'AdSense' || ad.enablePopunder || !ad.network;
+        
+        return (
+          <div key={ad._id || idx} className="w-full flex justify-center overflow-hidden relative">
+            {shouldRenderNatively ? (
+              <div dangerouslySetInnerHTML={{ __html: ad.adCode }} className="w-full flex justify-center" />
+            ) : (
+              <iframe
+                title={`Ad-${idx}`}
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }</style>
+                  </head>
+                  <body>
+                    ${ad.adCode}
+                  </body>
+                  </html>
+                `}
+                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                scrolling="no"
+                frameBorder="0"
+                className="w-full border-none overflow-hidden"
+                style={{ minHeight: '120px' }}
+              />
+            )}
+          </div>
+        );
+      })}
       <p className="text-slate-500 text-[10px] mt-1 opacity-50 uppercase">Advertisement</p>
     </div>
   );
