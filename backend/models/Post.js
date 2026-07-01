@@ -128,6 +128,8 @@ const postSchema = new mongoose.Schema(
     downloads: { type: Number, default: 0, index: true },
     averageRating: { type: Number, default: 0 },
     totalVotes: { type: Number, default: 0 },
+    auraScore: { type: Number, default: 0 },
+    auraVotes: { type: Number, default: 0 },
     
     author: {
       type: mongoose.Schema.ObjectId,

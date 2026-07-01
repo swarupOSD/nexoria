@@ -9,6 +9,7 @@ import FallbackImage from '../components/FallbackImage';
 import SEO from '../components/SEO';
 import Leaderboard from '../components/Leaderboard';
 import AdPlacement from '../components/AdPlacement';
+import { AuraBadge } from '../components/AuraScore';
 
 const RetryComponent = ({ onRetry, message = "Failed to load content" }) => (
   <div className="flex flex-col items-center justify-center py-12 px-4 text-center border border-white/5 rounded-2xl bg-white/5">
@@ -37,6 +38,11 @@ const AppCard = React.memo(({ app }) => {
           {isPremium && (
             <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-md uppercase tracking-wider">
               PRO
+            </div>
+          )}
+          {app.auraScore > 0 && (
+            <div className="absolute bottom-2 right-2 z-10">
+              <AuraBadge score={app.auraScore} />
             </div>
           )}
         </div>

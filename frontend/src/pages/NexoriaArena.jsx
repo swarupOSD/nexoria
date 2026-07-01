@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Maximize2, Shield, AlertTriangle } from 'lucide-react';
+import { Maximize2, Shield, AlertTriangle, Swords, Trophy, Flame } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 
@@ -91,6 +92,19 @@ const NexoriaArena = () => {
             Use the Fullscreen button for the best fighting experience!
           </li>
         </ul>
+      </div>
+      {/* Aura System Integration */}
+      <div className="max-w-3xl w-full mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link to="/aura/battle" className="group flex flex-col items-center justify-center gap-2 p-6 bg-gradient-to-br from-rose-900/20 to-purple-900/20 border border-rose-500/30 rounded-2xl hover:border-rose-400 hover:shadow-[0_0_20px_rgba(225,29,72,0.3)] transition-all">
+          <Swords className="w-10 h-10 text-rose-500 group-hover:scale-110 transition-transform" />
+          <h3 className="text-lg font-black text-rose-100 uppercase tracking-widest">Aura Battle</h3>
+          <p className="text-xs text-rose-300/70 text-center font-medium">Vote for your favorite apps in real-time head-to-head battles!</p>
+        </Link>
+        <Link to="/aura" className="group flex flex-col items-center justify-center gap-2 p-6 bg-gradient-to-br from-amber-900/20 to-orange-900/20 border border-amber-500/30 rounded-2xl hover:border-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">
+          <Flame className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform" />
+          <h3 className="text-lg font-black text-amber-100 uppercase tracking-widest">Aura Leaderboard</h3>
+          <p className="text-xs text-amber-300/70 text-center font-medium">See the most hyped items with 999+ Aura ranking.</p>
+        </Link>
       </div>
     </div>
   );

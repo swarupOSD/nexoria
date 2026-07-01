@@ -21,6 +21,9 @@ import SEO from '../components/SEO';
 import QRPaymentModal from '../components/QRPaymentModal';
 import PurchaseErrorBoundary from '../components/ErrorBoundaries/PurchaseErrorBoundary';
 import { useSubmitPurchaseRequestMutation, useGetMyRequestsQuery } from '../features/api/paymentApiSlice';
+import { useGetItemAuraQuery, useVibeVoteMutation } from '../features/aura/auraApiSlice';
+import AuraScore from '../components/AuraScore';
+import { Flame } from 'lucide-react';
 
 const renderContentWithEmbeds = (htmlContent) => {
   if (!htmlContent) return '';
@@ -106,6 +109,9 @@ const SinglePost = () => {
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isUploadingProof, setIsUploadingProof] = useState(false);
 
+  const { data: auraRes } = useGetItemAuraQuery({ type: 'post', id: postRes?.data?._id }, { skip: !postRes?.data?._id });
+  const [vibeVote, { isLoading: isVibeVoting }] = useVibeVoteMutation();
+
   const { data: wishlistRes } = useGetWishlistQuery(undefined, { skip: !user });
   const [addToWishlist, { isLoading: isAddingWishlist }] = useAddToWishlistMutation();
   const [removeFromWishlist, { isLoading: isRemovingWishlist }] = useRemoveFromWishlistMutation();
@@ -118,6 +124,7 @@ const SinglePost = () => {
   const ratings = ratingsRes?.data || [];
   const relatedPosts = relatedRes?.data || [];
   const reviews = reviewsRes?.data || [];
+  const aura = auraRes?.data;
 
   const isWishlisted = wishlistRes?.data?.some(item => item._id === post?._id || item === post?._id);
 
@@ -133,6 +140,16 @@ const SinglePost = () => {
       }
     } catch (err) {
       toast.error(err?.data?.message || 'Error updating wishlist');
+    }
+  };
+
+  const handleVibeVote = async () => {
+    if (!user) return toast.error('You must be logged in to Vibe Vote!');
+    try {
+      await vibeVote({ type: 'post', id: post._id }).unwrap();
+      toast.success('🔥 Vibe Vote cast successfully!');
+    } catch (err) {
+      toast.error(err?.data?.message || 'Error casting Vibe Vote');
     }
   };
 
@@ -555,6 +572,29 @@ const SinglePost = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <HeroDisplay position="Sidebar" />
+          
+          {/* Aura Widget */}
+          <div className="bg-[#111] rounded-2xl border border-white/5 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-amber-500/30 transition-colors">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-amber-500/20 transition-colors duration-500"></div>
+             <h3 className="font-black text-lg text-white uppercase tracking-widest mb-1 flex items-center gap-2">
+                <Flame className="w-5 h-5 text-amber-500" /> Nexoria Aura
+             </h3>
+             <p className="text-xs text-slate-400 mb-6 z-10">Real-time hype score based on community engagement.</p>
+             
+             <div className="z-10 bg-black/40 p-4 rounded-[2rem] border border-white/5 mb-4">
+               <AuraScore score={aura?.score || post.auraScore || 0} size="lg" />
+             </div>
+             
+             <button
+               onClick={handleVibeVote}
+               disabled={isVibeVoting}
+               className="z-10 mt-2 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold tracking-wide shadow-lg shadow-amber-500/20 active:scale-95 transition-all disabled:opacity-50"
+             >
+               <Flame className="w-4 h-4" /> {isVibeVoting ? 'Voting...' : 'Vibe Vote +1'}
+             </button>
+             <p className="text-[10px] text-slate-500 mt-2 z-10">You can vote once every 24 hours.</p>
+          </div>
+
           <AdPlacement location="Sidebar" />
           <div className="bg-[#111] rounded-2xl border border-white/5 p-6">
             <div className="flex justify-between items-center mb-4 border-b border-slate-200/50 dark:border-white/10 pb-2">

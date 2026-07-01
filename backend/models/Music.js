@@ -72,6 +72,14 @@ const musicSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  auraScore: {
+    type: Number,
+    default: 0
+  },
+  auraVotes: {
+    type: Number,
+    default: 0
+  },
   isTrending: {
     type: Boolean,
     default: false

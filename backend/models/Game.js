@@ -49,6 +49,14 @@ const gameSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    auraScore: {
+      type: Number,
+      default: 0,
+    },
+    auraVotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
