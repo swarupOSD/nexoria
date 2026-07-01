@@ -28,13 +28,13 @@ export default function AuraLeaderboard() {
   const [showAuraCard, setShowAuraCard] = useState(false);
   const { data, isLoading, refetch } = useGetAuraLeaderboardQuery(activeTab);
   const [vibeVote] = useVibeVoteMutation();
-  const { userInfo } = useSelector((s) => s.auth);
+  const { user } = useSelector((s) => s.auth);
   const items = data?.data || [];
   const clubItems = items.filter((i) => i.score >= 900);
   const normalItems = items.filter((i) => i.score < 900);
 
   const handleVibeVote = async (item) => {
-    if (!userInfo) return toast.error('Login করুন Vibe দিতে!', { id: 'auth_error' });
+    if (!user) return toast.error('Login করুন Vibe দিতে!', { id: 'auth_error' });
     try {
       const res = await vibeVote({ type: item.itemType, id: item.itemId }).unwrap();
       toast.success(res.message || '🔥 Vibe sent!');
@@ -73,7 +73,7 @@ export default function AuraLeaderboard() {
               <Swords className="w-4 h-4" /> Enter Aura Battle <ChevronRight className="w-4 h-4" />
             </Link>
             
-            {userInfo && (
+            {user && (
               <button
                 onClick={() => setShowAuraCard(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-2xl font-bold text-sm transition-all hover:shadow-lg active:scale-95 text-white"

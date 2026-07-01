@@ -12,7 +12,7 @@ const BATTLE_DURATION = 30; // seconds
 export default function AuraBattle() {
   const { data, isLoading, refetch } = useGetAuraBattleQuery();
   const [voteAuraBattle] = useVoteAuraBattleMutation();
-  const { userInfo } = useSelector((s) => s.auth);
+  const { user } = useSelector((s) => s.auth);
 
   const [voted, setVoted] = useState(null); // 'item1' | 'item2'
   const [winner, setWinner] = useState(null);
@@ -45,7 +45,7 @@ export default function AuraBattle() {
 
   const handleVote = async (choice) => {
     if (voted) return;
-    if (!userInfo) return toast.error('Login করুন vote দিতে!', { id: 'auth_error' });
+    if (!user) return toast.error('Login করুন vote দিতে!', { id: 'auth_error' });
     if (!battle) return;
 
     setVoted(choice);
