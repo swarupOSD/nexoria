@@ -45,7 +45,7 @@ export default function AuraBattle() {
 
   const handleVote = async (choice) => {
     if (voted) return;
-    if (!userInfo) return toast.error('Login করুন vote দিতে!');
+    if (!userInfo) return toast.error('Login করুন vote দিতে!', { id: 'auth_error' });
     if (!battle) return;
 
     setVoted(choice);

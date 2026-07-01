@@ -144,7 +144,7 @@ const SinglePost = () => {
   };
 
   const handleVibeVote = async () => {
-    if (!user) return toast.error('You must be logged in to Vibe Vote!');
+    if (!user) return toast.error('You must be logged in to Vibe Vote!', { id: 'auth_error' });
     try {
       await vibeVote({ type: 'post', id: post._id }).unwrap();
       toast.success('🔥 Vibe Vote cast successfully!');

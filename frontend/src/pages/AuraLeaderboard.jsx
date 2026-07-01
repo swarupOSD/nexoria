@@ -34,7 +34,7 @@ export default function AuraLeaderboard() {
   const normalItems = items.filter((i) => i.score < 900);
 
   const handleVibeVote = async (item) => {
-    if (!userInfo) return toast.error('Login করুন Vibe দিতে!');
+    if (!userInfo) return toast.error('Login করুন Vibe দিতে!', { id: 'auth_error' });
     try {
       const res = await vibeVote({ type: item.itemType, id: item.itemId }).unwrap();
       toast.success(res.message || '🔥 Vibe sent!');
