@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import { Download, Flame, Trophy, Share2 } from 'lucide-react';
 import { useGetPersonalAuraQuery } from '../features/aura/auraApiSlice';
 import FallbackImage from './FallbackImage';
@@ -21,13 +21,11 @@ const AuraCard = () => {
       setIsExporting(true);
       toast.loading('Generating Aura Card...', { id: 'export' });
       
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2, // High resolution
-        useCORS: true,
+      const image = await toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
         backgroundColor: '#050505',
       });
-      
-      const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = image;
       link.download = `Nexoria_Aura_${aura.username}.png`;
