@@ -47,11 +47,20 @@ export const initSocket = (server) => {
       const token = socket.handshake.auth.token || (socket.handshake.headers.cookie && socket.handshake.headers.cookie.split('jwt=')[1]?.split(';')[0]);
       
       if (token) {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        socket.user = await User.findById(decoded.id).select('-password');
+        let decoded;
+        try {
+          // Try verifying as access token first
+          decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+          // Fallback to refresh token verify (since jwt cookie is a refresh token)
+          decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        }
+        
+        socket.user = await User.findById(decoded._id).select('-password');
       }
       next();
     } catch (err) {
+      console.error('Socket Auth Error:', err.message);
       next();
     }
   });
