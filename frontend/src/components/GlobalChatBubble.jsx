@@ -153,6 +153,8 @@ const GlobalChatBubble = () => {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
               {messages.map((msg, idx) => {
                 const isMe = user && msg.sender?._id === user._id;
+                const senderRole = isMe ? user.role : msg.sender?.role;
+                const senderPremium = isMe ? user.isPremium : msg.sender?.isPremium;
                 
                 return (
                   <div key={msg._id || idx} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
@@ -167,17 +169,17 @@ const GlobalChatBubble = () => {
                           {msg.sender?.name || 'User'}
                         </span>
                         {/* VIP Badges */}
-                        {msg.sender?.role === 'super_admin' && (
+                        {senderRole === 'super_admin' && (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 shadow-[0_0_8px_rgba(244,63,94,0.3)]">
                             <ShieldAlert className="w-2.5 h-2.5" /> SUPER ADMIN
                           </span>
                         )}
-                        {msg.sender?.role === 'admin' && (
+                        {senderRole === 'admin' && (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1">
                             <ShieldAlert className="w-2.5 h-2.5" /> ADMIN
                           </span>
                         )}
-                        {msg.sender?.isPremium && msg.sender?.role === 'user' && (
+                        {senderPremium && senderRole === 'user' && (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
                             <Crown className="w-2.5 h-2.5" /> PREMIUM
                           </span>
@@ -187,9 +189,9 @@ const GlobalChatBubble = () => {
                         )}
                       </div>
                       <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
-                        msg.sender?.role === 'super_admin' || msg.sender?.role === 'admin'
+                        senderRole === 'super_admin' || senderRole === 'admin'
                           ? `bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
-                          : msg.sender?.isPremium
+                          : senderPremium
                             ? `bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                             : isMe 
                               ? 'bg-purple-600 text-white rounded-tr-sm' 
