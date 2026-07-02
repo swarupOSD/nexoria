@@ -84,12 +84,15 @@ const ManageArenaGames = () => {
     try {
       const result = await scrapeApp({ url: sourceUrl }).unwrap();
       
-      // Try to construct iframe URL if it's gamepix
+      // Try to construct iframe URL if it's gamepix or use embedUrl from scraper
       let iframeUrl = formData.iframeUrl;
-      if (sourceUrl.includes('gamepix.com')) {
+      if (result.embedUrl) {
+        iframeUrl = result.embedUrl;
+      } else if (sourceUrl.includes('gamepix.com') || sourceUrl.includes('gamebol.com')) {
         const slugMatch = sourceUrl.match(/play\/([^\/]+)/);
         if (slugMatch && slugMatch[1]) {
-          iframeUrl = `https://play.gamepix.com/${slugMatch[1]}/embed`;
+          // generic embed constructor for Gamepix/Gamebol
+          iframeUrl = sourceUrl.includes('gamepix') ? `https://play.gamepix.com/${slugMatch[1]}/embed` : `https://www.gamebol.com/embed/${slugMatch[1]}`;
         }
       }
 

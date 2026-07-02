@@ -48,6 +48,7 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
       const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
       const icon = $('meta[property="og:image"]').attr('content') || $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href') || '';
       const developer = $('meta[property="og:site_name"]').attr('content') || new URL(url).hostname;
+      const embedUrl = $('meta[property="og:video:url"]').attr('content') || $('meta[property="twitter:player"]').attr('content') || $('iframe').first().attr('src') || '';
       
       // Attempt to resolve absolute URLs for images
       let finalIcon = icon;
@@ -61,6 +62,7 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
         developer: developer,
         description: description,
         icon: finalIcon,
+        embedUrl: embedUrl,
         screenshots: finalIcon ? [finalIcon] : [],
         version: '1.0.0',
         size: 'Varies',
