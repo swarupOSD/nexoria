@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check } from 'lucide-react';
+import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 
@@ -162,18 +162,40 @@ const GlobalChatBubble = () => {
                       className="w-8 h-8 rounded-full object-cover shrink-0 mt-1"
                     />
                     <div className={`flex flex-col max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
-                      <div className="flex items-center gap-1 mb-1">
+                      <div className="flex items-center gap-1.5 mb-1">
                         <span className={`text-[11px] ${getRankColor(msg.sender?.auraRank)}`}>
                           {msg.sender?.name || 'User'}
                         </span>
+                        {/* VIP Badges */}
+                        {msg.sender?.role === 'super_admin' && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 shadow-[0_0_8px_rgba(244,63,94,0.3)]">
+                            <ShieldAlert className="w-2.5 h-2.5" /> SUPER ADMIN
+                          </span>
+                        )}
+                        {msg.sender?.role === 'admin' && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1">
+                            <ShieldAlert className="w-2.5 h-2.5" /> ADMIN
+                          </span>
+                        )}
+                        {msg.sender?.isPremium && msg.sender?.role === 'user' && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                            <Crown className="w-2.5 h-2.5" /> PREMIUM
+                          </span>
+                        )}
                         {msg.sender?.badges?.includes('aura_legend') && (
                           <Trophy className="w-3 h-3 text-amber-400" />
                         )}
                       </div>
+                      
+                      {/* Message Bubble */}
                       <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
                         isMe 
                           ? 'bg-purple-600 text-white rounded-tr-sm' 
-                          : 'bg-slate-800 text-slate-200 border border-slate-700/50 rounded-tl-sm'
+                          : msg.sender?.role === 'super_admin' || msg.sender?.role === 'admin'
+                            ? 'bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 rounded-tl-sm shadow-[0_0_15px_rgba(244,63,94,0.15)]'
+                            : msg.sender?.isPremium
+                              ? 'bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 rounded-tl-sm'
+                              : 'bg-slate-800 text-slate-200 border border-slate-700/50 rounded-tl-sm'
                       }`}>
                         {editingId === msg._id ? (
                           <div className="flex items-center gap-2">

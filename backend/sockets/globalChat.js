@@ -9,7 +9,7 @@ export const registerGlobalChatHandlers = (io, socket) => {
       const history = await ChatMessage.find({ isDeleted: false })
         .sort({ createdAt: -1 })
         .limit(50)
-        .populate('sender', 'name username profileImage auraRank badges')
+        .populate('sender', 'name username profileImage auraRank badges role isPremium')
         .lean();
       
       socket.emit('globalChatHistory', history.reverse());
@@ -34,7 +34,7 @@ export const registerGlobalChatHandlers = (io, socket) => {
 
       // Populate sender info before broadcasting
       const populatedMessage = await ChatMessage.findById(newMessage._id)
-        .populate('sender', 'name username profileImage auraRank badges')
+        .populate('sender', 'name username profileImage auraRank badges role isPremium')
         .lean();
 
       // Broadcast to everyone in the room
