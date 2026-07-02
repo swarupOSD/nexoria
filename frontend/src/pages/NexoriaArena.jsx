@@ -41,13 +41,7 @@ const NexoriaArena = () => {
   }, []);
 
   const isExternalOnly = (url) => {
-    if (!url) return false;
-    try {
-      const urlObj = new URL(url);
-      return urlObj.hostname.includes('crazygames.com');
-    } catch (e) {
-      return false;
-    }
+    return false; // Allow everything to try and embed
   };
 
   return (
@@ -130,36 +124,32 @@ const NexoriaArena = () => {
                 </div>
 
                 <div className="w-full aspect-square md:aspect-video min-h-[400px] bg-black rounded-2xl overflow-hidden relative">
-                  {isExternalOnly(activeGame.iframeUrl) ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#111] text-center p-6 border-2 border-dashed border-white/10 rounded-2xl">
-                      <AlertTriangle className="w-16 h-16 text-amber-500 mb-4 opacity-80" />
-                      <h3 className="text-2xl font-bold text-white mb-2">External Game</h3>
-                      <p className="text-slate-400 mb-6 max-w-md">
-                        This game's publisher does not allow it to be embedded. You can still play it directly on their website!
-                      </p>
-                      <a 
-                        href={activeGame.iframeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 hover:scale-105 active:scale-95"
-                      >
-                        <Play className="w-5 h-5" /> Play in New Tab
-                      </a>
-                    </div>
-                  ) : (
-                    <iframe 
-                      src={activeGame.iframeUrl} 
-                      className="w-full h-full border-none bg-black"
-                      title={activeGame.title}
-                      allow="autoplay; fullscreen; focus-without-user-activation *;"
-                      allowFullScreen
-                    ></iframe>
-                  )}
+                  <iframe 
+                    src={getEmbedUrl(activeGame.iframeUrl)} 
+                    className="w-full h-full border-none bg-black"
+                    title={activeGame.title}
+                    allow="autoplay; fullscreen; focus-without-user-activation *;"
+                    allowFullScreen
+                  ></iframe>
                 </div>
                 
-                <div className="p-4 mt-2">
-                  <h2 className="text-2xl font-black text-white">{activeGame.title}</h2>
-                  <p className="text-slate-400 mt-2 text-sm leading-relaxed">{activeGame.description}</p>
+                <div className="p-4 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-black text-white">{activeGame.title}</h2>
+                    <p className="text-slate-400 mt-2 text-sm leading-relaxed">{activeGame.description}</p>
+                  </div>
+                  
+                  {activeGame.iframeUrl?.includes('crazygames.com') && (
+                    <a 
+                      href={activeGame.iframeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-xl text-sm font-medium transition-colors flex items-center gap-2 border border-white/10 shrink-0"
+                      title="If the game doesn't load, click here to play on the original site"
+                    >
+                      <Play className="w-4 h-4" /> Play Original
+                    </a>
+                  )}
                 </div>
               </motion.div>
             ) : (
