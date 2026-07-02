@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
-import { LayoutDashboard, UserCircle, ShoppingBag, Settings, Loader2, Menu, X, ArrowLeft, Heart, Download, HelpCircle, Gift, Music, Smartphone } from 'lucide-react';
+import { LayoutDashboard, UserCircle, ShoppingBag, Settings, Loader2, Menu, X, ArrowLeft, Heart, Download, HelpCircle, Gift, Music, Smartphone, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useGetMeQuery } from '../features/auth/authApiSlice';
@@ -20,6 +20,7 @@ import AppRequestsTab from '../components/DashboardTabs/AppRequestsTab';
 import RewardsTab from '../components/DashboardTabs/RewardsTab';
 import MusicAnalyticsTab from '../components/DashboardTabs/MusicAnalyticsTab';
 import AppDownloadTab from '../components/DashboardTabs/AppDownloadTab';
+import EarnTab from '../components/DashboardTabs/EarnTab';
 import { useNavigate } from 'react-router-dom';
 
 const TABS = [
@@ -29,6 +30,7 @@ const TABS = [
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
   { id: 'music', label: 'Music Analytics', icon: Music },
   { id: 'downloads', label: 'Downloads', icon: Download },
+  { id: 'earn', label: 'Earn Points', icon: Coins },
   { id: 'requests', label: 'App Requests', icon: HelpCircle },
   { id: 'rewards', label: 'Rewards & Levels', icon: Gift },
   { id: 'app-download', label: 'Nexoria App', icon: Smartphone },
@@ -83,6 +85,8 @@ const UserDashboard = () => {
         return <MusicAnalyticsTab />;
       case 'downloads':
         return <DownloadsTab user={user} />;
+      case 'earn':
+        return <EarnTab />;
       case 'requests':
         return <AppRequestsTab user={user} />;
       case 'rewards':

@@ -82,6 +82,11 @@ const siteSettingsSchema = new mongoose.Schema(
         url: { type: String }
       }
     ],
+    offerwallSettings: {
+      enabled: { type: Boolean, default: false },
+      offerwallUrl: { type: String, default: '' },
+      secretKey: { type: String, default: '' }
+    },
     paymentSettings: {
       upiId: { type: String, default: '' },
       upiQrUrl: { type: String, default: '' },

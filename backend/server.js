@@ -151,6 +151,7 @@ import trashRoutes from './routes/trashRoutes.js';
 import auraRoutes from './routes/auraRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
 import arenaGameRoutes from './routes/arenaGameRoutes.js';
+import offerwallRoutes from './routes/offerwallRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -205,6 +206,7 @@ app.use('/api/music', musicRoutes);
 app.use('/api/admin/scraper', scraperRoutes);
 app.use('/api/aura', auraRoutes);
 app.use('/api/campaigns', campaignRoutes);
+app.use('/api/webhooks/offerwall', offerwallRoutes);
 
 import path from 'path';
 

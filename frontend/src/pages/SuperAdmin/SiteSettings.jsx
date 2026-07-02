@@ -47,6 +47,11 @@ const SiteSettings = () => {
       enabled: true,
       timerSeconds: 30,
       downloadClicks: 2
+    },
+    offerwallSettings: {
+      enabled: false,
+      offerwallUrl: '',
+      secretKey: ''
     }
   });
 
@@ -101,6 +106,11 @@ const SiteSettings = () => {
           enabled: settingsRes.data.ads?.enabled ?? true,
           timerSeconds: settingsRes.data.ads?.timerSeconds || 30,
           downloadClicks: settingsRes.data.ads?.downloadClicks || 2
+        },
+        offerwallSettings: {
+          enabled: settingsRes.data.offerwallSettings?.enabled ?? false,
+          offerwallUrl: settingsRes.data.offerwallSettings?.offerwallUrl || '',
+          secretKey: settingsRes.data.offerwallSettings?.secretKey || ''
         }
       });
     }
@@ -433,6 +443,30 @@ const SiteSettings = () => {
               <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Page Clicks</label>
               <input type="number" name="ads_downloadClicks" value={formData.ads?.downloadClicks || 2} onChange={(e) => setFormData({...formData, ads: {...formData.ads, downloadClicks: Number(e.target.value)}})} className="premium-input w-full" />
               <p className="text-xs text-slate-500 mt-1">Number of steps/clicks required to reach the final file.</p>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Offerwall Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-6 border border-slate-200 dark:border-night-border">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Globe className="w-5 h-5 text-amber-500" />
+            <h2 className="text-lg font-bold dark:text-white">Offerwall & Rewards</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4">
+              <input type="checkbox" name="offerwall_enabled" checked={formData.offerwallSettings?.enabled} onChange={(e) => setFormData({...formData, offerwallSettings: {...formData.offerwallSettings, enabled: e.target.checked}})} id="offerwallEnabled" className="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-night-bg focus:ring-2 dark:bg-night-bg dark:border-night-border" />
+              <label htmlFor="offerwallEnabled" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Offerwall</label>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Offerwall URL</label>
+              <input type="text" name="offerwall_url" value={formData.offerwallSettings?.offerwallUrl || ''} onChange={(e) => setFormData({...formData, offerwallSettings: {...formData.offerwallSettings, offerwallUrl: e.target.value}})} className="premium-input w-full" placeholder="e.g. https://cpalead.com/wall?pub=123" />
+              <p className="text-xs text-slate-500 mt-1">Make sure the URL accepts a 'subid' parameter for tracking.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Secret Key / Hash</label>
+              <input type="text" name="offerwall_secret" value={formData.offerwallSettings?.secretKey || ''} onChange={(e) => setFormData({...formData, offerwallSettings: {...formData.offerwallSettings, secretKey: e.target.value}})} className="premium-input w-full" placeholder="Secret Key for Postback Validation" />
+              <p className="text-xs text-slate-500 mt-1">Postback Webhook URL: <code>{window.location.origin}/api/webhooks/offerwall</code></p>
             </div>
           </div>
         </motion.div>
