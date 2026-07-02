@@ -85,7 +85,7 @@ const VIPLounge = () => {
   return (
     <div className="p-4 sm:p-8 min-h-screen">
       <div className="mb-12 max-w-4xl relative group">
-        <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 blur-2xl rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
+        <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 md:blur-2xl rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
         <div className="relative">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight flex items-center gap-3">
             <span className="text-5xl drop-shadow-2xl">👑</span>
@@ -101,7 +101,7 @@ const VIPLounge = () => {
         // LOCKED STATE
         <div className="flex flex-col items-center justify-center py-20 px-4">
           <div className="w-32 h-32 mb-8 relative">
-            <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-2xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-amber-500/20 rounded-full md:blur-2xl blur-xl animate-pulse"></div>
             <div className="w-full h-full bg-[#1a1a1f] border border-amber-500/30 rounded-3xl shadow-[0_0_40px_rgba(245,158,11,0.2)] flex items-center justify-center relative z-10">
               <Lock className="w-16 h-16 text-amber-500" />
             </div>
@@ -174,7 +174,7 @@ const EmptyState = ({ label }) => (
 
 const GameCard = ({ item }) => (
   <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
-    <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 blur-3xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
+    <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 md:blur-3xl blur-xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
     <div className="relative aspect-video bg-black/50 overflow-hidden border-b border-amber-500/10">
       {item.banner || item.logo ? (
         <img src={item.banner || item.logo} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -184,7 +184,7 @@ const GameCard = ({ item }) => (
         </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-transparent to-transparent"></div>
-      <div className="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
+      <div className="absolute top-3 left-3 bg-amber-500/90 md:backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
         <Crown className="w-3 h-3" /> VIP Game
       </div>
       {item.banner && item.logo && (
@@ -211,11 +211,11 @@ const GameCard = ({ item }) => (
 
 const AppCard = ({ item, navigate }) => (
   <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
-    <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 blur-3xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
+    <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 md:blur-3xl blur-xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
     <div className="relative aspect-video bg-black/50 overflow-hidden border-b border-amber-500/10">
       <img src={item.featuredImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-transparent to-transparent"></div>
-      <div className="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
+      <div className="absolute top-3 left-3 bg-amber-500/90 md:backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
         <Crown className="w-3 h-3" /> VIP App
       </div>
     </div>
@@ -251,7 +251,7 @@ const MovieCard = ({ item, navigate }) => (
     <div className="relative aspect-[2/3] bg-black/50 overflow-hidden">
       <img src={item.posterImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-[#1a1a1f]/20 to-transparent"></div>
-      <div className="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
+      <div className="absolute top-3 left-3 bg-amber-500/90 md:backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-black border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1">
         <Crown className="w-3 h-3" /> VIP Movie
       </div>
       <div className="absolute bottom-4 left-4 right-4">
