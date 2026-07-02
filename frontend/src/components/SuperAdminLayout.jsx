@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Shield, Key, Settings, 
   MonitorPlay, Database, Activity, FileWarning, 
   LogOut, ShieldAlert, Moon, Sun, Menu, X, Bell, Gamepad2,
-  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, Youtube
+  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -154,7 +154,7 @@ const SuperAdminLayout = () => {
       title: 'Nexoria Official',
       items: [
         { name: 'WhatsApp Channel', icon: <MessageCircle className="w-4 h-4 text-green-500" />, path: 'https://whatsapp.com/channel/0029VbDkid9AO7R9N7HwJP0v', external: true },
-        { name: 'YouTube Channel', icon: <Youtube className="w-4 h-4 text-red-500" />, path: 'https://youtube.com/@nexoriaofficialzone?si=pjehQ6MX1-Ncspdd', external: true },
+        { name: 'YouTube Channel', icon: <MonitorPlay className="w-4 h-4 text-red-500" />, path: 'https://youtube.com/@nexoriaofficialzone?si=pjehQ6MX1-Ncspdd', external: true },
       ]
     },
     {
