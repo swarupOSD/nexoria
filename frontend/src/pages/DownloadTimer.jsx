@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useTrackDownloadMutation } from '../features/download/downloadApiSlice';
 import { toast } from 'react-hot-toast';
 import { ShieldCheck, Download, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -15,6 +16,14 @@ const DownloadTimer = () => {
   const [canProceed, setCanProceed] = useState(false);
   const [canDownload, setCanDownload] = useState(false);
   const [trackDownload, { isLoading }] = useTrackDownloadMutation();
+  const { user } = useSelector((state) => state.auth);
+
+  const shouldShowAds = () => {
+    if (!user) return true;
+    if (user.isPremium) return false;
+    if (user.role === 'admin' || user.role === 'super_admin') return false;
+    return true;
+  };
 
   useEffect(() => {
     if (!state?.postId || !state?.linkId) {
@@ -41,14 +50,18 @@ const DownloadTimer = () => {
     setCanProceed(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // Open Adsterra Smartlink silently in a new tab
-    window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+    if (shouldShowAds()) {
+      // Open Adsterra Smartlink silently in a new tab
+      window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+    }
   };
 
   const handleDownload = async () => {
     try {
-      // Open Adsterra Smartlink silently in a new tab
-      window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+      if (shouldShowAds()) {
+        // Open Adsterra Smartlink silently in a new tab
+        window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+      }
       
       const res = await trackDownload({ postId: state.postId, linkId: state.linkId }).unwrap();
       if (res.downloadUrl) {

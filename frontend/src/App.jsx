@@ -33,6 +33,7 @@ import SoundQueue from './pages/SoundQueue';
 import AuraLeaderboard from './pages/AuraLeaderboard';
 import AuraBattle from './pages/AuraBattle';
 import AuraSurgeBanner from './components/AuraSurgeBanner';
+import AdsterraManager from './components/AdsterraManager';
 
 // Admin Sound
 import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
@@ -190,6 +191,7 @@ function App() {
     <Router>
       <AuraSurgeBanner />
       <Toaster position="top-right" />
+      <AdsterraManager />
       <KidsModeGuard>
         <Suspense fallback={<PageLoader />}>
           <GlobalMusicPlayer />
