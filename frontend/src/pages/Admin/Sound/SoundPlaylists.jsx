@@ -4,9 +4,10 @@ import {
   useCreatePlaylistMutation, 
   useDeletePlaylistMutation 
 } from '../../../features/api/musicApiSlice';
-import { Plus, Trash2, Edit, X, ListVideo } from 'lucide-react';
+import { Plus, Trash2, Edit, X, ListVideo , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import FallbackImage from '../../../components/FallbackImage';
+import BackButton from '../../../components/BackButton';
 
 const SoundPlaylists = () => {
   const { data, isLoading } = useGetAllPlaylistsAdminQuery();

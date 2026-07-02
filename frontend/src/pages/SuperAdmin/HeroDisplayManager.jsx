@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit, Layers, Loader2, Image as ImageIcon, X, Link as LinkIcon } from 'lucide-react';
+import { Plus, Trash2, Edit, Layers, Loader2, Image as ImageIcon, X, Link as LinkIcon , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 import { 
   useGetAdminHeroDisplaysQuery, 
   useCreateHeroDisplayMutation, 
@@ -113,10 +114,18 @@ const HeroDisplayManager = () => {
           <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center">
             <Layers className="w-5 h-5 text-pink-500" />
           </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Hero Display Manager</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Hero Display Manager
+            </h1>
             <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Manage hero sections and featured visual placements.</p>
           </div>
+        </div>
+      </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}

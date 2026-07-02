@@ -7,8 +7,9 @@ import {
 } from '../../features/arenaGame/arenaGameApiSlice';
 import { useScrapePlayStoreMutation } from '../../features/post/postApiSlice';
 import { toast } from 'react-hot-toast';
-import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Gamepad2, Eye, EyeOff, DownloadCloud } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Gamepad2, Eye, EyeOff, DownloadCloud , LayoutTemplate } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '../../components/BackButton';
 
 const ManageArenaGames = () => {
   const { data: gamesRes, isLoading, refetch } = useGetAdminArenaGamesQuery();

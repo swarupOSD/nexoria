@@ -1,11 +1,12 @@
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Activity } from 'lucide-react';
+import { Activity , LayoutTemplate } from 'lucide-react';
 import { 
   LineChart, Line, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { useGetSuperAdminAnalyticsQuery } from '../../features/analytics/analyticsApiSlice';
+import BackButton from '../../components/BackButton';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -45,9 +46,17 @@ const SuperAnalytics = () => {
         <title>Analytics - Super Admin</title>
       </Helmet>
 
-      <div>
-        <h1 className="text-2xl font-bold dark:text-white">Advanced Analytics</h1>
-        <p className="text-slate-500 text-sm mt-1">Deep insights into user behavior and platform metrics.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Advanced Analytics
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Deep insights into user behavior and platform metrics.</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

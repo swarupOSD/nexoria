@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Trophy, RefreshCcw, AlertTriangle, CheckCircle, Flame } from 'lucide-react';
+import { Trophy, RefreshCcw, AlertTriangle, CheckCircle, Flame , LayoutTemplate } from 'lucide-react';
 import { useRecalculateAuraMutation } from '../../features/api/auraApiSlice';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import BackButton from '../../components/BackButton';
 
 const AuraRecalculate = () => {
   const [recalculateAura, { isLoading }] = useRecalculateAuraMutation();

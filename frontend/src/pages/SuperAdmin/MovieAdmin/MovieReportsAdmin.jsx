@@ -1,6 +1,7 @@
 import React from 'react';
-import { AlertTriangle, Trash2, CheckCircle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Trash2, CheckCircle, Loader2 , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../../components/BackButton';
 import { 
   useGetAdminMovieReportsQuery, 
   useModerateMovieReportMutation, 

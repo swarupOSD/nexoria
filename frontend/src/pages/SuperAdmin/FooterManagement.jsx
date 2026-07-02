@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import SupportCenter from './SupportCenter';
+import BackButton from '../../components/BackButton';
 
 const FooterManagement = () => {
   const { data: settingsRes, isLoading } = useGetSettingsQuery();
@@ -215,10 +216,18 @@ const FooterManagement = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-slate-800 dark:text-white">Footer Management</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure your website's footer completely from this panel.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Footer Management
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Configure your website's footer completely from this panel.</p>
+          </div>
         </div>
+      </div>
         <button 
           onClick={handleSubmit} 
           disabled={isUpdating}

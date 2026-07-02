@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Send, Clock, Calendar, Users, Smartphone, Zap } from 'lucide-react';
+import { Bell, Send, Clock, Calendar, Users, Smartphone, Zap , LayoutTemplate } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useLaunchCampaignMutation } from '../../features/campaign/campaignApiSlice';
+import BackButton from '../../components/BackButton';
 
 const PushCampaigns = () => {
   const [launchCampaign, { isLoading: isSending }] = useLaunchCampaignMutation();
@@ -40,10 +41,18 @@ const PushCampaigns = () => {
         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
           <Bell className="w-6 h-6 text-white" />
         </div>
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Push Campaigns</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Engage users with direct notifications</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Push Campaigns
+            </h1>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Engage users with direct notifications</p>
+          </div>
         </div>
+      </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

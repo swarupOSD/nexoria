@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Save, Image as ImageIcon, Globe, Type, Mail, Settings as SettingsIcon, Plus, Trash2, ArrowUp, ArrowDown, Link as LinkIcon, Lock } from 'lucide-react';
+import { Save, Image as ImageIcon, Globe, Type, Mail, Settings as SettingsIcon, Plus, Trash2, ArrowUp, ArrowDown, Link as LinkIcon, Lock , LayoutTemplate } from 'lucide-react';
 import { useGetSettingsQuery, useUpdateSettingsMutation } from '../../features/settings/settingsApiSlice';
 import ImageUpload from '../../components/ImageUpload';
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const SiteSettings = () => {
   const navigate = useNavigate();
@@ -135,10 +136,18 @@ const SiteSettings = () => {
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">Site Settings</h1>
-          <p className="text-slate-500 text-sm mt-1">Configure global application details and preferences.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Site Settings
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Configure global application details and preferences.</p>
+          </div>
         </div>
+      </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
           <button 
             type="button"

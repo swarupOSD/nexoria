@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
-import { Save, Globe, Share2, Shield, Settings as SettingsIcon } from 'lucide-react';
+import { Save, Globe, Share2, Shield, Settings as SettingsIcon , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 
 const AdminSettings = () => {
   const [formData, setFormData] = useState({

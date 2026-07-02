@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Shield, FileText, AlertTriangle, CheckCircle, XCircle, Clock, Trash2, Calendar, Settings } from 'lucide-react';
+import { Shield, FileText, AlertTriangle, CheckCircle, XCircle, Clock, Trash2, Calendar, Settings , LayoutTemplate } from 'lucide-react';
 import { useGetAdminPostsQuery, useDeletePostMutation } from '../../features/post/postApiSlice';
+import BackButton from '../../components/BackButton';
 import { 
   useGetReportsQuery, 
   useResolveReportMutation, 

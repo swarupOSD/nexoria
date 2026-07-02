@@ -5,10 +5,11 @@ import { useGetAdminMovieCategoriesQuery } from '../../../features/movieCategory
 import { useTheme } from '../../../context/ThemeContext';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../../../components/BackButton';
 import { 
   ChevronRight, ChevronLeft, Save, Plus, Trash2, 
   Image as ImageIcon, Film, LayoutList, Link as LinkIcon
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 
 const AddMovie = ({ type = 'Movie' }) => {
   const navigate = useNavigate();

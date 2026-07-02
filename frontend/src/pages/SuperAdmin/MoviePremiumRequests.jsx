@@ -8,9 +8,10 @@ import {
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import BackButton from '../../components/BackButton';
 import { 
   CheckCircle, XCircle, Search, Eye, Filter, Loader2, X, Crown
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 
 const MoviePremiumRequests = () => {
   const [page, setPage] = useState(1);

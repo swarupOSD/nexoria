@@ -3,7 +3,8 @@ import { useCreateSongMutation, useScrapeMusicMutation } from '../../../features
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Globe, Download } from 'lucide-react';
+import { Globe, Download , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const SoundAddSong = () => {
   const [createSong, { isLoading }] = useCreateSongMutation();

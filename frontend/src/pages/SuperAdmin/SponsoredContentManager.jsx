@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, Power, X, Sparkles } from 'lucide-react';
+import { Plus, Edit2, Trash2, Power, X, Sparkles , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 import {
   useGetAdvertisementsQuery,
   useCreateAdvertisementMutation,
@@ -105,10 +106,18 @@ const SponsoredContentManager = () => {
           <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-violet-500" />
           </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Ads & Monetization</h1>
+            <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Ads & Monetization
+            </h1>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest mt-0.5">Manage Ad Networks, Timers & Scripts</p>
           </div>
+        </div>
+      </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}

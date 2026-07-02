@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCreateGameMutation } from '../../../features/games/gameApiSlice';
 import ImageUpload from '../../../components/ImageUpload';
+import BackButton from '../../../components/BackButton';
 
 const AddGame = () => {
   const navigate = useNavigate();

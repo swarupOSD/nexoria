@@ -4,8 +4,9 @@ import { Helmet } from 'react-helmet-async';
 import { useGetUsersQuery, useAssignPremiumMutation, useRevokePremiumMutation, useGetPremiumHistoryQuery } from '../../features/user/userApiSlice';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Crown, CheckCircle, XCircle, Shield, Clock, ShieldAlert, X } from 'lucide-react';
+import { Search, Crown, CheckCircle, XCircle, Shield, Clock, ShieldAlert, X , LayoutTemplate } from 'lucide-react';
 import FallbackImage from '../../components/FallbackImage';
+import BackButton from '../../components/BackButton';
 
 const HistoryModal = ({ user, onClose }) => {
   const { data: historyRes, isLoading } = useGetPremiumHistoryQuery(user._id);

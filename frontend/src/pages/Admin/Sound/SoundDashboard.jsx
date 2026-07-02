@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGetMusicAnalyticsQuery } from '../../../features/api/musicApiSlice';
-import { Activity, Music, Heart, Play } from 'lucide-react';
+import { Activity, Music, Heart, Play , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const SoundDashboard = () => {
   const { data: analyticsRes, isLoading } = useGetMusicAnalyticsQuery();

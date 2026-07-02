@@ -2,11 +2,12 @@ import CustomSearchBar from '../../components/CustomSearchBar';
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { ShieldAlert, AlertTriangle, Info, CheckCircle, Search, Filter, Trash2, Loader2 } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, Info, CheckCircle, Search, Filter, Trash2, Loader2 , LayoutTemplate } from 'lucide-react';
 
 import { useGetSecurityLogsQuery, useClearSecurityLogsMutation } from '../../features/system/systemApiSlice';
 import { useGetSettingsQuery, useUpdateSettingsMutation } from '../../features/settings/settingsApiSlice';
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const SecurityLogs = () => {
   const [filter, setFilter] = useState('All');
@@ -93,9 +94,17 @@ const SecurityLogs = () => {
         <title>Security Logs - Super Admin</title>
       </Helmet>
 
-      <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Security & Access Control</h1>
-        <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Monitor authentication events, administrative actions, and system alerts.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Security & Access Control
+            </h1>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Monitor authentication events, administrative actions, and system alerts.</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

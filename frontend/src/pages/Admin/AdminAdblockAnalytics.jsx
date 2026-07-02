@@ -1,6 +1,7 @@
 import { useGetAdblockAnalyticsQuery } from '../../features/analytics/analyticsApiSlice';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Activity, Globe, MonitorOff } from 'lucide-react';
+import { ShieldAlert, Activity, Globe, MonitorOff , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell

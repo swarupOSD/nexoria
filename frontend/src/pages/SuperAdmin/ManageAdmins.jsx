@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Plus, Edit2, UserMinus, ShieldOff, X, Search, Loader2 } from 'lucide-react';
+import { Shield, Plus, Edit2, UserMinus, ShieldOff, X, Search, Loader2 , LayoutTemplate } from 'lucide-react';
 import { useGetUsersQuery, useUpdateUserMutation } from '../../features/user/userApiSlice';
+import BackButton from '../../components/BackButton';
 
 const ManageAdmins = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,10 +53,18 @@ const ManageAdmins = () => {
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">Manage Administrators</h1>
-          <p className="text-slate-400 text-sm mt-1">Add or remove admin privileges.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Manage Administrators
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Add or remove admin privileges.</p>
+          </div>
         </div>
+      </div>
         <button 
           onClick={() => setIsModalOpen(true)}
           className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 shadow-lg shadow-red-500/20 text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max border border-red-500/50"

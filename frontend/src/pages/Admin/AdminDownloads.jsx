@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Download, TrendingUp, Filter } from 'lucide-react';
+import { Download, TrendingUp, Filter , LayoutTemplate } from 'lucide-react';
 
 import { useGetAdminAnalyticsQuery } from '../../features/analytics/analyticsApiSlice';
+import BackButton from '../../components/BackButton';
 
 const AdminDownloads = () => {
   const { data: analyticsRes, isLoading } = useGetAdminAnalyticsQuery();
@@ -20,10 +21,18 @@ const AdminDownloads = () => {
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">Downloads Analytics</h1>
-          <p className="text-slate-400 text-sm mt-1">Track content performance and file download rates.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Downloads Analytics
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Track content performance and file download rates.</p>
+          </div>
         </div>
+      </div>
         <button className="flex items-center gap-2 px-5 py-2.5 bg-[#111827] border border-slate-700/50 rounded-xl hover:border-blue-500/50 hover:bg-[#0B0F19] text-sm font-medium transition-all w-max text-slate-300 shadow-lg">
           <Filter className="w-4 h-4" /> Filter by Date
         </button>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Gift, Copy, Loader2, Calendar, Users, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Gift, Copy, Loader2, Calendar, Users, AlertCircle , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const CouponManager = () => {
   const [coupons, setCoupons] = useState([]);

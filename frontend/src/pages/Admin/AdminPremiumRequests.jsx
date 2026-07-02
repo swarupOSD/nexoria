@@ -2,7 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useGetPremiumRequestsQuery, useApprovePremiumRequestMutation, useRejectPremiumRequestMutation } from '../../features/api/paymentApiSlice';
-import { Check, X, Eye, ExternalLink } from 'lucide-react';
+import { Check, X, Eye, ExternalLink , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 
 const AdminPremiumRequests = () => {
   const { data: paymentsRes, isLoading, refetch } = useGetPremiumRequestsQuery();
@@ -39,9 +40,17 @@ const AdminPremiumRequests = () => {
         <title>Premium Requests - Admin</title>
       </Helmet>
 
-      <div>
-        <h1 className="text-2xl font-bold dark:text-white">Premium Requests</h1>
-        <p className="text-slate-500 text-sm mt-1">Review and manage manual premium payments.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Premium Requests
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Review and manage manual premium payments.</p>
+          </div>
+        </div>
       </div>
 
       <motion.div 

@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { useGetMovieAnalyticsQuery } from '../../features/movie/movieApiSlice';
+import BackButton from '../../components/BackButton';
 import { 
   Activity, Users, PlaySquare, TrendingUp, Download, Star, 
   Clock, Loader2 
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 
 const MovieAnalytics = () => {
   const { data: analyticsRes, isLoading } = useGetMovieAnalyticsQuery();

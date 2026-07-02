@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Save, Check, X } from 'lucide-react';
+import { Save, Check, X , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 
 const RolesPermissions = () => {
   const permissionsList = [
@@ -42,10 +43,18 @@ const RolesPermissions = () => {
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">Roles & Permissions</h1>
-          <p className="text-slate-500 text-sm mt-1">Configure global access controls across the platform.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Roles & Permissions
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Configure global access controls across the platform.</p>
+          </div>
         </div>
+      </div>
         <button className="px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 hover:shadow-lg hover:shadow-red-500/30 text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max">
           <Save className="w-5 h-5" /> Save Changes
         </button>

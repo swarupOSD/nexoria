@@ -1,6 +1,7 @@
 import React from 'react';
-import { Star, Loader2, TrendingUp } from 'lucide-react';
+import { Star, Loader2, TrendingUp , LayoutTemplate } from 'lucide-react';
 import { useGetAdminMovieRatingsQuery } from '../../../features/movie/movieApiSlice';
+import BackButton from '../../../components/BackButton';
 
 export default function MovieRatingsAdmin({ type = 'Movie' }) {
   const { data: res, isLoading } = useGetAdminMovieRatingsQuery();

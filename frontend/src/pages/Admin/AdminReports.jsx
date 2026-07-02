@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 import { 
   AlertOctagon, CheckCircle, XCircle, Trash2, 
   Search, Link as LinkIcon, Loader2 
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import BackButton from '../../components/BackButton';
 import { 
   useGetReportsQuery, 
   useResolveReportMutation, 
@@ -77,10 +78,18 @@ const AdminReports = () => {
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">User Reports</h1>
-          <p className="text-slate-400 text-sm mt-1">Manage app and broken link reports submitted by users.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              User Reports
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Manage app and broken link reports submitted by users.</p>
+          </div>
         </div>
+      </div>
       </div>
 
       {/* Main Content */}

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useGetMovieSettingsQuery, useUpdateMovieSettingsMutation } from '../../features/settings/movieSettingsApiSlice';
 import { useUploadImageMutation } from '../../features/upload/uploadApiSlice';
 import { toast } from 'react-hot-toast';
-import { Save, Image as ImageIcon, Layout, Type } from 'lucide-react';
+import { Save, Image as ImageIcon, Layout, Type , LayoutTemplate } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import BackButton from '../../components/BackButton';
 
 const MovieSettings = () => {
   const { data: settingsRes, isLoading } = useGetMovieSettingsQuery();

@@ -2,7 +2,7 @@ import CustomSearchBar from '../../components/CustomSearchBar';
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Trash2, Eye, Shield, X, Star, Crown, ShieldAlert, AlertTriangle, FileText, Lock, Send, Mail } from 'lucide-react';
+import { Search, Filter, Trash2, Eye, Shield, X, Star, Crown, ShieldAlert, AlertTriangle, FileText, Lock, Send, Mail , LayoutTemplate } from 'lucide-react';
 import { 
   useGetUsersQuery, 
   useDeleteUserMutation, 
@@ -20,6 +20,7 @@ import {
   useUpdateRestrictionsMutation
 } from '../../features/api/userModerationApiSlice';
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const AdminNotesList = ({ userId }) => {
   const { data: notesRes, isLoading } = useGetAdminNotesQuery(userId);
@@ -186,10 +187,18 @@ const AdminUsers = () => {
       </Helmet>
 
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">User Management</h1>
-          <p className="text-slate-500 text-sm mt-1">Advanced enforcement and moderation tools.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              User Management
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Advanced enforcement and moderation tools.</p>
+          </div>
         </div>
+      </div>
         <button onClick={() => setIsMessageModalOpen(true)} className="premium-btn gap-2 py-2">
           <Send className="w-4 h-4" /> Send Message
         </button>

@@ -11,10 +11,11 @@ import { useGetAdminMovieCategoriesQuery } from '../../../features/movieCategory
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import BackButton from '../../../components/BackButton';
 import { 
   Plus, Edit2, Trash2, Search, Filter, Loader2, X, Eye, EyeOff,
   Image as ImageIcon, CheckCircle, Video, Tag, Clock, Globe, Download
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 
 const MovieManagement = ({ type = 'Movie' }) => {
   const [page, setPage] = useState(1);

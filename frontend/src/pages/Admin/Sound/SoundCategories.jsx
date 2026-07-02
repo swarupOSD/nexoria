@@ -1,5 +1,6 @@
 import React from 'react';
-import { Database, Music, Settings, Info } from 'lucide-react';
+import { Database, Music, Settings, Info , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const SoundCategories = () => {
   const categories = [

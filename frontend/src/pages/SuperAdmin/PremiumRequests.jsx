@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useGetPremiumRequestsQuery, useApprovePremiumRequestMutation, useRejectPremiumRequestMutation } from '../../features/api/paymentApiSlice';
 import { toast } from 'react-hot-toast';
-import { Check, X, Eye, FileText, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Check, X, Eye, FileText, CheckCircle, XCircle, Clock , LayoutTemplate } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '../../components/BackButton';
 
 const PremiumRequests = () => {
   const { data: requestsRes, isLoading } = useGetPremiumRequestsQuery();
@@ -47,10 +48,18 @@ const PremiumRequests = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between bg-white dark:bg-[#111111] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Premium Requests</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage user premium membership payments.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Premium Requests
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">Manage user premium membership payments.</p>
+          </div>
         </div>
+      </div>
       </div>
 
       <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm">

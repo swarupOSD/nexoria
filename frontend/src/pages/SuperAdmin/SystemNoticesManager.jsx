@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit, Megaphone, Loader2, Bell, Calendar, X, Info, AlertTriangle, CheckCircle, AlertOctagon } from 'lucide-react';
+import { Plus, Trash2, Edit, Megaphone, Loader2, Bell, Calendar, X, Info, AlertTriangle, CheckCircle, AlertOctagon , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const typeConfig = {
   info:    { label: 'Info',    bg: 'bg-blue-100 dark:bg-blue-900/30',    text: 'text-blue-700 dark:text-blue-300',    icon: <Info className="w-4 h-4" />,           accent: 'border-blue-400'    },
@@ -110,10 +111,18 @@ const SystemNoticesManager = () => {
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
             <Megaphone className="w-5 h-5 text-amber-500" />
           </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">System Notices</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              System Notices
+            </h1>
             <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Broadcast global notices and system messages to all users.</p>
           </div>
+        </div>
+      </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}

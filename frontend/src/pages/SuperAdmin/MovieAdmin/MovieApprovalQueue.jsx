@@ -1,6 +1,8 @@
 import React from 'react';
 import { useGetMovieApprovalQueueQuery, useModerateMovieApprovalMutation } from '../../../features/movie/movieApiSlice';
 import { toast } from 'react-hot-toast';
+import BackButton from '../../../components/BackButton';
+import { LayoutTemplate } from 'lucide-react';
 
 export default function MovieApprovalQueue({ type = 'Movie' }) {
   const { data: moviesRes, isLoading } = useGetMovieApprovalQueueQuery();

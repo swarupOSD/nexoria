@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Search, Save, Loader2, Link as LinkIcon, RefreshCw, AlertCircle, Share2 } from 'lucide-react';
+import { Globe, Search, Save, Loader2, Link as LinkIcon, RefreshCw, AlertCircle, Share2 , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const SEOManager = () => {
   const [settings, setSettings] = useState({

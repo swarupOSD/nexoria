@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Users, Download, Bell, Shield, Database, Cpu, HardDrive, DollarSign } from 'lucide-react';
+import { Activity, Users, Download, Bell, Shield, Database, Cpu, HardDrive, DollarSign , LayoutTemplate } from 'lucide-react';
 import { useSocket } from '../../context/SocketContext';
+import BackButton from '../../components/BackButton';
 
 const LiveMonitor = () => {
   const socket = useSocket();

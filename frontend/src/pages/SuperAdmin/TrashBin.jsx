@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, RotateCcw, Search, AlertCircle, FileWarning, CheckCircle } from 'lucide-react';
+import { Trash2, RotateCcw, Search, AlertCircle, FileWarning, CheckCircle , LayoutTemplate } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 import {
   useGetTrashItemsQuery,
   useRestoreTrashItemMutation,
@@ -76,10 +77,18 @@ const TrashBin = () => {
           <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
             <FileWarning className="w-6 h-6 text-rose-500" />
           </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Trash Bin</h1>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Trash Bin
+            </h1>
             <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">Items are kept for 30 days before permanent deletion</p>
           </div>
+        </div>
+      </div>
         </div>
         <button 
           onClick={handleEmptyTrash}

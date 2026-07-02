@@ -1,6 +1,7 @@
 import React from 'react';
-import { Star, Trash2, CheckCircle, XCircle, MessageSquare, Loader2 } from 'lucide-react';
+import { Star, Trash2, CheckCircle, XCircle, MessageSquare, Loader2 , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
+import BackButton from '../../../components/BackButton';
 import { 
   useGetAdminMovieReviewsQuery, 
   useModerateMovieReviewMutation, 

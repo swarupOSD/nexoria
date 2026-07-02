@@ -1,10 +1,11 @@
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Star, Trash2 } from 'lucide-react';
+import { CheckCircle, XCircle, Star, Trash2 , LayoutTemplate } from 'lucide-react';
 import { useState } from 'react';
 
 import { useGetRatingsQuery, useDeleteRatingMutation, useModerateRatingMutation } from '../../features/rating/ratingApiSlice';
+import BackButton from '../../components/BackButton';
 
 const AdminRatings = () => {
   const { data: ratingsRes, isLoading } = useGetRatingsQuery();
@@ -40,10 +41,18 @@ const AdminRatings = () => {
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">Ratings Management</h1>
-          <p className="text-slate-400 text-sm mt-1">Review user ratings and moderate suspicious voting activity.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Ratings Management
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Review user ratings and moderate suspicious voting activity.</p>
+          </div>
         </div>
+      </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}

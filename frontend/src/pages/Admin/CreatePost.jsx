@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Save, Globe, Eye, UploadCloud, Plus, Trash2, Settings, 
   Tag, Download, FileText, Image as ImageIcon, CheckCircle, Smartphone
-} from 'lucide-react';
+, LayoutTemplate } from 'lucide-react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -25,6 +25,7 @@ import {
 import { useGetCategoriesQuery } from "../../features/category/categoryApiSlice";
 import ImageUpload from "../../components/ImageUpload";
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const MenuBar = ({ editor }) => {
   if (!editor) return null;
@@ -460,10 +461,18 @@ const CreatePost = () => {
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass p-4 rounded-2xl sticky top-0 z-40 border border-slate-200 dark:border-slate-800 backdrop-blur-xl">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">{isEditing ? 'Edit Post' : 'Create New Post'}</h1>
-          <p className="text-slate-500 text-sm mt-1">Fill in the details to publish a new app or mod.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              {isEditing ? 'Edit Post' : 'Create New Post'}
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Fill in the details to publish a new app or mod.</p>
+          </div>
         </div>
+      </div>
         <div className="flex flex-wrap gap-3 mt-4 md:mt-0">
           <button 
             type="button"

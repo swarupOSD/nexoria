@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Search, CheckCircle, Trash2, Mail, XCircle } from 'lucide-react';
+import { Search, CheckCircle, Trash2, Mail, XCircle , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 import { 
   useGetContactMessagesQuery, 
   useResolveContactMessageMutation, 
@@ -49,10 +50,18 @@ const AdminContactMessages = () => {
       <Helmet><title>Contact Messages - Admin</title></Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">Contact Messages</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage inquiries from users and visitors.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Contact Messages
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Manage inquiries from users and visitors.</p>
+          </div>
         </div>
+      </div>
         
         <form onSubmit={handleSearch} className="relative">
           <input 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useGetAdminMoviesQuery, useUpdateMovieMutation } from '../../../features/movie/movieApiSlice';
 import { toast } from 'react-hot-toast';
-import { ChevronDown, Plus, Edit, Trash2, Save, X, Film, Search } from 'lucide-react';
+import { ChevronDown, Plus, Edit, Trash2, Save, X, Film, Search , LayoutTemplate } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '../../../components/BackButton';
 
 const MovieSeriesManager = ({ type = 'Web Series' }) => {
   const [searchTerm, setSearchTerm] = useState('');

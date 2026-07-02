@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Loader2 , LayoutTemplate } from 'lucide-react';
 import { 
   useGetAllCategoriesQuery, 
   useCreateCategoryMutation, 
@@ -9,6 +9,7 @@ import {
   useDeleteCategoryMutation 
 } from "../../features/category/categoryApiSlice";
 import { toast } from 'react-hot-toast';
+import BackButton from '../../components/BackButton';
 
 const AdminCategories = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,10 +113,18 @@ const AdminCategories = () => {
 
       {/* Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">Categories</h1>
-          <p className="text-slate-500 text-sm mt-1">Organize your content with categories.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Categories
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Organize your content with categories.</p>
+          </div>
         </div>
+      </div>
         <button 
           onClick={() => handleOpenModal()}
           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-blue-500/30 text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max"

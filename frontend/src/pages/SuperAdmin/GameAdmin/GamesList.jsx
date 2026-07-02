@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink , LayoutTemplate } from 'lucide-react';
 import { useGetGamesQuery, useDeleteGameMutation } from '../../../features/games/gameApiSlice';
 import toast from 'react-hot-toast';
+import BackButton from '../../../components/BackButton';
 
 const GamesList = () => {
   const { data: res, isLoading } = useGetGamesQuery();

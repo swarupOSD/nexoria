@@ -3,7 +3,8 @@ import { toast } from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGetAllPlansQuery, useCreatePlanMutation, useUpdatePlanMutation, useDeletePlanMutation } from '../../features/api/planApiSlice';
-import { Plus, Edit2, Trash2, X, Check } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Check , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 
 const ManagePlans = () => {
   const { data: plansRes, isLoading, refetch } = useGetAllPlansQuery();
@@ -64,10 +65,18 @@ const ManagePlans = () => {
       </Helmet>
 
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold dark:text-white">Premium Plans</h1>
-          <p className="text-slate-500 text-sm mt-1">Configure subscription plans for users.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Premium Plans
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Configure subscription plans for users.</p>
+          </div>
         </div>
+      </div>
         <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 font-semibold text-sm transition shadow-lg shadow-blue-500/30">
           <Plus className="w-4 h-4" /> Create Plan
         </button>

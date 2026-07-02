@@ -1,6 +1,7 @@
 import React from 'react';
-import { History, Loader2, Clock } from 'lucide-react';
+import { History, Loader2, Clock , LayoutTemplate } from 'lucide-react';
 import { useGetMovieWatchHistoryQuery } from '../../../features/movie/movieApiSlice';
+import BackButton from '../../../components/BackButton';
 
 export default function MovieWatchHistoryAdmin() {
   const { data: res, isLoading } = useGetMovieWatchHistoryQuery();

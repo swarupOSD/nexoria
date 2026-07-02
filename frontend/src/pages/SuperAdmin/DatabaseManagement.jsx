@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Download, RefreshCcw, HardDrive, Clock, ShieldAlert, X } from 'lucide-react';
+import { Database, Download, RefreshCcw, HardDrive, Clock, ShieldAlert, X , LayoutTemplate } from 'lucide-react';
+import BackButton from '../../components/BackButton';
 
 const DatabaseManagement = () => {
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
@@ -20,9 +21,17 @@ const DatabaseManagement = () => {
         <title>Database Management - Super Admin</title>
       </Helmet>
 
-      <div>
-        <h1 className="text-2xl font-bold dark:text-white">Database Management</h1>
-        <p className="text-slate-500 text-sm mt-1">Backup, restore, and schedule MongoDB snapshots.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              Database Management
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Backup, restore, and schedule MongoDB snapshots.</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
