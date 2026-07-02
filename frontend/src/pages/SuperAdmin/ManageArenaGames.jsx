@@ -25,7 +25,8 @@ const ManageArenaGames = () => {
     description: '',
     iframeUrl: '',
     thumbnail: '',
-    isActive: true
+    isActive: true,
+    isVip: false
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
@@ -43,7 +44,8 @@ const ManageArenaGames = () => {
         description: game.description,
         iframeUrl: game.iframeUrl,
         thumbnail: game.thumbnail,
-        isActive: game.isActive
+        isActive: game.isActive,
+        isVip: game.isVip || false
       });
     } else {
       setEditMode(false);
@@ -53,7 +55,8 @@ const ManageArenaGames = () => {
         description: '',
         iframeUrl: '',
         thumbnail: '',
-        isActive: true
+        isActive: true,
+        isVip: false
       });
     }
     setIsModalOpen(true);
@@ -338,13 +341,23 @@ const ManageArenaGames = () => {
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
-                <div className="flex items-center gap-3 pt-2">
-                  <input 
-                    type="checkbox" id="isActive"
-                    checked={formData.isActive} onChange={e => setFormData({...formData, isActive: e.target.checked})}
-                    className="w-5 h-5 rounded border-white/20 bg-black/50 text-primary focus:ring-primary focus:ring-offset-0"
-                  />
-                  <label htmlFor="isActive" className="text-sm font-medium text-white cursor-pointer">Active (Visible to users)</label>
+                <div className="flex flex-wrap items-center gap-6 pt-2">
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox" id="isActive"
+                      checked={formData.isActive} onChange={e => setFormData({...formData, isActive: e.target.checked})}
+                      className="w-5 h-5 rounded border-white/20 bg-black/50 text-primary focus:ring-primary focus:ring-offset-0"
+                    />
+                    <label htmlFor="isActive" className="text-sm font-medium text-white cursor-pointer">Active</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox" id="isVip"
+                      checked={formData.isVip} onChange={e => setFormData({...formData, isVip: e.target.checked})}
+                      className="w-5 h-5 rounded border-amber-500/50 bg-black/50 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
+                    />
+                    <label htmlFor="isVip" className="text-sm font-bold text-amber-500 cursor-pointer">👑 VIP Exclusive</label>
+                  </div>
                 </div>
 
                 <div className="flex gap-3 pt-4 mt-2 border-t border-white/10">

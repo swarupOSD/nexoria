@@ -22,6 +22,10 @@ const arenaGameSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isVip: {
+    type: Boolean,
+    default: false,
+  },
   createdBy: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
