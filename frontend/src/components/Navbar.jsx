@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, 
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -328,7 +328,10 @@ const Navbar = () => {
             </Link>
 
             <Link to="/premium" className={`font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
-              Premium
+              Premium 💎
+            </Link>
+            <Link to="/vip-games" className={`font-bold transition-colors ${location.pathname === '/vip-games' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
+              VIP Arcade 👑
             </Link>
 
             {/* Advanced Search Bar */}
@@ -647,8 +650,11 @@ const Navbar = () => {
                     <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-indigo-500" /> Requests
                     </Link>
-                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
-                      <Star className="w-5 h-5 text-amber-500 fill-current" /> Go Premium
+                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-2xl font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
+                      <Star className="w-5 h-5" /> Premium 💎
+                    </Link>
+                    <Link to="/vip-games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
+                      <Crown className="w-5 h-5" /> VIP Arcade 👑
                     </Link>
                   </div>
 

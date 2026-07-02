@@ -58,6 +58,7 @@ import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
 import PrivateRoute from './components/PrivateRoute';
 import Games from './pages/Games';
+import VIPGames from './pages/VIPGames';
 import NexoriaArena from './pages/NexoriaArena';
 
 import { useEffect, Suspense, lazy } from 'react';
@@ -235,6 +236,7 @@ function App() {
                 <Route path="post/:slug" element={<SinglePost />} />
                 <Route path="download/:slug" element={<DownloadFlow />} />
                 <Route path="premium" element={<Premium />} />
+                <Route path="/vip-games" element={<VIPGames />} />
                 
                 {/* User Dashboard Routes */}
                 <Route path="dashboard" element={<UserDashboard />} />
