@@ -186,15 +186,13 @@ const GlobalChatBubble = () => {
                           <Trophy className="w-3 h-3 text-amber-400" />
                         )}
                       </div>
-                      
-                      {/* Message Bubble */}
                       <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
-                        isMe 
-                          ? 'bg-purple-600 text-white rounded-tr-sm' 
-                          : msg.sender?.role === 'super_admin' || msg.sender?.role === 'admin'
-                            ? 'bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 rounded-tl-sm shadow-[0_0_15px_rgba(244,63,94,0.15)]'
-                            : msg.sender?.isPremium
-                              ? 'bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 rounded-tl-sm'
+                        msg.sender?.role === 'super_admin' || msg.sender?.role === 'admin'
+                          ? `bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                          : msg.sender?.isPremium
+                            ? `bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                            : isMe 
+                              ? 'bg-purple-600 text-white rounded-tr-sm' 
                               : 'bg-slate-800 text-slate-200 border border-slate-700/50 rounded-tl-sm'
                       }`}>
                         {editingId === msg._id ? (
