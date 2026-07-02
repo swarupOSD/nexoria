@@ -40,6 +40,22 @@ const NexoriaArena = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  const getEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+      const urlObj = new URL(url);
+      if (urlObj.hostname.includes('crazygames.com')) {
+        // Convert /game/slug to /embed/slug
+        if (urlObj.pathname.startsWith('/game/')) {
+          return url.replace('/game/', '/embed/');
+        }
+      }
+      return url;
+    } catch (e) {
+      return url;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-24 pb-12 px-4 relative flex flex-col items-center">
       <SEO title={activeGame ? `${activeGame.title} | Nexoria Arena` : "Nexoria Arena | Live Gaming"} />
@@ -121,7 +137,7 @@ const NexoriaArena = () => {
 
                 <div className="w-full aspect-square md:aspect-video min-h-[400px] bg-black rounded-2xl overflow-hidden relative">
                   <iframe 
-                    src={activeGame.iframeUrl} 
+                    src={getEmbedUrl(activeGame.iframeUrl)} 
                     className="w-full h-full border-none bg-black"
                     title={activeGame.title}
                     allow="autoplay; fullscreen; focus-without-user-activation *;"
