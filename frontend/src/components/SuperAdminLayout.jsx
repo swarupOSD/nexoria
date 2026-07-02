@@ -111,6 +111,7 @@ const SuperAdminLayout = () => {
       title: 'Nexoria Arcade (Games)',
       items: [
         { name: 'Games Management', icon: <Gamepad2 className="w-4 h-4" />, path: '/superadmin/games' },
+        { name: 'Arena Games', icon: <Swords className="w-4 h-4 text-orange-400" />, path: '/superadmin/arena-games' },
         { name: 'Arcade Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/categories' },
       ]
     },

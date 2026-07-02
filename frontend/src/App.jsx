@@ -131,6 +131,7 @@ const AdminMovieSeriesManager = lazy(() => import('./pages/SuperAdmin/MovieAdmin
 const AdminGamesList = lazy(() => import('./pages/SuperAdmin/GameAdmin/GamesList'));
 const AdminAddGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/AddGame'));
 const AdminEditGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/EditGame'));
+const ManageArenaGames = lazy(() => import('./pages/SuperAdmin/ManageArenaGames'));
 
 // Loader component for suspense fallback
 const PageLoader = () => (
@@ -374,6 +375,7 @@ function App() {
             <Route path="games" element={<AdminGamesList />} />
             <Route path="games/add" element={<AdminAddGame />} />
             <Route path="games/edit/:id" element={<AdminEditGame />} />
+            <Route path="arena-games" element={<ManageArenaGames />} />
           </Route>
         </Routes>
       </Suspense>

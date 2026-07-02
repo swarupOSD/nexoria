@@ -150,6 +150,7 @@ import scraperRoutes from './routes/scraperRoutes.js';
 import trashRoutes from './routes/trashRoutes.js';
 import auraRoutes from './routes/auraRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
+import arenaGameRoutes from './routes/arenaGameRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -198,6 +199,7 @@ app.use('/api/movie-settings', movieSettingsRoutes);
 app.use('/api/movie-admin', movieAdminRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/arena-games', arenaGameRoutes);
 app.use('/api/watch-history', watchHistoryRoutes);
 app.use('/api/music', musicRoutes);
 app.use('/api/admin/scraper', scraperRoutes);
