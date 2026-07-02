@@ -160,6 +160,10 @@ const userSchema = new mongoose.Schema(
       ref: 'User',
       default: null,
     },
+    fcmTokens: {
+      type: [String],
+      default: [],
+    },
     referralCount: {
       type: Number,
       default: 0,

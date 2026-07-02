@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Send, Clock, Calendar, Users, Smartphone, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { useLaunchCampaignMutation } from '../../../features/campaign/campaignApiSlice';
 
 const PushCampaigns = () => {
+  const [launchCampaign, { isLoading: isSending }] = useLaunchCampaignMutation();
   const [formData, setFormData] = useState({
     title: '',
     message: '',
@@ -13,29 +16,22 @@ const PushCampaigns = () => {
     actionLink: ''
   });
 
-  const [isSending, setIsSending] = useState(false);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.message) {
       toast.error('Title and message are required.');
       return;
     }
     
-    setIsSending(true);
     toast.loading('Preparing campaign...', { id: 'push' });
     
-    // Simulate backend call
-    setTimeout(() => {
-      toast.success(
-        formData.scheduleType === 'Now' 
-          ? 'Push notifications sent to active devices!' 
-          : 'Campaign scheduled successfully!', 
-        { id: 'push' }
-      );
-      setIsSending(false);
+    try {
+      const res = await launchCampaign(formData).unwrap();
+      toast.success(res.message || 'Push notifications sent to active devices!', { id: 'push' });
       setFormData({ title: '', message: '', targetAudience: 'All Users', scheduleType: 'Now', scheduledTime: '', actionLink: '' });
-    }, 2000);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to send campaign', { id: 'push' });
+    }
   };
 
   return (

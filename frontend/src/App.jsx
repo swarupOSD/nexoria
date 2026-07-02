@@ -61,6 +61,7 @@ import NexoriaArena from './pages/NexoriaArena';
 
 import { useEffect, Suspense, lazy } from 'react';
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
+import usePushNotifications from './hooks/usePushNotifications';
 
 // Admin routes (Lazy Loaded)
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
@@ -168,6 +169,9 @@ function App() {
 
   // Initialize Easter Egg Hook
   useKonamiCode();
+
+  // Initialize Push Notifications
+  usePushNotifications();
 
   useEffect(() => {
     if (settings.favicon) {

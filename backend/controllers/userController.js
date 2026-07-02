@@ -258,6 +258,29 @@ export const unsubscribeFromPush = async (req, res) => {
   }
 };
 
+// @desc    Update FCM Token for Push Notifications
+// @route   POST /api/users/fcm-token
+// @access  Private
+export const updateFCMToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    if (!fcmToken) return res.status(400).json({ success: false, message: 'FCM Token required' });
+
+    const user = await User.findById(req.user.id);
+    
+    // Add token if it doesn't exist
+    if (!user.fcmTokens.includes(fcmToken)) {
+      user.fcmTokens.push(fcmToken);
+      await user.save();
+    }
+
+    res.status(200).json({ success: true, message: 'FCM Token updated' });
+  } catch (error) {
+    logger.error(`Update FCM Token Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
 // @desc    Remove post from wishlist
 // @route   DELETE /api/users/me/wishlist/:postId
 // @access  Private

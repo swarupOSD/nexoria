@@ -18,6 +18,7 @@ import { csrfTokenRoute } from './middlewares/csrf.js';
 import { startPremiumExpiryJob } from './utils/premiumExpiryJob.js';
 import { startUserExpiryJob } from './utils/userExpiryJob.js';
 import { securityGuard } from './middlewares/securityGuard.js';
+import { initFirebase } from './utils/firebase.js';
 
 dotenv.config();
 
@@ -30,6 +31,9 @@ connectDB().then(() => {
     // Start automated jobs
     startPremiumExpiryJob();
     startUserExpiryJob();
+    
+    // Initialize Firebase
+    initFirebase();
   }
 });
 
@@ -145,6 +149,7 @@ import musicRoutes from './routes/musicRoutes.js';
 import scraperRoutes from './routes/scraperRoutes.js';
 import trashRoutes from './routes/trashRoutes.js';
 import auraRoutes from './routes/auraRoutes.js';
+import campaignRoutes from './routes/campaignRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -197,6 +202,7 @@ app.use('/api/watch-history', watchHistoryRoutes);
 app.use('/api/music', musicRoutes);
 app.use('/api/admin/scraper', scraperRoutes);
 app.use('/api/aura', auraRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 import path from 'path';
 

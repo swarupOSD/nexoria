@@ -79,6 +79,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       })
     }),
+    updateFCMToken: builder.mutation({
+      query: (data) => ({
+        url: '/users/fcm-token',
+        method: 'POST',
+        body: data,
+      })
+    }),
   }),
 });
 
@@ -95,4 +102,5 @@ export const {
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
   useSubscribeToPushMutation,
+  useUpdateFCMTokenMutation,
 } = userApiSlice;
