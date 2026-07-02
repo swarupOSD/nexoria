@@ -40,10 +40,16 @@ const DownloadTimer = () => {
     setTimeLeft(30);
     setCanProceed(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Open Adsterra Smartlink silently in a new tab
+    window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
   };
 
   const handleDownload = async () => {
     try {
+      // Open Adsterra Smartlink silently in a new tab
+      window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+      
       const res = await trackDownload({ postId: state.postId, linkId: state.linkId }).unwrap();
       if (res.downloadUrl) {
         window.location.href = res.downloadUrl;
