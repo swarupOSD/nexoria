@@ -8,7 +8,7 @@ const AdsterraManager = () => {
     // Determine if the user should see ads
     // Ads are hidden if the user is a Premium User, Admin, or Super Admin
     const isPremium = user?.isPremium;
-    const isElevatedRole = user?.role === 'admin' || user?.role === 'super_admin';
+    const isElevatedRole = user?.role === 'admin' || user?.role === 'superadmin';
     const shouldShowAds = !isPremium && !isElevatedRole;
 
     if (!shouldShowAds) {
