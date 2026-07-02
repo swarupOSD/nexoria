@@ -5,6 +5,7 @@ import { useGetGamesQuery } from '../features/games/gameApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useGetSongsQuery } from '../features/api/musicApiSlice';
 import { useGetMoviesQuery } from '../features/movie/movieApiSlice';
+import { useGetActiveArenaGamesQuery } from '../features/arenaGame/arenaGameApiSlice';
 import { Crown, Lock, Star, Play, Coins, ExternalLink, Gamepad2, Smartphone, Music, Clapperboard } from 'lucide-react';
 import { AuraBadge } from '../components/AuraScore';
 
@@ -19,17 +20,20 @@ const VIPLounge = () => {
   const { data: postsRes, isLoading: isLoadingPosts } = useGetPostsQuery({ limit: 100 });
   const { data: songsRes, isLoading: isLoadingSongs } = useGetSongsQuery();
   const { data: moviesRes, isLoading: isLoadingMovies } = useGetMoviesQuery({ limit: 100 });
+  const { data: arenaGamesRes, isLoading: isLoadingArena } = useGetActiveArenaGamesQuery();
 
   const isVIP = user?.isPremium || user?.role === 'admin' || user?.role === 'superadmin';
 
   // Filter VIP Items
   const vipGames = (gamesRes?.data || []).filter(item => item.isVip);
+  const vipArenaGames = (arenaGamesRes?.data || []).filter(item => item.isVip);
+  const allVipGames = [...vipGames, ...vipArenaGames];
   const vipApps = (postsRes?.data?.posts || []).filter(item => item.isVip);
   const vipSongs = (songsRes?.data || songsRes || []).filter(item => item.isVip);
   const vipMovies = (moviesRes?.data?.movies || []).filter(item => item.isVip);
 
   const tabs = [
-    { id: 'games', label: 'VIP Games', icon: <Gamepad2 className="w-5 h-5" />, count: vipGames.length },
+    { id: 'games', label: 'VIP Games', icon: <Gamepad2 className="w-5 h-5" />, count: allVipGames.length },
     { id: 'apps', label: 'VIP Apps', icon: <Smartphone className="w-5 h-5" />, count: vipApps.length },
     { id: 'music', label: 'VIP Music', icon: <Music className="w-5 h-5" />, count: vipSongs.length },
     { id: 'movies', label: 'VIP Movies', icon: <Clapperboard className="w-5 h-5" />, count: vipMovies.length },
@@ -37,11 +41,11 @@ const VIPLounge = () => {
 
   const renderContent = () => {
     if (activeTab === 'games') {
-      if (isLoadingGames) return <Loader />;
-      if (vipGames.length === 0) return <EmptyState label="VIP Games" />;
+      if (isLoadingGames || isLoadingArena) return <Loader />;
+      if (allVipGames.length === 0) return <EmptyState label="VIP Games" />;
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {vipGames.map((game) => (
+          {allVipGames.map((game) => (
             <GameCard key={game._id} item={game} />
           ))}
         </div>
@@ -176,8 +180,8 @@ const GameCard = ({ item }) => (
   <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 md:blur-3xl blur-xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
     <div className="relative aspect-video bg-black/50 overflow-hidden border-b border-amber-500/10">
-      {item.banner || item.logo ? (
-        <img src={item.banner || item.logo} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+      {item.banner || item.logo || item.thumbnail ? (
+        <img src={item.banner || item.logo || item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-900/40 to-orange-900/40">
           <span className="text-4xl font-bold text-amber-500/50">{item.title?.charAt(0)}</span>
@@ -196,13 +200,21 @@ const GameCard = ({ item }) => (
     <div className="p-4 relative z-10">
       <div className="flex items-start justify-between gap-2 mb-2">
         <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1">{item.title}</h3>
-        <div className="flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 rounded shrink-0 border border-amber-500/20">
-          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-          <span className="text-xs font-bold text-amber-500">{item.rating || '0'}</span>
-        </div>
+        {item.rating && (
+          <div className="flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 rounded shrink-0 border border-amber-500/20">
+            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+            <span className="text-xs font-bold text-amber-500">{item.rating}</span>
+          </div>
+        )}
       </div>
       <p className="text-sm text-slate-400 line-clamp-2 mb-5">{item.description || 'Exclusive VIP Game.'}</p>
-      <button onClick={() => window.open(item.githubLink, '_blank')} className="w-full px-4 py-3 flex justify-center items-center gap-2 text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500 hover:to-orange-500 text-amber-500 hover:text-white border border-amber-500/30 hover:border-transparent">
+      <button onClick={() => {
+        if(item.iframeUrl) {
+          window.location.href = `/arena`; // Simple redirect to arena
+        } else {
+          window.open(item.githubLink, '_blank');
+        }
+      }} className="w-full px-4 py-3 flex justify-center items-center gap-2 text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500 hover:to-orange-500 text-amber-500 hover:text-white border border-amber-500/30 hover:border-transparent">
         Play Now <ExternalLink className="w-4 h-4" />
       </button>
     </div>
