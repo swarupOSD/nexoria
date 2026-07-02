@@ -84,25 +84,33 @@ const ManageArenaGames = () => {
     try {
       const result = await scrapeApp({ url: sourceUrl }).unwrap();
       
-      // Try to construct iframe URL if it's gamepix or use embedUrl from scraper
+      // Try to construct iframe URL for known providers first
       let iframeUrl = formData.iframeUrl;
-      if (result.embedUrl) {
-        iframeUrl = result.embedUrl;
-      } else if (sourceUrl) {
+      let isKnownProvider = false;
+      
+      if (sourceUrl) {
         try {
           const urlObj = new URL(sourceUrl);
           const slug = urlObj.pathname.split('/').filter(Boolean).pop();
           
           if (sourceUrl.includes('gamepix.com') && slug) {
             iframeUrl = `https://play.gamepix.com/${slug}/embed`;
+            isKnownProvider = true;
           } else if (sourceUrl.includes('crazygames.com') && slug) {
             iframeUrl = `https://games.crazygames.com/en_US/${slug}/index.html`;
+            isKnownProvider = true;
           } else if (sourceUrl.includes('poki.com') && slug) {
             iframeUrl = `https://poki.com/en/g/${slug}`;
+            isKnownProvider = true;
           }
         } catch (e) {
           // ignore invalid urls
         }
+      }
+
+      // Fallback to scraper's embedUrl if not a known provider and not a YouTube trailer
+      if (!isKnownProvider && result.embedUrl && !result.embedUrl.includes('youtube.com')) {
+        iframeUrl = result.embedUrl;
       }
 
       setFormData(prev => ({
