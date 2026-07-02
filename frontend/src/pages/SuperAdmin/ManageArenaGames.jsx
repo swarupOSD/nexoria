@@ -88,11 +88,20 @@ const ManageArenaGames = () => {
       let iframeUrl = formData.iframeUrl;
       if (result.embedUrl) {
         iframeUrl = result.embedUrl;
-      } else if (sourceUrl.includes('gamepix.com') || sourceUrl.includes('gamebol.com')) {
-        const slugMatch = sourceUrl.match(/play\/([^\/]+)/);
-        if (slugMatch && slugMatch[1]) {
-          // generic embed constructor for Gamepix/Gamebol
-          iframeUrl = sourceUrl.includes('gamepix') ? `https://play.gamepix.com/${slugMatch[1]}/embed` : `https://www.gamebol.com/embed/${slugMatch[1]}`;
+      } else if (sourceUrl) {
+        try {
+          const urlObj = new URL(sourceUrl);
+          const slug = urlObj.pathname.split('/').filter(Boolean).pop();
+          
+          if (sourceUrl.includes('gamepix.com') && slug) {
+            iframeUrl = `https://play.gamepix.com/${slug}/embed`;
+          } else if (sourceUrl.includes('crazygames.com') && slug) {
+            iframeUrl = `https://games.crazygames.com/en_US/${slug}/index.html`;
+          } else if (sourceUrl.includes('poki.com') && slug) {
+            iframeUrl = `https://poki.com/en/g/${slug}`;
+          }
+        } catch (e) {
+          // ignore invalid urls
         }
       }
 
@@ -273,7 +282,9 @@ const ManageArenaGames = () => {
                       {isScraping ? 'Fetching...' : 'Fetch'}
                     </button>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2">Fetches Title, Description, Thumbnail, and attempts to guess Iframe Embed URL.</p>
+                  <p className="text-xs text-slate-500 mt-2">
+                    <span className="text-amber-500 font-bold">Recommended:</span> Use <b>GamePix.com</b> or <b>CrazyGames.com</b> links. Some sites like Gamebol do not support clean embedding and will show their full website instead of just the game.
+                  </p>
                 </div>
 
                 <div>
