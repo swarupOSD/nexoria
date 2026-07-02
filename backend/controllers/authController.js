@@ -549,6 +549,9 @@ export const updateProfile = async (req, res) => {
     if (req.body.profileTheme !== undefined) {
       user.profileTheme = req.body.profileTheme;
     }
+    if (req.body.genderIdentity !== undefined) {
+      user.genderIdentity = req.body.genderIdentity;
+    }
     if (req.body.socialLinks !== undefined) {
       user.socialLinks = { ...user.socialLinks, ...req.body.socialLinks };
     }
@@ -581,6 +584,7 @@ export const updateProfile = async (req, res) => {
         longestStreak: user.longestStreak || 0,
         profileTheme: user.profileTheme || 'default',
         auraRank: user.auraRank || 'Rookie',
+        genderIdentity: user.genderIdentity || 'Not specified',
         createdAt: user.createdAt
       }
     });

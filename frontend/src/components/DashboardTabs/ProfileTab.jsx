@@ -18,6 +18,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
     username: user?.username || '',
     bio: user?.bio || '',
     email: user?.email || '',
+    genderIdentity: user?.genderIdentity || 'Not specified',
     socialLinks: {
       telegram: user?.socialLinks?.telegram || '',
       whatsapp: user?.socialLinks?.whatsapp || '',
@@ -68,6 +69,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
         username: formData.username,
         bio: formData.bio,
         email: formData.email,
+        genderIdentity: formData.genderIdentity,
         socialLinks: formData.socialLinks,
       };
 
@@ -228,13 +230,39 @@ const ProfileTab = ({ user, token, refetchUser }) => {
                 </div>
               </div>
               
-              <div>
-                <label className="block text-sm font-semibold text-slate-500 mb-1.5">Email Address</label>
-                {isEditing ? (
-                  <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="premium-input w-full" />
-                ) : (
-                  <p className="font-bold dark:text-white">{user?.email}</p>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1.5">Email Address</label>
+                  {isEditing ? (
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="premium-input w-full" />
+                  ) : (
+                    <p className="font-bold dark:text-white">{user?.email}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-500 mb-1.5">Gender / Identity</label>
+                  {isEditing ? (
+                    <select 
+                      value={formData.genderIdentity} 
+                      onChange={(e) => setFormData({...formData, genderIdentity: e.target.value})}
+                      className="premium-input w-full"
+                    >
+                      <option value="Not specified">Prefer not to say</option>
+                      <option value="Men">Men</option>
+                      <option value="Women">Women</option>
+                      <option value="Gay">Gay</option>
+                      <option value="Lesbian">Lesbian</option>
+                      <option value="Bisexual">Bisexual</option>
+                      <option value="Transgender">Transgender</option>
+                      <option value="Non-binary">Non-binary</option>
+                      <option value="Pansexual">Pansexual</option>
+                      <option value="Asexual">Asexual</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  ) : (
+                    <p className="font-bold dark:text-white">{user?.genderIdentity || 'Not specified'}</p>
+                  )}
+                </div>
               </div>
 
               <div>

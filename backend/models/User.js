@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
       default: '',
       maxLength: [160, 'Bio cannot exceed 160 characters']
     },
+    genderIdentity: {
+      type: String,
+      default: 'Not specified'
+    },
     email: {
       type: String,
       required: [true, 'Please add an email'],
