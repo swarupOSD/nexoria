@@ -107,6 +107,7 @@ const movieSchema = new mongoose.Schema(
     },
     isFeatured: { type: Boolean, default: false, index: true },
     isTrending: { type: Boolean, default: false, index: true },
+    isVip: { type: Boolean, default: false },
     appType: { // To match existing premium architecture checks where possible
       type: String,
       enum: ['Free', 'Premium', 'Paid'],

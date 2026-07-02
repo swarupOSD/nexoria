@@ -132,6 +132,7 @@ const CreatePost = () => {
     isFeatured: false,
     isTrending: false,
     isPopular: false,
+    isVip: false,
     editorChoice: false,
     changelog: '',
     expectedReleaseDate: '',
@@ -256,6 +257,7 @@ const CreatePost = () => {
         isFeatured: post.isFeatured || false,
         isTrending: post.isTrending || false,
         isPopular: post.isPopular || false,
+        isVip: post.isVip || false,
         editorChoice: post.editorChoice || false,
         changelog: post.changelog || '',
         expectedReleaseDate: post.expectedReleaseDate ? new Date(post.expectedReleaseDate).toISOString().split('T')[0] : '',
@@ -420,6 +422,7 @@ const CreatePost = () => {
         isFeatured: formData.isFeatured,
         isTrending: formData.isTrending,
         isPopular: formData.isPopular,
+        isVip: formData.isVip,
         editorChoice: formData.editorChoice,
         changelog: formData.changelog,
         expectedReleaseDate: formData.expectedReleaseDate || null,
@@ -767,6 +770,10 @@ const CreatePost = () => {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})} className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500" />
                   <span className="text-sm font-semibold dark:text-slate-300">Featured App</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer ml-4">
+                  <input type="checkbox" name="isVip" checked={formData.isVip} onChange={(e) => setFormData({...formData, isVip: e.target.checked})} className="w-5 h-5 rounded border-amber-500/50 text-amber-500 focus:ring-amber-500 bg-amber-500/10" />
+                  <span className="text-sm font-bold text-amber-500">👑 VIP App</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" name="isTrending" checked={formData.isTrending} onChange={(e) => setFormData({...formData, isTrending: e.target.checked})} className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500" />

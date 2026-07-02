@@ -21,7 +21,7 @@ const AddMovie = ({ type = 'Movie' }) => {
   const [formData, setFormData] = useState({
     title: '', originalTitle: '', slug: '', category: '', 
     status: 'Draft', visibilityStatus: 'Public', appType: 'Free',
-    price: 0, isFeatured: false, isTrending: false,
+    price: 0, isFeatured: false, isTrending: false, isVip: false,
     shortDescription: '', description: '',
     
     // Media Info
@@ -154,7 +154,7 @@ const AddMovie = ({ type = 'Movie' }) => {
         </div>
       )}
 
-      <div className="flex gap-6">
+      <div className="flex flex-wrap gap-6">
         <label className="flex items-center gap-2 cursor-pointer text-slate-300">
           <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="w-4 h-4 rounded border-white/10 bg-[#111] text-purple-600 focus:ring-purple-600 focus:ring-offset-[#111]" />
           Featured Movie
@@ -162,6 +162,10 @@ const AddMovie = ({ type = 'Movie' }) => {
         <label className="flex items-center gap-2 cursor-pointer text-slate-300">
           <input type="checkbox" name="isTrending" checked={formData.isTrending} onChange={handleChange} className="w-4 h-4 rounded border-white/10 bg-[#111] text-purple-600 focus:ring-purple-600 focus:ring-offset-[#111]" />
           Trending Movie
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer text-amber-500 font-bold ml-4 border border-amber-500/20 px-3 py-1 rounded-lg bg-amber-500/5">
+          <input type="checkbox" name="isVip" checked={formData.isVip} onChange={handleChange} className="w-5 h-5 rounded border-amber-500/50 bg-[#111] text-amber-500 focus:ring-amber-500 focus:ring-offset-[#111]" />
+          👑 VIP Exclusive
         </label>
       </div>
 

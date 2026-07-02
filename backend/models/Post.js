@@ -116,6 +116,7 @@ const postSchema = new mongoose.Schema(
     isTrending: { type: Boolean, default: false, index: true },
     isPopular: { type: Boolean, default: false },
     editorChoice: { type: Boolean, default: false },
+    isVip: { type: Boolean, default: false },
 
     // SEO
     seoTitle: String,

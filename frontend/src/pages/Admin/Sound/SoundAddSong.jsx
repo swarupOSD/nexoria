@@ -13,7 +13,7 @@ const SoundAddSong = () => {
 
   const [formData, setFormData] = useState({
     title: '', artist: '', album: '', category: 'Hindi', description: '',
-    image: '', audioUrl: '', isYoutube: false, duration: '', releaseYear: '', lyrics: ''
+    image: '', audioUrl: '', isYoutube: false, isVip: false, duration: '', releaseYear: '', lyrics: ''
   });
   
   const [scrapeUrl, setScrapeUrl] = useState('');
@@ -130,10 +130,14 @@ const SoundAddSong = () => {
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Audio URL (Direct MP3 or YouTube) *</label>
             <input required type="url" value={formData.audioUrl} onChange={e => setFormData({...formData, audioUrl: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-purple-500" />
           </div>
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 flex flex-wrap gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={formData.isYoutube} onChange={e => setFormData({...formData, isYoutube: e.target.checked})} className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Is this a YouTube Link?</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer ml-4">
+              <input type="checkbox" checked={formData.isVip} onChange={e => setFormData({...formData, isVip: e.target.checked})} className="w-5 h-5 rounded border-amber-500/50 text-amber-500 focus:ring-amber-500 bg-amber-500/10" />
+              <span className="text-sm font-bold text-amber-500">👑 VIP Music</span>
             </label>
           </div>
         </div>

@@ -330,8 +330,8 @@ const Navbar = () => {
             <Link to="/premium" className={`font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
               Premium 💎
             </Link>
-            <Link to="/vip-games" className={`font-bold transition-colors ${location.pathname === '/vip-games' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
-              VIP Arcade 👑
+            <Link to="/vip-lounge" className={`font-bold transition-colors ${location.pathname === '/vip-lounge' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
+              VIP Lounge 👑
             </Link>
 
             {/* Advanced Search Bar */}
@@ -653,8 +653,8 @@ const Navbar = () => {
                     <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-2xl font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
                       <Star className="w-5 h-5" /> Premium 💎
                     </Link>
-                    <Link to="/vip-games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
-                      <Crown className="w-5 h-5" /> VIP Arcade 👑
+                    <Link to="/vip-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
+                      <Crown className="w-5 h-5" /> VIP Lounge 👑
                     </Link>
                   </div>
 

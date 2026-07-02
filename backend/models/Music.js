@@ -84,6 +84,10 @@ const musicSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isVip: {
+    type: Boolean,
+    default: false
+  },
   allowDownload: {
     type: Boolean,
     default: false
