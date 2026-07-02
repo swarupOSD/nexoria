@@ -12,8 +12,8 @@ const VIPGames = () => {
 
   const isVIP = user?.isPremium || user?.role === 'admin' || user?.role === 'superadmin';
 
-  // Filter only premium (paid) games for the VIP section
-  const vipGames = (res?.data || []).filter(game => game.isPaid);
+  // Filter only premium (VIP) games for the VIP section
+  const vipGames = (res?.data || []).filter(game => game.isVip);
 
   if (isLoading) {
     return (

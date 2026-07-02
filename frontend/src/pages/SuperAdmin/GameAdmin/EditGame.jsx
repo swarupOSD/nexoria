@@ -24,6 +24,7 @@ const EditGame = () => {
     githubLink: '',
     videoUrl: '',
     isPaid: false,
+    isVip: false,
     price: 0,
   });
 
@@ -40,6 +41,7 @@ const EditGame = () => {
         githubLink: gameRes.data.githubLink || '',
         videoUrl: gameRes.data.videoUrl || '',
         isPaid: gameRes.data.isPaid || false,
+        isVip: gameRes.data.isVip || false,
         price: gameRes.data.price || 0,
       });
     }
@@ -145,6 +147,17 @@ const EditGame = () => {
                 className="w-5 h-5 rounded border-white/10 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 bg-black/50"
               />
               <span className="text-sm font-bold text-white">This is a Paid Game</span>
+            </label>
+
+            <label className="flex items-center gap-3 cursor-pointer mt-3">
+              <input
+                type="checkbox"
+                name="isVip"
+                checked={formData.isVip}
+                onChange={handleChange}
+                className="w-5 h-5 rounded border-white/10 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 bg-black/50"
+              />
+              <span className="text-sm font-bold text-amber-500 flex items-center gap-2">👑 Make this a VIP Exclusive Game</span>
             </label>
             
             {formData.isPaid && (
