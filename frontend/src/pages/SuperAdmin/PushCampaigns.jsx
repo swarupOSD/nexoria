@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Send, Clock, Calendar, Users, Smartphone, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { toast } from 'react-hot-toast';
-import { useLaunchCampaignMutation } from '../../../features/campaign/campaignApiSlice';
+import { useLaunchCampaignMutation } from '../../features/campaign/campaignApiSlice';
 
 const PushCampaigns = () => {
   const [launchCampaign, { isLoading: isSending }] = useLaunchCampaignMutation();
