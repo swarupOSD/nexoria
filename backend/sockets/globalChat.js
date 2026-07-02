@@ -44,4 +44,35 @@ export const registerGlobalChatHandlers = (io, socket) => {
       socket.emit('globalChatError', { message: 'Failed to send message.' });
     }
   });
+
+  socket.on('deleteGlobalMessage', async (messageId) => {
+    if (!socket.user) return;
+    try {
+      const message = await ChatMessage.findById(messageId);
+      if (!message || message.sender.toString() !== socket.user._id.toString()) return;
+      
+      message.isDeleted = true;
+      await message.save();
+      
+      io.to('globalChatRoom').emit('messageDeleted', messageId);
+    } catch (err) {
+      console.error('Error deleting message:', err);
+    }
+  });
+
+  socket.on('editGlobalMessage', async ({ messageId, newContent }) => {
+    if (!socket.user || !newContent.trim()) return;
+    try {
+      const message = await ChatMessage.findById(messageId);
+      if (!message || message.sender.toString() !== socket.user._id.toString()) return;
+      
+      message.message = newContent.trim();
+      message.isEdited = true;
+      await message.save();
+      
+      io.to('globalChatRoom').emit('messageEdited', { messageId, newContent: message.message });
+    } catch (err) {
+      console.error('Error editing message:', err);
+    }
+  });
 };

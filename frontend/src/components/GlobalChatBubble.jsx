@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ChevronDown, Trophy } from 'lucide-react';
+import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 
@@ -12,7 +12,8 @@ const GlobalChatBubble = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isConnected, setIsConnected] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState('');
   
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
@@ -50,11 +51,23 @@ const GlobalChatBubble = () => {
       scrollToBottom();
     });
 
+    socket.on('messageEdited', ({ messageId, newContent }) => {
+      setMessages((prev) => 
+        prev.map(m => m._id === messageId ? { ...m, message: newContent, isEdited: true } : m)
+      );
+    });
+
+    socket.on('messageDeleted', (messageId) => {
+      setMessages((prev) => prev.filter(m => m._id !== messageId));
+    });
+
     return () => {
       socket.off('connect');
       socket.off('disconnect');
       socket.off('globalChatHistory');
       socket.off('newGlobalMessage');
+      socket.off('messageEdited');
+      socket.off('messageDeleted');
     };
   }, []);
 
@@ -64,6 +77,17 @@ const GlobalChatBubble = () => {
     
     socket.emit('sendGlobalMessage', inputValue.trim());
     setInputValue('');
+  };
+
+  const handleDelete = (id) => {
+    socket.emit('deleteGlobalMessage', id);
+  };
+
+  const handleEditSubmit = (id) => {
+    if (!editValue.trim()) return;
+    socket.emit('editGlobalMessage', { messageId: id, newContent: editValue });
+    setEditingId(null);
+    setEditValue('');
   };
 
   const getRankColor = (rank) => {
@@ -83,7 +107,7 @@ const GlobalChatBubble = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => { setIsOpen(true); scrollToBottom(); }}
-        className={`fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all ${
+        className={`fixed bottom-6 left-6 z-[100] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all ${
           isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100 bg-gradient-to-tr from-purple-600 to-pink-500 hover:shadow-purple-500/50'
         }`}
       >
@@ -95,11 +119,11 @@ const GlobalChatBubble = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9, transformOrigin: 'bottom right' }}
+            initial={{ opacity: 0, y: 50, scale: 0.9, transformOrigin: 'bottom left' }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 right-6 z-[110] w-full max-w-sm h-[500px] sm:w-[380px] bg-[#0f1219] border border-slate-800 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
+            className="fixed bottom-6 left-6 z-[110] w-full max-w-sm h-[500px] sm:w-[380px] bg-[#0f1219] border border-slate-800 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800">
@@ -146,12 +170,36 @@ const GlobalChatBubble = () => {
                           <Trophy className="w-3 h-3 text-amber-400" />
                         )}
                       </div>
-                      <div className={`px-4 py-2 text-sm rounded-2xl ${
+                      <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
                         isMe 
                           ? 'bg-purple-600 text-white rounded-tr-sm' 
                           : 'bg-slate-800 text-slate-200 border border-slate-700/50 rounded-tl-sm'
                       }`}>
-                        {msg.message}
+                        {editingId === msg._id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={editValue}
+                              onChange={e => setEditValue(e.target.value)}
+                              className="bg-purple-700 text-white outline-none border-b border-white/50 w-full"
+                              autoFocus
+                              onKeyDown={(e) => e.key === 'Enter' && handleEditSubmit(msg._id)}
+                            />
+                            <button onClick={() => handleEditSubmit(msg._id)} className="text-white hover:text-green-300"><Check className="w-4 h-4" /></button>
+                            <button onClick={() => setEditingId(null)} className="text-white hover:text-red-300"><X className="w-4 h-4" /></button>
+                          </div>
+                        ) : (
+                          <>
+                            {msg.message}
+                            {msg.isEdited && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
+                            {isMe && (
+                              <div className="absolute top-1/2 -translate-y-1/2 -left-14 hidden group-hover:flex gap-1">
+                                <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
+                                <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

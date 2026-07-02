@@ -88,10 +88,10 @@ const PushCampaigns = () => {
                     onChange={e => setFormData({...formData, targetAudience: e.target.value})}
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-slate-900 dark:text-white appearance-none"
                   >
-                    <option>All Users</option>
-                    <option>Premium Members Only</option>
-                    <option>Inactive Users (30+ days)</option>
-                    <option>Android Devices Only</option>
+                    <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Users</option>
+                    <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Premium Members Only</option>
+                    <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Inactive Users (30+ days)</option>
+                    <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Android Devices Only</option>
                   </select>
                 </div>
               </div>
