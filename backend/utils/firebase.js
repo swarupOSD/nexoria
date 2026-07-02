@@ -7,8 +7,16 @@ let initialized = false;
 export const initFirebase = async () => {
   if (initialized) return;
   try {
-    const serviceAccountPath = path.resolve('./config/firebase-service-account.json');
-    const serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
+    let serviceAccount;
+    
+    // Try to load from Environment Variable first (for Render deployment)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    } else {
+      // Fallback to local file
+      const serviceAccountPath = path.resolve('./config/firebase-service-account.json');
+      serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
+    }
     
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
