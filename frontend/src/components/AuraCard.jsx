@@ -134,6 +134,27 @@ const AuraCard = () => {
             </div>
           </div>
         )}
+
+        {/* Earned Badges */}
+        {aura.badges && aura.badges.length > 0 && (
+          <div className="relative z-10 mt-6 pt-4 border-t border-white/10 flex justify-center gap-3">
+            {aura.badges.slice(0, 5).map(badge => {
+              let icon = '🏆';
+              if (badge === 'first_vibe') icon = '🎭';
+              if (badge === 'aura_legend') icon = '👑';
+              if (badge === 'streak_master') icon = '🔥';
+              if (badge === 'music_lover') icon = '🎧';
+              if (badge === 'app_tester') icon = '📱';
+              if (badge === 'social_butterfly') icon = '🦋';
+              
+              return (
+                <div key={badge} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-lg" title={badge}>
+                  <span className="text-sm">{icon}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
         
         {/* Footer Brand */}
         <div className="relative z-10 mt-8 pt-4 border-t border-white/10 flex justify-between items-center opacity-60">

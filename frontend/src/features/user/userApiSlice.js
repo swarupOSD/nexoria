@@ -86,6 +86,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       })
     }),
+    updateTheme: builder.mutation({
+      query: (data) => ({
+        url: '/users/theme',
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
@@ -103,4 +111,5 @@ export const {
   useRemoveFromWishlistMutation,
   useSubscribeToPushMutation,
   useUpdateFCMTokenMutation,
+  useUpdateThemeMutation,
 } = userApiSlice;

@@ -8,6 +8,7 @@ import sendEmail from '../utils/sendEmail.js';
 import { getWelcomeTemplate, getPasswordResetTemplate } from '../utils/emailTemplates.js';
 import { logSecurityEvent } from '../utils/securityLogger.js';
 import { logActivity, sendNotification } from '../utils/tracker.js';
+import { checkAndAwardBadges } from '../utils/badges.js';
 
 // @desc    Generate a Math CAPTCHA
 // @route   GET /api/auth/captcha
@@ -269,6 +270,8 @@ export const login = async (req, res) => {
       if (user.refreshTokens.length > 5) user.refreshTokens.shift();
       
       await user.save();
+
+      await checkAndAwardBadges(user._id);
 
       res.cookie('jwt', refreshToken, {
         httpOnly: true,
@@ -553,6 +556,8 @@ export const updateProfile = async (req, res) => {
     await user.save();
 
     await logActivity(user._id, 'Profile Updated', 'Profile details updated', req);
+
+    await checkAndAwardBadges(user._id);
 
     res.status(200).json({
       success: true,

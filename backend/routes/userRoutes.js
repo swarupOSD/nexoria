@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, getUserById, updateUser, deleteUser, managePremium, getWishlist, addToWishlist, removeFromWishlist, getMyActivity, subscribeToPush, unsubscribeFromPush, updateFCMToken } from '../controllers/userController.js';
+import { getUsers, getUserById, updateUser, deleteUser, managePremium, getWishlist, addToWishlist, removeFromWishlist, getMyActivity, subscribeToPush, unsubscribeFromPush, updateFCMToken, updateTheme } from '../controllers/userController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
 import { banUser, unbanUser, suspendUser, restoreUser, warnUser, addAdminNote, getAdminNotes, updateRestrictions } from '../controllers/userModerationController.js';
@@ -33,6 +33,7 @@ router.route('/:id/premium')
 router.post('/push-subscribe', protect, subscribeToPush);
 router.post('/push-unsubscribe', protect, unsubscribeFromPush);
 router.post('/fcm-token', protect, updateFCMToken);
+router.put('/theme', protect, updateTheme);
 
 router.post('/premium/assign', protect, authorize('superadmin'), assignPremium);
 router.post('/premium/revoke', protect, authorize('superadmin'), revokePremium);

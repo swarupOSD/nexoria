@@ -28,6 +28,10 @@ export const postApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: (result, error, arg) => [{ type: 'Post', id: arg }],
     }),
+    getRecommendations: builder.query({
+      query: () => '/posts/recommendations',
+      providesTags: ['Post'],
+    }),
     createPost: builder.mutation({
       query: (data) => ({
         url: '/posts',
@@ -141,6 +145,7 @@ export const {
   useGetPostsQuery,
   useGetPostBySlugQuery,
   useGetPostByIdQuery,
+  useGetRecommendationsQuery,
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,

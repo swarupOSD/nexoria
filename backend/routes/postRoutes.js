@@ -21,6 +21,7 @@ import {
   updateDownloadLink,
   deleteDownloadLink,
   toggleDownloadLink,
+  toggleDownloadLink,
   updateLinkPriority
 } from '../controllers/postController.js';
 import { protect, protectOptional, authorize } from '../middlewares/auth.js';

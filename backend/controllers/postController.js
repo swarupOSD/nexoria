@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Category from '../models/Category.js';
 import Notification from '../models/Notification.js';
 import Download from '../models/Download.js';
+import Aura from '../models/Aura.js';
 import logger from '../middlewares/logger.js';
 import redis from '../config/redis.js';
 import { logActivity, sendNotification, emitGlobalEvent } from '../utils/tracker.js';
@@ -835,3 +836,4 @@ export const updateLinkPriority = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+

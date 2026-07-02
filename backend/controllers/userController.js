@@ -298,3 +298,33 @@ export const removeFromWishlist = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
+
+// @desc    Update Profile Theme
+// @route   PUT /api/users/theme
+// @access  Private (Premium/Admin only)
+export const updateTheme = async (req, res) => {
+  try {
+    const { theme } = req.body;
+    
+    if (!theme) return res.status(400).json({ success: false, message: 'Theme is required' });
+
+    const user = await User.findById(req.user.id);
+    
+    if (user.role === 'user' && !user.isPremium) {
+      return res.status(403).json({ success: false, message: 'Premium is required to change themes' });
+    }
+
+    const allowedThemes = ['default', 'cyberpunk', 'synthwave', 'neon'];
+    if (!allowedThemes.includes(theme)) {
+      return res.status(400).json({ success: false, message: 'Invalid theme' });
+    }
+
+    user.profileTheme = theme;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Theme updated successfully', data: user.profileTheme });
+  } catch (error) {
+    logger.error(`Update Theme Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};

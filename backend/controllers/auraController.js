@@ -362,6 +362,7 @@ export const getPersonalAura = asyncHandler(async (req, res) => {
       color,
       votedIn,
       topVibes,
+      badges: user.badges || [],
     },
   });
 });

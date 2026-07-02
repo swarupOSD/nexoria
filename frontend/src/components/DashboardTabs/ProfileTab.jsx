@@ -328,6 +328,24 @@ const ProfileTab = ({ user, token, refetchUser }) => {
                     <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider text-center">Streak Master</span>
                   </div>
                 )}
+                {user.badges.includes('music_lover') && (
+                  <div className="flex flex-col items-center p-3 bg-pink-500/10 border border-pink-500/20 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.3)]" title="Music Lover - Listened to 50 songs">
+                    <span className="text-2xl mb-1">🎧</span>
+                    <span className="text-[10px] font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider text-center">Music Lover</span>
+                  </div>
+                )}
+                {user.badges.includes('app_tester') && (
+                  <div className="flex flex-col items-center p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.3)]" title="App Tester - Downloaded 10 apps">
+                    <span className="text-2xl mb-1">📱</span>
+                    <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider text-center">App Tester</span>
+                  </div>
+                )}
+                {user.badges.includes('social_butterfly') && (
+                  <div className="flex flex-col items-center p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.3)]" title="Social Butterfly - Added 5 wishlist items">
+                    <span className="text-2xl mb-1">🦋</span>
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider text-center">Social Butterfly</span>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
