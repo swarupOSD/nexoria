@@ -40,19 +40,13 @@ const NexoriaArena = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  const getEmbedUrl = (url) => {
-    if (!url) return '';
+  const isExternalOnly = (url) => {
+    if (!url) return false;
     try {
       const urlObj = new URL(url);
-      if (urlObj.hostname.includes('crazygames.com')) {
-        // Convert /game/slug to /embed/slug
-        if (urlObj.pathname.startsWith('/game/')) {
-          return url.replace('/game/', '/embed/');
-        }
-      }
-      return url;
+      return urlObj.hostname.includes('crazygames.com');
     } catch (e) {
-      return url;
+      return false;
     }
   };
 
@@ -136,13 +130,31 @@ const NexoriaArena = () => {
                 </div>
 
                 <div className="w-full aspect-square md:aspect-video min-h-[400px] bg-black rounded-2xl overflow-hidden relative">
-                  <iframe 
-                    src={getEmbedUrl(activeGame.iframeUrl)} 
-                    className="w-full h-full border-none bg-black"
-                    title={activeGame.title}
-                    allow="autoplay; fullscreen; focus-without-user-activation *;"
-                    allowFullScreen
-                  ></iframe>
+                  {isExternalOnly(activeGame.iframeUrl) ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#111] text-center p-6 border-2 border-dashed border-white/10 rounded-2xl">
+                      <AlertTriangle className="w-16 h-16 text-amber-500 mb-4 opacity-80" />
+                      <h3 className="text-2xl font-bold text-white mb-2">External Game</h3>
+                      <p className="text-slate-400 mb-6 max-w-md">
+                        This game's publisher does not allow it to be embedded. You can still play it directly on their website!
+                      </p>
+                      <a 
+                        href={activeGame.iframeUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 hover:scale-105 active:scale-95"
+                      >
+                        <Play className="w-5 h-5" /> Play in New Tab
+                      </a>
+                    </div>
+                  ) : (
+                    <iframe 
+                      src={activeGame.iframeUrl} 
+                      className="w-full h-full border-none bg-black"
+                      title={activeGame.title}
+                      allow="autoplay; fullscreen; focus-without-user-activation *;"
+                      allowFullScreen
+                    ></iframe>
+                  )}
                 </div>
                 
                 <div className="p-4 mt-2">
