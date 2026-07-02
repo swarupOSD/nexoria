@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Gift, Coins, AlertCircle, RefreshCw } from 'lucide-react';
-import { useGetSettingsQuery } from '../../../features/settings/settingsApiSlice';
+import { useGetSettingsQuery } from '../../features/settings/settingsApiSlice';
 import { useSelector } from 'react-redux';
 
 const EarnTab = () => {
