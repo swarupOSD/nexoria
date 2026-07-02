@@ -22,7 +22,8 @@ import {
   X,
   User as UserIcon,
   LogOut,
-  Settings
+  Settings,
+  Music
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
@@ -56,7 +57,7 @@ const MovieBoxLayout = () => {
 
   const menuItems = [
     { name: 'Nexoria Arcade', path: '/moviebox/games', icon: Gamepad2 },
-    { name: 'Nexoria FM', path: '/sound', icon: Download },
+    { name: 'Nexoria Music', path: '/sound', icon: Music },
   ];
 
   const appItems = [

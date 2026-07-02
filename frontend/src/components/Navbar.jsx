@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, 
-  LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle,
+  LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
   Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -316,7 +316,7 @@ const Navbar = () => {
               Games
             </Link>
             <Link to="/sound" className={`font-bold transition-colors ${location.pathname.startsWith('/sound') ? 'text-purple-500' : 'text-slate-700 dark:text-slate-300 hover:text-purple-500'}`}>
-              FM
+              Nexoria Music
             </Link>
 
             <Link to="/nexoria-arena" className={`font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
@@ -636,7 +636,7 @@ const Navbar = () => {
                       <Gamepad2 className="w-5 h-5 text-blue-500" /> Games
                     </Link>
                     <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Mic className="w-5 h-5 text-purple-500" /> FM
+                      <Music className="w-5 h-5 text-purple-500" /> Nexoria Music
                     </Link>
                     <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-red-500" /> Arena
