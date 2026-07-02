@@ -108,9 +108,15 @@ const ManageArenaGames = () => {
         }
       }
 
-      // Fallback to scraper's embedUrl if not a known provider and not a YouTube trailer
-      if (!isKnownProvider && result.embedUrl && !result.embedUrl.includes('youtube.com')) {
-        iframeUrl = result.embedUrl;
+      // Fallback to scraper's embedUrl if not a known provider
+      if (!isKnownProvider) {
+        if (result.embedUrl && !result.embedUrl.includes('youtube.com')) {
+          iframeUrl = result.embedUrl;
+        } else {
+          // Last resort: just use the source URL itself
+          iframeUrl = sourceUrl;
+          toast('Notice: Used the raw URL. This might show the full website instead of just the game.', { icon: '⚠️' });
+        }
       }
 
       setFormData(prev => ({
