@@ -40,6 +40,21 @@ const NexoriaArena = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  const getEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+      const urlObj = new URL(url);
+      if (urlObj.hostname.includes('crazygames.com')) {
+        if (urlObj.pathname.startsWith('/game/')) {
+          return url.replace('/game/', '/embed/');
+        }
+      }
+      return url;
+    } catch (e) {
+      return url;
+    }
+  };
+
   const isExternalOnly = (url) => {
     return false; // Allow everything to try and embed
   };
