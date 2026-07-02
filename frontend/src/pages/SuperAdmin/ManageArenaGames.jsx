@@ -5,8 +5,9 @@ import {
   useUpdateArenaGameMutation, 
   useDeleteArenaGameMutation 
 } from '../../features/arenaGame/arenaGameApiSlice';
+import { useScrapePlayStoreMutation } from '../../features/post/postApiSlice';
 import { toast } from 'react-hot-toast';
-import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Gamepad2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Gamepad2, Eye, EyeOff, DownloadCloud } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ManageArenaGames = () => {
@@ -26,6 +27,8 @@ const ManageArenaGames = () => {
     isActive: true
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
+  const [scrapeApp, { isLoading: isScraping }] = useScrapePlayStoreMutation();
 
   const games = gamesRes?.data || [];
   const filteredGames = games.filter(g => g.title.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -69,6 +72,37 @@ const ManageArenaGames = () => {
       refetch();
     } catch (err) {
       toast.error(err?.data?.message || 'Failed to save game');
+    }
+  };
+
+  const handleFetchInfo = async () => {
+    if (!sourceUrl) {
+      toast.error('Please enter a Game Source URL to fetch');
+      return;
+    }
+    
+    try {
+      const result = await scrapeApp({ url: sourceUrl }).unwrap();
+      
+      // Try to construct iframe URL if it's gamepix
+      let iframeUrl = formData.iframeUrl;
+      if (sourceUrl.includes('gamepix.com')) {
+        const slugMatch = sourceUrl.match(/play\/([^\/]+)/);
+        if (slugMatch && slugMatch[1]) {
+          iframeUrl = `https://play.gamepix.com/${slugMatch[1]}/embed`;
+        }
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        title: result.title || prev.title,
+        description: result.description || prev.description,
+        thumbnail: result.icon || (result.screenshots?.length > 0 ? result.screenshots[0] : prev.thumbnail),
+        iframeUrl: iframeUrl
+      }));
+      toast.success('Game info fetched successfully!');
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to fetch game details');
     }
   };
 
@@ -214,6 +248,31 @@ const ManageArenaGames = () => {
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
+                
+                {/* Auto Fetch Section */}
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl mb-6">
+                  <label className="block text-sm font-medium text-primary mb-1.5 flex items-center gap-2">
+                    <DownloadCloud className="w-4 h-4" /> Auto-Fetch Game Info
+                  </label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="url"
+                      value={sourceUrl} onChange={e => setSourceUrl(e.target.value)}
+                      className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-primary/50 outline-none text-sm"
+                      placeholder="Paste GamePix URL (e.g. gamepix.com/play/game)"
+                    />
+                    <button 
+                      type="button" 
+                      onClick={handleFetchInfo}
+                      disabled={isScraping}
+                      className="px-4 py-2.5 bg-primary/20 hover:bg-primary/30 text-primary font-bold rounded-xl transition border border-primary/30 whitespace-nowrap disabled:opacity-50"
+                    >
+                      {isScraping ? 'Fetching...' : 'Fetch'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">Fetches Title, Description, Thumbnail, and attempts to guess Iframe Embed URL.</p>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">Game Title *</label>
                   <input 
