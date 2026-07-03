@@ -308,7 +308,7 @@ export const updateTheme = async (req, res) => {
     
     if (!theme) return res.status(400).json({ success: false, message: 'Theme is required' });
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     
     if (user.role === 'user' && !user.isPremium) {
       return res.status(403).json({ success: false, message: 'Premium is required to change themes' });

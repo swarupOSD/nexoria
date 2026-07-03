@@ -21,15 +21,7 @@ router.route('/me/wishlist/:postId')
 router.route('/')
   .get(protect, authorize('admin', 'superadmin'), getUsers);
 
-router.route('/:id')
-  .get(protect, authorize('admin', 'superadmin'), getUserById)
-  .put(protect, authorize('superadmin'), updateUser)
-  .delete(protect, authorize('superadmin'), deleteUser);
-
-router.route('/:id/premium')
-  .put(protect, authorize('superadmin'), managePremium);
-
-// New robust premium management endpoints
+// Static routes must come BEFORE /:id
 router.post('/push-subscribe', protect, subscribeToPush);
 router.post('/push-unsubscribe', protect, unsubscribeFromPush);
 router.post('/fcm-token', protect, updateFCMToken);
@@ -38,6 +30,16 @@ router.put('/theme', protect, updateTheme);
 router.post('/premium/assign', protect, authorize('superadmin'), assignPremium);
 router.post('/premium/revoke', protect, authorize('superadmin'), revokePremium);
 router.get('/premium/history/:id', protect, authorize('superadmin'), getPremiumHistory);
+
+router.route('/:id')
+  .get(protect, authorize('admin', 'superadmin'), getUserById)
+  .put(protect, authorize('superadmin'), updateUser)
+  .delete(protect, authorize('superadmin'), deleteUser);
+
+router.route('/:id/premium')
+  .put(protect, authorize('superadmin'), managePremium);
+
+// Removed static routes from here as they were moved up
 
 router.route('/:id/ban')
   .put(protect, authorize('admin', 'superadmin'), banUser);
