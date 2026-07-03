@@ -102,9 +102,9 @@ const UserDashboard = () => {
 
   const getThemeClass = (theme) => {
     switch(theme) {
-      case 'cyberpunk': return 'bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] dark:from-[#000000] dark:via-[#1a0b2e] dark:to-[#000000] text-white';
-      case 'synthwave': return 'bg-gradient-to-br from-[#2a0845] to-[#6441A5] dark:from-[#110122] dark:to-[#311155] text-white';
-      case 'neon': return 'bg-slate-900 dark:bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/40 via-slate-900 to-black text-white';
+      case 'cyberpunk': return 'bg-gradient-to-br from-[#2b044d] via-[#10194a] to-[#240b36] text-white shadow-[inset_0_0_100px_rgba(255,0,255,0.1)]';
+      case 'synthwave': return 'bg-gradient-to-r from-[#fc00ff] to-[#00dbde] text-white';
+      case 'neon': return 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-rose-900 via-purple-900 to-indigo-900 text-white';
       default: return 'bg-slate-50 dark:bg-[#030303] text-slate-900 dark:text-white';
     }
   };
