@@ -12,9 +12,9 @@ const EarnTab = () => {
   useEffect(() => {
     if (settingsRes?.data?.offerwallSettings?.enabled && settingsRes?.data?.offerwallSettings?.offerwallUrl) {
       const baseUrl = settingsRes.data.offerwallSettings.offerwallUrl;
-      // Append subid correctly based on whether URL already has query params
+      // Append subid (for CPALead) and track (for CPAGrip)
       const separator = baseUrl.includes('?') ? '&' : '?';
-      setIframeUrl(`${baseUrl}${separator}subid=${user?._id || ''}`);
+      setIframeUrl(`${baseUrl}${separator}subid=${user?._id || ''}&track=${user?._id || ''}`);
     } else {
       setIframeUrl('');
     }
