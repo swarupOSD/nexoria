@@ -29,7 +29,7 @@ const ThemeSelector = () => {
 
     try {
       const res = await updateTheme({ theme: themeId }).unwrap();
-      dispatch(setCredentials({ ...user, profileTheme: res.data }));
+      dispatch(setCredentials({ user: { ...user, profileTheme: res.data }, token: user.token || localStorage.getItem('token') }));
       toast.success('Profile theme updated!');
     } catch (err) {
       toast.error(err?.data?.message || 'Failed to update theme');
