@@ -267,11 +267,11 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Links & Advanced Search */}
-          <div className="hidden lg:flex items-center gap-6 flex-1 justify-center px-8">
-            <Link to="/" className={`font-bold transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
+          <div className="hidden lg:flex items-center gap-3 xl:gap-5 flex-1 justify-center px-2 xl:px-4 whitespace-nowrap">
+            <Link to="/" className={`text-sm font-bold transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
               Home
             </Link>
-            <Link to="/requests" className={`font-bold transition-colors flex items-center gap-1 ${location.pathname === '/requests' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
+            <Link to="/requests" className={`text-sm font-bold transition-colors flex items-center gap-1 ${location.pathname === '/requests' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
               Requests
             </Link>
             
@@ -281,8 +281,8 @@ const Navbar = () => {
               width="w-[500px]"
               closeOnClickInside={true}
               trigger={
-                <button className="flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
-                  <LayoutGrid className="w-4 h-4" /> Categories <ChevronDown className="w-4 h-4" />
+                <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
+                  <LayoutGrid className="w-4 h-4" /> Categories <ChevronDown className="w-3 h-3" />
                 </button>
               }
             >
@@ -308,34 +308,34 @@ const Navbar = () => {
               </div>
             </DropdownMenu>
             
-            <Link to="/apps" className={`font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
+            <Link to="/apps" className={`text-sm font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
               Apps
             </Link>
             
-            <Link to="/moviebox/games" className={`font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
+            <Link to="/moviebox/games" className={`text-sm font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
               Games
             </Link>
-            <Link to="/sound" className={`font-bold transition-colors ${location.pathname.startsWith('/sound') ? 'text-purple-500' : 'text-slate-700 dark:text-slate-300 hover:text-purple-500'}`}>
-              Nexoria Music
+            <Link to="/sound" className={`text-sm font-bold transition-colors ${location.pathname.startsWith('/sound') ? 'text-purple-500' : 'text-slate-700 dark:text-slate-300 hover:text-purple-500'}`}>
+              Music
             </Link>
 
-            <Link to="/nexoria-arena" className={`font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
+            <Link to="/nexoria-arena" className={`text-sm font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
               🎮 Arena
             </Link>
 
-            <Link to="/aura" className={`font-bold flex items-center gap-1 transition-colors ${location.pathname.startsWith('/aura') ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
+            <Link to="/aura" className={`text-sm font-bold flex items-center gap-1 transition-colors ${location.pathname.startsWith('/aura') ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
               🔥 Aura
             </Link>
 
-            <Link to="/premium" className={`font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
+            <Link to="/premium" className={`text-sm font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
               Premium 💎
             </Link>
-            <Link to="/vip-lounge" className={`font-bold transition-colors ${location.pathname === '/vip-lounge' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
-              VIP Lounge 👑
+            <Link to="/vip-lounge" className={`text-sm font-bold transition-colors ${location.pathname === '/vip-lounge' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
+              VIP 👑
             </Link>
 
             {/* Advanced Search Bar */}
-            <div className="relative w-full max-w-lg" ref={searchRef}>
+            <div className="relative w-full max-w-[200px] xl:max-w-xs transition-all duration-300 focus-within:max-w-[250px] xl:focus-within:max-w-sm" ref={searchRef}>
               <form onSubmit={handleSearchSubmit} className="relative flex items-center justify-center">
                 <CustomSearchBar 
                   value={searchQuery}
@@ -344,9 +344,9 @@ const Navbar = () => {
                     setShowSearchSuggest(true);
                   }}
                   onFocus={() => setShowSearchSuggest(true)}
-                  placeholder="Search apps, games, movies..."
+                  placeholder="Search..."
                 />
-                <div className="relative ml-3 flex items-center gap-1 bg-white dark:bg-[#1A1A1A] p-1 rounded-lg backdrop-blur-md shadow-sm border border-slate-200/50 dark:border-white/10 z-10">
+                <div className="relative ml-2 flex items-center gap-1 bg-white dark:bg-[#1A1A1A] p-1 rounded-lg backdrop-blur-md shadow-sm border border-slate-200/50 dark:border-white/10 z-10">
                   <select 
                     value={voiceLang}
                     onChange={(e) => setVoiceLang(e.target.value)}
