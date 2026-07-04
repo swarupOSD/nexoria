@@ -311,7 +311,18 @@ const GlobalMusicPlayer = () => {
     />
     
     <div className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none">
-      <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
+        
+        {/* Mobile Background Play Disclaimer */}
+        <div className="max-w-6xl mx-auto mb-2 pointer-events-auto flex justify-center">
+          <div className="bg-slate-900/60 backdrop-blur-md border border-purple-500/30 text-slate-300 text-[10px] sm:text-xs rounded-full px-4 py-1.5 flex items-center gap-2 shadow-lg animate-pulse-slow">
+            <span className="text-purple-400 font-bold">ℹ️ Info:</span> 
+            <span>
+              For mobile background play, use <b>HQ Audio</b>. For <b>Nexoria Music</b>, use <b>Brave Browser</b>.
+            </span>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 
         {/* NATIVE MP3 AUDIO */}
         {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
