@@ -1,9 +1,5 @@
 {
   "appId": "com.swaruposd.nexoria",
   "appName": "Nexoria",
-  "webDir": "dist",
-  "server": {
-    "url": "https://nexoria-theta-eight.vercel.app",
-    "cleartext": true
-  }
+  "webDir": "dist"
 }
