@@ -6,6 +6,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.app.PictureInPictureParams;
+import android.util.Rational;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.getcapacitor.BridgeActivity;
@@ -37,6 +39,18 @@ public class MainActivity extends BridgeActivity {
         if (this.bridge != null && this.bridge.getWebView() != null) {
             this.bridge.getWebView().resumeTimers();
             this.bridge.getWebView().onResume();
+        }
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // When user presses home button, enter PiP mode automatically
+            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+            // Set a wide aspect ratio so it doesn't look like a square
+            pipBuilder.setAspectRatio(new Rational(16, 9));
+            enterPictureInPictureMode(pipBuilder.build());
         }
     }
 }
