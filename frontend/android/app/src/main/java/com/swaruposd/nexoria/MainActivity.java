@@ -40,14 +40,7 @@ public class MainActivity extends BridgeActivity {
             // Allow mixed content (needed for some audio CDNs)
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
-            // CRITICAL: Custom WebChromeClient to allow video/audio to enter PiP
-            // This makes embedded YT/media iframes also support PiP
-            webView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onShowCustomView(View view, CustomViewCallback callback) {
-                    super.onShowCustomView(view, callback);
-                }
-            });
+
         }
     }
 
