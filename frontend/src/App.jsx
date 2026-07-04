@@ -114,7 +114,6 @@ const UserRequestsAdmin = lazy(() => import('./pages/SuperAdmin/UserRequestsAdmi
 const PushCampaigns = lazy(() => import('./pages/SuperAdmin/PushCampaigns'));
 const TrashBin = lazy(() => import('./pages/SuperAdmin/TrashBin'));
 const AuraRecalculate = lazy(() => import('./pages/SuperAdmin/AuraRecalculate'));
-const MusicLibrary = lazy(() => import('./pages/SuperAdmin/MusicLibrary'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 
 // MovieBox Admin Routes (Lazy Loaded)
