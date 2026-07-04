@@ -1,5 +1,16 @@
 {
   "appId": "com.swaruposd.nexoria",
   "appName": "Nexoria",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "CapacitorCookies": {
+      "enabled": true
+    }
+  }
 }
