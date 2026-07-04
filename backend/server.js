@@ -66,8 +66,25 @@ app.use(helmet({
 app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
+// CORS Config
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost',
+  'capacitor://localhost',
+  'http://10.0.2.2:5173'
+];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, 'http://localhost:5173'] : 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('http://192.168.')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

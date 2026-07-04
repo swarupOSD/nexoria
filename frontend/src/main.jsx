@@ -10,6 +10,23 @@ import App from './App';
 import ErrorBoundary from './ErrorBoundary';
 import './index.css';
 
+// Global fetch interceptor for Capacitor/Android WebView
+const originalFetch = window.fetch;
+window.fetch = async function(resource, config) {
+  // If running in Capacitor and the request is to a relative /api route
+  if (
+    typeof window !== 'undefined' && 
+    window.Capacitor && 
+    window.Capacitor.isNativePlatform() &&
+    typeof resource === 'string' && 
+    resource.startsWith('/api')
+  ) {
+    // Redirect the relative /api call directly to the live backend server
+    resource = 'https://nexoria-backend-mt5e.onrender.com' + resource;
+  }
+  return originalFetch.call(this, resource, config);
+};
+
 window.deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
