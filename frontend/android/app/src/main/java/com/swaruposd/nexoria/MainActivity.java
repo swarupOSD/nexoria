@@ -87,9 +87,8 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-        // For Android 8 to 11: manually trigger PiP when user presses Home button
-        // Android 12+ does this automatically via setAutoEnterEnabled(true) above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        // Aggressively trigger PiP when user presses Home button for ALL Android 8+ devices
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PictureInPictureParams params = new PictureInPictureParams.Builder()
                 .setAspectRatio(new Rational(16, 9))
                 .build();
