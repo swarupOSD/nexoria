@@ -12,7 +12,6 @@ import FeatureRequests from './pages/FeatureRequests';
 import ChangePassword from './pages/ChangePassword';
 import Notifications from './pages/Notifications';
 import UserActivity from './pages/UserActivity';
-import WhatsAppChat from './components/WhatsAppChat';
 import AdBlockDetector from './components/AdBlockDetector';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
@@ -384,7 +383,6 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <WhatsAppChat />
       <AdBlockDetector />
     </KidsModeGuard>
   </Router>
