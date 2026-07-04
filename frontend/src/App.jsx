@@ -177,22 +177,13 @@ function App() {
   // Initialize Push Notifications
   usePushNotifications();
 
+  // Try to remove splash screen early if possible
   useEffect(() => {
-    // Aggressively initialize Background Mode for Capacitor/Cordova
-    const tryEnableBackgroundMode = setInterval(() => {
-      if (window.cordova && window.cordova.plugins && window.cordova.plugins.backgroundMode) {
-        window.cordova.plugins.backgroundMode.enable();
-        window.cordova.plugins.backgroundMode.overrideBackButton();
-        window.cordova.plugins.backgroundMode.on('activate', function() {
-          try {
-            window.cordova.plugins.backgroundMode.disableWebViewOptimizations(); 
-          } catch(e) {}
-        });
-        clearInterval(tryEnableBackgroundMode);
+    try {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+        window.Capacitor.Plugins.SplashScreen.hide();
       }
-    }, 1000);
-
-    return () => clearInterval(tryEnableBackgroundMode);
+    } catch(e) {}
   }, []);
 
   useEffect(() => {
