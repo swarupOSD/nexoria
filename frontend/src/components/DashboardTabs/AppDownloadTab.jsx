@@ -20,6 +20,17 @@ const AppDownloadTab = () => {
   }, []);
 
   const handleInstallApp = async () => {
+    // Determine if the user is on Android
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // Direct APK download for Android users
+      toast.success('Downloading Nexoria Android App...');
+      window.location.href = 'https://github.com/swarupOSD/nexoria/releases/latest/download/Nexoria.apk';
+      return;
+    }
+
+    // Fallback to PWA install prompt for iOS/Desktop
     const prompt = window.deferredPrompt || deferredPrompt;
     if (prompt) {
       prompt.prompt();
@@ -27,13 +38,10 @@ const AppDownloadTab = () => {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
         window.deferredPrompt = null;
-        toast.success('App installed successfully! 🎉');
+        toast.success('App installed successfully! 🚀');
       }
     } else {
-      toast('To install, click the monitor/download icon in your browser address bar (top right)!', { 
-        icon: '💡',
-        duration: 5000 
-      });
+      toast.error('Installation is only supported on Android or Safari/Chrome via Add to Home Screen.');
     }
   };
 
