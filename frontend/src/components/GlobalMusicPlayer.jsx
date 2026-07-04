@@ -57,6 +57,7 @@ const GlobalMusicPlayer = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const playerRef = useRef(null);
   const audioRef = useRef(null);
+  const silentAudioRef = useRef(null);
 
   // Determine playback mode
   const isYouTube = currentSong?.isYoutube || currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
@@ -89,6 +90,17 @@ const GlobalMusicPlayer = () => {
       }
     }
   }, [isPlaying, currentSong, dispatch, resumeContext]);
+
+  // Sync silent audio loop for YouTube background play hack
+  useEffect(() => {
+    if (isYouTube && silentAudioRef.current) {
+      if (isPlaying) {
+        silentAudioRef.current.play().catch(() => {});
+      } else {
+        silentAudioRef.current.pause();
+      }
+    }
+  }, [isPlaying, isYouTube]);
 
   // MediaSession API Integration
   useEffect(() => {
@@ -301,7 +313,7 @@ const GlobalMusicPlayer = () => {
     <div className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none">
       <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 
-        {/* NATIVE HTML5 AUDIO PLAYER — MP3 / Stream only */}
+        {/* NATIVE MP3 AUDIO */}
         {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
         {!isYouTube && (
           <audio
@@ -324,6 +336,15 @@ const GlobalMusicPlayer = () => {
               dispatch(setPlaying(false));
             }}
             style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+          />
+        )}
+
+        {/* YOUTUBE BACKGROUND AUDIO HACK */}
+        {isYouTube && (
+          <audio
+            ref={silentAudioRef}
+            src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"
+            loop
           />
         )}
 
