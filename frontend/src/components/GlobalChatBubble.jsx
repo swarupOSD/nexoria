@@ -27,7 +27,7 @@ const GlobalChatBubble = () => {
   // Connect on mount
   useEffect(() => {
     if (!socket) {
-      socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      socket = io(import.meta.env.VITE_API_URL || 'https://nexoria-backend-mt5e.onrender.com', {
         withCredentials: true,
       });
     }

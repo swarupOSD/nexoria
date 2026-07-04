@@ -26,7 +26,7 @@ const SecretLounge = () => {
       return;
     }
 
-    const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+    const newSocket = io(import.meta.env.VITE_API_URL || 'https://nexoria-backend-mt5e.onrender.com', {
       withCredentials: true,
     });
     setSocket(newSocket);
