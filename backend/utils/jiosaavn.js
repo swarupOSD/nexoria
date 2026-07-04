@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import CryptoJS from 'crypto-js';
 
 // JioSaavn decryption key
 const KEY = '38346591';
@@ -10,13 +10,19 @@ const KEY = '38346591';
  */
 export const decryptUrl = (encryptedUrl) => {
   try {
-    const keyBuffer = Buffer.from(KEY, 'utf8');
-    const decipher = crypto.createDecipheriv('des-ecb', keyBuffer, '');
-    let decrypted = decipher.update(encryptedUrl, 'base64', 'utf8');
-    decrypted += decipher.final('utf8');
+    const keyUtf8 = CryptoJS.enc.Utf8.parse(KEY);
+    const decrypted = CryptoJS.DES.decrypt(
+      { ciphertext: CryptoJS.enc.Base64.parse(encryptedUrl) },
+      keyUtf8,
+      {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+      }
+    );
+    let decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
     
     // Replace default _96.mp4 with _320.mp4 for highest quality
-    return decrypted.replace('_96.mp4', '_320.mp4').replace('_160.mp4', '_320.mp4');
+    return decryptedStr.replace('_96.mp4', '_320.mp4').replace('_160.mp4', '_320.mp4');
   } catch (error) {
     console.error('Error decrypting JioSaavn URL:', error);
     return null;
