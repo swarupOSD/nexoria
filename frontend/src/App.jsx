@@ -178,6 +178,15 @@ function App() {
   usePushNotifications();
 
   useEffect(() => {
+    // Initialize Background Mode for Capacitor/Cordova
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.backgroundMode) {
+      window.cordova.plugins.backgroundMode.enable();
+      window.cordova.plugins.backgroundMode.overrideBackButton();
+      window.cordova.plugins.backgroundMode.on('activate', function() {
+        window.cordova.plugins.backgroundMode.disableWebViewOptimizations(); 
+      });
+    }
+
     if (settings.favicon) {
       let link = document.querySelector("link[rel~='icon']");
       if (!link) {
