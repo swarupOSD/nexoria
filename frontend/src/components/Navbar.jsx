@@ -42,6 +42,16 @@ const Navbar = () => {
   }, []);
 
   const handleInstallApp = async () => {
+    // Determine if the user is on Android
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // Direct APK download for Android users
+      toast.success('Downloading Nexoria Android App...');
+      window.location.href = 'https://github.com/swarupOSD/nexoria/releases/latest/download/Nexoria.apk.apk';
+      return;
+    }
+
     const prompt = window.deferredPrompt || deferredPrompt;
     if (prompt) {
       prompt.prompt();
