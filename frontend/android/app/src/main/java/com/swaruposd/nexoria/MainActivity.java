@@ -42,11 +42,13 @@ public class MainActivity extends BridgeActivity {
             webView.setKeepScreenOn(false);
 
             // Restore the exact WebChromeClient hook that fixed PiP in 8912379, 
-            // but extend BridgeWebChromeClient so Capacitor doesn't break
+            // but extend BridgeWebChromeClient so Capacitor doesn't break.
+            // WE MUST NOT CALL super.onShowCustomView() because Capacitor's implementation 
+            // instantly hides the video by calling callback.onCustomViewHidden()!
             webView.setWebChromeClient(new BridgeWebChromeClient(this.bridge) {
                 @Override
                 public void onShowCustomView(View view, CustomViewCallback callback) {
-                    super.onShowCustomView(view, callback);
+                    // Deliberately left empty so Android allows the iframe to go fullscreen and trigger PiP
                 }
             });
         }
