@@ -178,20 +178,22 @@ function App() {
   usePushNotifications();
 
   useEffect(() => {
-    // Initialize Background Mode for Capacitor/Cordova after deviceready
-    const initBackgroundMode = () => {
+    // Aggressively initialize Background Mode for Capacitor/Cordova
+    const tryEnableBackgroundMode = setInterval(() => {
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.backgroundMode) {
         window.cordova.plugins.backgroundMode.enable();
         window.cordova.plugins.backgroundMode.overrideBackButton();
         window.cordova.plugins.backgroundMode.on('activate', function() {
-          window.cordova.plugins.backgroundMode.disableWebViewOptimizations(); 
+          try {
+            window.cordova.plugins.backgroundMode.disableWebViewOptimizations(); 
+          } catch(e) {}
         });
+        clearInterval(tryEnableBackgroundMode);
       }
-    };
+    }, 1000);
 
-    document.addEventListener('deviceready', initBackgroundMode, false);
-    // Also try immediately in case it's already ready
-    initBackgroundMode();
+    return () => clearInterval(tryEnableBackgroundMode);
+  }, []);
 
     if (settings.favicon) {
       let link = document.querySelector("link[rel~='icon']");
