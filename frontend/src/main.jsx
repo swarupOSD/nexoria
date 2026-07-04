@@ -16,26 +16,16 @@ window.fetch = async function(resource, config) {
   if (typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform()) {
     const backendUrl = 'https://nexoria-backend-mt5e.onrender.com';
     
+    // Only intercept raw string paths (like fetch('/api/...'))
     if (typeof resource === 'string') {
       if (resource.startsWith('/api')) {
         resource = backendUrl + resource;
       } else if (resource.startsWith(window.location.origin + '/api')) {
         resource = resource.replace(window.location.origin, backendUrl);
       }
-    } else if (resource instanceof Request) {
-      let newUrl = resource.url;
-      if (newUrl.startsWith('/api')) {
-        newUrl = backendUrl + newUrl;
-      } else if (newUrl.startsWith(window.location.origin + '/api')) {
-        newUrl = newUrl.replace(window.location.origin, backendUrl);
-      } else if (newUrl.startsWith('capacitor://localhost/api') || newUrl.startsWith('http://localhost/api')) {
-         newUrl = newUrl.replace(/^(capacitor:\/\/localhost|http:\/\/localhost)/, backendUrl);
-      }
-      
-      if (newUrl !== resource.url) {
-        resource = new Request(newUrl, resource);
-      }
     }
+    // We do NOT intercept Request objects here anymore. 
+    // RTK Query is now natively configured to use the absolute backend URL in Capacitor.
   }
   return originalFetch.call(this, resource, config);
 };
