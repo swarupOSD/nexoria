@@ -51,7 +51,7 @@ const Login = () => {
       return;
     }
     
-    if (captchaData?.success && !captchaAnswer) {
+    if (captchaData?.success && captchaData?.captcha && !captchaAnswer) {
       setCaptchaError('Please solve the math problem');
       return;
     }
