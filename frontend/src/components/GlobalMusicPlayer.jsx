@@ -60,7 +60,6 @@ const GlobalMusicPlayer = () => {
   
   const [youtubeStreamUrl, setYoutubeStreamUrl] = useState(null);
   const [isFetchingStream, setIsFetchingStream] = useState(false);
-  const [getYoutubeStream] = useLazyGetYoutubeSongStreamQuery();
 
   // Determine playback mode
   const isYouTube = currentSong?.isYoutube || currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
@@ -82,8 +81,6 @@ const GlobalMusicPlayer = () => {
   // Fetch YouTube direct stream URL on demand
   useEffect(() => {
     if (isYouTube && currentSong?._id) {
-      let isMounted = true;
-      setYoutubeStreamUrl(null);
       setIsFetchingStream(true);
       
       let videoId = currentSong._id;
@@ -94,29 +91,17 @@ const GlobalMusicPlayer = () => {
         if (match) videoId = match[1];
       }
 
-      getYoutubeStream(videoId).unwrap()
-        .then(res => {
-          if (isMounted && res?.data?.streamUrl) {
-            setYoutubeStreamUrl(res.data.streamUrl);
-          }
-        })
-        .catch(err => {
-          if (isMounted) {
-            console.error("Failed to fetch YT stream:", err);
-            toast.error("Failed to load YouTube audio stream");
-            dispatch(setPlaying(false));
-          }
-        })
-        .finally(() => {
-          if (isMounted) setIsFetchingStream(false);
-        });
-        
-      return () => { isMounted = false; };
+      const apiUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+      setYoutubeStreamUrl(`${apiUrl}/music/youtube/stream/${videoId}`);
+      
+      // Simulate slight loading state so UI feels consistent
+      const timer = setTimeout(() => setIsFetchingStream(false), 800);
+      return () => clearTimeout(timer);
     } else {
       setYoutubeStreamUrl(null);
       setIsFetchingStream(false);
     }
-  }, [currentSong, isYouTube, getYoutubeStream, dispatch]);
+  }, [currentSong, isYouTube]);
 
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
