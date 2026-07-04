@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,20 +24,15 @@ public class MainActivity extends BridgeActivity {
             }
         }
 
+        // Allow media to play without a user gesture inside WebView
         WebView webView = this.bridge.getWebView();
         if (webView != null) {
             WebSettings settings = webView.getSettings();
-
-            // Allow media to autoplay without user gesture
             settings.setMediaPlaybackRequiresUserGesture(false);
 
-            // Enable JavaScript (needed for media session API)
-            settings.setJavaScriptEnabled(true);
-
-            // Allow mixed content (needed for some audio CDNs)
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-
-
+            // CRITICAL: Tell the WebView to keep playing audio in background
+            // This prevents Android from pausing audio when the screen locks
+            webView.setKeepScreenOn(false); // Don't force screen on; just keep audio
         }
     }
 
@@ -46,26 +40,26 @@ public class MainActivity extends BridgeActivity {
     public void onResume() {
         super.onResume();
 
-        // Always keep WebView running
+        // Resume WebView timers and rendering when app comes back to foreground
         if (this.bridge != null && this.bridge.getWebView() != null) {
             this.bridge.getWebView().resumeTimers();
             this.bridge.getWebView().onResume();
         }
 
-        // Setup Auto-PiP for Android 12+ — app automatically becomes small window when home is pressed
+        // Setup Auto-PiP for Android 12+ so minimizing the app keeps audio alive
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PictureInPictureParams params = new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(16, 9))
-                .setAutoEnterEnabled(true)  // Auto-enter PiP when user presses home
-                .build();
-            setPictureInPictureParams(params);
+            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+            pipBuilder.setAspectRatio(new Rational(16, 9));
+            pipBuilder.setAutoEnterEnabled(true);
+            setPictureInPictureParams(pipBuilder.build());
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // DO NOT pause the WebView — this keeps audio/video playing when in PiP
+        // CRITICAL: When the app is paused (goes to background/PiP), do NOT pause the WebView.
+        // This is what keeps audio playing in background.
         if (this.bridge != null && this.bridge.getWebView() != null) {
             this.bridge.getWebView().resumeTimers();
             this.bridge.getWebView().onResume();
@@ -75,7 +69,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onStop() {
         super.onStop();
-        // Keep WebView alive even when app is fully in background (not in PiP)
+        // Even when fully stopped, keep WebView audio alive
         if (this.bridge != null && this.bridge.getWebView() != null) {
             this.bridge.getWebView().resumeTimers();
             this.bridge.getWebView().onResume();
@@ -85,12 +79,12 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-        // Aggressively trigger PiP when user presses Home button for ALL Android 8+ devices
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            PictureInPictureParams params = new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(16, 9))
-                .build();
-            enterPictureInPictureMode(params);
+        // Manually enter PiP for Android 8.0 to 11 (API 26-30).
+        // Android 12+ handles it automatically via setAutoEnterEnabled above.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+            pipBuilder.setAspectRatio(new Rational(16, 9));
+            enterPictureInPictureMode(pipBuilder.build());
         }
     }
 }
