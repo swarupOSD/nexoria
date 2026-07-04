@@ -162,6 +162,9 @@ export const musicApiSlice = apiSlice.injectEndpoints({
     }),
     getSaavnSongDetails: builder.query({
       query: (id) => `/music/saavn/song/${id}`
+    }),
+    searchYouTubePublic: builder.query({
+      query: (query) => `/music/youtube/search?query=${query}`
     })
   })
 });
@@ -192,5 +195,6 @@ export const {
   useToggleSongInUserPlaylistMutation,
   useScrapeMusicMutation,
   useSearchSaavnPublicQuery,
-  useLazyGetSaavnSongDetailsQuery
+  useLazyGetSaavnSongDetailsQuery,
+  useSearchYouTubePublicQuery
 } = musicApiSlice;

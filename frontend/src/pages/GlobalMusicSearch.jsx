@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Music, Loader2, PlayCircle, Heart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { useSearchSaavnPublicQuery, useLazyGetSaavnSongDetailsQuery } from '../features/api/musicApiSlice';
+import { useSearchSaavnPublicQuery, useLazyGetSaavnSongDetailsQuery, useSearchYouTubePublicQuery } from '../features/api/musicApiSlice';
 import { playSong } from '../features/music/musicSlice';
 import SEO from '../components/SEO';
 
@@ -11,6 +11,7 @@ const GlobalMusicSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [playingId, setPlayingId] = useState(null);
+  const [searchSource, setSearchSource] = useState('saavn'); // 'saavn' or 'youtube'
 
   const { currentSong, isPlaying } = useSelector(state => state.music);
   const [getSongDetails] = useLazyGetSaavnSongDetailsQuery();
@@ -27,11 +28,31 @@ const GlobalMusicSearch = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: searchResults, isFetching } = useSearchSaavnPublicQuery(debouncedSearch, {
-    skip: !debouncedSearch
+  const { data: searchResults, isFetching: isFetchingSaavn } = useSearchSaavnPublicQuery(debouncedSearch, {
+    skip: !debouncedSearch || searchSource !== 'saavn'
   });
 
+  const { data: ytResults, isFetching: isFetchingYt } = useSearchYouTubePublicQuery(debouncedSearch, {
+    skip: !debouncedSearch || searchSource !== 'youtube'
+  });
+  
+  const isFetching = isFetchingSaavn || isFetchingYt;
+
   const handlePlaySong = async (songMetadata) => {
+    if (searchSource === 'youtube') {
+      const playableSong = {
+        _id: songMetadata.youtubeId,
+        title: songMetadata.title,
+        artist: songMetadata.artist,
+        image: songMetadata.image,
+        audioUrl: songMetadata.audioUrl,
+        isYoutube: true,
+        duration: songMetadata.duration
+      };
+      dispatch(playSong(playableSong));
+      return;
+    }
+
     try {
       setPlayingId(songMetadata.saavnId);
       
@@ -58,7 +79,7 @@ const GlobalMusicSearch = () => {
     }
   };
 
-  const songs = searchResults?.data || [];
+  const songs = searchSource === 'saavn' ? (searchResults?.data || []) : (ytResults?.data || []);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-24 pb-32">
@@ -99,6 +120,31 @@ const GlobalMusicSearch = () => {
               <Loader2 className="h-6 w-6 text-purple-400 animate-spin" />
             </div>
           )}
+
+          <div className="flex justify-center mt-6">
+            <div className="bg-slate-800/60 p-1 rounded-full flex gap-1">
+              <button
+                onClick={() => setSearchSource('saavn')}
+                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
+                  searchSource === 'saavn' 
+                    ? 'bg-purple-500 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                JioSaavn
+              </button>
+              <button
+                onClick={() => setSearchSource('youtube')}
+                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
+                  searchSource === 'youtube' 
+                    ? 'bg-red-500 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                YouTube Music
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Empty State */}
@@ -126,12 +172,13 @@ const GlobalMusicSearch = () => {
             <h2 className="text-2xl font-bold text-white px-2">Top Results</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {songs.map((song) => {
-                const isThisPlaying = currentSong?._id === song.saavnId && isPlaying;
-                const isLoading = playingId === song.saavnId;
+                const songId = song.saavnId || song.youtubeId;
+                const isThisPlaying = currentSong?._id === songId && isPlaying;
+                const isLoading = playingId === songId;
 
                 return (
                   <div 
-                    key={song.saavnId} 
+                    key={songId} 
                     className="group bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 flex gap-4 items-center transition-all cursor-pointer backdrop-blur-sm"
                     onClick={() => !isLoading && handlePlaySong(song)}
                   >

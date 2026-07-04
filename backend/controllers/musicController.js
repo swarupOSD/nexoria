@@ -278,3 +278,20 @@ export const getJioSaavnSong = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// @desc    Search songs on YouTube
+// @route   GET /api/music/youtube/search
+// @access  Public
+export const searchYouTube = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) return res.status(400).json({ success: false, message: 'Search query is required' });
+
+    const ytUtils = await import('../utils/youtube.js');
+    const videos = await ytUtils.searchYouTube(query);
+    
+    res.status(200).json({ success: true, data: videos });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
