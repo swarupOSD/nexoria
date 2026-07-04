@@ -13,7 +13,11 @@ import { Capacitor } from '@capacitor/core';
 import { BackgroundMode } from '@anuradev/capacitor-background-mode';
 
 if (Capacitor.isNativePlatform()) {
-  BackgroundMode.enable().catch(err => console.log('Background mode error', err));
+  BackgroundMode.enable({
+    title: 'Nexoria',
+    text: 'Audio is running in background',
+    disableWebViewOptimization: true
+  }).catch(err => console.log('Background mode error', err));
 }
 window.deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
