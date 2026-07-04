@@ -2,14 +2,12 @@ package com.swaruposd.nexoria;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.app.PictureInPictureParams;
 import android.util.Rational;
-import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.getcapacitor.BridgeActivity;
