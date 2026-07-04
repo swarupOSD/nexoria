@@ -46,9 +46,13 @@ const Navbar = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
 
     if (isAndroid) {
-      // Direct APK download for Android users
+      // Direct APK download for Android users via nightly.link (no GitHub login needed)
       toast.success('Downloading Nexoria Android App...');
-      window.location.href = 'https://nightly.link/swarupOSD/nexoria/workflows/build-android.yml/main/Nexoria-App-Debug.zip';
+      // nightly.link provides the latest GitHub Actions APK without login
+      window.open('https://nightly.link/swarupOSD/nexoria/workflows/build-android.yml/main/Nexoria-App-Debug.zip', '_blank');
+      setTimeout(() => {
+        toast('📦 A ZIP file will download. Open it and install the APK inside!', { duration: 6000, icon: '📱' });
+      }, 2000);
       return;
     }
 
