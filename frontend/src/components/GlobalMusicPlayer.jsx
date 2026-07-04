@@ -59,7 +59,7 @@ const GlobalMusicPlayer = () => {
   const audioRef = useRef(null);
 
   // Determine playback mode
-  const isYouTube = currentSong?.isYoutube;
+  const isYouTube = currentSong?.isYoutube || currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
   const playerUrl = isYouTube ? sanitizeYouTubeUrl(currentSong?.audioUrl) : currentSong?.audioUrl;
 
   const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(audioRef, isYouTube);
