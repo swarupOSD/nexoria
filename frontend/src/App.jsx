@@ -302,7 +302,6 @@ function App() {
             <Route path="admins" element={<ManageAdmins />} />
             <Route path="roles" element={<RolesPermissions />} />
             <Route path="settings" element={<SiteSettings />} />
-            <Route path="music-library" element={<MusicLibrary />} />
             {/* Sponsored Content — safe alias, legacy /ads also kept */}
             <Route path="ads" element={<SponsoredContent />} />
             <Route path="sponsored-content" element={<SponsoredContent />} />
