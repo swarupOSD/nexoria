@@ -4,6 +4,12 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import SinglePost from './pages/SinglePost';
 import DownloadFlow from './pages/DownloadFlow';
@@ -13,6 +19,7 @@ import ChangePassword from './pages/ChangePassword';
 import Notifications from './pages/Notifications';
 import UserActivity from './pages/UserActivity';
 import AdBlockDetector from './components/AdBlockDetector';
+import SecretLoungeButton from './components/SecretLoungeButton';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 import Support from './pages/Support';
@@ -76,6 +83,7 @@ const AdminModeration = lazy(() => import('./pages/Admin/AdminModeration'));
 const AdminDownloads = lazy(() => import('./pages/Admin/AdminDownloads'));
 const CreatePost = lazy(() => import('./pages/Admin/CreatePost'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
+const SecretLounge = lazy(() => import('./pages/SecretLounge'));
 
 const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
 // Legacy Admin Contact Messages removed, replaced by SupportCenter
@@ -243,6 +251,7 @@ function App() {
                 <Route path="change-password" element={<ChangePassword />} />
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="activity" element={<UserActivity />} />
+                <Route path="secret-lounge" element={<SecretLounge />} />
               </Route>
             </Route>
 
@@ -383,6 +392,7 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
+      <SecretLoungeButton />
       <AdBlockDetector />
     </KidsModeGuard>
   </Router>
