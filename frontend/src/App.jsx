@@ -195,6 +195,7 @@ function App() {
     return () => clearInterval(tryEnableBackgroundMode);
   }, []);
 
+  useEffect(() => {
     if (settings.favicon) {
       let link = document.querySelector("link[rel~='icon']");
       if (!link) {
