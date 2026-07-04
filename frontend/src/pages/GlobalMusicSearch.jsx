@@ -147,7 +147,7 @@ const GlobalMusicSearch = () => {
                 }`}
               >
                 <PlayCircle className="w-4 h-4" />
-                Global Library
+                Nexoria Music
               </button>
             </div>
           </div>
