@@ -13,16 +13,29 @@ import './index.css';
 // Global fetch interceptor for Capacitor/Android WebView
 const originalFetch = window.fetch;
 window.fetch = async function(resource, config) {
-  // If running in Capacitor and the request is to a relative /api route
-  if (
-    typeof window !== 'undefined' && 
-    window.Capacitor && 
-    window.Capacitor.isNativePlatform() &&
-    typeof resource === 'string' && 
-    resource.startsWith('/api')
-  ) {
-    // Redirect the relative /api call directly to the live backend server
-    resource = 'https://nexoria-backend-mt5e.onrender.com' + resource;
+  if (typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform()) {
+    const backendUrl = 'https://nexoria-backend-mt5e.onrender.com';
+    
+    if (typeof resource === 'string') {
+      if (resource.startsWith('/api')) {
+        resource = backendUrl + resource;
+      } else if (resource.startsWith(window.location.origin + '/api')) {
+        resource = resource.replace(window.location.origin, backendUrl);
+      }
+    } else if (resource instanceof Request) {
+      let newUrl = resource.url;
+      if (newUrl.startsWith('/api')) {
+        newUrl = backendUrl + newUrl;
+      } else if (newUrl.startsWith(window.location.origin + '/api')) {
+        newUrl = newUrl.replace(window.location.origin, backendUrl);
+      } else if (newUrl.startsWith('capacitor://localhost/api') || newUrl.startsWith('http://localhost/api')) {
+         newUrl = newUrl.replace(/^(capacitor:\/\/localhost|http:\/\/localhost)/, backendUrl);
+      }
+      
+      if (newUrl !== resource.url) {
+        resource = new Request(newUrl, resource);
+      }
+    }
   }
   return originalFetch.call(this, resource, config);
 };
