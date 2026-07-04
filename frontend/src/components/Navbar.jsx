@@ -428,7 +428,7 @@ const Navbar = () => {
                               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Profile</span>
                             </Link>
 
-                            {deferredPrompt && (
+                            {(deferredPrompt || /Android/i.test(navigator.userAgent)) && (
                               <button onClick={handleInstallApp} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors w-full text-left">
                                 <Smartphone className="w-4 h-4 text-primary" />
                                 <span className="text-sm font-bold text-primary">Install App</span>
