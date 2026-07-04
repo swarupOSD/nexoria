@@ -304,15 +304,26 @@ export const getYoutubeStream = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ success: false, message: 'YouTube ID is required' });
 
-    const ytdl = require('@distube/ytdl-core');
-    const info = await ytdl.getInfo(id);
-    const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
-
-    if (!format || !format.url) {
+    const { createRequire } = await import('module');
+    const require = createRequire(import.meta.url);
+    const youtubedl = require('youtube-dl-exec');
+    
+    const output = await youtubedl(`https://www.youtube.com/watch?v=${id}`, {
+      dumpJson: true,
+      noWarnings: true,
+      noCallHome: true,
+      noCheckCertificate: true,
+      preferFreeFormats: true,
+      youtubeSkipDashManifest: true,
+      referer: 'https://www.youtube.com'
+    });
+    
+    const formats = output.formats.filter(f => f.acodec !== 'none' && f.vcodec === 'none');
+    if (!formats || formats.length === 0) {
       return res.status(404).json({ success: false, message: 'Audio stream not found for this video' });
     }
 
-    res.status(200).json({ success: true, data: { streamUrl: format.url } });
+    res.status(200).json({ success: true, data: { streamUrl: formats[0].url } });
   } catch (error) {
     console.error('Error getting YT stream:', error);
     res.status(500).json({ success: false, message: error.message });

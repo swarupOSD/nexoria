@@ -16,6 +16,7 @@
     "validate:technical": "node scripts/validate_technical.js"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "axios": "^1.18.0",
     "bcrypt": "^5.1.1",
     "cheerio": "^1.2.0",
@@ -41,12 +42,14 @@
     "morgan": "^1.10.0",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",
+    "play-dl": "^1.9.7",
     "puppeteer": "^25.1.0",
     "socket.io": "^4.8.3",
     "streamifier": "^0.1.1",
     "web-push": "^3.6.7",
     "winston": "^3.12.0",
     "xss-clean": "^0.1.4",
+    "youtube-dl-exec": "^3.1.8",
     "yt-search": "^2.13.1"
   },
   "devDependencies": {

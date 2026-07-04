@@ -417,10 +417,19 @@ const GlobalMusicPlayer = () => {
               <SkipBack className="w-5 h-5 fill-current" />
             </button>
             <button 
-              onClick={() => dispatch(togglePlayPause())}
-              className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform text-black shadow-lg shadow-white/20"
+              onClick={() => {
+                if (!isFetchingStream) dispatch(togglePlayPause());
+              }}
+              disabled={isFetchingStream}
+              className={`w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform text-black shadow-lg shadow-white/20 ${isFetchingStream ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {isPlaying ? <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-current" /> : <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-1" />}
+              {isFetchingStream ? (
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+              ) : isPlaying ? (
+                <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
+              ) : (
+                <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current ml-1" />
+              )}
             </button>
             <button 
               onClick={() => dispatch(playNext())}
