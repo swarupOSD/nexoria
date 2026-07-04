@@ -103,23 +103,26 @@ const GlobalMusicSearch = () => {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative group max-w-3xl mx-auto">
-          <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-            <Search className="h-6 w-6 text-slate-400 group-focus-within:text-purple-400 transition-colors" />
-          </div>
-          <input
-            type="text"
-            placeholder="What do you want to listen to?"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-16 pr-6 py-5 bg-slate-900/80 border border-slate-700/50 rounded-full focus:outline-none focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/20 text-white placeholder-slate-500 transition-all text-xl shadow-2xl backdrop-blur-xl"
-          />
-          {isFetching && (
-            <div className="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
-              <Loader2 className="h-6 w-6 text-purple-400 animate-spin" />
+        {/* Search Area */}
+        <div className="max-w-3xl mx-auto">
+          {/* Search Input */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+              <Search className="h-6 w-6 text-slate-400 group-focus-within:text-purple-400 transition-colors" />
             </div>
-          )}
+            <input
+              type="text"
+              placeholder="What do you want to listen to?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-16 pr-12 py-5 bg-slate-900/80 border border-slate-700/50 rounded-full focus:outline-none focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/20 text-white placeholder-slate-500 transition-all text-xl shadow-2xl backdrop-blur-xl"
+            />
+            {isFetching && (
+              <div className="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
+                <Loader2 className="h-6 w-6 text-purple-400 animate-spin" />
+              </div>
+            )}
+          </div>
 
           <div className="flex justify-center mt-8 relative z-10">
             <div className="relative inline-flex items-center p-1.5 bg-slate-900/80 border border-white/10 rounded-full backdrop-blur-xl shadow-2xl overflow-hidden">
