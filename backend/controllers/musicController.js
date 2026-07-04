@@ -307,7 +307,7 @@ export const getYoutubeStream = async (req, res) => {
     const { createRequire } = await import('module');
     const require = createRequire(import.meta.url);
     const youtubedl = require('youtube-dl-exec');
-    
+
     const output = await youtubedl(`https://www.youtube.com/watch?v=${id}`, {
       dumpJson: true,
       noWarnings: true,
@@ -323,9 +323,29 @@ export const getYoutubeStream = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Audio stream not found for this video' });
     }
 
-    res.status(200).json({ success: true, data: { streamUrl: formats[0].url } });
+    const streamUrl = formats[0].url;
+    
+    // Set headers for audio streaming
+    res.setHeader('Content-Type', 'audio/mp4');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    
+    // Pipe the audio directly from YouTube to the client to avoid IP mismatch 403 errors
+    const https = require('https');
+    https.get(streamUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    }, (streamRes) => {
+      streamRes.pipe(res);
+    }).on('error', (err) => {
+      console.error('Stream proxy error:', err);
+      res.end();
+    });
+
   } catch (error) {
     console.error('Error getting YT stream:', error);
-    res.status(500).json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 };
