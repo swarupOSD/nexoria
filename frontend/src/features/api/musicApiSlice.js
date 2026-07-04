@@ -165,6 +165,9 @@ export const musicApiSlice = apiSlice.injectEndpoints({
     }),
     searchYouTubePublic: builder.query({
       query: (query) => `/music/youtube/search?query=${query}`
+    }),
+    getYoutubeSongStream: builder.query({
+      query: (id) => `/music/youtube/stream/${id}`
     })
   })
 });
@@ -196,5 +199,6 @@ export const {
   useScrapeMusicMutation,
   useSearchSaavnPublicQuery,
   useLazyGetSaavnSongDetailsQuery,
-  useSearchYouTubePublicQuery
+  useSearchYouTubePublicQuery,
+  useLazyGetYoutubeSongStreamQuery
 } = musicApiSlice;

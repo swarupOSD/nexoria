@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import ReactPlayer from 'react-player/youtube';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
   Repeat, Shuffle, Heart, ListVideo, Mic2, Share2, Radio, Download
@@ -13,7 +12,8 @@ import {
   useToggleFavoriteMutation, 
   useGetUserFavoritesQuery,
   useRecordListenHistoryMutation,
-  useGetSongsQuery
+  useGetSongsQuery,
+  useLazyGetYoutubeSongStreamQuery
 } from '../features/api/musicApiSlice';
 import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -57,10 +57,14 @@ const GlobalMusicPlayer = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const playerRef = useRef(null);
   const audioRef = useRef(null);
+  
+  const [youtubeStreamUrl, setYoutubeStreamUrl] = useState(null);
+  const [isFetchingStream, setIsFetchingStream] = useState(false);
+  const [getYoutubeStream] = useLazyGetYoutubeSongStreamQuery();
 
   // Determine playback mode
   const isYouTube = currentSong?.isYoutube || currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
-  const playerUrl = isYouTube ? sanitizeYouTubeUrl(currentSong?.audioUrl) : currentSong?.audioUrl;
+  const playerUrl = isYouTube ? youtubeStreamUrl : currentSong?.audioUrl;
 
   const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(audioRef, isYouTube);
 
@@ -75,9 +79,40 @@ const GlobalMusicPlayer = () => {
 
   const isFavorite = favoritesRes?.data?.some(s => s._id === currentSong?._id);
 
+  // Fetch YouTube direct stream URL on demand
+  useEffect(() => {
+    if (isYouTube && currentSong?._id) {
+      let isMounted = true;
+      setYoutubeStreamUrl(null);
+      setIsFetchingStream(true);
+      
+      getYoutubeStream(currentSong._id).unwrap()
+        .then(res => {
+          if (isMounted && res?.data?.streamUrl) {
+            setYoutubeStreamUrl(res.data.streamUrl);
+          }
+        })
+        .catch(err => {
+          if (isMounted) {
+            console.error("Failed to fetch YT stream:", err);
+            toast.error("Failed to load YouTube audio stream");
+            dispatch(setPlaying(false));
+          }
+        })
+        .finally(() => {
+          if (isMounted) setIsFetchingStream(false);
+        });
+        
+      return () => { isMounted = false; };
+    } else {
+      setYoutubeStreamUrl(null);
+      setIsFetchingStream(false);
+    }
+  }, [currentSong, isYouTube, getYoutubeStream, dispatch]);
+
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
-    if (audioRef.current && currentSong && !currentSong.isYoutube) {
+    if (audioRef.current && currentSong && playerUrl) {
       if (isPlaying) {
         audioRef.current.play().then(() => {
           resumeContext(); // Ensure Web Audio API is resumed
@@ -88,7 +123,7 @@ const GlobalMusicPlayer = () => {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, currentSong, dispatch, resumeContext]);
+  }, [isPlaying, currentSong, playerUrl, dispatch, resumeContext]);
 
   // MediaSession API Integration
   useEffect(() => {
@@ -113,14 +148,12 @@ const GlobalMusicPlayer = () => {
           audioRef.current.fastSeek(details.seekTime);
           return;
         }
-        if (isYouTube && playerRef.current) {
-          playerRef.current.seekTo(details.seekTime);
-        } else if (audioRef.current) {
+        if (audioRef.current) {
           audioRef.current.currentTime = details.seekTime;
         }
       });
     }
-  }, [currentSong, dispatch, isYouTube]);
+  }, [currentSong, dispatch]);
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -140,8 +173,7 @@ const GlobalMusicPlayer = () => {
           } else {
             // Seek Back 10 seconds
             const backTime = Math.max(0, playedSeconds - 10);
-            if (isYouTube && playerRef.current) playerRef.current.seekTo(backTime);
-            else if (audioRef.current) audioRef.current.currentTime = backTime;
+            if (audioRef.current) audioRef.current.currentTime = backTime;
           }
           break;
         case 'ArrowRight':
@@ -151,8 +183,7 @@ const GlobalMusicPlayer = () => {
           } else {
             // Seek Forward 10 seconds
             const forwardTime = Math.min(duration, playedSeconds + 10);
-            if (isYouTube && playerRef.current) playerRef.current.seekTo(forwardTime);
-            else if (audioRef.current) audioRef.current.currentTime = forwardTime;
+            if (audioRef.current) audioRef.current.currentTime = forwardTime;
           }
           break;
         default:
@@ -162,7 +193,7 @@ const GlobalMusicPlayer = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, playedSeconds, duration, isYouTube]);
+  }, [dispatch, playedSeconds, duration]);
 
   // Sync volume/mute on native audio
   useEffect(() => {
@@ -202,12 +233,8 @@ const GlobalMusicPlayer = () => {
   const handleSeekMouseUp = (e) => {
     setIsSeeking(false);
     const newTime = parseFloat(e.target.value);
-    if (isYouTube) {
-      playerRef.current?.seekTo(newTime);
-    } else {
-      if (audioRef.current && duration > 0) {
-        audioRef.current.currentTime = newTime * duration;
-      }
+    if (audioRef.current && duration > 0) {
+      audioRef.current.currentTime = newTime * duration;
     }
   };
 
@@ -301,72 +328,30 @@ const GlobalMusicPlayer = () => {
     <div className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none">
       <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 
-        {/* NATIVE HTML5 AUDIO PLAYER — MP3 / Stream only */}
-        {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
-        {!isYouTube && (
-          <audio
-            ref={audioRef}
-            src={playerUrl}
-            onTimeUpdate={onAudioTimeUpdate}
-            onLoadedMetadata={onAudioLoadedMetadata}
-            onEnded={handleSongEnd}
-            onCanPlay={() => {
-              // onCanPlay fires after mount + src ready — audioRef.current is guaranteed set here
-              if (isPlaying && audioRef.current) {
-                audioRef.current.play().catch(() => dispatch(setPlaying(false)));
-              }
-            }}
-            onPlaying={() => dispatch(setPlaying(true))}
-            onPause={() => { /* intentionally empty — pause controlled by useEffect only */ }}
-            onWaiting={() => { /* buffering */ }}
-            onError={() => {
-              toast.error('Failed to play audio');
-              dispatch(setPlaying(false));
-            }}
-            style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
-          />
-        )}
-
-        {/* YOUTUBE AUDIO-ONLY — ReactPlayer */}
-        {/* FIX: Chrome blocks autoplay if iframe is completely hidden/off-screen. Making it 50x50 with 0.01 opacity so browser considers it "visible". */}
-        {isYouTube && (
-          <div style={{ position: 'absolute', right: '0', bottom: '0', width: '50px', height: '50px', opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}>
-            <ReactPlayer
-              ref={playerRef}
-              url={playerUrl}
-              playing={isPlaying}
-              volume={isMuted ? 0 : volume}
-              width="100%"
-              height="100%"
-              onProgress={handleProgress}
-              onDuration={handleDuration}
-              onEnded={handleSongEnd}
-              onPlay={() => dispatch(setPlaying(true))}
-              onPause={() => { /* controlled by Redux only */ }}
-              onReady={() => {
-                // Force play on ready if it should be playing
-                if (isPlaying && playerRef.current) {
-                   playerRef.current.seekTo(0);
-                }
-              }}
-              onError={() => {
-                toast.error('Failed to play YouTube audio');
-                dispatch(setPlaying(false));
-              }}
-              config={{
-                youtube: {
-                  playerVars: {
-                    showinfo: 0,
-                    controls: 0,
-                    autoplay: 1,
-                    playsinline: 1,
-                    origin: window.location.origin
-                  }
-                }
-              }}
-            />
-          </div>
-        )}
+        {/* NATIVE HTML5 AUDIO PLAYER - Handles EVERYTHING now! */}
+        <audio
+          ref={audioRef}
+          src={playerUrl || ''}
+          onTimeUpdate={onAudioTimeUpdate}
+          onLoadedMetadata={onAudioLoadedMetadata}
+          onEnded={handleSongEnd}
+          onCanPlay={() => {
+            // onCanPlay fires after mount + src ready - audioRef.current is guaranteed set here
+            if (isPlaying && audioRef.current) {
+              audioRef.current.play().catch(() => dispatch(setPlaying(false)));
+            }
+          }}
+          onPlaying={() => dispatch(setPlaying(true))}
+          onPause={() => { /* intentionally empty - pause controlled by useEffect only */ }}
+          onWaiting={() => { /* buffering */ }}
+          onError={(e) => {
+            // Ignore error if there's no src yet
+            if (audioRef.current && audioRef.current.src) {
+              console.error('Audio playback error', e);
+            }
+          }}
+          style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+        />
 
         {/* Left: Song Info */}
         <div className="flex items-center gap-3 w-full sm:w-1/3 min-w-0">

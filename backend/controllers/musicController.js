@@ -295,3 +295,26 @@ export const searchYouTube = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// @desc    Get direct audio stream URL for a YouTube video
+// @route   GET /api/music/youtube/stream/:id
+// @access  Public
+export const getYoutubeStream = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ success: false, message: 'YouTube ID is required' });
+
+    const ytdl = require('@distube/ytdl-core');
+    const info = await ytdl.getInfo(id);
+    const format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio' });
+
+    if (!format || !format.url) {
+      return res.status(404).json({ success: false, message: 'Audio stream not found for this video' });
+    }
+
+    res.status(200).json({ success: true, data: { streamUrl: format.url } });
+  } catch (error) {
+    console.error('Error getting YT stream:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

@@ -13,6 +13,7 @@ router.post('/songs/:id/play', musicController.trackPlay);
 router.get('/saavn/search', musicController.searchJioSaavn);
 router.get('/saavn/song/:id', musicController.getJioSaavnSong);
 router.get('/youtube/search', musicController.searchYouTube);
+router.get('/youtube/stream/:id', musicController.getYoutubeStream);
 
 // Public Playlist Routes
 router.get('/playlists', playlistController.getPlaylists);
