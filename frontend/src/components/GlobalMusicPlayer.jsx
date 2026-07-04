@@ -86,7 +86,15 @@ const GlobalMusicPlayer = () => {
       setYoutubeStreamUrl(null);
       setIsFetchingStream(true);
       
-      getYoutubeStream(currentSong._id).unwrap()
+      let videoId = currentSong._id;
+      if (currentSong.youtubeId) {
+        videoId = currentSong.youtubeId;
+      } else if (currentSong.audioUrl) {
+        const match = currentSong.audioUrl.match(/[?&]v=([^&]+)/) || currentSong.audioUrl.match(/youtu\.be\/([^?]+)/);
+        if (match) videoId = match[1];
+      }
+
+      getYoutubeStream(videoId).unwrap()
         .then(res => {
           if (isMounted && res?.data?.streamUrl) {
             setYoutubeStreamUrl(res.data.streamUrl);
