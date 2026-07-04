@@ -8,8 +8,8 @@ import {
   useGetMusicAnalyticsQuery,
   useGetUserPlaylistsQuery
 } from '../features/api/musicApiSlice';
-import { playSong, playPlaylist, togglePlayPause } from '../features/music/musicSlice';
-import { Play, Pause, Music, Heart, Clock, TrendingUp, Radio, ListMusic, Plus, Mic2, Search } from 'lucide-react';
+import { playSong, playPlaylist, togglePlayPause, removeFromRecentlyPlayed } from '../features/music/musicSlice';
+import { Play, Pause, Music, Heart, Clock, TrendingUp, Radio, ListMusic, Plus, Mic2, Search, X } from 'lucide-react';
 
 const NexoriaSound = () => {
   const dispatch = useDispatch();
@@ -81,7 +81,19 @@ const NexoriaSound = () => {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {recentlyPlayed.slice(0, 6).map((song, idx) => (
-                <div key={song._id} onClick={() => handlePlaySong(song, recentlyPlayed.slice(0, 6), idx)} className="bg-slate-800/40 hover:bg-slate-800 p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-purple-500/30">
+                <div key={song._id} onClick={() => handlePlaySong(song, recentlyPlayed.slice(0, 6), idx)} className="bg-slate-800/40 hover:bg-slate-800 p-3 rounded-2xl cursor-pointer group transition-all border border-white/5 hover:border-purple-500/30 relative">
+                  {/* Remove Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(removeFromRecentlyPlayed(song._id));
+                    }}
+                    className="absolute top-2 right-2 z-20 p-1.5 bg-black/60 hover:bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    title="Remove from history"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                  
                   <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg">
                     <FallbackImage src={song.image} alt={song.title} fallbackType="music" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

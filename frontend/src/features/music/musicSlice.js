@@ -5,11 +5,17 @@ const getInitialState = () => {
   if (savedState) {
     try {
       const parsed = JSON.parse(savedState);
+      
+      // Filter out any invalid old dummy data (like songs without proper audio URLs or titles if they are not youtube)
+      const cleanRecentlyPlayed = (parsed.recentlyPlayed || []).filter(
+        s => s && s.title && (s.audioUrl || s.isYoutube) && !s.title.includes('Cyber Beats FM') && !s.title.includes('Lofi Chill Station') && !s.title.includes('Nexoria Hits 99.5')
+      );
+
       return {
         currentSong: parsed.currentSong || null,
         isPlaying: false, // always start paused to respect browser autoplay rules
         queue: parsed.queue || [],
-        recentlyPlayed: parsed.recentlyPlayed || [],
+        recentlyPlayed: cleanRecentlyPlayed,
         volume: parsed.volume !== undefined ? parsed.volume : 1,
         isMuted: parsed.isMuted || false,
         loopMode: parsed.loopMode || 0, // 0 = no loop, 1 = loop all, 2 = loop one
@@ -131,6 +137,11 @@ const musicSlice = createSlice({
       state.queue = [];
       saveStateToLocal(state);
     },
+    removeFromRecentlyPlayed: (state, action) => {
+      const songIdToRemove = action.payload;
+      state.recentlyPlayed = state.recentlyPlayed.filter(s => s._id !== songIdToRemove);
+      saveStateToLocal(state);
+    },
     toggleLoopMode: (state) => {
       state.loopMode = (state.loopMode + 1) % 3;
       saveStateToLocal(state);
@@ -161,7 +172,7 @@ const musicSlice = createSlice({
 export const {
   playSong, togglePlayPause, setPlaying, setVolume, toggleMute,
   addToQueue, removeFromQueue, playNext, playPrevious, clearQueue,
-  toggleLoopMode, toggleShuffle, toggleRadioMode, playPlaylist
+  removeFromRecentlyPlayed, toggleLoopMode, toggleShuffle, toggleRadioMode, playPlaylist
 } = musicSlice.actions;
 
 export default musicSlice.reducer;
