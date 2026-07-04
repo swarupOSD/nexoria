@@ -126,28 +126,28 @@ const GlobalMusicSearch = () => {
               <div 
                 className={`absolute inset-y-1.5 rounded-full transition-all duration-400 ease-spring ${
                   searchSource === 'saavn' 
-                    ? 'left-1.5 w-[120px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' 
-                    : 'left-[125px] w-[150px] bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
+                    ? 'left-1.5 w-[140px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' 
+                    : 'left-[145px] w-[160px] bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
                 }`}
               ></div>
               
               <button
                 onClick={() => setSearchSource('saavn')}
-                className={`relative z-10 w-[120px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
+                className={`relative z-10 w-[140px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
                   searchSource === 'saavn' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <Music className="w-4 h-4" />
-                JioSaavn
+                HQ Audio
               </button>
               <button
                 onClick={() => setSearchSource('youtube')}
-                className={`relative z-10 w-[150px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
+                className={`relative z-10 w-[160px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
                   searchSource === 'youtube' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <PlayCircle className="w-4 h-4" />
-                YouTube
+                Global Library
               </button>
             </div>
           </div>
