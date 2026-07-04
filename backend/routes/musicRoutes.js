@@ -10,6 +10,8 @@ const router = express.Router();
 // Public Music Routes
 router.get('/songs', musicController.getSongs);
 router.post('/songs/:id/play', musicController.trackPlay);
+router.get('/saavn/search', musicController.searchJioSaavn);
+router.get('/saavn/song/:id', musicController.getJioSaavnSong);
 
 // Public Playlist Routes
 router.get('/playlists', playlistController.getPlaylists);
@@ -36,8 +38,6 @@ router.get('/admin/songs', protect, superAdmin, musicController.getAllSongsAdmin
 router.post('/admin/songs', protect, superAdmin, musicController.createSong);
 router.put('/admin/songs/:id', protect, superAdmin, musicController.updateSong);
 router.delete('/admin/songs/:id', protect, superAdmin, musicController.deleteSong);
-router.get('/admin/saavn-search', protect, superAdmin, musicController.searchJioSaavn);
-router.post('/admin/saavn-import', protect, superAdmin, musicController.importFromJioSaavn);
 
 // Admin Routes for Playlists
 router.get('/admin/playlists', protect, superAdmin, playlistController.getAllPlaylistsAdmin);

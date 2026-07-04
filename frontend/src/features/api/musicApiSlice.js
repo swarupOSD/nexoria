@@ -157,16 +157,11 @@ export const musicApiSlice = apiSlice.injectEndpoints({
         body: data
       })
     }),
-    searchSaavn: builder.query({
-      query: (query) => `/music/admin/saavn-search?query=${query}`
+    searchSaavnPublic: builder.query({
+      query: (query) => `/music/saavn/search?query=${query}`
     }),
-    importSaavn: builder.mutation({
-      query: (data) => ({
-        url: '/music/admin/saavn-import',
-        method: 'POST',
-        body: data
-      }),
-      invalidatesTags: ['Music']
+    getSaavnSongDetails: builder.query({
+      query: (id) => `/music/saavn/song/${id}`
     })
   })
 });
@@ -196,6 +191,6 @@ export const {
   useDeleteUserPlaylistMutation,
   useToggleSongInUserPlaylistMutation,
   useScrapeMusicMutation,
-  useSearchSaavnQuery,
-  useImportSaavnMutation
+  useSearchSaavnPublicQuery,
+  useLazyGetSaavnSongDetailsQuery
 } = musicApiSlice;

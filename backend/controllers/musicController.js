@@ -240,9 +240,9 @@ export const getUserMusicAnalytics = async (req, res) => {
   }
 };
 
-// @desc    Search songs on JioSaavn
-// @route   GET /api/music/admin/saavn-search
-// @access  Private/SuperAdmin
+// @desc    Search songs on JioSaavn (Public)
+// @route   GET /api/music/saavn/search
+// @access  Public
 export const searchJioSaavn = async (req, res) => {
   try {
     const { query } = req.query;
@@ -257,39 +257,23 @@ export const searchJioSaavn = async (req, res) => {
   }
 };
 
-// @desc    Import song from JioSaavn
-// @route   POST /api/music/admin/saavn-import
-// @access  Private/SuperAdmin
-export const importFromJioSaavn = async (req, res) => {
+// @desc    Get JioSaavn song streaming URL
+// @route   GET /api/music/saavn/song/:id
+// @access  Public
+export const getJioSaavnSong = async (req, res) => {
   try {
-    const { saavnId, isVip = false, isTrending = false } = req.body;
+    const { id } = req.params;
     
-    if (!saavnId) return res.status(400).json({ success: false, message: 'Saavn ID is required' });
+    if (!id) return res.status(400).json({ success: false, message: 'Saavn ID is required' });
 
     const jiosaavn = await import('../utils/jiosaavn.js');
-    const details = await jiosaavn.getSongDetails(saavnId);
+    const details = await jiosaavn.getSongDetails(id);
     
     if (!details.audioUrl) {
       return res.status(400).json({ success: false, message: 'Could not decrypt streaming URL' });
     }
 
-    // Check if already exists
-    const existingSong = await Music.findOne({ audioUrl: details.audioUrl });
-    if (existingSong) {
-      return res.status(400).json({ success: false, message: 'This song has already been imported' });
-    }
-
-    const newSong = await Music.create({
-      title: details.title,
-      artist: details.artist,
-      image: details.image,
-      audioUrl: details.audioUrl,
-      isYoutube: false,
-      isVip,
-      isTrending
-    });
-
-    res.status(201).json({ success: true, data: newSong });
+    res.status(200).json({ success: true, data: details });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

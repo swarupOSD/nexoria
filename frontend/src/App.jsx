@@ -30,6 +30,7 @@ import GlobalMusicPlayer from './components/GlobalMusicPlayer';
 import GlobalChatBubble from './components/GlobalChatBubble';
 import NexoriaSound from './pages/NexoriaSound';
 import SoundQueue from './pages/SoundQueue';
+import GlobalMusicSearch from './pages/GlobalMusicSearch';
 import AuraLeaderboard from './pages/AuraLeaderboard';
 import AuraBattle from './pages/AuraBattle';
 import AuraSurgeBanner from './components/AuraSurgeBanner';
@@ -227,6 +228,7 @@ function App() {
                 <Route path="requests" element={<FeatureRequests />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/sound" element={<NexoriaSound />} />
+                <Route path="/sound/search" element={<GlobalMusicSearch />} />
                 <Route path="/sound/queue" element={<SoundQueue />} />
                 <Route path="/category/:slug" element={<CategoryPage />} />
                 <Route path="categories" element={<AllCategories />} />

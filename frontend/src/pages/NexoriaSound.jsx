@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import FallbackImage from '../components/FallbackImage';
 import { 
@@ -8,7 +9,7 @@ import {
   useGetUserPlaylistsQuery
 } from '../features/api/musicApiSlice';
 import { playSong, playPlaylist, togglePlayPause } from '../features/music/musicSlice';
-import { Play, Pause, Music, Heart, Clock, TrendingUp, Radio, ListMusic, Plus, Mic2 } from 'lucide-react';
+import { Play, Pause, Music, Heart, Clock, TrendingUp, Radio, ListMusic, Plus, Mic2, Search } from 'lucide-react';
 
 const NexoriaSound = () => {
   const dispatch = useDispatch();
@@ -57,9 +58,14 @@ const NexoriaSound = () => {
             <Radio className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">Nexoria <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Sound</span></h1>
           </div>
-          <p className="text-lg text-slate-300 max-w-2xl font-medium">
+          <p className="text-lg text-slate-300 max-w-2xl font-medium mb-8">
             Immerse yourself in endless audio. Ad-free background streaming, curated playlists, and GenZ vibes.
           </p>
+
+          <Link to="/sound/search" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-slate-100 text-black rounded-full font-bold transition-all shadow-xl hover:scale-105 active:scale-95">
+            <Search className="w-5 h-5" />
+            Global Search
+          </Link>
         </div>
       </div>
 

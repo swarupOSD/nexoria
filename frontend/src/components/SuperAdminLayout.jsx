@@ -119,7 +119,6 @@ const SuperAdminLayout = () => {
       title: 'Nexoria Sound (Music)',
       items: [
         { name: 'Dashboard', icon: <Activity className="w-4 h-4" />, path: '/superadmin/sound/dashboard' },
-        { name: 'Music Library (JioSaavn)', icon: <Music className="w-4 h-4 text-purple-400" />, path: '/superadmin/music-library' },
         { name: 'Songs', icon: <Music className="w-4 h-4" />, path: '/superadmin/sound/songs' },
         { name: 'Add Song', icon: <PlusCircle className="w-4 h-4" />, path: '/superadmin/sound/add-song' },
         { name: 'Playlists', icon: <ListVideo className="w-4 h-4" />, path: '/superadmin/sound/playlists' },
