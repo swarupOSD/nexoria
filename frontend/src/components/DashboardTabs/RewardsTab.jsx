@@ -16,7 +16,7 @@ const RewardsTab = ({ user }) => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await fetch('/api/users/me/activity', {
+        const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/users/me/activity', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         const data = await res.json();
@@ -45,7 +45,7 @@ const RewardsTab = ({ user }) => {
     if (!couponCode) return toast.error('Please enter a coupon code');
     setRedeeming(true);
     try {
-      const res = await fetch('/api/coupons/redeem', {
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/coupons/redeem', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

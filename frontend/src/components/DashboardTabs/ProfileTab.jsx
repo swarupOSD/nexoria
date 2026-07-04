@@ -80,7 +80,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
         const fd = new FormData();
         fd.append('image', blob, 'image.jpg');
         
-        const uploadRes = await fetch('/api/upload/profile', {
+        const uploadRes = await fetch('https://nexoria-backend-mt5e.onrender.com/api/upload/profile', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: fd

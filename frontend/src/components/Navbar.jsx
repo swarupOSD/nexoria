@@ -248,7 +248,7 @@ const Navbar = () => {
 
   const handleSurpriseMe = async () => {
     try {
-      const res = await fetch('/api/posts?limit=50');
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/posts?limit=50');
       const data = await res.json();
       const apps = data?.data?.posts || [];
       if (apps.length > 0) {

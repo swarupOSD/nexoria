@@ -10,7 +10,7 @@ const ReviewModeration = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch('/api/reviews/admin/all', {
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/reviews/admin/all', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();

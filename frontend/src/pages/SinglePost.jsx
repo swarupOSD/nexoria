@@ -321,7 +321,7 @@ const SinglePost = () => {
       const formData = new FormData();
       formData.append('image', proofImage);
       
-      const uploadRes = await fetch('/api/upload/proof', {
+      const uploadRes = await fetch('https://nexoria-backend-mt5e.onrender.com/api/upload/proof', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData

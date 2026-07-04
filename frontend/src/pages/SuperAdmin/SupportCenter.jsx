@@ -112,7 +112,7 @@ const SupportCenter = ({ isEmbedded = false }) => {
 
     const uploadToast = toast.loading('Uploading attachment...');
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,

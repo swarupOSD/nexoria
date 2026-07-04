@@ -17,7 +17,7 @@ const SEOManager = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch('/api/settings');
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/settings');
       const data = await res.json();
       if (data.success && data.data) {
         setSettings({
@@ -50,7 +50,7 @@ const SEOManager = () => {
 
     const uploadToast = toast.loading('Uploading OpenGraph Image...');
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,
@@ -72,7 +72,7 @@ const SEOManager = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
