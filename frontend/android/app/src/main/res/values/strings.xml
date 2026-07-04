@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nexoria</string>
+    <string name="title_activity_main">Nexoria</string>
+    <string name="package_name">com.swaruposd.nexoria</string>
+    <string name="custom_url_scheme">com.swaruposd.nexoria</string>
+</resources>
