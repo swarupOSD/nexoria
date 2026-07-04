@@ -48,7 +48,7 @@ const Navbar = () => {
     if (isAndroid) {
       // Direct APK download for Android users
       toast.success('Downloading Nexoria Android App...');
-      window.location.href = 'https://github.com/swarupOSD/nexoria/releases/latest/download/Nexoria.apk.apk';
+      window.location.href = 'https://github.com/swarupOSD/nexoria/releases/latest/download/Nexoria.apk';
       return;
     }
 
