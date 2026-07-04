@@ -1,5 +1,5 @@
-// ⚡ CACHE VERSION — bump this string to force ALL browsers to drop old caches
-const CACHE_NAME = 'modsapp-cache-v5';
+// 🔄 CACHE VERSION — bump this string to force ALL browsers to drop old caches
+const CACHE_NAME = 'modsapp-cache-v6';
 const OFFLINE_URL = '/';
 
 const urlsToCache = [
@@ -49,6 +49,12 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
   const url = new URL(event.request.url);
+
+  // CRITICAL FIX: Bypass Service Worker COMPLETELY for audio/video streams!
+  // SW fetch() strips Range headers and breaks chunked audio streams!
+  if (url.pathname.includes('/youtube/stream')) {
+    return; // Browser handles natively
+  }
 
   // NEVER cache API requests — always go to network
   if (url.pathname.startsWith('/api/')) {

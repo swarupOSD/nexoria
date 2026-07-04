@@ -296,46 +296,71 @@ export const searchYouTube = async (req, res) => {
   }
 };
 
-// @desc    Get direct audio stream URL for a YouTube video
+// Global cache for stream URLs to avoid re-running yt-dlp on every seek
+const streamUrlCache = new Map();
+
+// @desc    Get YouTube audio stream directly (Proxied)
 // @route   GET /api/music/youtube/stream/:id
 // @access  Public
 export const getYoutubeStream = async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ success: false, message: 'YouTube ID is required' });
+    const videoId = req.params.id;
+    if (!videoId) return res.status(400).json({ success: false, message: 'Video ID is required' });
 
     const { createRequire } = await import('module');
     const require = createRequire(import.meta.url);
     const youtubedl = require('youtube-dl-exec');
 
-    const output = await youtubedl(`https://www.youtube.com/watch?v=${id}`, {
-      dumpJson: true,
-      noWarnings: true,
-      noCallHome: true,
-      noCheckCertificate: true,
-      preferFreeFormats: true,
-      youtubeSkipDashManifest: true,
-      referer: 'https://www.youtube.com'
-    });
-    
-    const formats = output.formats.filter(f => f.acodec !== 'none' && f.vcodec === 'none');
-    if (!formats || formats.length === 0) {
-      return res.status(404).json({ success: false, message: 'Audio stream not found for this video' });
+    let streamUrl;
+
+    // Check cache first
+    if (streamUrlCache.has(videoId)) {
+      const entry = streamUrlCache.get(videoId);
+      if (Date.now() - entry.time < 1000 * 60 * 30) { // Valid for 30 mins
+        streamUrl = entry.url;
+      } else {
+        streamUrlCache.delete(videoId);
+      }
     }
 
-    const streamUrl = formats[0].url;
-    
-    // Set headers for audio streaming
-    res.setHeader('Content-Type', 'audio/mp4');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    
-    // Pipe the audio directly from YouTube to the client to avoid IP mismatch 403 errors
-    const https = require('https');
-    https.get(streamUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    if (!streamUrl) {
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const output = await youtubedl(url, {
+        dumpSingleJson: true,
+        noCheckCertificates: true,
+        noWarnings: true,
+        preferFreeFormats: true,
+        format: 'bestaudio'
+      });
+
+      const formats = output.formats.filter(f => f.acodec !== 'none' && f.vcodec === 'none');
+      if (!formats || formats.length === 0) {
+        return res.status(404).json({ success: false, message: 'Audio stream not found for this video' });
       }
-    }, (streamRes) => {
+
+      streamUrl = formats[0].url;
+      streamUrlCache.set(videoId, { url: streamUrl, time: Date.now() });
+    }
+    
+    // Pass headers, especially Range for seeking
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    };
+    if (req.headers.range) {
+      headers['Range'] = req.headers.range;
+    }
+    
+    const https = require('https');
+    https.get(streamUrl, { headers }, (streamRes) => {
+      // Forward status code (e.g. 206 Partial Content)
+      res.status(streamRes.statusCode);
+      
+      // Forward essential headers
+      if (streamRes.headers['content-range']) res.setHeader('Content-Range', streamRes.headers['content-range']);
+      if (streamRes.headers['content-length']) res.setHeader('Content-Length', streamRes.headers['content-length']);
+      if (streamRes.headers['content-type']) res.setHeader('Content-Type', streamRes.headers['content-type']);
+      if (streamRes.headers['accept-ranges']) res.setHeader('Accept-Ranges', streamRes.headers['accept-ranges']);
+      
       streamRes.pipe(res);
     }).on('error', (err) => {
       console.error('Stream proxy error:', err);
