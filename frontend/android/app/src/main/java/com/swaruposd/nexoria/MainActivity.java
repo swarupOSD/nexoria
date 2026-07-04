@@ -12,7 +12,6 @@ import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.getcapacitor.BridgeActivity;
-import com.getcapacitor.BridgeWebChromeClient;
 
 public class MainActivity extends BridgeActivity {
 
@@ -41,14 +40,11 @@ public class MainActivity extends BridgeActivity {
             // CRITICAL: Prevent Android from pausing audio when the screen locks
             webView.setKeepScreenOn(false);
 
-            // Restore the exact WebChromeClient hook that fixed PiP in 8912379, 
-            // but extend BridgeWebChromeClient so Capacitor doesn't break.
-            // WE MUST NOT CALL super.onShowCustomView() because Capacitor's implementation 
-            // instantly hides the video by calling callback.onCustomViewHidden()!
-            webView.setWebChromeClient(new BridgeWebChromeClient(this.bridge) {
+            // Restore the exact WebChromeClient hook that fixed PiP in 8912379
+            webView.setWebChromeClient(new android.webkit.WebChromeClient() {
                 @Override
                 public void onShowCustomView(View view, CustomViewCallback callback) {
-                    // Deliberately left empty so Android allows the iframe to go fullscreen and trigger PiP
+                    super.onShowCustomView(view, callback);
                 }
             });
         }
