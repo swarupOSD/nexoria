@@ -17,4 +17,14 @@ public class MainActivity extends BridgeActivity {
             settings.setMediaPlaybackRequiresUserGesture(false);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Prevent Capacitor from pausing the WebView when the app goes to the background
+        if (this.bridge != null && this.bridge.getWebView() != null) {
+            this.bridge.getWebView().resumeTimers();
+            this.bridge.getWebView().onResume();
+        }
+    }
 }
