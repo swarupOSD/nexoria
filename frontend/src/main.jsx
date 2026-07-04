@@ -9,7 +9,12 @@ import { SocketProvider } from './context/SocketContext';
 import App from './App';
 import ErrorBoundary from './ErrorBoundary';
 import './index.css';
+import { Capacitor } from '@capacitor/core';
+import { BackgroundMode } from '@anuradev/capacitor-background-mode';
 
+if (Capacitor.isNativePlatform()) {
+  BackgroundMode.enable().catch(err => console.log('Background mode error', err));
+}
 window.deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
