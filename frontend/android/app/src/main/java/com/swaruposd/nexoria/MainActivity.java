@@ -33,6 +33,18 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Setup Auto-PiP for Android 12+ (API 31+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+            pipBuilder.setAspectRatio(new Rational(16, 9));
+            pipBuilder.setAutoEnterEnabled(true);
+            setPictureInPictureParams(pipBuilder.build());
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         // Prevent Capacitor from pausing the WebView when the app goes to the background
@@ -45,10 +57,9 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // When user presses home button, enter PiP mode automatically
+        // Fallback for Android 8.0 to 11 (API 26-30). Android 12+ handles it automatically via onResume.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
-            // Set a wide aspect ratio so it doesn't look like a square
             pipBuilder.setAspectRatio(new Rational(16, 9));
             enterPictureInPictureMode(pipBuilder.build());
         }
