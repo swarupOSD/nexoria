@@ -61,6 +61,18 @@ const GlobalChatBubble = () => {
       setMessages((prev) => prev.filter(m => m._id !== messageId));
     });
 
+    socket.on('userSuspended', ({ userId, username }) => {
+      import('react-hot-toast').then(({ default: toast }) => {
+        toast.success(`${username} has been suspended.`);
+      });
+    });
+
+    socket.on('globalChatError', ({ message }) => {
+      import('react-hot-toast').then(({ default: toast }) => {
+        toast.error(message);
+      });
+    });
+
     return () => {
       socket.off('connect');
       socket.off('disconnect');
@@ -68,6 +80,8 @@ const GlobalChatBubble = () => {
       socket.off('newGlobalMessage');
       socket.off('messageEdited');
       socket.off('messageDeleted');
+      socket.off('userSuspended');
+      socket.off('globalChatError');
     };
   }, []);
 
@@ -81,6 +95,12 @@ const GlobalChatBubble = () => {
 
   const handleDelete = (id) => {
     socket.emit('deleteGlobalMessage', id);
+  };
+
+  const handleSuspend = (userId) => {
+    if (window.confirm("Are you sure you want to suspend this user?")) {
+      socket.emit('suspendGlobalUser', userId);
+    }
   };
 
   const handleEditSubmit = (id) => {
@@ -214,10 +234,15 @@ const GlobalChatBubble = () => {
                           <>
                             {msg.message}
                             {msg.isEdited && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
-                            {isMe && (
-                              <div className="absolute top-1/2 -translate-y-1/2 -left-14 hidden group-hover:flex gap-1">
-                                <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
-                                <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                            {(isMe || user?.role === 'admin' || user?.role === 'superadmin') && (
+                              <div className={`absolute top-1/2 -translate-y-1/2 ${isMe ? '-left-20' : '-right-20'} hidden group-hover:flex gap-1`}>
+                                {isMe && (
+                                  <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
+                                )}
+                                <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500" title="Delete Message"><Trash2 className="w-3 h-3" /></button>
+                                {!isMe && (user?.role === 'admin' || user?.role === 'superadmin') && msg.sender?.role !== 'superadmin' && (
+                                  <button onClick={() => handleSuspend(msg.sender._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-orange-500" title="Suspend User"><ShieldAlert className="w-3 h-3" /></button>
+                                )}
                               </div>
                             )}
                           </>

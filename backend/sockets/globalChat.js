@@ -26,6 +26,12 @@ export const registerGlobalChatHandlers = (io, socket) => {
     if (!socket.user) return; // Must be authenticated
 
     try {
+      // Check if user is suspended or banned
+      const currentUser = await User.findById(socket.user._id).select('status');
+      if (!currentUser || currentUser.status === 'suspended' || currentUser.status === 'banned') {
+        return socket.emit('globalChatError', { message: 'You are suspended from the chat.' });
+      }
+
       // Save message to DB
       const newMessage = await ChatMessage.create({
         sender: socket.user._id,
@@ -49,7 +55,9 @@ export const registerGlobalChatHandlers = (io, socket) => {
     if (!socket.user) return;
     try {
       const message = await ChatMessage.findById(messageId);
-      if (!message || message.sender.toString() !== socket.user._id.toString()) return;
+      const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin';
+      
+      if (!message || (message.sender.toString() !== socket.user._id.toString() && !isAdmin)) return;
       
       message.isDeleted = true;
       await message.save();
@@ -57,6 +65,31 @@ export const registerGlobalChatHandlers = (io, socket) => {
       io.to('globalChatRoom').emit('messageDeleted', messageId);
     } catch (err) {
       console.error('Error deleting message:', err);
+    }
+  });
+
+  socket.on('suspendGlobalUser', async (userId) => {
+    if (!socket.user) return;
+    const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin';
+    if (!isAdmin) return;
+    
+    try {
+      const targetUser = await User.findById(userId);
+      if (!targetUser) return;
+      
+      // Prevent suspending other admins/superadmins
+      if (targetUser.role === 'superadmin' || (targetUser.role === 'admin' && socket.user.role !== 'superadmin')) {
+        return socket.emit('globalChatError', { message: 'Cannot suspend this user.' });
+      }
+
+      targetUser.status = 'suspended';
+      targetUser.suspendedReason = 'Suspended via Global Chat by ' + socket.user.username;
+      targetUser.suspendedBy = socket.user._id;
+      await targetUser.save();
+      
+      io.to('globalChatRoom').emit('userSuspended', { userId, username: targetUser.username });
+    } catch (err) {
+      console.error('Error suspending user:', err);
     }
   });
 
