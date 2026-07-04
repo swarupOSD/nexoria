@@ -121,27 +121,33 @@ const GlobalMusicSearch = () => {
             </div>
           )}
 
-          <div className="flex justify-center mt-6">
-            <div className="bg-slate-800/60 p-1 rounded-full flex gap-1">
+          <div className="flex justify-center mt-8 relative z-10">
+            <div className="relative inline-flex items-center p-1.5 bg-slate-900/80 border border-white/10 rounded-full backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div 
+                className={`absolute inset-y-1.5 rounded-full transition-all duration-400 ease-spring ${
+                  searchSource === 'saavn' 
+                    ? 'left-1.5 w-[120px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' 
+                    : 'left-[125px] w-[150px] bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
+                }`}
+              ></div>
+              
               <button
                 onClick={() => setSearchSource('saavn')}
-                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                  searchSource === 'saavn' 
-                    ? 'bg-purple-500 text-white shadow-lg' 
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                className={`relative z-10 w-[120px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
+                  searchSource === 'saavn' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
+                <Music className="w-4 h-4" />
                 JioSaavn
               </button>
               <button
                 onClick={() => setSearchSource('youtube')}
-                className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                  searchSource === 'youtube' 
-                    ? 'bg-red-500 text-white shadow-lg' 
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                className={`relative z-10 w-[150px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
+                  searchSource === 'youtube' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                YouTube Music
+                <PlayCircle className="w-4 h-4" />
+                YouTube
               </button>
             </div>
           </div>
