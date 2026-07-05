@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { 
   useGetNexoriaTracksQuery, 
   useCreateNexoriaTrackMutation,
+  useUpdateNexoriaTrackMutation,
   useDeleteNexoriaTrackMutation,
   useGetNexoriaArtistsQuery,
   useGetNexoriaAlbumsQuery,
   useGetNexoriaGenresQuery,
   useUploadNexoriaTrackAudioMutation
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Music, Play } from 'lucide-react';
+import { Plus, Trash2, XCircle, Music, Play, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+const emptyForm = { 
+  title: '', artist: '', album: '', genre: '', 
+  duration: 0, audioUrl: '', isPremium: false, audioFile: null 
+};
 
 const NexoriaTracksManager = () => {
   const { data: response, isLoading } = useGetNexoriaTracksQuery();
@@ -18,13 +24,12 @@ const NexoriaTracksManager = () => {
   const { data: genresRes } = useGetNexoriaGenresQuery();
   
   const [createTrack, { isLoading: isCreating }] = useCreateNexoriaTrackMutation();
+  const [updateTrack, { isLoading: isUpdating }] = useUpdateNexoriaTrackMutation();
   const [deleteTrack] = useDeleteNexoriaTrackMutation();
   
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ 
-    title: '', artist: '', album: '', genre: '', 
-    duration: 0, audioUrl: '', isPremium: false, audioFile: null 
-  });
+  const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
+  const [editTarget, setEditTarget] = useState(null);
+  const [formData, setFormData] = useState(emptyForm);
 
   const tracks = response?.data || [];
   const artists = artistsRes?.data || [];
@@ -33,10 +38,36 @@ const NexoriaTracksManager = () => {
 
   const [uploadAudio, { isLoading: isUploading }] = useUploadNexoriaTrackAudioMutation();
 
+  const openCreate = () => {
+    setFormData(emptyForm);
+    setEditTarget(null);
+    setModalMode('create');
+  };
+
+  const openEdit = (track) => {
+    setFormData({
+      title: track.title,
+      artist: track.artist?._id || track.artist,
+      album: track.album?._id || track.album || '',
+      genre: track.genre?._id || track.genre || '',
+      duration: track.duration || 0,
+      audioUrl: track.audioUrl || '',
+      isPremium: track.isPremium || false,
+      audioFile: null
+    });
+    setEditTarget(track);
+    setModalMode('edit');
+  };
+
+  const closeModal = () => {
+    setModalMode(null);
+    setEditTarget(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.artist) return toast.error('Please select an artist');
-    if (!formData.audioFile && !formData.audioUrl) return toast.error('Please upload an audio file or provide a URL');
+    if (!formData.audioFile && !formData.audioUrl && modalMode === 'create') return toast.error('Please upload an audio file or provide a URL');
     if (formData.audioFile && formData.audioFile.size > 20 * 1024 * 1024) {
       return toast.error('File size must be under 20MB for Telegram CDN');
     }
@@ -76,10 +107,14 @@ const NexoriaTracksManager = () => {
       payload.audioUrl = finalAudioUrl;
       delete payload.audioFile;
 
-      await createTrack(payload).unwrap();
-      toast.success('Track created successfully');
-      setIsModalOpen(false);
-      setFormData({ title: '', artist: '', album: '', genre: '', duration: 0, audioUrl: '', isPremium: false, audioFile: null });
+      if (modalMode === 'edit' && editTarget) {
+        await updateTrack({ id: editTarget._id, data: payload }).unwrap();
+        toast.success('Track updated successfully');
+      } else {
+        await createTrack(payload).unwrap();
+        toast.success('Track created successfully');
+      }
+      closeModal();
     } catch (error) {
       console.error(error);
       toast.error(error?.data?.message || 'Failed to process track');
@@ -106,7 +141,7 @@ const NexoriaTracksManager = () => {
           <p className="text-slate-500 text-sm mt-0.5">{tracks.length} songs available</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCreate}
           className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" /> Add Track
@@ -160,24 +195,29 @@ const NexoriaTracksManager = () => {
               <div className="text-sm font-bold text-slate-500 w-16 text-right font-mono bg-white/5 px-2 py-1 rounded-lg">
                 {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
               </div>
-              <button onClick={() => handleDelete(track._id)} className="p-3 opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all">
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => openEdit(track)} className="p-3 text-slate-500 hover:text-purple-400 hover:bg-purple-400/10 rounded-xl transition-all">
+                  <Edit2 className="w-5 h-5" />
+                </button>
+                <button onClick={() => handleDelete(track._id)} className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all">
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {/* Modal */}
-      {isModalOpen && (
+      {modalMode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
           <div className="bg-[#0f0f0f] border border-white/10 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
             <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#0f0f0f]/95 shrink-0">
               <div>
-                <h3 className="text-lg font-black text-white">Add New Track</h3>
-                <p className="text-slate-500 text-xs mt-0.5">Upload a new audio file</p>
+                <h3 className="text-lg font-black text-white">{modalMode === 'edit' ? 'Edit Track' : 'Add New Track'}</h3>
+                <p className="text-slate-500 text-xs mt-0.5">{modalMode === 'edit' ? 'Update track details' : 'Upload a new audio file'}</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
+              <button onClick={closeModal} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
@@ -288,7 +328,7 @@ const NexoriaTracksManager = () => {
 
                 <button 
                   type="submit" 
-                  disabled={isCreating || isUploading}
+                  disabled={isCreating || isUpdating || isUploading}
                   className="w-full py-4 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
                 >
                   {isUploading ? (
@@ -296,13 +336,13 @@ const NexoriaTracksManager = () => {
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Uploading to Telegram CDN...
                     </>
-                  ) : isCreating ? (
+                  ) : (isCreating || isUpdating) ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Saving Track...
                     </>
                   ) : (
-                    '🎵 Upload & Save Track'
+                    modalMode === 'edit' ? '✅ Update Track' : '🎵 Upload & Save Track'
                   )}
                 </button>
               </form>

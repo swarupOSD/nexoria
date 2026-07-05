@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { 
   useGetNexoriaAlbumsQuery, 
   useCreateNexoriaAlbumMutation,
+  useUpdateNexoriaAlbumMutation,
   useDeleteNexoriaAlbumMutation,
   useGetNexoriaArtistsQuery,
-  useGetNexoriaGenresQuery
+  useGetNexoriaGenresQuery 
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Disc3 } from 'lucide-react';
+import { Plus, Trash2, XCircle, Disc3, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+const emptyForm = { title: '', artist: '', genre: '', type: 'Album', coverImage: '' };
 
 const NexoriaAlbumsManager = () => {
   const { data: response, isLoading } = useGetNexoriaAlbumsQuery();
@@ -15,26 +18,53 @@ const NexoriaAlbumsManager = () => {
   const { data: genresRes } = useGetNexoriaGenresQuery();
   
   const [createAlbum, { isLoading: isCreating }] = useCreateNexoriaAlbumMutation();
+  const [updateAlbum, { isLoading: isUpdating }] = useUpdateNexoriaAlbumMutation();
   const [deleteAlbum] = useDeleteNexoriaAlbumMutation();
   
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ title: '', artist: '', genre: '', type: 'Album', coverImage: '' });
+  const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
+  const [editTarget, setEditTarget] = useState(null);
+  const [formData, setFormData] = useState(emptyForm);
 
   const albums = response?.data || [];
   const artists = artistsRes?.data || [];
   const genres = genresRes?.data || [];
 
+  const openCreate = () => {
+    setFormData(emptyForm);
+    setEditTarget(null);
+    setModalMode('create');
+  };
+
+  const openEdit = (album) => {
+    setFormData({
+      title: album.title,
+      artist: album.artist?._id || album.artist,
+      genre: album.genre?._id || album.genre,
+      type: album.type,
+      coverImage: album.coverImage || ''
+    });
+    setEditTarget(album);
+    setModalMode('edit');
+  };
+
+  const closeModal = () => {
+    setModalMode(null);
+    setEditTarget(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.artist) return toast.error('Please select an artist');
-    
     try {
-      await createAlbum(formData).unwrap();
-      toast.success('Album created successfully');
-      setIsModalOpen(false);
-      setFormData({ title: '', artist: '', genre: '', type: 'Album', coverImage: '' });
+      if (modalMode === 'edit' && editTarget) {
+        await updateAlbum({ id: editTarget._id, data: formData }).unwrap();
+        toast.success('Album updated successfully');
+      } else {
+        await createAlbum(formData).unwrap();
+        toast.success('Album created successfully');
+      }
+      closeModal();
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create album');
+      toast.error(error?.data?.message || 'Failed to save album');
     }
   };
 
@@ -58,7 +88,7 @@ const NexoriaAlbumsManager = () => {
           <p className="text-slate-500 text-sm mt-0.5">{albums.length} releases in the platform</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCreate}
           className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" /> Add Album
@@ -91,8 +121,20 @@ const NexoriaAlbumsManager = () => {
                     <Disc3 className="w-10 h-10 text-white/30" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                  <button onClick={() => handleDelete(album._id)} className="p-3 text-white bg-red-500/80 hover:bg-red-500 rounded-xl backdrop-blur-sm transition-all hover:scale-110 shadow-lg">
+                {/* Quick Actions (Hover) */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
+                  <button 
+                    onClick={() => openEdit(album)}
+                    className="p-3 bg-purple-500 text-white rounded-full hover:bg-purple-400 hover:scale-110 transition-all shadow-xl"
+                    title="Edit Album"
+                  >
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(album._id)}
+                    className="p-3 bg-red-500 text-white rounded-full hover:bg-red-400 hover:scale-110 transition-all shadow-xl"
+                    title="Delete Album"
+                  >
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
@@ -110,15 +152,15 @@ const NexoriaAlbumsManager = () => {
       )}
 
       {/* Modal */}
-      {isModalOpen && (
+      {modalMode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
           <div className="bg-[#0f0f0f] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#0f0f0f]/95">
               <div>
-                <h3 className="text-lg font-black text-white">Add New Album</h3>
-                <p className="text-slate-500 text-xs mt-0.5">Create a new album release</p>
+                <h3 className="text-lg font-black text-white">{modalMode === 'edit' ? 'Edit Album' : 'Add New Album'}</h3>
+                <p className="text-slate-500 text-xs mt-0.5">{modalMode === 'edit' ? 'Update album details' : 'Release a new record'}</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
+              <button onClick={closeModal} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
@@ -204,15 +246,17 @@ const NexoriaAlbumsManager = () => {
 
               <button 
                 type="submit" 
-                disabled={isCreating}
+                disabled={isCreating || isUpdating}
                 className="w-full py-3.5 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
               >
-                {isCreating ? (
+                {isCreating || isUpdating ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Saving...
                   </>
-                ) : '💿 Create Album'}
+                ) : (
+                  modalMode === 'edit' ? '✅ Update Album' : '💿 Publish Album'
+                )}
               </button>
             </form>
           </div>

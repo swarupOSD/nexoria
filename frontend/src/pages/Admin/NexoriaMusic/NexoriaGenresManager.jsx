@@ -2,29 +2,56 @@ import React, { useState } from 'react';
 import { 
   useGetNexoriaGenresQuery, 
   useCreateNexoriaGenreMutation,
+  useUpdateNexoriaGenreMutation,
   useDeleteNexoriaGenreMutation 
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Tag } from 'lucide-react';
+import { Plus, Trash2, XCircle, Tag, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+const emptyForm = { name: '', hexColor: '#8B5CF6' };
 
 const NexoriaGenresManager = () => {
   const { data: response, isLoading } = useGetNexoriaGenresQuery();
   const [createGenre, { isLoading: isCreating }] = useCreateNexoriaGenreMutation();
+  const [updateGenre, { isLoading: isUpdating }] = useUpdateNexoriaGenreMutation();
   const [deleteGenre] = useDeleteNexoriaGenreMutation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', hexColor: '#8B5CF6' });
+  
+  const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
+  const [editTarget, setEditTarget] = useState(null);
+  const [formData, setFormData] = useState(emptyForm);
 
   const genres = response?.data || [];
+
+  const openCreate = () => {
+    setFormData(emptyForm);
+    setEditTarget(null);
+    setModalMode('create');
+  };
+
+  const openEdit = (genre) => {
+    setFormData({ name: genre.name, hexColor: genre.hexColor });
+    setEditTarget(genre);
+    setModalMode('edit');
+  };
+
+  const closeModal = () => {
+    setModalMode(null);
+    setEditTarget(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createGenre(formData).unwrap();
-      toast.success('Genre created successfully');
-      setIsModalOpen(false);
-      setFormData({ name: '', hexColor: '#8B5CF6' });
+      if (modalMode === 'edit' && editTarget) {
+        await updateGenre({ id: editTarget._id, data: formData }).unwrap();
+        toast.success('Genre updated successfully');
+      } else {
+        await createGenre(formData).unwrap();
+        toast.success('Genre created successfully');
+      }
+      closeModal();
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create genre');
+      toast.error(error?.data?.message || 'Failed to save genre');
     }
   };
 
@@ -48,7 +75,7 @@ const NexoriaGenresManager = () => {
           <p className="text-slate-500 text-sm mt-0.5">{genres.length} categories available</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCreate}
           className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" /> Add Genre
@@ -89,27 +116,35 @@ const NexoriaGenresManager = () => {
                 </div>
                 <h3 className="text-white font-black text-lg tracking-tight truncate">{genre.name}</h3>
               </div>
-              <button 
-                onClick={() => handleDelete(genre._id)} 
-                className="opacity-0 group-hover:opacity-100 p-2 text-white/40 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all relative z-10"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <div className="opacity-0 group-hover:opacity-100 flex gap-2 relative z-10 transition-all">
+                <button 
+                  onClick={() => openEdit(genre)} 
+                  className="p-2 text-white/40 hover:text-purple-400 hover:bg-purple-400/10 rounded-xl transition-all"
+                >
+                  <Edit2 className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => handleDelete(genre._id)} 
+                  className="p-2 text-white/40 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {/* Modal */}
-      {isModalOpen && (
+      {modalMode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
           <div className="bg-[#0f0f0f] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#0f0f0f]/95">
               <div>
-                <h3 className="text-lg font-black text-white">Add New Genre</h3>
-                <p className="text-slate-500 text-xs mt-0.5">Create a music category</p>
+                <h3 className="text-lg font-black text-white">{modalMode === 'edit' ? 'Edit Genre' : 'Add New Genre'}</h3>
+                <p className="text-slate-500 text-xs mt-0.5">{modalMode === 'edit' ? 'Update music category' : 'Create a music category'}</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
+              <button onClick={closeModal} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
@@ -165,15 +200,17 @@ const NexoriaGenresManager = () => {
 
               <button 
                 type="submit" 
-                disabled={isCreating}
+                disabled={isCreating || isUpdating}
                 className="w-full py-3.5 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
               >
-                {isCreating ? (
+                {isCreating || isUpdating ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Saving...
                   </>
-                ) : '🏷️ Create Genre'}
+                ) : (
+                  modalMode === 'edit' ? '✅ Update Genre' : '🏷️ Create Genre'
+                )}
               </button>
             </form>
           </div>
