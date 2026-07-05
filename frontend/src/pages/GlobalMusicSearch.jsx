@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Music, Loader2, PlayCircle, Heart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { useSearchSaavnPublicQuery, useLazyGetSaavnSongDetailsQuery, useSearchYouTubePublicQuery } from '../features/api/musicApiSlice';
+import { useSearchSaavnPublicQuery, useLazyGetSaavnSongDetailsQuery } from '../features/api/musicApiSlice';
 import { playSong } from '../features/music/musicSlice';
 import SEO from '../components/SEO';
 
@@ -11,7 +11,6 @@ const GlobalMusicSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [playingId, setPlayingId] = useState(null);
-  const [searchSource, setSearchSource] = useState('saavn'); // 'saavn' or 'youtube'
 
   const { currentSong, isPlaying } = useSelector(state => state.music);
   const [getSongDetails] = useLazyGetSaavnSongDetailsQuery();
@@ -28,32 +27,11 @@ const GlobalMusicSearch = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: searchResults, isFetching: isFetchingSaavn } = useSearchSaavnPublicQuery(debouncedSearch, {
-    skip: !debouncedSearch || searchSource !== 'saavn'
+  const { data: searchResults, isFetching } = useSearchSaavnPublicQuery(debouncedSearch, {
+    skip: !debouncedSearch
   });
 
-  const { data: ytResults, isFetching: isFetchingYt } = useSearchYouTubePublicQuery(debouncedSearch, {
-    skip: !debouncedSearch || searchSource !== 'youtube'
-  });
-  
-  const isFetching = isFetchingSaavn || isFetchingYt;
-
-  const handlePlaySong = async (songMetadata) => {
-    if (searchSource === 'youtube') {
-      const playableSong = {
-        _id: songMetadata.youtubeId,
-        title: songMetadata.title,
-        artist: songMetadata.artist,
-        image: songMetadata.image,
-        audioUrl: songMetadata.audioUrl,
-        isYoutube: true,
-        duration: songMetadata.duration
-      };
-      dispatch(playSong(playableSong));
-      return;
-    }
-
-    try {
+  const handlePlaySong = async (songMetadata) => {    try {
       setPlayingId(songMetadata.saavnId);
       
       // Fetch full details (includes decrypted audio URL)
@@ -79,7 +57,7 @@ const GlobalMusicSearch = () => {
     }
   };
 
-  const songs = searchSource === 'saavn' ? (searchResults?.data || []) : (ytResults?.data || []);
+  const songs = searchResults?.data || [];
 
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-24 pb-32">
@@ -122,37 +100,6 @@ const GlobalMusicSearch = () => {
                 <Loader2 className="h-6 w-6 text-purple-400 animate-spin" />
               </div>
             )}
-          </div>
-
-          <div className="flex justify-center mt-8 relative z-10">
-            <div className="relative inline-flex items-center p-1.5 bg-slate-900/80 border border-white/10 rounded-full backdrop-blur-xl shadow-2xl overflow-hidden">
-              <div 
-                className={`absolute inset-y-1.5 rounded-full transition-all duration-400 ease-spring ${
-                  searchSource === 'saavn' 
-                    ? 'left-1.5 w-[140px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]' 
-                    : 'left-[145px] w-[160px] bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
-                }`}
-              ></div>
-              
-              <button
-                onClick={() => setSearchSource('saavn')}
-                className={`relative z-10 w-[140px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
-                  searchSource === 'saavn' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Music className="w-4 h-4" />
-                HQ Audio
-              </button>
-              <button
-                onClick={() => setSearchSource('youtube')}
-                className={`relative z-10 w-[160px] py-2.5 rounded-full font-bold text-sm tracking-wide transition-colors duration-300 flex items-center justify-center gap-2 ${
-                  searchSource === 'youtube' ? 'text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <PlayCircle className="w-4 h-4" />
-                Nexoria Music
-              </button>
-            </div>
           </div>
         </div>
 

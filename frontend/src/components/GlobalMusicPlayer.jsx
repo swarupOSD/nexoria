@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import ReactPlayer from 'react-player/youtube';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
   Repeat, Shuffle, Heart, ListVideo, Mic2, Share2, Radio, Download
@@ -27,19 +26,6 @@ import { downloadMp3 } from '../utils/downloadMp3';
 import { Sliders, X } from 'lucide-react';
 import FallbackImage from './FallbackImage';
 
-// Sanitize YouTube URL to standard watch?v= format
-const sanitizeYouTubeUrl = (url) => {
-  if (!url) return '';
-  if (url.includes('youtu.be/')) {
-    const id = url.split('youtu.be/')[1].split('?')[0];
-    return `https://www.youtube.com/watch?v=${id}`;
-  }
-  if (url.includes('?si=')) {
-    return url.split('?si=')[0];
-  }
-  return url;
-};
-
 const GlobalMusicPlayer = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -55,15 +41,11 @@ const GlobalMusicPlayer = () => {
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
   const [isEqOpen, setIsEqOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const playerRef = useRef(null);
   const audioRef = useRef(null);
-  const silentAudioRef = useRef(null);
 
-  // Determine playback mode
-  const isYouTube = currentSong?.isYoutube || currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
-  const playerUrl = isYouTube ? sanitizeYouTubeUrl(currentSong?.audioUrl) : currentSong?.audioUrl;
+  const playerUrl = currentSong?.audioUrl;
 
-  const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(audioRef, isYouTube);
+  const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(audioRef, false);
 
   const [toggleFavorite] = useToggleFavoriteMutation();
   const [recordListenHistory] = useRecordListenHistoryMutation();
@@ -78,7 +60,7 @@ const GlobalMusicPlayer = () => {
 
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
-    if (audioRef.current && currentSong && !currentSong.isYoutube) {
+    if (audioRef.current && currentSong) {
       if (isPlaying) {
         audioRef.current.play().then(() => {
           resumeContext(); // Ensure Web Audio API is resumed
@@ -90,17 +72,6 @@ const GlobalMusicPlayer = () => {
       }
     }
   }, [isPlaying, currentSong, dispatch, resumeContext]);
-
-  // Sync silent audio loop for YouTube background play hack
-  useEffect(() => {
-    if (isYouTube && silentAudioRef.current) {
-      if (isPlaying) {
-        silentAudioRef.current.play().catch(() => {});
-      } else {
-        silentAudioRef.current.pause();
-      }
-    }
-  }, [isPlaying, isYouTube]);
 
   // MediaSession API Integration
   useEffect(() => {
@@ -125,14 +96,12 @@ const GlobalMusicPlayer = () => {
           audioRef.current.fastSeek(details.seekTime);
           return;
         }
-        if (isYouTube && playerRef.current) {
-          playerRef.current.seekTo(details.seekTime);
-        } else if (audioRef.current) {
+        if (audioRef.current) {
           audioRef.current.currentTime = details.seekTime;
         }
       });
     }
-  }, [currentSong, dispatch, isYouTube]);
+  }, [currentSong, dispatch]);
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -152,8 +121,7 @@ const GlobalMusicPlayer = () => {
           } else {
             // Seek Back 10 seconds
             const backTime = Math.max(0, playedSeconds - 10);
-            if (isYouTube && playerRef.current) playerRef.current.seekTo(backTime);
-            else if (audioRef.current) audioRef.current.currentTime = backTime;
+            if (audioRef.current) audioRef.current.currentTime = backTime;
           }
           break;
         case 'ArrowRight':
@@ -163,8 +131,7 @@ const GlobalMusicPlayer = () => {
           } else {
             // Seek Forward 10 seconds
             const forwardTime = Math.min(duration, playedSeconds + 10);
-            if (isYouTube && playerRef.current) playerRef.current.seekTo(forwardTime);
-            else if (audioRef.current) audioRef.current.currentTime = forwardTime;
+            if (audioRef.current) audioRef.current.currentTime = forwardTime;
           }
           break;
         default:
@@ -174,7 +141,7 @@ const GlobalMusicPlayer = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, playedSeconds, duration, isYouTube]);
+  }, [dispatch, playedSeconds, duration]);
 
   // Sync volume/mute on native audio
   useEffect(() => {
@@ -214,12 +181,8 @@ const GlobalMusicPlayer = () => {
   const handleSeekMouseUp = (e) => {
     setIsSeeking(false);
     const newTime = parseFloat(e.target.value);
-    if (isYouTube) {
-      playerRef.current?.seekTo(newTime);
-    } else {
-      if (audioRef.current && duration > 0) {
-        audioRef.current.currentTime = newTime * duration;
-      }
+    if (audioRef.current && duration > 0) {
+      audioRef.current.currentTime = newTime * duration;
     }
   };
 
@@ -301,7 +264,7 @@ const GlobalMusicPlayer = () => {
     <EqualizerModal
       isOpen={isEqOpen}
       onClose={() => setIsEqOpen(false)}
-      isYouTube={isYouTube}
+      isYouTube={false}
       updateEq={updateEq}
     />
     <ShareCardModal
@@ -312,21 +275,10 @@ const GlobalMusicPlayer = () => {
     
     <div className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none">
         
-        {/* Mobile Background Play Disclaimer */}
-        <div className="max-w-6xl mx-auto mb-2 pointer-events-auto flex justify-center">
-          <div className="bg-slate-900/60 backdrop-blur-md border border-purple-500/30 text-slate-300 text-[10px] sm:text-xs rounded-full px-4 py-1.5 flex items-center gap-2 shadow-lg animate-pulse-slow">
-            <span className="text-purple-400 font-bold">ℹ️ Info:</span> 
-            <span>
-              For mobile background play, use <b>HQ Audio</b>. For <b>Nexoria Music</b>, use <b>Brave Browser</b>.
-            </span>
-          </div>
-        </div>
-
         <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 
         {/* NATIVE MP3 AUDIO */}
         {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
-        {!isYouTube && (
           <audio
             ref={audioRef}
             src={playerUrl}
@@ -348,57 +300,6 @@ const GlobalMusicPlayer = () => {
             }}
             style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
           />
-        )}
-
-        {/* YOUTUBE BACKGROUND AUDIO HACK */}
-        {isYouTube && (
-          <audio
-            ref={silentAudioRef}
-            src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"
-            loop
-          />
-        )}
-
-        {/* YOUTUBE AUDIO-ONLY — ReactPlayer */}
-        {/* FIX: Chrome blocks autoplay if iframe is completely hidden/off-screen. Making it 50x50 with 0.01 opacity so browser considers it "visible". */}
-        {isYouTube && (
-          <div style={{ position: 'absolute', right: '0', bottom: '0', width: '50px', height: '50px', opacity: 0.01, pointerEvents: 'none', zIndex: -1 }}>
-            <ReactPlayer
-              ref={playerRef}
-              url={playerUrl}
-              playing={isPlaying}
-              volume={isMuted ? 0 : volume}
-              width="100%"
-              height="100%"
-              onProgress={handleProgress}
-              onDuration={handleDuration}
-              onEnded={handleSongEnd}
-              onPlay={() => dispatch(setPlaying(true))}
-              onPause={() => { /* controlled by Redux only */ }}
-              onReady={() => {
-                // Force play on ready if it should be playing
-                if (isPlaying && playerRef.current) {
-                   playerRef.current.seekTo(0);
-                }
-              }}
-              onError={() => {
-                toast.error('Failed to play YouTube audio');
-                dispatch(setPlaying(false));
-              }}
-              config={{
-                youtube: {
-                  playerVars: {
-                    showinfo: 0,
-                    controls: 0,
-                    autoplay: 1,
-                    playsinline: 1,
-                    origin: window.location.origin
-                  }
-                }
-              }}
-            />
-          </div>
-        )}
 
         {/* Left: Song Info */}
         <div className="flex items-center gap-3 w-full sm:w-1/3 min-w-0">
@@ -411,7 +312,7 @@ const GlobalMusicPlayer = () => {
             />
             {isPlaying && (
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
-                <AudioVisualizer isPlaying={isPlaying} isYouTube={isYouTube} getAnalyser={getAnalyser} />
+                <AudioVisualizer isPlaying={isPlaying} isYouTube={false} getAnalyser={getAnalyser} />
               </div>
             )}
           </div>
@@ -498,7 +399,7 @@ const GlobalMusicPlayer = () => {
         <div className="hidden sm:flex items-center justify-end gap-3 w-1/3">
           <button 
             onClick={() => setIsEqOpen(true)}
-            className={`p-2 transition-colors ${!isYouTube ? 'text-slate-300 hover:text-white' : 'text-slate-600 cursor-not-allowed'}`}
+            className="p-2 transition-colors text-slate-300 hover:text-white"
             title="Advanced Equalizer"
           >
             <Sliders className="w-4 h-4" />
@@ -524,15 +425,13 @@ const GlobalMusicPlayer = () => {
             <Share2 className="w-4 h-4" />
           </button>
 
-          {!isYouTube && (
-            <button 
-              onClick={() => downloadMp3(currentSong)} 
-              className="text-slate-400 hover:text-green-400 transition-colors p-2" 
-              title="Download MP3"
-            >
-              <Download className="w-4 h-4" />
-            </button>
-          )}
+          <button 
+            onClick={() => downloadMp3(currentSong)} 
+            className="text-slate-400 hover:text-green-400 transition-colors p-2" 
+            title="Download MP3"
+          >
+            <Download className="w-4 h-4" />
+          </button>
 
           <Link to="/sound/queue" className="text-slate-400 hover:text-white transition-colors p-2" title="Queue">
             <ListVideo className="w-5 h-5" />

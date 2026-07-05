@@ -6,9 +6,9 @@ const getInitialState = () => {
     try {
       const parsed = JSON.parse(savedState);
       
-      // Filter out any invalid old dummy data (like songs without proper audio URLs or titles if they are not youtube)
+      // Filter out any invalid old dummy data (like songs without proper audio URLs or titles)
       const cleanRecentlyPlayed = (parsed.recentlyPlayed || []).filter(
-        s => s && s.title && (s.audioUrl || s.isYoutube) && !s.title.includes('Cyber Beats FM') && !s.title.includes('Lofi Chill Station') && !s.title.includes('Nexoria Hits 99.5')
+        s => s && s.title && s.audioUrl && !s.title.includes('Cyber Beats FM') && !s.title.includes('Lofi Chill Station') && !s.title.includes('Nexoria Hits 99.5')
       );
 
       return {
