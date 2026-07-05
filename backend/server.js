@@ -163,6 +163,7 @@ import auraRoutes from './routes/auraRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
 import arenaGameRoutes from './routes/arenaGameRoutes.js';
 import offerwallRoutes from './routes/offerwallRoutes.js';
+import nexoriaMusicRoutes from './routes/nexoriaMusicRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -218,6 +219,7 @@ app.use('/api/admin/scraper', scraperRoutes);
 app.use('/api/aura', auraRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/webhooks/offerwall', offerwallRoutes);
+app.use('/api/nexoria-music', nexoriaMusicRoutes);
 
 import path from 'path';
 

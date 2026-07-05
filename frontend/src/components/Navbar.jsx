@@ -330,7 +330,10 @@ const Navbar = () => {
               Games
             </Link>
             <Link to="/sound" className={`text-sm font-bold transition-colors ${location.pathname.startsWith('/sound') ? 'text-purple-500' : 'text-slate-700 dark:text-slate-300 hover:text-purple-500'}`}>
-              Music
+              Classic Sound
+            </Link>
+            <Link to="/nexoria-music" className={`text-sm font-bold transition-colors ${location.pathname.startsWith('/nexoria-music') ? 'text-pink-500' : 'text-slate-700 dark:text-slate-300 hover:text-pink-500'}`}>
+              Nexoria Music
             </Link>
 
             <Link to="/nexoria-arena" className={`text-sm font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
@@ -653,7 +656,10 @@ const Navbar = () => {
                       <Gamepad2 className="w-5 h-5 text-blue-500" /> Games
                     </Link>
                     <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Music className="w-5 h-5 text-purple-500" /> Nexoria Music
+                      <Music className="w-5 h-5 text-purple-500" /> Classic Sound
+                    </Link>
+                    <Link to="/nexoria-music" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                      <Music className="w-5 h-5 text-pink-500" /> Nexoria Music
                     </Link>
                     <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-red-500" /> Arena

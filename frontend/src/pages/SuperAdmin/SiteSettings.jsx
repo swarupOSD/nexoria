@@ -52,6 +52,13 @@ const SiteSettings = () => {
       enabled: false,
       offerwallUrl: '',
       secretKey: ''
+    },
+    nexoriaMusicSettings: {
+      uploadsEnabled: true,
+      downloadsEnabled: true,
+      streamingEnabled: true,
+      recommendationsEnabled: true,
+      lyricsEnabled: true
     }
   });
 
@@ -111,6 +118,13 @@ const SiteSettings = () => {
           enabled: settingsRes.data.offerwallSettings?.enabled ?? false,
           offerwallUrl: settingsRes.data.offerwallSettings?.offerwallUrl || '',
           secretKey: settingsRes.data.offerwallSettings?.secretKey || ''
+        },
+        nexoriaMusicSettings: {
+          uploadsEnabled: settingsRes.data.nexoriaMusicSettings?.uploadsEnabled ?? true,
+          downloadsEnabled: settingsRes.data.nexoriaMusicSettings?.downloadsEnabled ?? true,
+          streamingEnabled: settingsRes.data.nexoriaMusicSettings?.streamingEnabled ?? true,
+          recommendationsEnabled: settingsRes.data.nexoriaMusicSettings?.recommendationsEnabled ?? true,
+          lyricsEnabled: settingsRes.data.nexoriaMusicSettings?.lyricsEnabled ?? true
         }
       });
     }
@@ -467,6 +481,36 @@ const SiteSettings = () => {
               <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Secret Key / Hash</label>
               <input type="text" name="offerwall_secret" value={formData.offerwallSettings?.secretKey || ''} onChange={(e) => setFormData({...formData, offerwallSettings: {...formData.offerwallSettings, secretKey: e.target.value}})} className="premium-input w-full" placeholder="Secret Key for Postback Validation" />
               <p className="text-xs text-slate-500 mt-1">Postback Webhook URL: <code>{window.location.origin}/api/webhooks/offerwall</code></p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Nexoria Music Settings */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="glass-card p-6 border border-slate-200 dark:border-night-border lg:col-span-2">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <SettingsIcon className="w-5 h-5 text-purple-500" />
+            <h2 className="text-lg font-bold dark:text-white">Nexoria Music Platform (Global Toggles)</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={formData.nexoriaMusicSettings?.streamingEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, streamingEnabled: e.target.checked}})} id="musicStreaming" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
+              <label htmlFor="musicStreaming" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Streaming</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={formData.nexoriaMusicSettings?.uploadsEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, uploadsEnabled: e.target.checked}})} id="musicUploads" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
+              <label htmlFor="musicUploads" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Uploads</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={formData.nexoriaMusicSettings?.downloadsEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, downloadsEnabled: e.target.checked}})} id="musicDownloads" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
+              <label htmlFor="musicDownloads" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Downloads</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={formData.nexoriaMusicSettings?.recommendationsEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, recommendationsEnabled: e.target.checked}})} id="musicRecs" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
+              <label htmlFor="musicRecs" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Recommendations</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={formData.nexoriaMusicSettings?.lyricsEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, lyricsEnabled: e.target.checked}})} id="musicLyrics" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
+              <label htmlFor="musicLyrics" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Lyrics</label>
             </div>
           </div>
         </motion.div>

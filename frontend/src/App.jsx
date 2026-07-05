@@ -26,6 +26,7 @@ import Sitemap from './pages/legal/Sitemap';
 import KidsModeGuard from './components/KidsModeGuard';
 import AllCategories from './pages/AllCategories';
 import Premium from './pages/Premium';
+import NexoriaPlayer from './components/NexoriaPlayer';
 import GlobalMusicPlayer from './components/GlobalMusicPlayer';
 import GlobalChatBubble from './components/GlobalChatBubble';
 import NexoriaSound from './pages/NexoriaSound';
@@ -60,6 +61,9 @@ import PrivateRoute from './components/PrivateRoute';
 import Games from './pages/Games';
 import VIPLounge from './pages/VIPLounge';
 import NexoriaArena from './pages/NexoriaArena';
+const NexoriaMusicHome = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicHome'));
+const NexoriaMusicSearch = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicSearch'));
+const NexoriaMusicLibrary = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLibrary'));
 
 import { useEffect, Suspense, lazy } from 'react';
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
@@ -87,6 +91,9 @@ const AdminLoginActivityLogs = lazy(() => import('./pages/Admin/AdminLoginActivi
 const AdminPremiumRequests = lazy(() => import('./pages/Admin/AdminPremiumRequests'));
 const AdminReports = lazy(() => import('./pages/Admin/AdminReports'));
 const AdminLiveMonitor = lazy(() => import('./pages/Admin/LiveMonitor'));
+
+// Nexoria Proprietary Music Platform
+const NexoriaMusicDashboard = lazy(() => import('./pages/admin/NexoriaMusic/NexoriaMusicDashboard'));
 
 // Super Admin UI (Lazy Loaded)
 const SuperAdminLayout = lazy(() => import('./components/SuperAdminLayout'));
@@ -205,6 +212,7 @@ function App() {
       <KidsModeGuard>
         <Suspense fallback={<PageLoader />}>
           <GlobalMusicPlayer />
+          <NexoriaPlayer />
           <GlobalChatBubble />
           <CyberpunkParticles />
           <Routes>
@@ -239,6 +247,12 @@ function App() {
                 <Route path="/sound" element={<NexoriaSound />} />
                 <Route path="/sound/search" element={<GlobalMusicSearch />} />
                 <Route path="/sound/queue" element={<SoundQueue />} />
+                
+                {/* Proprietary Nexoria Music Platform */}
+                <Route path="/nexoria-music" element={<NexoriaMusicHome />} />
+                <Route path="/nexoria-music/search" element={<NexoriaMusicSearch />} />
+                <Route path="/nexoria-music/library" element={<NexoriaMusicLibrary />} />
+
                 <Route path="/category/:slug" element={<CategoryPage />} />
                 <Route path="categories" element={<AllCategories />} />
                 <Route path="category/:slug" element={<CategoryPage />} />
@@ -304,6 +318,7 @@ function App() {
             <Route path="login-activity" element={<AdminLoginActivityLogs />} />
             <Route path="premium-requests" element={<AdminPremiumRequests />} />
             <Route path="live-monitor" element={<AdminLiveMonitor />} />
+            <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
           </Route>
 
             {/* Super Admin Protected Routes */}

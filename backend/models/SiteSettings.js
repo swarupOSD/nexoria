@@ -99,6 +99,13 @@ const siteSettingsSchema = new mongoose.Schema(
       captchaDifficulty: { type: String, enum: ['easy', 'medium', 'hard'], default: 'easy' },
       captchaRefreshCount: { type: Number, default: 3 }
     },
+    nexoriaMusicSettings: {
+      uploadsEnabled: { type: Boolean, default: true },
+      downloadsEnabled: { type: Boolean, default: true },
+      streamingEnabled: { type: Boolean, default: true },
+      recommendationsEnabled: { type: Boolean, default: true },
+      lyricsEnabled: { type: Boolean, default: true }
+    },
     updatedBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

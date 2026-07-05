@@ -53,6 +53,7 @@ export const apiSlice = createApi({
     'Plans', 'Payments', 'Analytics', 'Activity', 'Notifications',
     'MovieApproval', 'MovieReview', 'MovieRating', 'MovieReport', 'MovieWatchHistory', 'Games', 'Trash',
     'Aura', 'AuraBattle',
+    'NexoriaArtist', 'NexoriaGenre', 'NexoriaAlbum', 'NexoriaTrack', 'NexoriaPlaylist', 'NexoriaMusicHistory'
   ],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({}),
