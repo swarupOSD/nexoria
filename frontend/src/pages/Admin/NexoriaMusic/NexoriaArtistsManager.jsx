@@ -106,63 +106,77 @@ const NexoriaArtistsManager = () => {
           <p className="text-slate-600 text-sm">Add your first artist to get started</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {artists.map(artist => (
             <div
               key={artist._id}
-              className="group relative bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/8 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/5"
+              className="group relative bg-[#0f0f0f] border border-white/5 rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/10"
             >
               {/* Cover Banner */}
-              <div className="relative h-20 bg-gradient-to-r from-purple-900/60 via-pink-900/40 to-indigo-900/60 overflow-hidden">
+              <div className="relative h-28 bg-gradient-to-r from-purple-900/40 via-pink-900/20 to-indigo-900/40 overflow-hidden">
                 {artist.coverImage && (
-                  <img src={artist.coverImage} alt="" className="w-full h-full object-cover opacity-40" />
+                  <img src={artist.coverImage} alt="" className="w-full h-full object-cover opacity-50 mix-blend-screen group-hover:scale-105 transition-transform duration-700" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/80 to-transparent" />
               </div>
 
               {/* Artist Info */}
-              <div className="px-4 pb-4">
-                <div className="flex items-end gap-3 -mt-8 mb-3">
-                  {/* Avatar */}
-                  <div className="w-16 h-16 rounded-2xl border-2 border-[#0a0a0a] overflow-hidden bg-gradient-to-br from-purple-800 to-pink-800 shrink-0 shadow-xl">
+              <div className="px-5 pb-5">
+                <div className="flex flex-col items-center -mt-14 relative z-10 mb-4">
+                  {/* Avatar (Circle) */}
+                  <div className="w-24 h-24 rounded-full border-4 border-[#0f0f0f] overflow-hidden bg-gradient-to-br from-purple-800 to-pink-800 shadow-2xl mb-3 group-hover:shadow-purple-500/20 transition-all duration-300 relative">
                     {artist.image ? (
-                      <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={artist.image} 
+                        alt={artist.name} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name || 'Artist')}&background=random&color=fff&size=256`; 
+                        }} 
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-2xl font-black text-white">
+                      <div className="w-full h-full flex items-center justify-center text-3xl font-black text-white">
                         {artist.name?.[0]?.toUpperCase()}
                       </div>
                     )}
+                    <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-full" />
                   </div>
+                  
                   {/* Name & badge */}
-                  <div className="flex-1 min-w-0 pb-1">
-                    <div className="flex items-center gap-1.5">
-                      <h3 className="text-white font-black text-base truncate">{artist.name}</h3>
+                  <div className="text-center w-full">
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
+                      <h3 className="text-white font-black text-xl tracking-tight truncate max-w-[80%]">{artist.name}</h3>
                       {artist.isVerified && (
-                        <CheckCircle className="w-4 h-4 text-blue-400 shrink-0 fill-blue-400/20" />
+                        <CheckCircle className="w-5 h-5 text-blue-400 shrink-0 fill-blue-400/20" />
                       )}
                     </div>
-                    <p className="text-slate-500 text-xs">{(artist.totalPlays || 0).toLocaleString()} plays</p>
+                    <p className="text-purple-400/80 text-[10px] font-black uppercase tracking-widest">
+                      {(artist.totalPlays || 0).toLocaleString()} plays
+                    </p>
                   </div>
                 </div>
 
                 {/* Bio */}
-                {artist.bio && (
-                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-3">{artist.bio}</p>
+                {artist.bio ? (
+                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-5 text-center px-2 min-h-[32px]">{artist.bio}</p>
+                ) : (
+                  <div className="min-h-[32px] mb-5" />
                 )}
 
                 {/* Actions */}
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-2">
                   <button
                     onClick={() => openEdit(artist)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-purple-400 bg-purple-400/10 hover:bg-purple-400/20 rounded-xl transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-white bg-white/5 hover:bg-purple-500/20 hover:text-purple-300 rounded-xl transition-all border border-white/5 hover:border-purple-500/30"
                   >
-                    <Edit2 className="w-3.5 h-3.5" /> Edit
+                    <Edit2 className="w-4 h-4" /> Edit
                   </button>
                   <button
                     onClick={() => handleDelete(artist)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-xl transition-colors"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-white/5 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-all border border-white/5 hover:border-red-500/30"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
