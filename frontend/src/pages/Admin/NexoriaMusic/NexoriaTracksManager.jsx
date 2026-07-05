@@ -197,7 +197,16 @@ const NexoriaTracksManager = () => {
                     <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] uppercase font-black px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20">PRO</span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400 truncate">
+                {/* RAW AUDIO PLAYER FOR DEBUGGING */}
+                {track.telegramFileId && (
+                  <audio 
+                    controls 
+                    className="h-8 mt-2 w-full max-w-xs opacity-50 hover:opacity-100 transition-opacity" 
+                    src={`https://nexoria-backend-mt5e.onrender.com/api/nexoria-music/stream/${track.telegramFileId}`}
+                    preload="metadata"
+                  />
+                )}
+                <div className="flex items-center gap-2 text-xs text-slate-400 truncate mt-1">
                   <span className="font-medium text-purple-400/80">{track.artist?.name || 'Unknown'}</span>
                   {track.album && (
                     <>

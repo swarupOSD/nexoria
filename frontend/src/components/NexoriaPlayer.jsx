@@ -98,6 +98,18 @@ const NexoriaPlayer = () => {
             audioRef.current.play().catch(e => console.log('Playback error:', e));
           }
         }}
+        onError={(e) => {
+          console.error("Audio Element Error:", e.target.error);
+          if (e.target.error) {
+             const errorCodes = {
+               1: "MEDIA_ERR_ABORTED",
+               2: "MEDIA_ERR_NETWORK",
+               3: "MEDIA_ERR_DECODE",
+               4: "MEDIA_ERR_SRC_NOT_SUPPORTED"
+             };
+             console.error("Error Code:", errorCodes[e.target.error.code] || "UNKNOWN");
+          }
+        }}
       />
 
       {/* Fixed Bottom Player UI */}
