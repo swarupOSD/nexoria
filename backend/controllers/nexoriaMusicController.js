@@ -7,6 +7,7 @@ import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
 import path from 'path';
+import https from 'https';
 
 // ==========================================
 // ADMIN: ARTIST MANAGEMENT
@@ -307,46 +308,57 @@ export const streamTrack = async (req, res) => {
     const filePath = fileRes.data.result.file_path;
     const fileUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
-    // Step 2: Stream the file
-    const config = {
-      responseType: 'stream',
+    // Step 2: Stream the file using native https to prevent axios tampering
+    const options = {
+      method: 'GET',
       headers: {}
     };
 
     if (req.headers.range) {
-      config.headers['Range'] = req.headers.range;
+      options.headers['Range'] = req.headers.range;
     }
 
-    const response = await axios.get(fileUrl, config);
+    const proxyReq = https.request(fileUrl, options, (proxyRes) => {
+      // Forward status code
+      res.status(proxyRes.statusCode);
 
-    // Determine correct Content-Type based on extension
-    const ext = path.extname(fileUrl).toLowerCase();
-    let contentType = 'audio/mpeg'; // Default to mp3
-    if (ext === '.m4a' || ext === '.mp4') contentType = 'audio/mp4';
-    else if (ext === '.ogg') contentType = 'audio/ogg';
-    else if (ext === '.wav') contentType = 'audio/wav';
-    else if (ext === '.webm') contentType = 'audio/webm';
-    
-    // If Telegram provides a valid audio MIME type, use it
-    if (response.headers['content-type'] && response.headers['content-type'].startsWith('audio/')) {
-      contentType = response.headers['content-type'];
-    }
+      // Forward necessary headers
+      const headersToForward = ['content-length', 'content-range', 'accept-ranges'];
+      headersToForward.forEach(header => {
+        if (proxyRes.headers[header]) {
+          res.setHeader(header, proxyRes.headers[header]);
+        }
+      });
 
-    // Forward necessary headers
-    res.set({
-      'Content-Type': contentType,
-      'Content-Length': response.headers['content-length'],
-      'Accept-Ranges': 'bytes'
+      // Determine correct Content-Type
+      let contentType = proxyRes.headers['content-type'];
+      if (!contentType || contentType === 'application/octet-stream') {
+        const ext = path.extname(fileUrl).toLowerCase();
+        contentType = 'audio/mpeg'; // Default
+        if (ext === '.m4a' || ext === '.mp4') contentType = 'audio/mp4';
+        else if (ext === '.ogg') contentType = 'audio/ogg';
+        else if (ext === '.wav') contentType = 'audio/wav';
+        else if (ext === '.webm') contentType = 'audio/webm';
+      }
+      res.setHeader('Content-Type', contentType);
+
+      // Pipe the raw stream directly to the client
+      proxyRes.pipe(res);
+      
+      proxyRes.on('error', (err) => {
+        logger.error(`Proxy stream response error: ${err.message}`);
+        if (!res.headersSent) res.status(500).end();
+      });
     });
 
-    if (response.headers['content-range']) {
-      res.set('Content-Range', response.headers['content-range']);
-      res.status(206);
-    } else {
-      res.status(200);
-    }
+    proxyReq.on('error', (err) => {
+      logger.error(`Proxy request error: ${err.message}`);
+      if (!res.headersSent) {
+        res.status(500).json({ success: false, message: 'Failed to proxy audio stream' });
+      }
+    });
 
-    response.data.pipe(res);
+    proxyReq.end();
 
   } catch (error) {
     if (error.code !== 'ECONNRESET') {
