@@ -19,23 +19,21 @@ const NexoriaPlayer = () => {
     repeatMode, shuffleMode, currentTime, duration 
   } = useSelector(state => state.nexoriaMusic);
 
-  // Sync state to audio element
+  // Sync state to audio element for play/pause toggling
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        // We use a promise to handle modern browser autoplay policies gracefully
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => {
-             console.log("Autoplay prevented:", error);
-             // Optionally dispatch togglePlayPause() here if we want UI to reflect the block
+             console.log("Autoplay prevented or interrupted:", error);
           });
         }
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, currentTrack]);
+  }, [isPlaying]); // Removed currentTrack so it doesn't interrupt loading
 
   useEffect(() => {
     if (audioRef.current) {
@@ -92,9 +90,15 @@ const NexoriaPlayer = () => {
       <audio
         ref={audioRef}
         src={audioSource}
+        autoPlay={isPlaying}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         onLoadedMetadata={handleTimeUpdate}
+        onCanPlay={() => {
+          if (isPlaying && audioRef.current) {
+            audioRef.current.play().catch(e => console.log('Playback error:', e));
+          }
+        }}
       />
 
       {/* Fixed Bottom Player UI */}

@@ -27,6 +27,11 @@ const nexoriaMusicSlice = createSlice({
       
       state.currentTrack = track;
       state.isPlaying = true;
+      if (track.duration) {
+        state.duration = track.duration;
+      } else {
+        state.duration = 0;
+      }
     },
     setQueue: (state, action) => {
       state.queue = action.payload;
@@ -55,6 +60,9 @@ const nexoriaMusicSlice = createSlice({
         }
         
         state.currentTrack = state.queue[nextIndex];
+        if (state.currentTrack.duration) state.duration = state.currentTrack.duration;
+        else state.duration = 0;
+        
         // Remove from queue
         state.queue.splice(nextIndex, 1);
         state.isPlaying = true;
@@ -70,6 +78,8 @@ const nexoriaMusicSlice = createSlice({
              nextIdx = Math.floor(Math.random() * state.queue.length);
            }
            state.currentTrack = state.queue[nextIdx];
+           if (state.currentTrack.duration) state.duration = state.currentTrack.duration;
+           else state.duration = 0;
            state.queue.splice(nextIdx, 1);
            state.isPlaying = true;
         } else if (state.repeatMode !== 'one') {
@@ -84,6 +94,8 @@ const nexoriaMusicSlice = createSlice({
           state.queue.unshift(state.currentTrack);
         }
         state.currentTrack = state.history.pop();
+        if (state.currentTrack.duration) state.duration = state.currentTrack.duration;
+        else state.duration = 0;
         state.isPlaying = true;
       }
     },
