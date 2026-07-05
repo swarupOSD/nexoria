@@ -30,10 +30,12 @@ public class MediaForegroundService extends Service {
                 .setOngoing(true)
                 .build();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 14 requires SPECIAL_USE if a valid MediaSession is not explicitly provided natively
-            // 0x40000000 corresponds to ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        if (Build.VERSION.SDK_INT >= 34) {
+            // Android 14+ requires SPECIAL_USE (0x40000000) if no MediaSession is provided natively
             startForeground(NOTIFICATION_ID, notification, 0x40000000);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10 to 13 support mediaPlayback without requiring a strict native MediaSession
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         } else {
             startForeground(NOTIFICATION_ID, notification);
         }
