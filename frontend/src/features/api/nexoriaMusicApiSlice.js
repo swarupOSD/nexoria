@@ -4,12 +4,12 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // ARTISTS
     getNexoriaArtists: builder.query({
-      query: () => '/api/nexoria-music/admin/artists',
+      query: () => '/nexoria-music/admin/artists',
       providesTags: ['NexoriaArtist'],
     }),
     createNexoriaArtist: builder.mutation({
       query: (data) => ({
-        url: '/api/nexoria-music/admin/artists',
+        url: '/nexoria-music/admin/artists',
         method: 'POST',
         body: data,
       }),
@@ -33,12 +33,12 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
 
     // GENRES
     getNexoriaGenres: builder.query({
-      query: () => '/api/nexoria-music/admin/genres',
+      query: () => '/nexoria-music/admin/genres',
       providesTags: ['NexoriaGenre'],
     }),
     createNexoriaGenre: builder.mutation({
       query: (data) => ({
-        url: '/api/nexoria-music/admin/genres',
+        url: '/nexoria-music/admin/genres',
         method: 'POST',
         body: data,
       }),
@@ -62,12 +62,12 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
 
     // ALBUMS
     getNexoriaAlbums: builder.query({
-      query: () => '/api/nexoria-music/admin/albums',
+      query: () => '/nexoria-music/admin/albums',
       providesTags: ['NexoriaAlbum'],
     }),
     createNexoriaAlbum: builder.mutation({
       query: (data) => ({
-        url: '/api/nexoria-music/admin/albums',
+        url: '/nexoria-music/admin/albums',
         method: 'POST',
         body: data,
       }),
@@ -92,19 +92,19 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     // TRACKS
     uploadNexoriaTrackAudio: builder.mutation({
       query: (formData) => ({
-        url: '/api/nexoria-music/admin/tracks/upload',
+        url: '/nexoria-music/admin/tracks/upload',
         method: 'POST',
         body: formData,
         // When using FormData, fetch automatically sets Content-Type to multipart/form-data with the correct boundary
       }),
     }),
     getNexoriaTracks: builder.query({
-      query: () => '/api/nexoria-music/admin/tracks',
+      query: () => '/nexoria-music/admin/tracks',
       providesTags: ['NexoriaTrack'],
     }),
     createNexoriaTrack: builder.mutation({
       query: (data) => ({
-        url: '/api/nexoria-music/admin/tracks',
+        url: '/nexoria-music/admin/tracks',
         method: 'POST',
         body: data,
       }),
@@ -128,7 +128,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
 
     // CONSUMER: SEARCH
     searchNexoriaMusic: builder.query({
-      query: (searchTerm) => `/api/nexoria-music/search?q=${encodeURIComponent(searchTerm)}`,
+      query: (searchTerm) => `/nexoria-music/search?q=${encodeURIComponent(searchTerm)}`,
     }),
   }),
 });
