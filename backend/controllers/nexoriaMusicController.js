@@ -6,6 +6,7 @@ import NexoriaPlaylist from '../models/NexoriaPlaylist.js';
 import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
+import path from 'path';
 
 // ==========================================
 // ADMIN: ARTIST MANAGEMENT
@@ -318,9 +319,22 @@ export const streamTrack = async (req, res) => {
 
     const response = await axios.get(fileUrl, config);
 
+    // Determine correct Content-Type based on extension
+    const ext = path.extname(fileUrl).toLowerCase();
+    let contentType = 'audio/mpeg'; // Default to mp3
+    if (ext === '.m4a' || ext === '.mp4') contentType = 'audio/mp4';
+    else if (ext === '.ogg') contentType = 'audio/ogg';
+    else if (ext === '.wav') contentType = 'audio/wav';
+    else if (ext === '.webm') contentType = 'audio/webm';
+    
+    // If Telegram provides a valid audio MIME type, use it
+    if (response.headers['content-type'] && response.headers['content-type'].startsWith('audio/')) {
+      contentType = response.headers['content-type'];
+    }
+
     // Forward necessary headers
     res.set({
-      'Content-Type': response.headers['content-type'] || 'audio/mpeg', // Use actual MIME type from Telegram
+      'Content-Type': contentType,
       'Content-Length': response.headers['content-length'],
       'Accept-Ranges': 'bytes'
     });
