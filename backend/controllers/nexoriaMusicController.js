@@ -320,7 +320,7 @@ export const streamTrack = async (req, res) => {
 
     // Forward necessary headers
     res.set({
-      'Content-Type': 'audio/mpeg', // Force audio MIME type so browsers play it
+      'Content-Type': response.headers['content-type'] || 'audio/mpeg', // Use actual MIME type from Telegram
       'Content-Length': response.headers['content-length'],
       'Accept-Ranges': 'bytes'
     });
