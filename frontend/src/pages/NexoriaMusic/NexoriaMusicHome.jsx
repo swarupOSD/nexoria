@@ -129,31 +129,31 @@ const NexoriaMusicHome = () => {
               [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />)
             ) : (
               tracks.slice(0, 9).map((track, idx) => (
-                <div key={track._id} className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 group transition-all duration-300 cursor-pointer">
-                  <span className="text-slate-500 font-medium w-4 text-right group-hover:hidden">{idx + 1}</span>
-                  <button 
-                    className={`hidden group-hover:flex w-4 items-center justify-center text-white ${currentTrack?._id === track._id ? '!flex text-purple-400' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (currentTrack?._id === track._id) {
-                        dispatch(togglePlayPause());
-                      } else {
-                        const audioEl = document.getElementById('nexoria-global-audio');
-                        if (audioEl) audioEl.play().catch(err => console.log(err));
-                        
-                        // Set the rest of the list as queue
-                        const remainingTracks = tracks.slice(idx + 1);
-                        dispatch(setQueue(remainingTracks));
-                        dispatch(playTrack(track));
-                      }
-                    }}
-                  >
+                <div 
+                  key={track._id} 
+                  className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 group transition-all duration-300 cursor-pointer"
+                  onClick={() => {
+                    if (currentTrack?._id === track._id) {
+                      dispatch(togglePlayPause());
+                    } else {
+                      const audioEl = document.getElementById('nexoria-global-audio');
+                      if (audioEl) audioEl.play().catch(err => console.log(err));
+                      
+                      // Set the rest of the list as queue
+                      const remainingTracks = tracks.slice(idx + 1);
+                      dispatch(setQueue(remainingTracks));
+                      dispatch(playTrack(track));
+                    }
+                  }}
+                >
+                  <span className="text-slate-500 font-medium w-4 text-right group-hover:hidden md:block hidden">{idx + 1}</span>
+                  <div className={`w-4 items-center justify-center text-white ${currentTrack?._id === track._id ? 'flex text-purple-400' : 'hidden group-hover:flex md:hidden flex'}`}>
                     {currentTrack?._id === track._id && isPlaying ? (
                        <Pause className="w-4 h-4 fill-current" />
                     ) : (
                        <Play className="w-4 h-4 fill-current" />
                     )}
-                  </button>
+                  </div>
                   <div className="w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
                     {track.album?.coverImage ? (
                       <img src={track.album.coverImage} alt={track.title} className="w-full h-full object-cover" />
