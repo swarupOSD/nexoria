@@ -66,7 +66,11 @@ const NexoriaMusicHome = () => {
                   onClick={() => {
                     const audioEl = document.getElementById('nexoria-global-audio');
                     if (audioEl) audioEl.play().catch(e => console.log(e));
-                    if (tracks.length > 0) dispatch(playTrack(tracks[0]));
+                    if (tracks.length > 0) {
+                      const remainingTracks = tracks.slice(1);
+                      dispatch(setQueue(remainingTracks));
+                      dispatch(playTrack(tracks[0]));
+                    }
                   }}
                 >
                   <Play className="w-5 h-5 fill-current" /> Play Now
