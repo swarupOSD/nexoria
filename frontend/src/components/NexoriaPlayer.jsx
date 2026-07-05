@@ -86,6 +86,7 @@ const NexoriaPlayer = () => {
     <>
       {/* Hidden Audio Element */}
       <audio
+        id="nexoria-global-audio"
         ref={audioRef}
         src={audioSource}
         autoPlay={isPlaying}
@@ -166,15 +167,17 @@ const NexoriaPlayer = () => {
                 >
                   <SkipBack className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
                 </button>
-                <button 
-                  onClick={() => dispatch(togglePlayPause())}
-                  className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10"
+                <button
+                  className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isPlaying && audioRef.current) {
+                      audioRef.current.play().catch(err => console.log(err));
+                    }
+                    dispatch(togglePlayPause());
+                  }}
                 >
-                  {isPlaying ? (
-                    <Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
-                  ) : (
-                    <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-1" />
-                  )}
+                  {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
                 </button>
                 <button 
                   onClick={() => dispatch(playNextTrack())}

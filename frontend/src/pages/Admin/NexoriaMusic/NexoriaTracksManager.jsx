@@ -180,7 +180,11 @@ const NexoriaTracksManager = () => {
                   <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400 transition-colors" />
                 )}
                 <div 
-                  onClick={() => dispatch(playTrack(track))}
+                  onClick={() => {
+                            const audioEl = document.getElementById('nexoria-global-audio');
+                            if (audioEl) audioEl.play().catch(e => console.log(e));
+                            dispatch(playTrack(track));
+                          }}
                   className="absolute inset-0 bg-purple-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all backdrop-blur-sm"
                 >
                   <Play className="w-5 h-5 text-white ml-0.5 fill-white" />

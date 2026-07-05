@@ -60,7 +60,14 @@ const NexoriaMusicHome = () => {
               <h2 className="text-4xl md:text-6xl font-black mb-2">Midnight Echoes</h2>
               <p className="text-slate-300 text-lg md:text-xl max-w-2xl mb-6">Experience the new immersive audio journey crafted for the night.</p>
               <div className="flex items-center gap-4">
-                <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 px-8 py-3.5 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-all active:scale-95">
+                <button 
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 px-8 py-3.5 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-all active:scale-95"
+                  onClick={() => {
+                    const audioEl = document.getElementById('nexoria-global-audio');
+                    if (audioEl) audioEl.play().catch(e => console.log(e));
+                    if (tracks.length > 0) dispatch(playTrack(tracks[0]));
+                  }}
+                >
                   <Play className="w-5 h-5 fill-current" /> Play Now
                 </button>
                 <button className="bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 p-3.5 rounded-full transition-all hover:scale-110 active:scale-95 text-white hover:text-pink-400">
@@ -123,6 +130,11 @@ const NexoriaMusicHome = () => {
                     className="hidden group-hover:flex w-4 items-center justify-center text-white"
                     onClick={(e) => {
                       e.stopPropagation();
+                      // Synchronously activate audio to bypass Chrome autoplay block
+                      const audioEl = document.getElementById('nexoria-global-audio');
+                      if (audioEl) {
+                        audioEl.play().catch(err => console.log('Activation handled via src change', err));
+                      }
                       dispatch(playTrack(track));
                     }}
                   >
