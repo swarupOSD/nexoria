@@ -31,7 +31,9 @@ public class MediaForegroundService extends Service {
                 .build();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            // Android 14 requires SPECIAL_USE if a valid MediaSession is not explicitly provided natively
+            // 0x40000000 corresponds to ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            startForeground(NOTIFICATION_ID, notification, 0x40000000);
         } else {
             startForeground(NOTIFICATION_ID, notification);
         }
