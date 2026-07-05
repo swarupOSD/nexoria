@@ -6,7 +6,8 @@ import {
   Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2 
 } from 'lucide-react';
 import { 
-  setVolume, toggleMute, toggleRepeat, toggleShuffle, updateTime 
+  setVolume, toggleMute, toggleRepeat, toggleShuffle, updateTime,
+  playNextTrack, playPrevTrack, togglePlayPause
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
 
