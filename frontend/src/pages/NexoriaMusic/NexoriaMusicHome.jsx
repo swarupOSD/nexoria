@@ -65,8 +65,14 @@ const NexoriaMusicHome = () => {
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 px-8 py-3.5 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-all active:scale-95"
                   onClick={() => {
                     const audioEl = document.getElementById('nexoria-global-audio');
-                    if (audioEl) audioEl.play().catch(e => console.log(e));
                     if (tracks.length > 0) {
+                      if (audioEl) {
+                        const track = tracks[0];
+                        const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
+                        audioEl.src = newSrc;
+                        audioEl.play().catch(e => console.log(e));
+                      }
                       const remainingTracks = tracks.slice(1);
                       dispatch(setQueue(remainingTracks));
                       dispatch(playTrack(tracks[0]));
@@ -137,7 +143,12 @@ const NexoriaMusicHome = () => {
                       dispatch(togglePlayPause());
                     } else {
                       const audioEl = document.getElementById('nexoria-global-audio');
-                      if (audioEl) audioEl.play().catch(err => console.log(err));
+                      if (audioEl) {
+                        const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
+                        audioEl.src = newSrc;
+                        audioEl.play().catch(err => console.log(err));
+                      }
                       
                       // Set the rest of the list as queue
                       const remainingTracks = tracks.slice(idx + 1);
