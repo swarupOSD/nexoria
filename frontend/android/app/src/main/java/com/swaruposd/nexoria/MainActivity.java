@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.app.PictureInPictureParams;
 import android.util.Rational;
+import android.content.Intent;
 import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -24,6 +25,14 @@ public class MainActivity extends BridgeActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
+        }
+
+        // Start our custom native foreground service to keep media alive in background
+        Intent serviceIntent = new Intent(this, MediaForegroundService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, serviceIntent);
+        } else {
+            startService(serviceIntent);
         }
 
         WebView webView = this.bridge.getWebView();
