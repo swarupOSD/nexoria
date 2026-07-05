@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { playTrack } from '../../../features/music/nexoriaMusicSlice';
 import { 
   useGetNexoriaTracksQuery, 
   useCreateNexoriaTrackMutation,
@@ -18,6 +20,7 @@ const emptyForm = {
 };
 
 const NexoriaTracksManager = () => {
+  const dispatch = useDispatch();
   const { data: response, isLoading } = useGetNexoriaTracksQuery();
   const { data: artistsRes } = useGetNexoriaArtistsQuery();
   const { data: albumsRes } = useGetNexoriaAlbumsQuery();
@@ -171,8 +174,15 @@ const NexoriaTracksManager = () => {
               className="bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/8 rounded-2xl p-3 flex items-center gap-4 group hover:border-purple-500/30 hover:bg-purple-500/5 transition-all duration-300"
             >
               <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center relative overflow-hidden flex-shrink-0 shadow-lg group-hover:shadow-purple-500/20 transition-all">
-                <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400 transition-colors" />
-                <div className="absolute inset-0 bg-purple-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all backdrop-blur-sm">
+                {track.coverImage || track.album?.coverImage || track.artist?.image ? (
+                  <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                ) : (
+                  <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400 transition-colors" />
+                )}
+                <div 
+                  onClick={() => dispatch(playTrack(track))}
+                  className="absolute inset-0 bg-purple-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all backdrop-blur-sm"
+                >
                   <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
                 </div>
               </div>
