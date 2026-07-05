@@ -52,15 +52,31 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        // Always keep WebView running
+        if (this.bridge != null && this.bridge.getWebView() != null) {
+            this.bridge.getWebView().resumeTimers();
+            this.bridge.getWebView().onResume();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // DO NOT pause the WebView — this keeps audio/video playing when in background
+        if (this.bridge != null && this.bridge.getWebView() != null) {
+            this.bridge.getWebView().resumeTimers();
+            this.bridge.getWebView().onResume();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // Keep WebView alive even when app is fully in background
+        if (this.bridge != null && this.bridge.getWebView() != null) {
+            this.bridge.getWebView().resumeTimers();
+            this.bridge.getWebView().onResume();
+        }
     }
 }

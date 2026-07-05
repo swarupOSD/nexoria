@@ -282,6 +282,7 @@ const GlobalMusicPlayer = () => {
           <audio
             ref={audioRef}
             src={playerUrl}
+            crossOrigin="anonymous"
             onTimeUpdate={onAudioTimeUpdate}
             onLoadedMetadata={onAudioLoadedMetadata}
             onEnded={handleSongEnd}
