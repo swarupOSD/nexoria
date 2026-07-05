@@ -99,187 +99,214 @@ const NexoriaTracksManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-white">Tracks</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-black text-white tracking-tight">Audio Tracks</h2>
+          <p className="text-slate-500 text-sm mt-0.5">{tracks.length} songs available</p>
+        </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
+          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
         >
-          <Plus className="w-4 h-4" />
-          Add Track
+          <Plus className="w-4 h-4" /> Add Track
         </button>
       </div>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-slate-800/50 rounded-xl" />
+            <div key={i} className="h-16 bg-white/5 rounded-2xl" />
           ))}
+        </div>
+      ) : tracks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+            <Music className="w-10 h-10 text-slate-600" />
+          </div>
+          <p className="text-slate-400 font-semibold text-lg">No tracks yet</p>
+          <p className="text-slate-600 text-sm">Upload your first audio track</p>
         </div>
       ) : (
         <div className="space-y-3">
           {tracks.map(track => (
-            <div key={track._id} className="bg-slate-800/40 border border-white/5 rounded-xl p-3 flex items-center gap-4 group hover:bg-slate-800/60 transition-colors">
-              <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center relative overflow-hidden flex-shrink-0 group-hover:bg-purple-500/20 transition-colors">
-                <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400" />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                  <Play className="w-4 h-4 text-white ml-0.5" />
+            <div 
+              key={track._id} 
+              className="bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/8 rounded-2xl p-3 flex items-center gap-4 group hover:border-purple-500/30 hover:bg-purple-500/5 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center relative overflow-hidden flex-shrink-0 shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400 transition-colors" />
+                <div className="absolute inset-0 bg-purple-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all backdrop-blur-sm">
+                  <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-white font-semibold truncate text-sm">{track.title}</h3>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h3 className="text-white font-bold truncate text-[15px]">{track.title}</h3>
                   {track.isPremium && (
-                    <span className="bg-amber-500/20 text-amber-500 text-[10px] uppercase font-bold px-1.5 rounded">PRO</span>
+                    <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] uppercase font-black px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20">PRO</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-400 truncate">
-                  <span>{track.artist?.name || 'Unknown'}</span>
+                  <span className="font-medium text-purple-400/80">{track.artist?.name || 'Unknown'}</span>
                   {track.album && (
                     <>
                       <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                      <span>{track.album.title}</span>
+                      <span className="text-slate-500">{track.album.title}</span>
                     </>
                   )}
                 </div>
               </div>
-              <div className="text-sm font-medium text-slate-500 w-12 text-right">
+              <div className="text-sm font-bold text-slate-500 w-16 text-right font-mono bg-white/5 px-2 py-1 rounded-lg">
                 {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
               </div>
-              <button onClick={() => handleDelete(track._id)} className="p-2 opacity-0 group-hover:opacity-100 text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
-                <Trash2 className="w-4 h-4" />
+              <button onClick={() => handleDelete(track._id)} className="p-3 opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all">
+                <Trash2 className="w-5 h-5" />
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Track Create Modal */}
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <div className="p-4 border-b border-white/5 flex justify-between items-center sticky top-0 bg-slate-900/90 backdrop-blur-md z-10">
-              <h3 className="text-lg font-bold text-white">Add New Track</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+          <div className="bg-[#0f0f0f] border border-white/10 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#0f0f0f]/95 shrink-0">
+              <div>
+                <h3 className="text-lg font-black text-white">Add New Track</h3>
+                <p className="text-slate-500 text-xs mt-0.5">Upload a new audio file</p>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Title</label>
-                <input 
-                  type="text" 
-                  value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  required
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+            
+            <div className="overflow-y-auto hide-scrollbar p-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Artist</label>
-                  <select
-                    value={formData.artist}
-                    onChange={(e) => setFormData({...formData, artist: e.target.value})}
-                    required
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-                  >
-                    <option value="">Select Artist</option>
-                    {artists.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Album (Optional)</label>
-                  <select
-                    value={formData.album}
-                    onChange={(e) => setFormData({...formData, album: e.target.value})}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-                  >
-                    <option value="">None / Single</option>
-                    {albums.filter(a => a.artist?._id === formData.artist || !formData.artist).map(a => (
-                      <option key={a._id} value={a._id}>{a.title}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Genre</label>
-                  <select
-                    value={formData.genre}
-                    onChange={(e) => setFormData({...formData, genre: e.target.value})}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-                  >
-                    <option value="">Select Genre</option>
-                    {genres.map(g => <option key={g._id} value={g._id}>{g.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Duration (Seconds) (Optional)</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Track Title *</label>
                   <input 
-                    type="number" 
-                    value={formData.duration}
-                    onChange={(e) => setFormData({...formData, duration: Number(e.target.value)})}
-                    min="0"
-                    placeholder="Auto-calculated if left 0"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                    type="text" 
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    required
+                    placeholder="e.g. Blinding Lights"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
                   />
                 </div>
-              </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Artist *</label>
+                    <select
+                      value={formData.artist}
+                      onChange={(e) => setFormData({...formData, artist: e.target.value})}
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                    >
+                      <option value="">Select Artist</option>
+                      {artists.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Album</label>
+                    <select
+                      value={formData.album}
+                      onChange={(e) => setFormData({...formData, album: e.target.value})}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                    >
+                      <option value="">None / Single</option>
+                      {albums.filter(a => a.artist?._id === formData.artist || !formData.artist).map(a => (
+                        <option key={a._id} value={a._id}>{a.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Upload Audio File (Max 20MB)</label>
-                <input 
-                  type="file"
-                  accept="audio/mpeg, audio/mp3, audio/flac, audio/wav" 
-                  onChange={(e) => setFormData({...formData, audioFile: e.target.files[0]})}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30"
-                />
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Genre</label>
+                    <select
+                      value={formData.genre}
+                      onChange={(e) => setFormData({...formData, genre: e.target.value})}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                    >
+                      <option value="">Select Genre</option>
+                      {genres.map(g => <option key={g._id} value={g._id}>{g.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Duration (Secs)</label>
+                    <input 
+                      type="number" 
+                      value={formData.duration}
+                      onChange={(e) => setFormData({...formData, duration: Number(e.target.value)})}
+                      min="0"
+                      placeholder="Auto-calculated"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">OR External Audio URL</label>
-                <input 
-                  type="url" 
-                  value={formData.audioUrl}
-                  onChange={(e) => setFormData({...formData, audioUrl: e.target.value})}
-                  placeholder="Leave empty if uploading a file"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-                />
-              </div>
+                <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 rounded-2xl">
+                  <label className="block text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">Upload Audio File (Max 20MB)</label>
+                  <input 
+                    type="file"
+                    accept="audio/mpeg, audio/mp3, audio/flac, audio/wav" 
+                    onChange={(e) => setFormData({...formData, audioFile: e.target.files[0]})}
+                    className="w-full text-white text-sm file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-500 file:transition-colors file:cursor-pointer cursor-pointer"
+                  />
+                </div>
 
-              <div className="flex items-center gap-2 p-3 bg-slate-800/50 border border-slate-700 rounded-lg mt-2">
-                <input 
-                  type="checkbox" 
-                  id="isPremium"
-                  checked={formData.isPremium}
-                  onChange={(e) => setFormData({...formData, isPremium: e.target.checked})}
-                  className="rounded bg-slate-800 border-slate-700 text-purple-500 focus:ring-purple-500"
-                />
-                <label htmlFor="isPremium" className="text-sm font-medium text-amber-500 flex items-center gap-1">
-                  Require Premium Subscription
-                </label>
-              </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">OR External Audio URL</label>
+                  <input 
+                    type="url" 
+                    value={formData.audioUrl}
+                    onChange={(e) => setFormData({...formData, audioUrl: e.target.value})}
+                    placeholder="https://... (Leave empty if uploading)"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  />
+                </div>
 
-              <button 
-                type="submit" 
-                disabled={isCreating || isUploading}
-                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-medium py-3 rounded-lg transition-colors mt-4 flex items-center justify-center gap-2"
-              >
-                {isUploading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Uploading to Telegram CDN...
-                  </>
-                ) : isCreating ? (
-                  'Saving Track...'
-                ) : (
-                  'Upload & Save Track'
-                )}
-              </button>
-            </form>
+                <div className="flex items-center gap-3 p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl mt-2">
+                  <input 
+                    type="checkbox" 
+                    id="isPremium"
+                    checked={formData.isPremium}
+                    onChange={(e) => setFormData({...formData, isPremium: e.target.checked})}
+                    className="w-5 h-5 rounded bg-black/50 border-white/10 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer"
+                  />
+                  <div>
+                    <label htmlFor="isPremium" className="text-sm font-bold text-amber-500 cursor-pointer block">
+                      Require Premium Subscription
+                    </label>
+                    <p className="text-amber-500/60 text-xs">Only PRO users can play this track</p>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={isCreating || isUploading}
+                  className="w-full py-4 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
+                >
+                  {isUploading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Uploading to Telegram CDN...
+                    </>
+                  ) : isCreating ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Saving Track...
+                    </>
+                  ) : (
+                    '🎵 Upload & Save Track'
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}
