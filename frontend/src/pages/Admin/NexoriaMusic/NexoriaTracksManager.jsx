@@ -5,7 +5,8 @@ import {
   useDeleteNexoriaTrackMutation,
   useGetNexoriaArtistsQuery,
   useGetNexoriaAlbumsQuery,
-  useGetNexoriaGenresQuery
+  useGetNexoriaGenresQuery,
+  useUploadNexoriaTrackAudioMutation
 } from '../../../features/api/nexoriaMusicApiSlice';
 import { Plus, Trash2, XCircle, Music, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -22,7 +23,7 @@ const NexoriaTracksManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ 
     title: '', artist: '', album: '', genre: '', 
-    duration: 0, audioUrl: '', isPremium: false 
+    duration: 0, audioUrl: '', isPremium: false, audioFile: null 
   });
 
   const tracks = response?.data || [];
@@ -30,10 +31,15 @@ const NexoriaTracksManager = () => {
   const albums = albumsRes?.data || [];
   const genres = genresRes?.data || [];
 
+  const [uploadAudio, { isLoading: isUploading }] = useUploadNexoriaTrackAudioMutation();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.artist) return toast.error('Please select an artist');
-    if (!formData.audioUrl) return toast.error('Audio URL is required');
+    if (!formData.audioFile && !formData.audioUrl) return toast.error('Please upload an audio file or provide a URL');
+    if (formData.audioFile && formData.audioFile.size > 20 * 1024 * 1024) {
+      return toast.error('File size must be under 20MB for Telegram CDN');
+    }
     
     // Default album handling if not provided
     const payload = { ...formData };
@@ -41,12 +47,42 @@ const NexoriaTracksManager = () => {
     if (!payload.genre) delete payload.genre;
 
     try {
+      let telegramFileId = null;
+      let finalDuration = formData.duration;
+      let finalAudioUrl = formData.audioUrl;
+
+      // If there's an actual file, upload it to Telegram CDN first
+      if (formData.audioFile) {
+        const uploadData = new FormData();
+        uploadData.append('audio', formData.audioFile);
+        uploadData.append('title', formData.title);
+        
+        const selectedArtist = artists.find(a => a._id === formData.artist);
+        if (selectedArtist) {
+          uploadData.append('artistName', selectedArtist.name);
+        }
+
+        const uploadRes = await uploadAudio(uploadData).unwrap();
+        telegramFileId = uploadRes.data.telegramFileId;
+        
+        // Use Telegram's parsed duration if the user didn't provide one
+        if (!finalDuration || finalDuration === 0) {
+          finalDuration = uploadRes.data.duration;
+        }
+      }
+
+      payload.telegramFileId = telegramFileId;
+      payload.duration = finalDuration;
+      payload.audioUrl = finalAudioUrl;
+      delete payload.audioFile;
+
       await createTrack(payload).unwrap();
       toast.success('Track created successfully');
       setIsModalOpen(false);
-      setFormData({ title: '', artist: '', album: '', genre: '', duration: 0, audioUrl: '', isPremium: false });
+      setFormData({ title: '', artist: '', album: '', genre: '', duration: 0, audioUrl: '', isPremium: false, audioFile: null });
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create track');
+      console.error(error);
+      toast.error(error?.data?.message || 'Failed to process track');
     }
   };
 
@@ -181,29 +217,37 @@ const NexoriaTracksManager = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Duration (Seconds)</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Duration (Seconds) (Optional)</label>
                   <input 
                     type="number" 
                     value={formData.duration}
                     onChange={(e) => setFormData({...formData, duration: Number(e.target.value)})}
-                    required
-                    min="1"
+                    min="0"
+                    placeholder="Auto-calculated if left 0"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Audio URL (Temporary)</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Upload Audio File (Max 20MB)</label>
+                <input 
+                  type="file"
+                  accept="audio/mpeg, audio/mp3, audio/flac, audio/wav" 
+                  onChange={(e) => setFormData({...formData, audioFile: e.target.files[0]})}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">OR External Audio URL</label>
                 <input 
                   type="url" 
                   value={formData.audioUrl}
                   onChange={(e) => setFormData({...formData, audioUrl: e.target.value})}
-                  required
-                  placeholder="https://example.com/audio.mp3"
+                  placeholder="Leave empty if uploading a file"
                   className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
                 />
-                <p className="text-xs text-slate-500 mt-1">Direct upload system is deferred. Paste direct URL.</p>
               </div>
 
               <div className="flex items-center gap-2 p-3 bg-slate-800/50 border border-slate-700 rounded-lg mt-2">
@@ -221,10 +265,19 @@ const NexoriaTracksManager = () => {
 
               <button 
                 type="submit" 
-                disabled={isCreating}
-                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-medium py-3 rounded-lg transition-colors mt-4"
+                disabled={isCreating || isUploading}
+                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-medium py-3 rounded-lg transition-colors mt-4 flex items-center justify-center gap-2"
               >
-                {isCreating ? 'Saving...' : 'Save Track'}
+                {isUploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Uploading to Telegram CDN...
+                  </>
+                ) : isCreating ? (
+                  'Saving Track...'
+                ) : (
+                  'Upload & Save Track'
+                )}
               </button>
             </form>
           </div>

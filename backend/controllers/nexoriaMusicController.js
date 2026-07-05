@@ -4,6 +4,8 @@ import NexoriaAlbum from '../models/NexoriaAlbum.js';
 import NexoriaTrack from '../models/NexoriaTrack.js';
 import NexoriaPlaylist from '../models/NexoriaPlaylist.js';
 import logger from '../middlewares/logger.js';
+import axios from 'axios';
+import FormData from 'form-data';
 
 // ==========================================
 // ADMIN: ARTIST MANAGEMENT
@@ -224,5 +226,119 @@ export const searchMusic = async (req, res) => {
   } catch (error) {
     logger.error(`Search Music Error: ${error.message}`);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==========================================
+// TELEGRAM CDN: UPLOAD & STREAM
+// ==========================================
+
+export const uploadTrackAudio = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No audio file uploaded' });
+    }
+
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const channelId = process.env.TELEGRAM_CHANNEL_ID;
+
+    if (!botToken || !channelId) {
+      return res.status(500).json({ success: false, message: 'Telegram Bot Token or Channel ID not configured on the server.' });
+    }
+
+    const formData = new FormData();
+    formData.append('chat_id', channelId);
+    
+    // multer.memoryStorage() gives us a buffer
+    formData.append('audio', req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    });
+
+    const { title, artistName } = req.body;
+    if (title) formData.append('title', title);
+    if (artistName) formData.append('performer', artistName);
+
+    const response = await axios.post(`https://api.telegram.org/bot${botToken}/sendAudio`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    const fileId = response.data.result.audio.file_id;
+    const duration = response.data.result.audio.duration; 
+    const fileSizeBytes = response.data.result.audio.file_size;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        telegramFileId: fileId,
+        duration: duration,
+        fileSizeBytes: fileSizeBytes
+      }
+    });
+
+  } catch (error) {
+    logger.error(`Upload Track Audio Error: ${error.response?.data?.description || error.message}`);
+    res.status(500).json({ success: false, message: error.response?.data?.description || error.message });
+  }
+};
+
+export const streamTrack = async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+
+    if (!botToken) {
+      return res.status(500).json({ success: false, message: 'Server configuration error' });
+    }
+
+    // Step 1: Get File Path from Telegram
+    const fileRes = await axios.get(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`);
+    
+    if (!fileRes.data.ok) {
+      return res.status(404).json({ success: false, message: 'File not found on Telegram CDN' });
+    }
+
+    const filePath = fileRes.data.result.file_path;
+    const fileUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+
+    // Step 2: Stream the file
+    const config = {
+      responseType: 'stream',
+      headers: {}
+    };
+
+    if (req.headers.range) {
+      config.headers['Range'] = req.headers.range;
+    }
+
+    const response = await axios.get(fileUrl, config);
+
+    // Forward necessary headers
+    res.set({
+      'Content-Type': response.headers['content-type'],
+      'Content-Length': response.headers['content-length'],
+      'Accept-Ranges': 'bytes'
+    });
+
+    if (response.headers['content-range']) {
+      res.set('Content-Range', response.headers['content-range']);
+      res.status(206);
+    } else {
+      res.status(200);
+    }
+
+    response.data.pipe(res);
+
+  } catch (error) {
+    if (error.code !== 'ECONNRESET') {
+      logger.error(`Stream Track Error: ${error.message}`);
+      if (!res.headersSent) {
+        res.status(500).json({ success: false, message: 'Failed to stream audio' });
+      }
+    }
   }
 };

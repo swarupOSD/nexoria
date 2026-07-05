@@ -90,6 +90,14 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
 
     // TRACKS
+    uploadNexoriaTrackAudio: builder.mutation({
+      query: (formData) => ({
+        url: '/api/nexoria-music/admin/tracks/upload',
+        method: 'POST',
+        body: formData,
+        // When using FormData, fetch automatically sets Content-Type to multipart/form-data with the correct boundary
+      }),
+    }),
     getNexoriaTracks: builder.query({
       query: () => '/api/nexoria-music/admin/tracks',
       providesTags: ['NexoriaTrack'],
@@ -138,6 +146,7 @@ export const {
   useCreateNexoriaAlbumMutation,
   useUpdateNexoriaAlbumMutation,
   useDeleteNexoriaAlbumMutation,
+  useUploadNexoriaTrackAudioMutation,
   useGetNexoriaTracksQuery,
   useCreateNexoriaTrackMutation,
   useUpdateNexoriaTrackMutation,

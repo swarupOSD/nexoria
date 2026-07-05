@@ -6,9 +6,9 @@ import {
   Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2 
 } from 'lucide-react';
 import { 
-  togglePlayPause, playNextTrack, playPrevTrack, 
   setVolume, toggleMute, toggleRepeat, toggleShuffle, updateTime 
 } from '../features/music/nexoriaMusicSlice';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
@@ -81,12 +81,17 @@ const NexoriaPlayer = () => {
 
   if (!currentTrack) return null;
 
+  const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+  const audioSource = currentTrack.telegramFileId 
+    ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}`
+    : currentTrack.audioUrl;
+
   return (
     <>
       {/* Hidden Audio Element */}
       <audio
         ref={audioRef}
-        src={currentTrack.audioUrl} // Ensure DB saves the correct URL field here
+        src={audioSource}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         onLoadedMetadata={handleTimeUpdate}

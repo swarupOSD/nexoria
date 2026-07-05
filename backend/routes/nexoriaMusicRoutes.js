@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import {
   createArtist,
   getArtistsAdmin,
@@ -16,11 +17,18 @@ import {
   getTracksAdmin,
   updateTrack,
   deleteTrack,
-  searchMusic
+  searchMusic,
+  uploadTrackAudio,
+  streamTrack
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 22 * 1024 * 1024 } // 22MB limit to leave room for headers, Telegram allows 20MB for download
+});
 
 // All routes here are currently scoped for admin management.
 // Public consumer routes will be added later when building the frontend discovery engine.
@@ -28,6 +36,7 @@ const router = express.Router();
 
 // CONSUMER ROUTES
 router.route('/search').get(searchMusic);
+router.route('/stream/:fileId').get(streamTrack);
 
 // ADMIN ROUTES
 router.route('/admin/artists')
@@ -57,6 +66,9 @@ router.route('/admin/albums/:id')
   .delete(protect, authorize('admin', 'superadmin'), deleteAlbum);
 
 // TRACKS
+router.route('/admin/tracks/upload')
+  .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), uploadTrackAudio);
+
 router.route('/admin/tracks')
   .post(protect, authorize('admin', 'superadmin'), createTrack)
   .get(protect, authorize('admin', 'superadmin'), getTracksAdmin);

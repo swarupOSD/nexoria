@@ -27,7 +27,11 @@ const nexoriaTrackSchema = new mongoose.Schema(
     },
     audioUrl: {
       type: String,
-      required: [true, 'Audio URL is required']
+      required: false
+    },
+    telegramFileId: {
+      type: String,
+      required: false
     },
     fileSizeBytes: {
       type: Number,
