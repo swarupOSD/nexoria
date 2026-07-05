@@ -320,7 +320,7 @@ export const streamTrack = async (req, res) => {
 
     // Forward necessary headers
     res.set({
-      'Content-Type': response.headers['content-type'],
+      'Content-Type': 'audio/mpeg', // Force audio MIME type so browsers play it
       'Content-Length': response.headers['content-length'],
       'Accept-Ranges': 'bytes'
     });
