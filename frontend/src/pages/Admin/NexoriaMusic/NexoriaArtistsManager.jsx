@@ -24,7 +24,9 @@ const NexoriaArtistsManager = () => {
       setIsModalOpen(false);
       setFormData({ name: '', bio: '', image: '', coverImage: '', isVerified: false });
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create artist');
+      console.error('Create artist error:', error);
+      const msg = error?.data?.message || error?.message || error?.error || JSON.stringify(error);
+      toast.error(`Error: ${msg}`);
     }
   };
 
