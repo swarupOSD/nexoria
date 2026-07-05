@@ -1,4 +1,5 @@
-import admin from 'firebase-admin';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getMessaging } from 'firebase-admin/messaging';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
@@ -18,8 +19,8 @@ export const initFirebase = async () => {
       serviceAccount = JSON.parse(await readFile(serviceAccountPath, 'utf8'));
     }
     
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+    initializeApp({
+      credential: cert(serviceAccount)
     });
     initialized = true;
     console.log('Firebase Admin SDK initialized successfully');
@@ -44,7 +45,7 @@ export const sendPushNotification = async (tokens, title, body, imageUrl = '', l
       tokens
     };
 
-    const response = await admin.messaging().sendEachForMulticast(message);
+    const response = await getMessaging().sendEachForMulticast(message);
     
     // Check for failed tokens and maybe clean them up from DB later
     const failedTokens = [];

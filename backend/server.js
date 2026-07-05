@@ -228,12 +228,21 @@ app.use('/', seoRoutes);
 
 const __dirname = path.resolve();
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+import fs from 'fs';
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
-  });
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../frontend/dist');
+  
+  if (fs.existsSync(frontendPath)) {
+    app.use(express.static(frontendPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(frontendPath, 'index.html'));
+    });
+  } else {
+    app.get('/', (req, res) => {
+      res.send('API is running in production (Frontend not found locally)...');
+    });
+  }
 } else {
   app.get('/', (req, res) => {
     res.send('API is running...');
