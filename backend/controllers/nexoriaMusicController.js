@@ -262,6 +262,7 @@ export const uploadTrackAudio = async (req, res) => {
     const response = await axios.post(`https://api.telegram.org/bot${botToken}/sendAudio`, formData, {
       headers: {
         ...formData.getHeaders(),
+        'Content-Length': formData.getLengthSync()
       },
       maxContentLength: Infinity,
       maxBodyLength: Infinity
