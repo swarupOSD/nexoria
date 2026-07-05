@@ -183,7 +183,7 @@ const SuperAdminLayout = () => {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-[#050505] text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-white/10 w-64 flex-shrink-0 shadow-2xl z-50">
+    <div className="flex flex-col h-full bg-white dark:bg-[#080312]/95 backdrop-blur-xl text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-white/5 w-64 flex-shrink-0 shadow-2xl z-50">
       <div className="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 ring-2 ring-white/10">
           <Command className="w-5 h-5" />
@@ -317,8 +317,13 @@ const SuperAdminLayout = () => {
   );
 
   return (
-    <div className="flex h-[100dvh] bg-white dark:bg-[#000000] text-slate-800 dark:text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-[100dvh] bg-white dark:bg-[#080312] text-slate-800 dark:text-slate-200 font-sans overflow-hidden relative">
       
+      {/* Gen-Z Mesh Gradient Glowing Background (Dark Mode Only) */}
+      <div className="hidden dark:block fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none mix-blend-screen z-0" />
+      <div className="hidden dark:block fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-pink-600/5 blur-[120px] pointer-events-none mix-blend-screen z-0" />
+      <div className="hidden dark:block fixed top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none mix-blend-screen z-0" />
+
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex z-20">
         <SidebarContent />
@@ -352,10 +357,10 @@ const SuperAdminLayout = () => {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full min-w-0">
+      <main className="flex-1 flex flex-col h-full min-w-0 z-10">
         
         {/* Top Navbar */}
-        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white dark:bg-[#050505] flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 shadow-sm">
+        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
               <Menu className="w-6 h-6" />
@@ -431,7 +436,7 @@ const SuperAdminLayout = () => {
         </header>
 
         {/* Scrollable Page Content */}
-        <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-[#000000]">
+        <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-transparent relative">
           <div className="p-4 md:p-8 max-w-[1600px] mx-auto">
             <Outlet />
           </div>
