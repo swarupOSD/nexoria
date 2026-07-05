@@ -77,12 +77,10 @@ const NexoriaPlayer = () => {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  if (!currentTrack) return null;
-
   const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-  const audioSource = currentTrack.telegramFileId 
+  const audioSource = currentTrack?.telegramFileId 
     ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}`
-    : currentTrack.audioUrl;
+    : currentTrack?.audioUrl || "";
 
   return (
     <>
@@ -95,7 +93,7 @@ const NexoriaPlayer = () => {
         onEnded={handleEnded}
         onLoadedMetadata={handleTimeUpdate}
         onCanPlay={() => {
-          if (isPlaying && audioRef.current) {
+          if (isPlaying && audioRef.current && audioRef.current.paused) {
             audioRef.current.play().catch(e => console.log('Playback error:', e));
           }
         }}
@@ -103,7 +101,8 @@ const NexoriaPlayer = () => {
 
       {/* Fixed Bottom Player UI */}
       <AnimatePresence>
-        <motion.div 
+        {currentTrack && (
+          <motion.div 
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
@@ -246,6 +245,7 @@ const NexoriaPlayer = () => {
 
           </div>
         </motion.div>
+        )}
       </AnimatePresence>
     </>
   );
