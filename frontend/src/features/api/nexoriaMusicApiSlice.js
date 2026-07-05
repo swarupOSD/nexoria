@@ -17,7 +17,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     updateNexoriaArtist: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/api/nexoria-music/admin/artists/${id}`,
+        url: `/nexoria-music/admin/artists/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -25,7 +25,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     deleteNexoriaArtist: builder.mutation({
       query: (id) => ({
-        url: `/api/nexoria-music/admin/artists/${id}`,
+        url: `/nexoria-music/admin/artists/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['NexoriaArtist'],
@@ -46,7 +46,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     updateNexoriaGenre: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/api/nexoria-music/admin/genres/${id}`,
+        url: `/nexoria-music/admin/genres/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -54,7 +54,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     deleteNexoriaGenre: builder.mutation({
       query: (id) => ({
-        url: `/api/nexoria-music/admin/genres/${id}`,
+        url: `/nexoria-music/admin/genres/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['NexoriaGenre'],
@@ -75,7 +75,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     updateNexoriaAlbum: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/api/nexoria-music/admin/albums/${id}`,
+        url: `/nexoria-music/admin/albums/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -83,7 +83,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     deleteNexoriaAlbum: builder.mutation({
       query: (id) => ({
-        url: `/api/nexoria-music/admin/albums/${id}`,
+        url: `/nexoria-music/admin/albums/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['NexoriaAlbum'],
@@ -95,7 +95,6 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
         url: '/nexoria-music/admin/tracks/upload',
         method: 'POST',
         body: formData,
-        // When using FormData, fetch automatically sets Content-Type to multipart/form-data with the correct boundary
       }),
     }),
     getNexoriaTracks: builder.query({
@@ -112,7 +111,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     updateNexoriaTrack: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/api/nexoria-music/admin/tracks/${id}`,
+        url: `/nexoria-music/admin/tracks/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -120,7 +119,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     deleteNexoriaTrack: builder.mutation({
       query: (id) => ({
-        url: `/api/nexoria-music/admin/tracks/${id}`,
+        url: `/nexoria-music/admin/tracks/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['NexoriaTrack'],
