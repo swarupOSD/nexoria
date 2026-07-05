@@ -42,6 +42,38 @@ const NexoriaPlayer = () => {
     }
   }, [volume, isMuted]);
 
+  // Set up MediaSession API for background playback and lock-screen controls
+  useEffect(() => {
+    if ('mediaSession' in navigator && currentTrack) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: currentTrack.title || 'Unknown Title',
+        artist: currentTrack.artist?.name || 'Unknown Artist',
+        album: currentTrack.album?.title || 'Unknown Album',
+        artwork: [
+          { src: currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }
+        ]
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        dispatch(togglePlayPause());
+        if (audioRef.current) audioRef.current.play().catch(e => console.log(e));
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        dispatch(togglePlayPause());
+        if (audioRef.current) audioRef.current.pause();
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(playPrevTrack()));
+      navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(playNextTrack()));
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (audioRef.current && details.fastSeek && ('fastSeek' in audioRef.current)) {
+          audioRef.current.fastSeek(details.seekTime);
+        } else if (audioRef.current) {
+          audioRef.current.currentTime = details.seekTime;
+        }
+      });
+    }
+  }, [currentTrack, dispatch]);
+
   // Audio element event handlers
   const handleTimeUpdate = () => {
     if (audioRef.current) {
