@@ -124,19 +124,19 @@ const NexoriaAlbumsManager = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              {/* Cover Preview */}
-              <div className="relative h-32 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-white/5">
-                {formData.coverImage ? (
-                  <img src={formData.coverImage} alt="preview" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <Disc3 className="w-8 h-8 text-slate-600 mx-auto mb-1" />
-                      <p className="text-slate-600 text-xs">Cover preview</p>
+              {/* Cover Preview (Square) */}
+              <div className="flex justify-center mb-6">
+                <div className="w-40 h-40 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-2 border-white/10 shadow-2xl shadow-purple-500/10 relative">
+                  {formData.coverImage ? (
+                    <img src={formData.coverImage} alt="preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-white/5">
+                      <Disc3 className="w-12 h-12 text-white/20 mb-2" />
+                      <span className="text-[10px] text-white/40 uppercase tracking-widest font-black">Cover Art</span>
                     </div>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  )}
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none" />
+                </div>
               </div>
 
               <div>
