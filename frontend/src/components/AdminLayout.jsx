@@ -207,7 +207,7 @@ const AdminLayout = () => {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full min-w-0 z-10">
+      <main className="flex-1 flex flex-col h-full min-w-0">
         
         {/* Top Navbar (Vercel Style) */}
         <header className="h-14 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-6 shrink-0 z-10">
