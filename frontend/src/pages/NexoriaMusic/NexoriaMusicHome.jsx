@@ -17,10 +17,15 @@ const NexoriaMusicHome = () => {
   const tracks = tracksRes?.data || [];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pb-32">
+    <div className="min-h-screen bg-[#080312] text-white pb-32 relative overflow-hidden">
+      {/* Gen-Z Mesh Gradient Glowing Background */}
+      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/20 blur-[120px] pointer-events-none mix-blend-screen" />
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-pink-600/10 blur-[120px] pointer-events-none mix-blend-screen" />
+      <div className="fixed top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-indigo-500/10 blur-[100px] pointer-events-none mix-blend-screen" />
+
       {/* Dynamic Header/Nav */}
-      <header className="sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-2xl border-b border-white/5 px-4 lg:px-8 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+      <header className="sticky top-0 z-50 bg-[#080312]/50 backdrop-blur-3xl border-b border-white/5 px-4 lg:px-8 py-5 flex items-center justify-between">
+        <h1 className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
           NEXORIA MUSIC
         </h1>
         <div className="flex items-center gap-6 text-slate-400 font-medium">
@@ -39,9 +44,9 @@ const NexoriaMusicHome = () => {
       <main className="px-4 lg:px-8 py-8 space-y-12 max-w-[1600px] mx-auto">
         
         {/* Featured Banner / Hero */}
-        <section className="relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-blue-900/80 z-10 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
+        <section className="relative h-[300px] md:h-[420px] rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(168,85,247,0.3)] border border-white/10">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-900/90 via-purple-900/60 to-fuchsia-900/80 z-10 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080312] via-[#080312]/40 to-transparent z-10" />
           <img 
             src="https://images.unsplash.com/photo-1493225457124-a1a2a5370217?auto=format&fit=crop&q=80&w=2564" 
             alt="Featured" 
@@ -55,10 +60,10 @@ const NexoriaMusicHome = () => {
               <h2 className="text-4xl md:text-6xl font-black mb-2">Midnight Echoes</h2>
               <p className="text-slate-300 text-lg md:text-xl max-w-2xl mb-6">Experience the new immersive audio journey crafted for the night.</p>
               <div className="flex items-center gap-4">
-                <button className="bg-white text-black px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-transform">
+                <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 px-8 py-3.5 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-all active:scale-95">
                   <Play className="w-5 h-5 fill-current" /> Play Now
                 </button>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-full transition-colors">
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 p-3.5 rounded-full transition-all hover:scale-110 active:scale-95 text-white hover:text-pink-400">
                   <Heart className="w-6 h-6" />
                 </button>
               </div>
@@ -80,7 +85,7 @@ const NexoriaMusicHome = () => {
             <div className="flex gap-6 overflow-x-auto hide-scrollbar pb-4 snap-x">
               {albums.slice(0, 10).map(album => (
                 <div key={album._id} className="w-40 md:w-48 shrink-0 snap-start group cursor-pointer">
-                  <div className="relative aspect-square rounded-2xl overflow-hidden mb-3 shadow-lg">
+                  <div className="relative aspect-square rounded-[1.5rem] overflow-hidden mb-3 shadow-xl ring-1 ring-white/10 group-hover:ring-purple-500/50 group-hover:shadow-purple-500/20 transition-all duration-300">
                     {album.coverImage ? (
                       <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
@@ -112,7 +117,7 @@ const NexoriaMusicHome = () => {
               [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />)
             ) : (
               tracks.slice(0, 9).map((track, idx) => (
-                <div key={track._id} className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 group transition-colors cursor-pointer">
+                <div key={track._id} className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 group transition-all duration-300 cursor-pointer">
                   <span className="text-slate-500 font-medium w-4 text-right group-hover:hidden">{idx + 1}</span>
                   <button 
                     className="hidden group-hover:flex w-4 items-center justify-center text-white"
@@ -158,7 +163,7 @@ const NexoriaMusicHome = () => {
             ) : (
               artists.slice(0, 6).map(artist => (
                 <div key={artist._id} className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className="w-32 h-32 rounded-full overflow-hidden relative shadow-xl shadow-black/50 ring-2 ring-transparent group-hover:ring-purple-500 transition-all duration-300">
+                  <div className="w-32 h-32 rounded-full overflow-hidden relative shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] ring-2 ring-white/5 group-hover:ring-purple-500 group-hover:shadow-purple-500/30 transition-all duration-500">
                     {artist.image ? (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
