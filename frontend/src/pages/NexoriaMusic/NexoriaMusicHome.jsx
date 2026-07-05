@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, Heart, Search, Library, Compass, MoreVertical } from 'lucide-react';
+import { Play, Pause, Heart, Search, Library, Compass, MoreVertical } from 'lucide-react';
 import { useGetNexoriaAlbumsQuery, useGetNexoriaArtistsQuery, useGetNexoriaTracksQuery } from '../../features/api/nexoriaMusicApiSlice';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { playTrack } from '../../features/music/nexoriaMusicSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { playTrack, setQueue, togglePlayPause } from '../../features/music/nexoriaMusicSlice';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
+  const { currentTrack, isPlaying } = useSelector(state => state.nexoriaMusic);
   const { data: albumsRes, isLoading: loadingAlbums } = useGetNexoriaAlbumsQuery();
   const { data: artistsRes, isLoading: loadingArtists } = useGetNexoriaArtistsQuery();
   const { data: tracksRes, isLoading: loadingTracks } = useGetNexoriaTracksQuery();
@@ -127,18 +128,27 @@ const NexoriaMusicHome = () => {
                 <div key={track._id} className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 group transition-all duration-300 cursor-pointer">
                   <span className="text-slate-500 font-medium w-4 text-right group-hover:hidden">{idx + 1}</span>
                   <button 
-                    className="hidden group-hover:flex w-4 items-center justify-center text-white"
+                    className={`hidden group-hover:flex w-4 items-center justify-center text-white ${currentTrack?._id === track._id ? '!flex text-purple-400' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Synchronously activate audio to bypass Chrome autoplay block
-                      const audioEl = document.getElementById('nexoria-global-audio');
-                      if (audioEl) {
-                        audioEl.play().catch(err => console.log('Activation handled via src change', err));
+                      if (currentTrack?._id === track._id) {
+                        dispatch(togglePlayPause());
+                      } else {
+                        const audioEl = document.getElementById('nexoria-global-audio');
+                        if (audioEl) audioEl.play().catch(err => console.log(err));
+                        
+                        // Set the rest of the list as queue
+                        const remainingTracks = tracks.slice(idx + 1);
+                        dispatch(setQueue(remainingTracks));
+                        dispatch(playTrack(track));
                       }
-                      dispatch(playTrack(track));
                     }}
                   >
-                    <Play className="w-4 h-4 fill-current" />
+                    {currentTrack?._id === track._id && isPlaying ? (
+                       <Pause className="w-4 h-4 fill-current" />
+                    ) : (
+                       <Play className="w-4 h-4 fill-current" />
+                    )}
                   </button>
                   <div className="w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
                     {track.album?.coverImage ? (
