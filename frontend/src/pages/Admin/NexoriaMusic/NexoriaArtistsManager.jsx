@@ -187,25 +187,33 @@ const NexoriaArtistsManager = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              {/* Image Preview */}
-              <div className="relative h-28 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-white/5">
-                {formData.image && !imgPreviewError ? (
-                  <img
-                    src={formData.image}
-                    alt="preview"
-                    className="w-full h-full object-cover"
-                    onError={() => setImgPreviewError(true)}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <Music2 className="w-8 h-8 text-slate-600 mx-auto mb-1" />
-                      <p className="text-slate-600 text-xs">Image preview</p>
-                    </div>
+              {/* Live Preview (Banner + Avatar) */}
+              <div className="relative mb-6">
+                {/* Banner */}
+                <div className="h-24 w-full rounded-2xl bg-gradient-to-r from-purple-900/40 to-pink-900/40 overflow-hidden relative border border-white/5">
+                  {formData.coverImage && (
+                    <img src={formData.coverImage} alt="cover preview" className="w-full h-full object-cover opacity-50" />
+                  )}
+                </div>
+                {/* Avatar (Circle) */}
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
+                  <div className="w-20 h-20 rounded-full border-4 border-[#0f0f0f] bg-gradient-to-br from-purple-800 to-pink-800 overflow-hidden shadow-2xl relative">
+                    {formData.image && !imgPreviewError ? (
+                      <img
+                        src={formData.image}
+                        alt="avatar preview"
+                        className="w-full h-full object-cover"
+                        onError={() => setImgPreviewError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Mic2 className="w-8 h-8 text-white/30" />
+                      </div>
+                    )}
                   </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
               </div>
+              <div className="h-2"></div> {/* Spacer for the avatar overlap */}
 
               {/* Name */}
               <div>
