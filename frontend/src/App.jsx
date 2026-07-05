@@ -93,7 +93,11 @@ const AdminReports = lazy(() => import('./pages/Admin/AdminReports'));
 const AdminLiveMonitor = lazy(() => import('./pages/Admin/LiveMonitor'));
 
 // Nexoria Proprietary Music Platform
-const NexoriaMusicDashboard = lazy(() => import('./pages/admin/NexoriaMusic/NexoriaMusicDashboard'));
+const NexoriaMusicDashboard = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaMusicDashboard'));
+const NexoriaArtistsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaArtistsManager'));
+const NexoriaAlbumsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaAlbumsManager'));
+const NexoriaTracksManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaTracksManager'));
+const NexoriaGenresManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaGenresManager'));
 
 // Super Admin UI (Lazy Loaded)
 const SuperAdminLayout = lazy(() => import('./components/SuperAdminLayout'));
@@ -366,7 +370,13 @@ function App() {
             <Route path="sound/add-song" element={<SoundAddSong />} />
             <Route path="sound/playlists" element={<SoundPlaylists />} />
             <Route path="sound/categories" element={<SoundCategories />} />
-            
+            {/* Nexoria Music Platform Admin */}
+            <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
+            <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
+            <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
+            <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
+            <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
+
             {/* MovieBox SuperAdmin Routes */}
             <Route path="movies/analytics" element={<AdminMovieAnalytics />} />
             <Route path="movie-categories" element={<AdminMovieCategoryManager />} />

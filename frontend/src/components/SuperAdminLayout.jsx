@@ -116,13 +116,23 @@ const SuperAdminLayout = () => {
       ]
     },
     {
-      title: 'Nexoria Sound (Music)',
+      title: 'Nexoria Music Platform',
       items: [
-        { name: 'Dashboard', icon: <Activity className="w-4 h-4" />, path: '/superadmin/sound/dashboard' },
-        { name: 'Songs', icon: <Music className="w-4 h-4" />, path: '/superadmin/sound/songs' },
-        { name: 'Add Song', icon: <PlusCircle className="w-4 h-4" />, path: '/superadmin/sound/add-song' },
-        { name: 'Playlists', icon: <ListVideo className="w-4 h-4" />, path: '/superadmin/sound/playlists' },
-        { name: 'Categories', icon: <Database className="w-4 h-4" />, path: '/superadmin/sound/categories' },
+        { name: 'Dashboard', icon: <Activity className="w-4 h-4 text-pink-500" />, path: '/superadmin/nexoria-music' },
+        { name: 'Manage Artists', icon: <Users className="w-4 h-4 text-purple-400" />, path: '/superadmin/nexoria-music/artists' },
+        { name: 'Manage Albums', icon: <Database className="w-4 h-4 text-indigo-400" />, path: '/superadmin/nexoria-music/albums' },
+        { name: 'Manage Tracks', icon: <Music className="w-4 h-4 text-pink-400" />, path: '/superadmin/nexoria-music/tracks' },
+        { name: 'Manage Genres', icon: <ListVideo className="w-4 h-4 text-orange-400" />, path: '/superadmin/nexoria-music/genres' },
+      ]
+    },
+    {
+      title: 'JioSaavn Music (Legacy)',
+      items: [
+        { name: 'Dashboard', icon: <Activity className="w-4 h-4 text-slate-500" />, path: '/superadmin/sound/dashboard' },
+        { name: 'Songs', icon: <Music className="w-4 h-4 text-slate-500" />, path: '/superadmin/sound/songs' },
+        { name: 'Add Song', icon: <PlusCircle className="w-4 h-4 text-slate-500" />, path: '/superadmin/sound/add-song' },
+        { name: 'Playlists', icon: <ListVideo className="w-4 h-4 text-slate-500" />, path: '/superadmin/sound/playlists' },
+        { name: 'Categories', icon: <Database className="w-4 h-4 text-slate-500" />, path: '/superadmin/sound/categories' },
       ]
     },
     {
