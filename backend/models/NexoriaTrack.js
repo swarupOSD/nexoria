@@ -21,6 +21,10 @@ const nexoriaTrackSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'NexoriaGenre'
     },
+    coverImage: {
+      type: String,
+      required: false
+    },
     duration: {
       type: Number,
       required: true // Duration in seconds

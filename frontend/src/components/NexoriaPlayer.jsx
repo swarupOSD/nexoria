@@ -126,8 +126,8 @@ const NexoriaPlayer = () => {
             {/* Left: Track Info */}
             <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-[30%] min-w-0 px-2 sm:px-0">
               <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 shadow-lg">
-                {currentTrack.album?.coverImage ? (
-                  <img src={currentTrack.album.coverImage} alt={currentTrack.title} className="w-full h-full object-cover" />
+                {currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image ? (
+                  <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} alt={currentTrack.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-purple-900 to-black" />
                 )}

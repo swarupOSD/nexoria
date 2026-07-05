@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', 
-  duration: 0, audioUrl: '', isPremium: false, audioFile: null 
+  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null 
 };
 
 const NexoriaTracksManager = () => {
@@ -52,6 +52,7 @@ const NexoriaTracksManager = () => {
       genre: track.genre?._id || track.genre || '',
       duration: track.duration || 0,
       audioUrl: track.audioUrl || '',
+      coverImage: track.coverImage || '',
       isPremium: track.isPremium || false,
       audioFile: null
     });
@@ -287,6 +288,17 @@ const NexoriaTracksManager = () => {
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Track Cover Image URL (Optional)</label>
+                  <input 
+                    type="url" 
+                    value={formData.coverImage}
+                    onChange={(e) => setFormData({...formData, coverImage: e.target.value})}
+                    placeholder="https://..."
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  />
                 </div>
 
                 <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 rounded-2xl">
