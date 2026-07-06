@@ -194,15 +194,27 @@ const NexoriaPlayer = () => {
                 <h4 className="font-bold text-white truncate text-sm sm:text-base">{currentTrack.title}</h4>
                 <p className="text-xs sm:text-sm text-slate-400 truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
               </div>
-              <button 
-                className="text-slate-400 hover:text-white transition-colors p-2 sm:hidden"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(toggleLikeTrack(currentTrack._id));
-                }}
-              >
-                <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
-              </button>
+              {/* Mobile Actions: Like, Queue, Close */}
+              <div className="flex items-center gap-1 sm:hidden">
+                <button 
+                  className="text-slate-400 hover:text-white transition-colors p-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(toggleLikeTrack(currentTrack._id));
+                  }}
+                >
+                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]' : ''}`} />
+                </button>
+                <button className="text-slate-400 hover:text-white transition-colors p-2">
+                  <ListMusic className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => dispatch(clearPlayer())}
+                  className="text-slate-400 hover:text-red-500 transition-colors p-2"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Center: Controls & Desktop Progress */}
