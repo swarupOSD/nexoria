@@ -3,7 +3,11 @@
   "appName": "Nexoria",
   "webDir": "dist",
   "server": {
-    "cleartext": true
+    "url": "https://nexoria.vercel.app",
+    "cleartext": true,
+    "allowNavigation": [
+      "nexoria.vercel.app"
+    ]
   },
   "plugins": {
     "CapacitorHttp": {

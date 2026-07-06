@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, Play, Heart, Compass, Library, MoreVertical, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchNexoriaMusicQuery } from '../../features/api/nexoriaMusicApiSlice';
-import { playTrack } from '../../features/music/nexoriaMusicSlice';
+import { playTrack, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 
 const NexoriaMusicSearch = () => {
   const dispatch = useDispatch();
+  const { likedTracks } = useSelector(state => state.nexoriaMusic);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedTerm, setDebouncedTerm] = useState('');
 
@@ -136,8 +137,8 @@ const NexoriaMusicSearch = () => {
                     {results.tracks.slice(0, 4).map((track, idx) => (
                       <div key={track._id} className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 group transition-colors cursor-pointer">
                         <div className="relative w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
-                          {track.album?.coverImage ? (
-                            <img src={track.album.coverImage} alt={track.title} className="w-full h-full object-cover" />
+                          {track.coverImage || track.album?.coverImage || track.artist?.image ? (
+                            <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20" />
                           )}
@@ -156,8 +157,21 @@ const NexoriaMusicSearch = () => {
                           <p className="text-slate-400 text-sm truncate">{track.artist?.name || 'Unknown Artist'}</p>
                         </div>
                         <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="text-slate-400 hover:text-white"><Heart className="w-5 h-5" /></button>
-                          <button className="text-slate-400 hover:text-white"><MoreVertical className="w-5 h-5" /></button>
+                          <button 
+                            className="text-slate-400 hover:text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              dispatch(toggleLikeTrack(track._id));
+                            }}
+                          >
+                            <Heart className={`w-5 h-5 ${likedTracks?.includes(track._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
+                          </button>
+                          <button 
+                            className="text-slate-400 hover:text-white"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
                         </div>
                         <span className="text-sm font-medium text-slate-500 w-12 text-right group-hover:opacity-0">
                           {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
