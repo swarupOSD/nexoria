@@ -43,11 +43,21 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
       
       const $ = cheerio.load(data);
       
-      const title = $('h1').first().text().trim() || $('meta[property="og:title"]').attr('content') || '';
-      let cleanTitle = title.replace(/MOD APK.*?$/, '').trim(); // Remove "MOD APK v1.2..." from title if present
+      const rawTitle = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || '';
+      let cleanTitle = rawTitle.replace(/MOD APK.*$/i, '').trim(); // Remove "MOD APK v1.2..." from title if present
+      if (cleanTitle.includes(' - ')) {
+        cleanTitle = cleanTitle.split(' - ')[0].trim(); // Handle "AppName - GetModsApk" formats
+      }
       
       const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
-      let icon = $('meta[property="og:image"]').attr('content') || $('img.app-icon, img.icon, .app-img img').attr('src') || '';
+      
+      let icon = $('img[class*="w-20"][class*="h-20"], img[class*="w-24"][class*="h-24"], img.app-icon, img.icon').first().attr('src');
+      if (!icon) {
+        let ogImg = $('meta[property="og:image"]').attr('content');
+        if (ogImg && !ogImg.includes('favicon')) {
+          icon = ogImg;
+        }
+      }
       
       // Resolve absolute URLs for images
       if (icon && !icon.startsWith('http')) {
