@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', 
-  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null 
+  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null
 };
 
 const NexoriaTracksManager = () => {
@@ -57,6 +57,7 @@ const NexoriaTracksManager = () => {
       audioUrl: track.audioUrl || '',
       coverImage: track.coverImage || '',
       isPremium: track.isPremium || false,
+      telegramFileId: track.telegramFileId || null,
       audioFile: null
     });
     setEditTarget(track);
@@ -82,7 +83,7 @@ const NexoriaTracksManager = () => {
     if (!payload.genre) delete payload.genre;
 
     try {
-      let telegramFileId = null;
+      let telegramFileId = formData.telegramFileId;
       let finalDuration = formData.duration;
       let finalAudioUrl = formData.audioUrl;
 

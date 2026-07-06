@@ -165,8 +165,8 @@ const NexoriaMusicHome = () => {
                     )}
                   </div>
                   <div className="w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
-                    {track.album?.coverImage ? (
-                      <img src={track.album.coverImage} alt={track.title} className="w-full h-full object-cover" />
+                    {track.coverImage || track.album?.coverImage || track.artist?.image ? (
+                      <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20" />
                     )}
