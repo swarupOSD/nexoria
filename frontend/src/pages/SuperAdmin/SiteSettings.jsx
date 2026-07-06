@@ -46,7 +46,9 @@ const SiteSettings = () => {
     ads: {
       enabled: true,
       timerSeconds: 30,
-      downloadClicks: 2
+      downloadClicks: 2,
+      socialBarScript: '',
+      smartlinkUrl: ''
     },
     offerwallSettings: {
       enabled: false,
@@ -121,7 +123,9 @@ const SiteSettings = () => {
         ads: {
           enabled: settingsRes.data.ads?.enabled ?? true,
           timerSeconds: settingsRes.data.ads?.timerSeconds || 30,
-          downloadClicks: settingsRes.data.ads?.downloadClicks || 2
+          downloadClicks: settingsRes.data.ads?.downloadClicks || 2,
+          socialBarScript: settingsRes.data.ads?.socialBarScript || '',
+          smartlinkUrl: settingsRes.data.ads?.smartlinkUrl || ''
         },
         offerwallSettings: {
           enabled: settingsRes.data.offerwallSettings?.enabled ?? false,
@@ -475,6 +479,16 @@ const SiteSettings = () => {
               <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Page Clicks</label>
               <input type="number" name="ads_downloadClicks" value={formData.ads?.downloadClicks || 2} onChange={(e) => setFormData({...formData, ads: {...formData.ads, downloadClicks: Number(e.target.value)}})} className="premium-input w-full" />
               <p className="text-xs text-slate-500 mt-1">Number of steps/clicks required to reach the final file.</p>
+            </div>
+            <div className="pt-4 border-t border-slate-200 dark:border-night-border">
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Adsterra Social Bar Script</label>
+              <textarea rows="3" name="ads_socialBarScript" value={formData.ads?.socialBarScript || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, socialBarScript: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder='<script src="..."></script>'></textarea>
+              <p className="text-xs text-slate-500 mt-1">This script will be injected globally across the site.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Adsterra Smartlink URL</label>
+              <input type="text" name="ads_smartlinkUrl" value={formData.ads?.smartlinkUrl || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, smartlinkUrl: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder="https://..." />
+              <p className="text-xs text-slate-500 mt-1">This will trigger conditionally (e.g. on Download button click) to generate revenue.</p>
             </div>
           </div>
         </motion.div>

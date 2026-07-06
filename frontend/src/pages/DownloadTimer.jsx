@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTrackDownloadMutation } from '../features/download/downloadApiSlice';
+import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 import { toast } from 'react-hot-toast';
 import { ShieldCheck, Download, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import AdPlacement from '../components/AdPlacement';
@@ -17,14 +18,15 @@ const DownloadTimer = () => {
   const [canDownload, setCanDownload] = useState(false);
   const [trackDownload, { isLoading }] = useTrackDownloadMutation();
   const { user } = useSelector((state) => state.auth);
+  const { data: settingsRes } = useGetSettingsQuery();
 
   const shouldShowAds = () => {
+    if (!settingsRes?.data?.ads?.enabled) return false;
     if (!user) return true;
     if (user.isPremium) return false;
-    if (user.role === 'admin' || user.role === 'super_admin') return false;
+    if (user.role === 'admin' || user.role === 'superadmin') return false;
     return true;
   };
-
   useEffect(() => {
     if (!state?.postId || !state?.linkId) {
       toast.error('Invalid download link!');
@@ -49,18 +51,16 @@ const DownloadTimer = () => {
     setTimeLeft(30);
     setCanProceed(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    if (shouldShowAds()) {
-      // Open Adsterra Smartlink silently in a new tab
-      window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+
+    if (shouldShowAds() && settingsRes?.data?.ads?.smartlinkUrl) {
+      window.open(settingsRes.data.ads.smartlinkUrl, '_blank');
     }
   };
 
   const handleDownload = async () => {
     try {
-      if (shouldShowAds()) {
-        // Open Adsterra Smartlink silently in a new tab
-        window.open('https://www.effectivecpmnetwork.com/skn4v9twy?key=e5402946d6b510be79ecb6a0dcaba1aa', '_blank');
+      if (shouldShowAds() && settingsRes?.data?.ads?.smartlinkUrl) {
+        window.open(settingsRes.data.ads.smartlinkUrl, '_blank');
       }
       
       const res = await trackDownload({ postId: state.postId, linkId: state.linkId }).unwrap();

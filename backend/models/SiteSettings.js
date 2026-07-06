@@ -66,7 +66,9 @@ const siteSettingsSchema = new mongoose.Schema(
       enabled: { type: Boolean, default: true },
       timerSeconds: { type: Number, default: 30 },
       downloadClicks: { type: Number, default: 2 },
-      adNetworks: [{ name: String, code: String, active: Boolean }]
+      adNetworks: [{ name: String, code: String, active: Boolean }],
+      socialBarScript: { type: String, default: '' },
+      smartlinkUrl: { type: String, default: '' }
     },
     security: {
       underAttackMode: { type: Boolean, default: false },

@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import NoticeCenter from './NoticeCenter';
 import AdBlockDetector from './AdBlockDetector';
+import GlobalAds from './GlobalAds';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, Link } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -185,6 +186,7 @@ const Layout = () => {
         </motion.main>
       </AnimatePresence>
       <Footer />
+      <GlobalAds />
     </div>
   );
 
