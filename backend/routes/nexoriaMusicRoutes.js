@@ -38,6 +38,11 @@ const upload = multer({
 router.route('/search').get(searchMusic);
 router.route('/stream/:fileId').get(streamTrack);
 
+router.route('/artists').get(getArtistsAdmin);
+router.route('/genres').get(getGenresAdmin);
+router.route('/albums').get(getAlbumsAdmin);
+router.route('/tracks').get(getTracksAdmin);
+
 // ADMIN ROUTES
 router.route('/admin/artists')
   .post(protect, authorize('admin', 'superadmin'), createArtist)

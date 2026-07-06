@@ -4,7 +4,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // ARTISTS
     getNexoriaArtists: builder.query({
-      query: () => '/nexoria-music/admin/artists',
+      query: () => '/nexoria-music/artists',
       providesTags: ['NexoriaArtist'],
     }),
     createNexoriaArtist: builder.mutation({
@@ -33,7 +33,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
 
     // GENRES
     getNexoriaGenres: builder.query({
-      query: () => '/nexoria-music/admin/genres',
+      query: () => '/nexoria-music/genres',
       providesTags: ['NexoriaGenre'],
     }),
     createNexoriaGenre: builder.mutation({
@@ -62,7 +62,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
 
     // ALBUMS
     getNexoriaAlbums: builder.query({
-      query: () => '/nexoria-music/admin/albums',
+      query: () => '/nexoria-music/albums',
       providesTags: ['NexoriaAlbum'],
     }),
     createNexoriaAlbum: builder.mutation({
@@ -98,7 +98,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getNexoriaTracks: builder.query({
-      query: () => '/nexoria-music/admin/tracks',
+      query: () => '/nexoria-music/tracks',
       providesTags: ['NexoriaTrack'],
     }),
     createNexoriaTrack: builder.mutation({
