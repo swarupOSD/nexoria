@@ -261,7 +261,19 @@ export const uploadTrackAudio = async (req, res) => {
     if (title) formData.append('title', title);
     if (artistName) formData.append('performer', artistName);
 
-    const response = await axios.post(`https://api.telegram.org/bot${botToken}/sendAudio`, formData, {
+    const isStandardAudio = req.file.mimetype.includes('mpeg') || req.file.mimetype.includes('mp3') || req.file.mimetype.includes('m4a');
+    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
+    
+    // For sendDocument, the key is 'document' instead of 'audio'
+    if (!isStandardAudio) {
+      formData.delete('audio');
+      formData.append('document', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+    }
+
+    const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
       headers: {
         ...formData.getHeaders(),
         'Content-Length': formData.getLengthSync()
@@ -270,9 +282,15 @@ export const uploadTrackAudio = async (req, res) => {
       maxBodyLength: Infinity
     });
 
-    const fileId = response.data.result.audio.file_id;
-    const duration = response.data.result.audio.duration; 
-    const fileSizeBytes = response.data.result.audio.file_size;
+    const resultObj = response.data.result.audio || response.data.result.document || response.data.result.voice;
+    
+    if (!resultObj) {
+      throw new Error('Telegram API did not return a valid file identifier.');
+    }
+
+    const fileId = resultObj.file_id;
+    const duration = resultObj.duration || 0; 
+    const fileSizeBytes = resultObj.file_size || 0;
 
     res.status(200).json({
       success: true,
