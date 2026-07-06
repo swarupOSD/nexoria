@@ -106,6 +106,15 @@ const siteSettingsSchema = new mongoose.Schema(
       recommendationsEnabled: { type: Boolean, default: true },
       lyricsEnabled: { type: Boolean, default: true }
     },
+    underDevelopmentModules: {
+      apps: { type: Boolean, default: false },
+      games: { type: Boolean, default: false },
+      movies: { type: Boolean, default: false },
+      music: { type: Boolean, default: false },
+      arena: { type: Boolean, default: false },
+      vipLounge: { type: Boolean, default: false },
+      classicSound: { type: Boolean, default: false }
+    },
     updatedBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

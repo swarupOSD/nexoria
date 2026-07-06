@@ -59,6 +59,15 @@ const SiteSettings = () => {
       streamingEnabled: true,
       recommendationsEnabled: true,
       lyricsEnabled: true
+    },
+    underDevelopmentModules: {
+      apps: false,
+      games: false,
+      movies: false,
+      music: false,
+      arena: false,
+      vipLounge: false,
+      classicSound: false
     }
   });
 
@@ -125,6 +134,15 @@ const SiteSettings = () => {
           streamingEnabled: settingsRes.data.nexoriaMusicSettings?.streamingEnabled ?? true,
           recommendationsEnabled: settingsRes.data.nexoriaMusicSettings?.recommendationsEnabled ?? true,
           lyricsEnabled: settingsRes.data.nexoriaMusicSettings?.lyricsEnabled ?? true
+        },
+        underDevelopmentModules: {
+          apps: settingsRes.data.underDevelopmentModules?.apps ?? false,
+          games: settingsRes.data.underDevelopmentModules?.games ?? false,
+          movies: settingsRes.data.underDevelopmentModules?.movies ?? false,
+          music: settingsRes.data.underDevelopmentModules?.music ?? false,
+          arena: settingsRes.data.underDevelopmentModules?.arena ?? false,
+          vipLounge: settingsRes.data.underDevelopmentModules?.vipLounge ?? false,
+          classicSound: settingsRes.data.underDevelopmentModules?.classicSound ?? false,
         }
       });
     }
@@ -512,6 +530,33 @@ const SiteSettings = () => {
               <input type="checkbox" checked={formData.nexoriaMusicSettings?.lyricsEnabled} onChange={(e) => setFormData({...formData, nexoriaMusicSettings: {...formData.nexoriaMusicSettings, lyricsEnabled: e.target.checked}})} id="musicLyrics" className="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500" />
               <label htmlFor="musicLyrics" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Enable Lyrics</label>
             </div>
+          </div>
+        </motion.div>
+
+        {/* Under Development Modules */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass-card p-6 border border-slate-200 dark:border-night-border lg:col-span-2">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-night-border pb-4 mb-6">
+            <Lock className="w-5 h-5 text-red-500" />
+            <h2 className="text-lg font-bold dark:text-white">Module Access Control (Under Development)</h2>
+          </div>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 border-l-4 border-red-500 pl-4 py-1">
+            If you turn on "Under Development" for a module, regular users will see a Coming Soon page instead of the content. SuperAdmins and Admins can still access and test them normally.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {['apps', 'games', 'movies', 'music', 'arena', 'vipLounge', 'classicSound'].map((mod) => (
+              <div key={mod} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                <input 
+                  type="checkbox" 
+                  checked={formData.underDevelopmentModules?.[mod] || false} 
+                  onChange={(e) => setFormData({...formData, underDevelopmentModules: {...formData.underDevelopmentModules, [mod]: e.target.checked}})} 
+                  id={`ud_${mod}`} 
+                  className="w-5 h-5 text-red-600 bg-white border-slate-300 rounded focus:ring-red-500 dark:bg-slate-900 dark:border-slate-600" 
+                />
+                <label htmlFor={`ud_${mod}`} className="text-sm font-bold text-slate-700 dark:text-slate-300 capitalize cursor-pointer flex-1">
+                  {mod.replace(/([A-Z])/g, ' $1').trim()}
+                </label>
+              </div>
+            ))}
           </div>
         </motion.div>
 
