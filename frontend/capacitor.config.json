@@ -3,10 +3,10 @@
   "appName": "Nexoria",
   "webDir": "dist",
   "server": {
-    "url": "https://nexoria.vercel.app",
+    "url": "https://nexoria-theta-eight.vercel.app",
     "cleartext": true,
     "allowNavigation": [
-      "nexoria.vercel.app"
+      "nexoria-theta-eight.vercel.app"
     ]
   },
   "plugins": {
