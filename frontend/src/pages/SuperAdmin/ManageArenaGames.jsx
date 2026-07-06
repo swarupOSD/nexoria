@@ -199,7 +199,7 @@ const ManageArenaGames = () => {
                   <th className="py-3 px-4 font-semibold uppercase tracking-wider">Game</th>
                   <th className="py-3 px-4 font-semibold uppercase tracking-wider">Embed URL</th>
                   <th className="py-3 px-4 font-semibold uppercase tracking-wider">Status</th>
-                  <th className="py-3 px-4 font-semibold uppercase tracking-wider text-right">Actions</th>
+                  <th className="py-3 px-4 font-semibold uppercase tracking-wider text-right sticky right-0 bg-[#111] z-10 shadow-[-10px_0_15px_-5px_rgba(0,0,0,0.5)]">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -244,7 +244,7 @@ const ManageArenaGames = () => {
                             {game.isActive ? <><Eye className="w-3 h-3" /> Active</> : <><EyeOff className="w-3 h-3" /> Hidden</>}
                           </button>
                         </td>
-                        <td className="py-4 px-2 sm:px-4 text-right pr-4">
+                        <td className="py-4 px-2 sm:px-4 text-right pr-4 sticky right-0 bg-[#111] z-10 shadow-[-10px_0_15px_-5px_rgba(0,0,0,0.5)]">
                           <div className="flex items-center justify-end gap-1 sm:gap-2">
                             <button onClick={() => handleOpenModal(game)} className="p-1.5 sm:p-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition" title="Edit">
                               <Edit2 className="w-4 h-4" />
