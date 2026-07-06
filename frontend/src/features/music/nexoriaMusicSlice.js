@@ -11,6 +11,7 @@ const initialState = {
   shuffleMode: false,
   currentTime: 0,
   duration: 0,
+  likedTracks: JSON.parse(localStorage.getItem('nexoriaLikedTracks')) || [],
 };
 
 const nexoriaMusicSlice = createSlice({
@@ -129,6 +130,15 @@ const nexoriaMusicSlice = createSlice({
       if (action.payload.duration) {
         state.duration = action.payload.duration;
       }
+    },
+    toggleLikeTrack: (state, action) => {
+      const trackId = action.payload;
+      if (state.likedTracks.includes(trackId)) {
+        state.likedTracks = state.likedTracks.filter(id => id !== trackId);
+      } else {
+        state.likedTracks.push(trackId);
+      }
+      localStorage.setItem('nexoriaLikedTracks', JSON.stringify(state.likedTracks));
     }
   }
 });
@@ -148,7 +158,8 @@ export const {
   toggleMute,
   toggleRepeat,
   toggleShuffle,
-  updateTime
+  updateTime,
+  toggleLikeTrack
 } = nexoriaMusicSlice.actions;
 
 export default nexoriaMusicSlice.reducer;

@@ -4,11 +4,11 @@ import { Play, Pause, Heart, Search, Library, Compass, MoreVertical } from 'luci
 import { useGetNexoriaAlbumsQuery, useGetNexoriaArtistsQuery, useGetNexoriaTracksQuery } from '../../features/api/nexoriaMusicApiSlice';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { playTrack, setQueue, togglePlayPause } from '../../features/music/nexoriaMusicSlice';
+import { playTrack, setQueue, togglePlayPause, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
-  const { currentTrack, isPlaying } = useSelector(state => state.nexoriaMusic);
+  const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
   const { data: albumsRes, isLoading: loadingAlbums } = useGetNexoriaAlbumsQuery();
   const { data: artistsRes, isLoading: loadingArtists } = useGetNexoriaArtistsQuery();
   const { data: tracksRes, isLoading: loadingTracks } = useGetNexoriaTracksQuery();
@@ -150,7 +150,6 @@ const NexoriaMusicHome = () => {
                         audioEl.play().catch(err => console.log(err));
                       }
                       
-                      // Set the rest of the list as queue
                       const remainingTracks = tracks.slice(idx + 1);
                       dispatch(setQueue(remainingTracks));
                       dispatch(playTrack(track));
@@ -173,16 +172,29 @@ const NexoriaMusicHome = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-white truncate group-hover:text-purple-400 transition-colors text-sm">{track.title}</h4>
-                    <p className="text-slate-400 text-xs truncate">{track.artist?.name || 'Unknown'}</p>
+                    <h4 className={`font-bold truncate text-base ${currentTrack?._id === track._id ? 'text-purple-400' : 'text-white'}`}>
+                      {track.title}
+                    </h4>
+                    <p className="text-slate-400 text-sm truncate">{track.artist?.name || 'Unknown Artist'}</p>
                   </div>
-                  <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="text-slate-400 hover:text-white"><Heart className="w-4 h-4" /></button>
-                    <button className="text-slate-400 hover:text-white"><MoreVertical className="w-4 h-4" /></button>
-                  </div>
-                  <span className="text-xs font-medium text-slate-500 w-10 text-right group-hover:opacity-0">
+                  <div className="text-slate-500 text-sm font-medium mr-4 hidden md:block">
                     {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
-                  </span>
+                  </div>
+                  <button 
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(toggleLikeTrack(track._id));
+                    }}
+                  >
+                    <Heart className={`w-4 h-4 ${likedTracks.includes(track._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
+                  </button>
+                  <button 
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
                 </div>
               ))
             )}

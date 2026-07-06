@@ -6,8 +6,9 @@ import {
   Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2 
 } from 'lucide-react';
 import { 
-  setVolume, toggleMute, toggleRepeat, toggleShuffle, updateTime,
-  playNextTrack, playPrevTrack, togglePlayPause
+  playNextTrack, playPrevTrack, togglePlayPause, 
+  updateTime, setVolume, toggleMute, 
+  toggleRepeat, toggleShuffle, toggleLikeTrack
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
 
@@ -17,7 +18,8 @@ const NexoriaPlayer = () => {
   
   const { 
     currentTrack, isPlaying, volume, isMuted, 
-    repeatMode, shuffleMode, currentTime, duration 
+    repeatMode, shuffleMode, currentTime, duration,
+    likedTracks
   } = useSelector(state => state.nexoriaMusic);
 
   // Sync state to audio element for play/pause toggling
@@ -192,8 +194,14 @@ const NexoriaPlayer = () => {
                 <h4 className="font-bold text-white truncate text-sm sm:text-base">{currentTrack.title}</h4>
                 <p className="text-xs sm:text-sm text-slate-400 truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
               </div>
-              <button className="text-slate-400 hover:text-white transition-colors p-2 sm:hidden">
-                <Heart className="w-5 h-5" />
+              <button 
+                className="text-slate-400 hover:text-white transition-colors p-2 sm:hidden"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch(toggleLikeTrack(currentTrack._id));
+                }}
+              >
+                <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
               </button>
             </div>
 
@@ -258,12 +266,20 @@ const NexoriaPlayer = () => {
 
             {/* Right: Volume & Extras */}
             <div className="hidden sm:flex items-center justify-end gap-4 w-[30%] min-w-0">
-              <button className="text-slate-400 hover:text-white transition-colors">
-                <Heart className="w-5 h-5" />
-              </button>
-              <button className="text-slate-400 hover:text-white transition-colors">
-                <ListMusic className="w-5 h-5" />
-              </button>
+              {/* Desktop controls: Volume, Like, Menu */}
+              <div className="flex items-center gap-3">
+                <button 
+                  className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(toggleLikeTrack(currentTrack._id));
+                  }}
+                >
+                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
+                </button>
+                <button className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block">
+                  <ListMusic className="w-5 h-5" />
+                </button>
               
               <div className="flex items-center gap-2 group w-32">
                 <button onClick={() => dispatch(toggleMute())} className="text-slate-400 hover:text-white transition-colors">
