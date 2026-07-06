@@ -51,7 +51,7 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
       
       const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
       
-      let icon = $('img[class*="w-20"][class*="h-20"], img[class*="w-24"][class*="h-24"], img.app-icon, img.icon').first().attr('src');
+      let icon = $('img[class*="w-48"][class*="h-48"], img[class*="w-32"][class*="h-32"], img[class*="w-40"][class*="h-40"], img.app-icon, img.icon').first().attr('src');
       if (!icon) {
         let ogImg = $('meta[property="og:image"]').attr('content');
         if (ogImg && !ogImg.includes('favicon')) {

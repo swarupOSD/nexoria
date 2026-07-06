@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 async function testScrape() {
-  const url = 'https://getmodsapk.com/';
+  const url = 'https://getmodsapk.com/7169-youtube-music-free-Premium-mod-apk/';
   
   try {
     const { data } = await axios.get(url, {
@@ -10,22 +10,16 @@ async function testScrape() {
     });
     const $ = cheerio.load(data);
     
-    let targetUrl = $('a[href*="/"]').first().attr('href');
-    if (!targetUrl.startsWith('http')) targetUrl = `https://getmodsapk.com${targetUrl}`;
-    
-    const { data: gameData } = await axios.get(targetUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' }
+    const allImages = [];
+    $('img').each((i, el) => {
+      allImages.push({
+        src: $(el).attr('src'),
+        class: $(el).attr('class')
+      });
     });
-    const $game = cheerio.load(gameData);
     
-    const title = $game('h1').text().trim();
-    const ogImage = $game('meta[property="og:image"]').attr('content');
-    const firstW20Img = $game('img.w-20.h-20, img[class*="w-20"][class*="h-20"], img[class*="w-24"][class*="h-24"]').first().attr('src');
-    
-    console.log('Title:', title);
-    console.log('OG Image:', ogImage);
-    console.log('First App Icon Match:', firstW20Img);
-    
+    console.log('Images 5 to 25:', JSON.stringify(allImages.slice(5, 25), null, 2));
+
   } catch (error) {
     console.error('Error fetching:', error.message);
   }
