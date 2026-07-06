@@ -49,17 +49,21 @@ const NexoriaMusicHome = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-violet-900/90 via-purple-900/60 to-fuchsia-900/80 z-10 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080312] via-[#080312]/40 to-transparent z-10" />
           <img 
-            src="https://images.unsplash.com/photo-1493225457124-a1a2a5370217?auto=format&fit=crop&q=80&w=2564" 
+            src={tracks.length > 0 && (tracks[0].coverImage || tracks[0].album?.coverImage || tracks[0].artist?.image) ? (tracks[0].coverImage || tracks[0].album?.coverImage || tracks[0].artist?.image) : "https://images.unsplash.com/photo-1493225457124-a1a2a5370217?auto=format&fit=crop&q=80&w=2564"} 
             alt="Featured" 
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">
-                Exclusive Release
+                {tracks.length > 0 ? 'New Release' : 'Exclusive Release'}
               </span>
-              <h2 className="text-4xl md:text-6xl font-black mb-2">Midnight Echoes</h2>
-              <p className="text-slate-300 text-lg md:text-xl max-w-2xl mb-6">Experience the new immersive audio journey crafted for the night.</p>
+              <h2 className="text-4xl md:text-6xl font-black mb-2">{tracks.length > 0 ? tracks[0].title : 'Midnight Echoes'}</h2>
+              <p className="text-slate-300 text-lg md:text-xl max-w-2xl mb-6">
+                {tracks.length > 0 
+                  ? `${tracks[0].artist?.name ? `Listen to the latest hit from ${tracks[0].artist.name}. ` : ''}Experience the new immersive audio journey.` 
+                  : 'Experience the new immersive audio journey crafted for the night.'}
+              </p>
               <div className="flex items-center gap-4">
                 <button 
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25 px-8 py-3.5 rounded-full font-bold flex items-center gap-2 hover:scale-105 transition-all active:scale-95"
