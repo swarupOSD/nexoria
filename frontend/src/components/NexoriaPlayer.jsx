@@ -280,6 +280,7 @@ const NexoriaPlayer = () => {
                 <button className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block">
                   <ListMusic className="w-5 h-5" />
                 </button>
+              </div>
               
               <div className="flex items-center gap-2 group w-32">
                 <button onClick={() => dispatch(toggleMute())} className="text-slate-400 hover:text-white transition-colors">
