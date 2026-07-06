@@ -360,7 +360,7 @@ const SuperAdminLayout = () => {
       <main className="flex-1 flex flex-col h-full min-w-0">
         
         {/* Top Navbar */}
-        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-8 shrink-0 shadow-sm">
+        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-8 shrink-0 shadow-sm relative z-50">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
               <Menu className="w-6 h-6" />
