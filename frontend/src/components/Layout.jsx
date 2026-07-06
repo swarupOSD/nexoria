@@ -54,7 +54,28 @@ const Layout = () => {
     }
   }, [socket]);
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0F172A] relative overflow-hidden text-white font-sans">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1e1a3b] to-[#0F172A] opacity-80" />
+        <div className="flex flex-col items-center gap-6 relative z-10 p-8 md:p-12 rounded-[2rem] bg-black/20 border border-white/5 backdrop-blur-3xl shadow-2xl">
+          <div className="relative w-24 h-24">
+            <div className="absolute inset-0 rounded-full border-4 border-white/10" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+            <div className="absolute inset-0 rounded-full border-4 border-accent border-b-transparent animate-[spin_2s_linear_infinite_reverse] opacity-70" />
+            <div className="absolute inset-4 rounded-full bg-primary/20 animate-pulse" />
+          </div>
+          <div className="text-center space-y-3">
+            <h2 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent animate-pulse tracking-tight">Nexoria</h2>
+            <p className="text-slate-400 font-medium text-sm max-w-[250px] leading-relaxed">
+              Waking up server...<br/>
+              <span className="text-xs opacity-70">This may take up to 50 seconds if the server was asleep.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const publicAuthRoutes = ['/login', '/register', '/forgot-password', '/resetpassword', '/forgotpassword'];
   const isAuthRoute = publicAuthRoutes.some(route => location.pathname.startsWith(route));
