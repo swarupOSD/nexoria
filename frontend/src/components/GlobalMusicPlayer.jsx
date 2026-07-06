@@ -273,7 +273,7 @@ const GlobalMusicPlayer = () => {
       song={currentSong}
     />
     
-    <div className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none">
+    <div className="fixed bottom-[72px] lg:bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none transition-all duration-300">
         
         <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 

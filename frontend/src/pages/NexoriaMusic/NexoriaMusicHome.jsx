@@ -181,7 +181,7 @@ const NexoriaMusicHome = () => {
                     {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
                   </div>
                   <button 
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                    className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       dispatch(toggleLikeTrack(track._id));
@@ -190,7 +190,7 @@ const NexoriaMusicHome = () => {
                     <Heart className={`w-4 h-4 ${likedTracks.includes(track._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
                   </button>
                   <button 
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                    className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <MoreVertical className="w-4 h-4" />

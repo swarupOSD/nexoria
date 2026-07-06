@@ -20,6 +20,7 @@ import NotificationBell from './Layout/NotificationBell';
 import { toast } from 'react-hot-toast';
 import CustomSearchBar from './CustomSearchBar';
 import ParentalGateModal from './ParentalGateModal';
+import BottomNavigation from './Layout/BottomNavigation';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme, isCyberpunk, toggleCyberpunk } = useTheme();
@@ -748,6 +749,9 @@ const Navbar = () => {
       </nav>
       {/* Spacer to prevent content overlap */}
       <div className="h-24"></div>
+      
+      {/* Mobile Bottom Navigation */}
+      <BottomNavigation onMenuClick={() => setIsMobileMenuOpen(true)} />
     </>
   );
 };

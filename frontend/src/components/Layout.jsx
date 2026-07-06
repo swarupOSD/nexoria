@@ -179,7 +179,7 @@ const Layout = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="flex-grow container mx-auto px-4 py-8"
+          className="flex-grow container mx-auto px-4 pt-8 pb-24 lg:pb-8"
         >
           <Outlet />
         </motion.main>

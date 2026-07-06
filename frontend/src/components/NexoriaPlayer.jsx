@@ -155,7 +155,7 @@ const NexoriaPlayer = () => {
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none"
+          className="fixed bottom-[72px] lg:bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none"
         >
           <div className="mx-auto max-w-7xl bg-[#111111]/90 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[32px] p-2 sm:p-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)] pointer-events-auto">
             
