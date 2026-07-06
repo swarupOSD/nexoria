@@ -139,6 +139,12 @@ const nexoriaMusicSlice = createSlice({
         state.likedTracks.push(trackId);
       }
       localStorage.setItem('nexoriaLikedTracks', JSON.stringify(state.likedTracks));
+    },
+    clearPlayer: (state) => {
+      state.currentTrack = null;
+      state.isPlaying = false;
+      state.queue = [];
+      state.history = [];
     }
   }
 });
@@ -159,7 +165,8 @@ export const {
   toggleRepeat,
   toggleShuffle,
   updateTime,
-  toggleLikeTrack
+  toggleLikeTrack,
+  clearPlayer
 } = nexoriaMusicSlice.actions;
 
 export default nexoriaMusicSlice.reducer;

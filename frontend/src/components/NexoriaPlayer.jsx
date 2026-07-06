@@ -8,7 +8,7 @@ import {
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
-  toggleRepeat, toggleShuffle, toggleLikeTrack
+  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
 
@@ -269,16 +269,19 @@ const NexoriaPlayer = () => {
               {/* Desktop controls: Volume, Like, Menu */}
               <div className="flex items-center gap-3">
                 <button 
-                  className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(toggleLikeTrack(currentTrack._id));
-                  }}
+                  onClick={() => dispatch(toggleLikeTrack(currentTrack._id))}
+                  className="p-2 transition-colors hidden sm:block"
                 >
-                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
+                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-slate-400 hover:text-white'}`} />
                 </button>
                 <button className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block">
                   <ListMusic className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => dispatch(clearPlayer())}
+                  className="text-slate-400 hover:text-red-500 transition-colors p-2"
+                >
+                  <X className="w-5 h-5" />
                 </button>
               </div>
               
