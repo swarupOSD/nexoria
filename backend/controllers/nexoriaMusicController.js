@@ -251,8 +251,12 @@ export const uploadTrackAudio = async (req, res) => {
     const formData = new FormData();
     formData.append('chat_id', channelId);
     
+    const isStandardAudio = req.file.mimetype.includes('mpeg') || req.file.mimetype.includes('mp3') || req.file.mimetype.includes('m4a');
+    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
+    const fileField = isStandardAudio ? 'audio' : 'document';
+    
     // multer.memoryStorage() gives us a buffer
-    formData.append('audio', req.file.buffer, {
+    formData.append(fileField, req.file.buffer, {
       filename: req.file.originalname,
       contentType: req.file.mimetype,
     });
@@ -260,18 +264,6 @@ export const uploadTrackAudio = async (req, res) => {
     const { title, artistName } = req.body;
     if (title) formData.append('title', title);
     if (artistName) formData.append('performer', artistName);
-
-    const isStandardAudio = req.file.mimetype.includes('mpeg') || req.file.mimetype.includes('mp3') || req.file.mimetype.includes('m4a');
-    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
-    
-    // For sendDocument, the key is 'document' instead of 'audio'
-    if (!isStandardAudio) {
-      formData.delete('audio');
-      formData.append('document', req.file.buffer, {
-        filename: req.file.originalname,
-        contentType: req.file.mimetype,
-      });
-    }
 
     const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
       headers: {
