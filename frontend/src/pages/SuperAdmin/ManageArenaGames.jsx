@@ -230,13 +230,13 @@ const ManageArenaGames = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2 text-xs text-slate-300 font-mono bg-black/30 px-2 py-1 rounded max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap" title={game.iframeUrl}>
+                        <td className="py-4 px-2 sm:px-4">
+                          <div className="flex items-center gap-2 text-xs text-slate-300 font-mono bg-black/30 px-2 py-1 rounded max-w-[120px] sm:max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap" title={game.iframeUrl}>
                             <LinkIcon className="w-3 h-3 text-slate-500 shrink-0" />
                             {game.iframeUrl}
                           </div>
                         </td>
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-2 sm:px-4">
                           <button 
                             onClick={() => toggleStatus(game)}
                             className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition ${game.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}
@@ -244,12 +244,12 @@ const ManageArenaGames = () => {
                             {game.isActive ? <><Eye className="w-3 h-3" /> Active</> : <><EyeOff className="w-3 h-3" /> Hidden</>}
                           </button>
                         </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleOpenModal(game)} className="p-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition" title="Edit">
+                        <td className="py-4 px-2 sm:px-4 text-right pr-4">
+                          <div className="flex items-center justify-end gap-1 sm:gap-2">
+                            <button onClick={() => handleOpenModal(game)} className="p-1.5 sm:p-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition" title="Edit">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDelete(game._id)} disabled={isDeleting} className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition" title="Delete">
+                            <button onClick={() => handleDelete(game._id)} disabled={isDeleting} className="p-1.5 sm:p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition" title="Delete">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
