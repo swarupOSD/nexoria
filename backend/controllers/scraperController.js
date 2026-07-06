@@ -36,6 +36,58 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
         playStoreUrl: appData.url,
         updatedAt: appData.updated,
       });
+    } else if (url.includes('getmodsapk.com')) {
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+      });
+      
+      const $ = cheerio.load(data);
+      
+      const title = $('h1').first().text().trim() || $('meta[property="og:title"]').attr('content') || '';
+      let cleanTitle = title.replace(/MOD APK.*?$/, '').trim(); // Remove "MOD APK v1.2..." from title if present
+      
+      const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+      let icon = $('meta[property="og:image"]').attr('content') || $('img.app-icon, img.icon, .app-img img').attr('src') || '';
+      
+      // Resolve absolute URLs for images
+      if (icon && !icon.startsWith('http')) {
+        const urlObj = new URL(url);
+        icon = `${urlObj.protocol}//${urlObj.host}${icon.startsWith('/') ? '' : '/'}${icon}`;
+      }
+
+      let version = 'Varies';
+      let size = 'Varies';
+      let category = 'Apps';
+      
+      // Heuristic extraction for version and size from typical tables/lists
+      $('th, td, span, div, li, dt, dd').each((i, el) => {
+        const text = $(el).text().toLowerCase().trim();
+        if (text === 'version' || text.includes('latest version')) {
+          const val = $(el).next().text().trim() || $(el).parent().find('td, dd, span').last().text().trim();
+          if (val && val.length < 20) version = val;
+        }
+        if (text === 'size' || text.includes('app size')) {
+          const val = $(el).next().text().trim() || $(el).parent().find('td, dd, span').last().text().trim();
+          if (val && val.length < 20) size = val;
+        }
+        if (text === 'category' || text === 'genre') {
+          const val = $(el).next().text().trim() || $(el).parent().find('td, dd, span').last().text().trim();
+          if (val && val.length < 30) category = val;
+        }
+      });
+      
+      res.json({
+        title: cleanTitle || 'Unknown App',
+        developer: 'GetModsApk',
+        description,
+        icon,
+        screenshots: icon ? [icon] : [],
+        version,
+        size,
+        category,
+        playStoreUrl: url,
+        updatedAt: new Date().toISOString(),
+      });
     } else {
       // Fallback universal scraper using cheerio
       const { data } = await axios.get(url, {

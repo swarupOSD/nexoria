@@ -114,7 +114,7 @@ const ManageAdmins = () => {
                     </span>
                   </td>
                   <td className="p-5 text-sm text-slate-400">
-                    {admin.role === 'superadmin' ? 'All Access' : admin.role === 'admin' ? 'Posts, Comments, Categories' : 'Standard Access'}
+                    {admin.role === 'superadmin' ? 'All Access (Includes Users/Roles)' : admin.role === 'admin' ? 'Apps, Games, Music, Marketing' : 'Standard Access'}
                   </td>
                   <td className="p-5">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${

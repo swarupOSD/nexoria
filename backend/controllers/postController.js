@@ -356,36 +356,40 @@ export const incrementDownload = async (req, res) => {
       return res.status(400).json({ success: false, message: 'This link is currently disabled.' });
     }
 
-    // Increment counters
-    link.clickCount += 1;
-    post.downloads += 1;
-    await post.save({ validateBeforeSave: false });
+    const isAdmin = req.user && ['admin', 'superadmin'].includes(req.user.role);
 
-    // Log detailed tracking
-    const downloadRecord = await Download.create({
-      user: req.user ? req.user._id : null,
-      post: post._id,
-      downloadLink: link._id,
-      ipAddress: req.ip || req.headers['x-forwarded-for'],
-      userAgent: req.headers['user-agent']
-    });
+    if (!isAdmin) {
+      // Increment counters
+      link.clickCount += 1;
+      post.downloads += 1;
+      await post.save({ validateBeforeSave: false });
 
-    if (req.user) {
-      await logActivity(req.user._id, 'Download', `Downloaded ${post.title} via ${link.label || 'Direct Link'}`, req, { postId: post._id });
-    }
-    
-    // Emit live download event
-    try {
-      const { emitAdminEvent } = await import('../utils/tracker.js');
-      emitAdminEvent('liveDownload', {
-        appId: post._id,
-        appName: post.title,
-        mirror: link.label || 'Direct Link',
-        type: link.type,
-        user: req.user ? req.user.name : 'Guest',
-        timestamp: downloadRecord.createdAt
+      // Log detailed tracking
+      const downloadRecord = await Download.create({
+        user: req.user ? req.user._id : null,
+        post: post._id,
+        downloadLink: link._id,
+        ipAddress: req.ip || req.headers['x-forwarded-for'],
+        userAgent: req.headers['user-agent']
       });
-    } catch (e) {}
+
+      if (req.user) {
+        await logActivity(req.user._id, 'Download', `Downloaded ${post.title} via ${link.label || 'Direct Link'}`, req, { postId: post._id });
+      }
+      
+      // Emit live download event
+      try {
+        const { emitAdminEvent } = await import('../utils/tracker.js');
+        emitAdminEvent('liveDownload', {
+          appId: post._id,
+          appName: post.title,
+          mirror: link.label || 'Direct Link',
+          type: link.type,
+          user: req.user ? req.user.name : 'Guest',
+          timestamp: downloadRecord.createdAt
+        });
+      } catch (e) {}
+    }
     
     res.status(200).json({ success: true, message: 'Download tracked', data: { url: link.url } });
   } catch (error) {

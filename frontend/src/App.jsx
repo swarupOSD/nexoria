@@ -324,6 +324,20 @@ function App() {
             <Route path="premium-requests" element={<AdminPremiumRequests />} />
             <Route path="live-monitor" element={<AdminLiveMonitor />} />
             <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
+            <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
+            <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
+            <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
+            <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
+            
+            <Route path="games" element={<AdminGamesList />} />
+            <Route path="games/add" element={<AdminAddGame />} />
+            <Route path="games/edit/:id" element={<AdminEditGame />} />
+            <Route path="arena-games" element={<ManageArenaGames />} />
+
+            <Route path="push-campaigns" element={<PushCampaigns />} />
+            <Route path="coupons" element={<CouponManager />} />
+            <Route path="app-requests" element={<AppRequestModeration />} />
+            <Route path="user-requests" element={<UserRequestsAdmin />} />
           </Route>
 
             {/* Super Admin Protected Routes */}

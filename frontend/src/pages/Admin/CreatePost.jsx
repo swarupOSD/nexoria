@@ -518,14 +518,14 @@ const CreatePost = () => {
               <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1 tracking-tight flex items-center gap-2">
                 <Globe className="w-5 h-5 text-indigo-500" /> Auto-Scraper (Beta)
               </h3>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Paste a Play Store or GamePix link to auto-fill details</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Paste a Play Store, GamePix, or GetModsApk link to auto-fill details</p>
               
               <div className="flex flex-col sm:flex-row gap-3">
                 <input 
-                  type="text" 
+                  type="url" 
                   value={scrapeUrl}
                   onChange={(e) => setScrapeUrl(e.target.value)}
-                  placeholder="https://play.google.com/store/apps/details?id=..." 
+                  placeholder="https://play.google.com/... or https://getmodsapk.com/..." 
                   className="flex-1 px-4 py-3 bg-white dark:bg-[#111] border border-indigo-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-sm text-slate-700 dark:text-slate-200"
                 />
                 <button 

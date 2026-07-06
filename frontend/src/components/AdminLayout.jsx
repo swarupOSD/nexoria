@@ -4,8 +4,9 @@ import {
   LayoutDashboard, FileText, Folder, MessageSquare, 
   Settings, LogOut, ShieldAlert, User, Moon, Sun, 
   Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail, 
-  ChevronRight, Command, LayoutTemplate
+  ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart
 } from 'lucide-react';
+import NotificationBell from './Layout/NotificationBell';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation, useGetMeQuery } from '../features/auth/authApiSlice';
@@ -76,12 +77,37 @@ const AdminLayout = () => {
       ]
     },
     {
-      title: 'Content',
+      title: 'Nexoria Studio',
       items: [
         { name: 'Posts', icon: <FileText className="w-4 h-4" />, path: '/admin/posts' },
         { name: 'Categories', icon: <Folder className="w-4 h-4" />, path: '/admin/categories' },
         { name: 'Downloads', icon: <Download className="w-4 h-4" />, path: '/admin/downloads' },
-        { name: 'Nexoria Music', icon: <Activity className="w-4 h-4" />, path: '/admin/nexoria-music' },
+        { name: 'App Requests', icon: <FileText className="w-4 h-4" />, path: '/admin/app-requests' },
+        { name: 'User Requests', icon: <User className="w-4 h-4" />, path: '/admin/user-requests' },
+      ]
+    },
+    {
+      title: 'Nexoria Arcade',
+      items: [
+        { name: 'Games', icon: <Gamepad2 className="w-4 h-4" />, path: '/admin/games' },
+        { name: 'Arena Games', icon: <Gamepad2 className="w-4 h-4 text-orange-400" />, path: '/admin/arena-games' },
+      ]
+    },
+    {
+      title: 'Nexoria Music',
+      items: [
+        { name: 'Dashboard', icon: <Activity className="w-4 h-4" />, path: '/admin/nexoria-music' },
+        { name: 'Artists', icon: <User className="w-4 h-4" />, path: '/admin/nexoria-music/artists' },
+        { name: 'Albums', icon: <Folder className="w-4 h-4" />, path: '/admin/nexoria-music/albums' },
+        { name: 'Tracks', icon: <Music className="w-4 h-4" />, path: '/admin/nexoria-music/tracks' },
+        { name: 'Genres', icon: <Settings className="w-4 h-4" />, path: '/admin/nexoria-music/genres' },
+      ]
+    },
+    {
+      title: 'Marketing',
+      items: [
+        { name: 'Push Campaigns', icon: <Bell className="w-4 h-4" />, path: '/admin/push-campaigns' },
+        { name: 'Coupons', icon: <ShoppingCart className="w-4 h-4" />, path: '/admin/coupons' },
       ]
     },
     {
@@ -229,8 +255,10 @@ const AdminLayout = () => {
           </div>
           
           <div className="flex items-center gap-3">
+            <NotificationBell iconClassName="text-slate-500 hover:text-slate-900 dark:hover:text-white" />
+            
             <Link to="/admin/live-monitor" className="relative p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors">
-              <Bell className="w-4 h-4" />
+              <Activity className="w-4 h-4" />
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
             </Link>
             <button onClick={toggleTheme} className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors">

@@ -306,16 +306,20 @@ export const incrementMovieDownload = async (req, res) => {
     const movie = await Movie.findById(req.params.id);
     if (!movie) return res.status(404).json({ success: false, message: 'Movie not found' });
 
-    movie.downloads += 1;
-    await movie.save();
+    const isAdmin = req.user && ['admin', 'superadmin'].includes(req.user.role);
 
-    // Track download details
-    await MovieDownload.create({
-      movie: movie._id,
-      user: req.user ? req.user.id : null,
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent']
-    });
+    if (!isAdmin) {
+      movie.downloads += 1;
+      await movie.save();
+
+      // Track download details
+      await MovieDownload.create({
+        movie: movie._id,
+        user: req.user ? req.user.id : null,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent']
+      });
+    }
 
     res.status(200).json({ success: true, data: movie.downloads });
   } catch (error) {

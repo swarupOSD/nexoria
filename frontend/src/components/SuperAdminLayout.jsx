@@ -13,6 +13,7 @@ import { logout as clearCredentials, setCredentials } from '../features/auth/aut
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import BroadcastModal from './BroadcastModal';
+import NotificationBell from './Layout/NotificationBell';
 
 const SuperAdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -421,6 +422,8 @@ const SuperAdminLayout = () => {
             </div>
 
             <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
+
+            <NotificationBell iconClassName="text-slate-500 hover:text-slate-900 dark:hover:text-white" />
 
             <Link to="/superadmin/security-logs" className="relative p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
               <ShieldAlert className="w-5 h-5" />

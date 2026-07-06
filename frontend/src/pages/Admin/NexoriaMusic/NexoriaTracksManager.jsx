@@ -73,8 +73,8 @@ const NexoriaTracksManager = () => {
     e.preventDefault();
     if (!formData.artist) return toast.error('Please select an artist');
     if (!formData.audioFile && !formData.audioUrl && modalMode === 'create') return toast.error('Please upload an audio file or provide a URL');
-    if (formData.audioFile && formData.audioFile.size > 20 * 1024 * 1024) {
-      return toast.error('File size must be under 20MB for Telegram CDN');
+    if (formData.audioFile && formData.audioFile.size > 50 * 1024 * 1024) {
+      return toast.error('File size must be under 50MB for Telegram CDN');
     }
     
     // Default album handling if not provided
@@ -326,10 +326,10 @@ const NexoriaTracksManager = () => {
                 </div>
 
                 <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 rounded-2xl">
-                  <label className="block text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">Upload Audio File (Max 20MB)</label>
+                  <label className="block text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">Upload Audio File (Max 50MB)</label>
                   <input 
                     type="file"
-                    accept="audio/mpeg, audio/mp3, audio/flac, audio/wav" 
+                    accept="audio/*, .mp3, .wav, .flac, .ogg, .m4a, .aac" 
                     onChange={(e) => setFormData({...formData, audioFile: e.target.files[0]})}
                     className="w-full text-white text-sm file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-500 file:transition-colors file:cursor-pointer cursor-pointer"
                   />

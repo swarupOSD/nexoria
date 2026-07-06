@@ -27,7 +27,7 @@ const router = express.Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 22 * 1024 * 1024 } // 22MB limit to leave room for headers, Telegram allows 20MB for download
+  limits: { fileSize: 52 * 1024 * 1024 } // 52MB limit (Telegram allows 50MB for upload via bot API)
 });
 
 // All routes here are currently scoped for admin management.

@@ -22,7 +22,7 @@ export const getDashboardAnalytics = async (req, res) => {
     const mostViewed = await Post.find().sort({ views: -1 }).limit(5).select('title views logo featuredImage slug');
     
     // Growth simple metrics
-    const usersLast7Days = await User.countDocuments({ createdAt: { $gte: getDateNDaysAgo(7) } });
+    const usersLast7Days = await User.countDocuments({ createdAt: { $gte: getDateNDaysAgo(7) }, role: { $nin: ['admin', 'superadmin'] } });
     const downloadsLast7Days = await Download.countDocuments({ createdAt: { $gte: getDateNDaysAgo(7) } });
     const contentLast7Days = await Post.countDocuments({ createdAt: { $gte: getDateNDaysAgo(7) } });
 
@@ -52,7 +52,7 @@ export const getAdminAnalytics = async (req, res) => {
   try {
     const totalPosts = await Post.countDocuments();
     const totalCategories = await Category.countDocuments();
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ role: { $nin: ['admin', 'superadmin'] } });
     const totalDownloads = await Download.countDocuments();
 
     // Premium Analytics
@@ -133,7 +133,7 @@ export const getAdminAnalytics = async (req, res) => {
 // @access  Private/SuperAdmin
 export const getSuperAdminAnalytics = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ role: { $nin: ['admin', 'superadmin'] } });
     const totalPosts = await Post.countDocuments();
     const totalDownloads = await Download.countDocuments();
 
@@ -240,7 +240,7 @@ export const getSuperAdminAnalytics = async (req, res) => {
 
     // Registrations
     const registrations = await User.aggregate([
-      { $match: { createdAt: { $gte: getDateNDaysAgo(7) } } },
+      { $match: { createdAt: { $gte: getDateNDaysAgo(7) }, role: { $nin: ['admin', 'superadmin'] } } },
       { $group: { 
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, 
           users: { $sum: 1 } 
