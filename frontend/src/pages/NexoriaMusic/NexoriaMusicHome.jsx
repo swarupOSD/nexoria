@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, Heart, Search, Library, Compass, MoreVertical } from 'lucide-react';
+import { Play, Pause, Heart, Search, Library, Compass, MoreVertical, Download, ListPlus, Link2 } from 'lucide-react';
 import { useGetNexoriaAlbumsQuery, useGetNexoriaArtistsQuery, useGetNexoriaTracksQuery } from '../../features/api/nexoriaMusicApiSlice';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { playTrack, setQueue, togglePlayPause, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
+import { playTrack, setQueue, togglePlayPause, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
+import DropdownMenu from '../../components/DropdownMenu';
+import toast from 'react-hot-toast';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
@@ -193,12 +195,52 @@ const NexoriaMusicHome = () => {
                   >
                     <Heart className={`w-4 h-4 ${likedTracks.includes(track._id) ? 'fill-pink-500 text-pink-500' : ''}`} />
                   </button>
-                  <button 
-                    className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                  <DropdownMenu
+                    align="right"
+                    width="w-48"
+                    trigger={
+                      <button 
+                        className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    }
                   >
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
+                    <div className="py-2 text-sm font-medium text-slate-300">
+                      <button 
+                        className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          dispatch(addToQueue(track)); 
+                          toast.success('Added to Queue'); 
+                        }}
+                      >
+                        <ListPlus className="w-4 h-4" /> Add to Queue
+                      </button>
+                      <button 
+                        className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                          const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
+                          window.open(url, '_blank');
+                        }}
+                      >
+                        <Download className="w-4 h-4" /> Download
+                      </button>
+                      <button 
+                        className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          navigator.clipboard.writeText(window.location.href); 
+                          toast.success('Link copied'); 
+                        }}
+                      >
+                        <Link2 className="w-4 h-4" /> Share
+                      </button>
+                    </div>
+                  </DropdownMenu>
                 </div>
               ))
             )}
