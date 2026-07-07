@@ -9,7 +9,7 @@ const ICE_SERVERS = {
   ]
 };
 
-const CallOverlay = ({ socket, user, partner, callType, isReceivingCall, callerSignal, callerInfo, onClose }) => {
+const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCall, callerSignal, callerInfo, onClose }) => {
   const [stream, setStream] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
@@ -31,7 +31,7 @@ const CallOverlay = ({ socket, user, partner, callType, isReceivingCall, callerS
     // Handle ICE candidates
     peer.onicecandidate = (event) => {
       if (event.candidate) {
-        socket.emit('iceCandidate', { to: partner.socketId, candidate: event.candidate });
+        socket.emit('iceCandidate', { to: partner?.socketId || `private_${roomData.teamCode}`, candidate: event.candidate });
       }
     };
 
@@ -47,7 +47,7 @@ const CallOverlay = ({ socket, user, partner, callType, isReceivingCall, callerS
       .then(offer => peer.setLocalDescription(offer))
       .then(() => {
         socket.emit('callUser', {
-          userToCall: partner.socketId,
+          userToCall: partner?.socketId || `private_${roomData.teamCode}`,
           signalData: peer.localDescription,
           from: socket.id,
           name: user.name,
@@ -152,7 +152,7 @@ const CallOverlay = ({ socket, user, partner, callType, isReceivingCall, callerS
 
   const leaveCall = () => {
     setCallEnded(true);
-    socket.emit('endCall', { to: isReceivingCall ? callerInfo.from : partner.socketId });
+    socket.emit('endCall', { to: isReceivingCall ? callerInfo.from : (partner?.socketId || `private_${roomData.teamCode}`) });
     if (connectionRef.current) connectionRef.current.close();
     onClose();
   };

@@ -385,6 +385,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           socket={socket}
           user={user}
           partner={participants.find(p => p._id !== user._id)}
+          roomData={roomData}
           callType={activeCallType}
           isReceivingCall={isReceivingCall}
           callerSignal={callerSignal}
