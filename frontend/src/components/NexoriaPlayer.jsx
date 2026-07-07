@@ -143,6 +143,17 @@ const NexoriaPlayer = () => {
                4: "MEDIA_ERR_SRC_NOT_SUPPORTED"
              };
              console.error("Error Code:", errorCodes[e.target.error.code] || "UNKNOWN");
+             
+             // Auto-Recovery for Render's 100s idle timeout
+             if (e.target.error.code === 2 && audioRef.current) {
+               console.log("Network drop detected. Attempting auto-recovery...");
+               const currentTime = audioRef.current.currentTime;
+               audioRef.current.load();
+               audioRef.current.currentTime = currentTime;
+               if (isPlaying) {
+                 audioRef.current.play().catch(err => console.log('Recovery play error:', err));
+               }
+             }
           }
         }}
       />

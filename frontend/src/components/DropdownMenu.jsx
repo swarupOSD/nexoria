@@ -54,7 +54,10 @@ const DropdownMenu = ({
     <div className="relative inline-block text-left" ref={dropdownRef}>
       {/* Trigger Button */}
       <div 
-        onClick={toggleDropdown}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleDropdown();
+        }}
         className="cursor-pointer inline-flex items-center justify-center select-none"
       >
         {trigger}

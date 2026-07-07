@@ -201,7 +201,6 @@ const NexoriaMusicHome = () => {
                     trigger={
                       <button 
                         className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="w-4 h-4" />
                       </button>
