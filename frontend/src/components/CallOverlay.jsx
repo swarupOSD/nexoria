@@ -1,0 +1,272 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff, Maximize, Minimize } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const ICE_SERVERS = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:global.stun.twilio.com:3478' }
+  ]
+};
+
+const CallOverlay = ({ socket, user, partner, callType, isReceivingCall, callerSignal, callerInfo, onClose }) => {
+  const [stream, setStream] = useState(null);
+  const [callAccepted, setCallAccepted] = useState(false);
+  const [callEnded, setCallEnded] = useState(false);
+  
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(callType === 'audio');
+  
+  const myVideo = useRef();
+  const partnerVideo = useRef();
+  const connectionRef = useRef(null);
+
+  const initiateCall = (mediaStream) => {
+    const peer = new RTCPeerConnection(ICE_SERVERS);
+    connectionRef.current = peer;
+
+    // Add tracks
+    mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
+
+    // Handle ICE candidates
+    peer.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit('iceCandidate', { to: partner.socketId, candidate: event.candidate });
+      }
+    };
+
+    // Handle incoming streams
+    peer.ontrack = (event) => {
+      if (partnerVideo.current) {
+        partnerVideo.current.srcObject = event.streams[0];
+      }
+    };
+
+    // Create offer
+    peer.createOffer()
+      .then(offer => peer.setLocalDescription(offer))
+      .then(() => {
+        socket.emit('callUser', {
+          userToCall: partner.socketId,
+          signalData: peer.localDescription,
+          from: socket.id,
+          name: user.name,
+          type: callType
+        });
+      });
+
+    // Listen for answer
+    socket.on('callAccepted', (signal) => {
+      setCallAccepted(true);
+      peer.setRemoteDescription(new RTCSessionDescription(signal));
+    });
+
+    // Listen for their ICE candidates
+    socket.on('iceCandidate', (candidate) => {
+      if (peer.remoteDescription) {
+        peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+      }
+    });
+  };
+
+  // Initialize media
+  useEffect(() => {
+    let currentStream = null;
+    
+    navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
+      .then((mediaStream) => {
+        setStream(mediaStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = mediaStream;
+        }
+        
+        // If we are the caller, we need to wait for media, then call
+        if (!isReceivingCall && partner) {
+          initiateCall(mediaStream);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to get local stream", err);
+        alert("Could not access camera/microphone.");
+        onClose();
+      });
+
+    // Cleanup listeners
+    const handleCallEnded = () => {
+      setCallEnded(true);
+      if (connectionRef.current) connectionRef.current.close();
+      setTimeout(() => onClose(), 1500); // Close after 1.5s
+    };
+
+    socket.on('callEnded', handleCallEnded);
+
+    return () => {
+      socket.off('callEnded', handleCallEnded);
+      if (stream) stream.getTracks().forEach(track => track.stop());
+      if (connectionRef.current) connectionRef.current.close();
+    };
+  }, []);
+
+  const answerCall = () => {
+    setCallAccepted(true);
+    const peer = new RTCPeerConnection(ICE_SERVERS);
+    connectionRef.current = peer;
+
+    // Add tracks
+    stream.getTracks().forEach(track => peer.addTrack(track, stream));
+
+    // Handle ICE candidates
+    peer.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit('iceCandidate', { to: callerInfo.from, candidate: event.candidate });
+      }
+    };
+
+    // Handle incoming streams
+    peer.ontrack = (event) => {
+      if (partnerVideo.current) {
+        partnerVideo.current.srcObject = event.streams[0];
+      }
+    };
+
+    // Listen for their ICE candidates
+    socket.on('iceCandidate', (candidate) => {
+      if (peer.remoteDescription) {
+        peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+      }
+    });
+
+    // Accept offer and create answer
+    peer.setRemoteDescription(new RTCSessionDescription(callerSignal))
+      .then(() => peer.createAnswer())
+      .then(answer => peer.setLocalDescription(answer))
+      .then(() => {
+        socket.emit('answerCall', { to: callerInfo.from, signal: peer.localDescription });
+      });
+  };
+
+  const rejectCall = () => {
+    socket.emit('endCall', { to: callerInfo.from });
+    onClose();
+  };
+
+  const leaveCall = () => {
+    setCallEnded(true);
+    socket.emit('endCall', { to: isReceivingCall ? callerInfo.from : partner.socketId });
+    if (connectionRef.current) connectionRef.current.close();
+    onClose();
+  };
+
+  const toggleMute = () => {
+    if (stream) {
+      const audioTrack = stream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+        setIsMuted(!audioTrack.enabled);
+      }
+    }
+  };
+
+  const toggleVideo = () => {
+    if (stream) {
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled;
+        setIsVideoOff(!videoTrack.enabled);
+      }
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-[#000000] z-[9999] flex flex-col items-center justify-center font-sans"
+      >
+        {/* If receiving a call and haven't accepted yet */}
+        {isReceivingCall && !callAccepted && (
+          <div className="flex flex-col items-center justify-center p-8 bg-[#121212] border border-gray-800 rounded-3xl shadow-2xl">
+            <div className="w-24 h-24 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 animate-pulse">
+              {callType === 'video' ? <Video className="w-10 h-10 text-white" /> : <Phone className="w-10 h-10 text-white" />}
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">{callerInfo.name} is calling...</h2>
+            <p className="text-gray-400 mb-8">Incoming {callType} call</p>
+            
+            <div className="flex gap-6">
+              <button onClick={rejectCall} className="w-14 h-14 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors">
+                <PhoneOff className="w-6 h-6 text-white" />
+              </button>
+              <button onClick={answerCall} className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors">
+                <Phone className="w-6 h-6 text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* If call is active or calling */}
+        {(!isReceivingCall || callAccepted) && (
+          <div className="relative w-full h-full flex flex-col items-center justify-center">
+            
+            {/* Main Remote Video (or empty state if audio) */}
+            <div className="w-full h-full relative bg-gray-900">
+              {callAccepted && !callEnded ? (
+                <video 
+                  playsInline 
+                  ref={partnerVideo} 
+                  autoPlay 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <div className="w-24 h-24 bg-[#262626] rounded-full flex items-center justify-center mb-4 animate-pulse">
+                    {callType === 'video' ? <Video className="w-10 h-10 text-gray-400" /> : <Phone className="w-10 h-10 text-gray-400" />}
+                  </div>
+                  <h2 className="text-xl font-semibold text-white">{callEnded ? 'Call Ended' : 'Calling...'}</h2>
+                </div>
+              )}
+            </div>
+
+            {/* PiP Local Video */}
+            <motion.div 
+              drag
+              dragConstraints={{ top: 0, left: 0, right: 300, bottom: 500 }}
+              className="absolute bottom-28 right-6 w-32 h-48 md:w-48 md:h-72 bg-black border-2 border-gray-800 rounded-2xl overflow-hidden shadow-2xl z-10 cursor-move"
+            >
+              <video 
+                playsInline 
+                muted 
+                ref={myVideo} 
+                autoPlay 
+                className={`w-full h-full object-cover ${isVideoOff ? 'hidden' : 'block'}`}
+              />
+              {isVideoOff && (
+                <div className="w-full h-full bg-[#121212] flex items-center justify-center">
+                  <VideoOff className="w-8 h-8 text-gray-500" />
+                </div>
+              )}
+            </motion.div>
+
+            {/* Call Controls */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-[#121212]/80 backdrop-blur-md px-6 py-4 rounded-full border border-gray-800">
+              <button onClick={toggleMute} className={`p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
+                {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+              </button>
+              
+              <button onClick={leaveCall} className="p-4 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-colors mx-2">
+                <PhoneOff className="w-8 h-8" />
+              </button>
+
+              <button onClick={toggleVideo} className={`p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
+                {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default CallOverlay;

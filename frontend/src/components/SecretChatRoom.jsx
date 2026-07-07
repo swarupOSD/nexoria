@@ -5,6 +5,7 @@ import EmojiPicker from 'emoji-picker-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
+import CallOverlay from './CallOverlay';
 
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
@@ -16,6 +17,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  
+  // Call States
+  const [activeCallType, setActiveCallType] = useState(null); // 'video' | 'audio' | null
+  const [isReceivingCall, setIsReceivingCall] = useState(false);
+  const [callerSignal, setCallerSignal] = useState(null);
+  const [callerInfo, setCallerInfo] = useState(null);
+
   const audioRefs = useRef({});
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -56,6 +64,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     socket.on('userLeftPrivateRoom', (userInfo) => {
       setParticipants(prev => prev.filter(p => p._id !== userInfo._id));
       setMessages(prev => [...prev, { _id: Date.now(), type: 'system', content: `[SYSTEM] ${userInfo.username} disconnected.` }]);
+    });
+
+    socket.on('incomingCall', ({ signal, from, name, type }) => {
+      setCallerSignal(signal);
+      setCallerInfo({ from, name });
+      setActiveCallType(type);
+      setIsReceivingCall(true);
     });
 
     return () => {
@@ -159,11 +174,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         <div className="flex items-center gap-2 md:gap-4 text-gray-300">
           <Phone 
             className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
-            onClick={() => toast('Voice Calling coming in v2.0! 🚀', { icon: '📞', style: { background: '#121212', color: '#fff', border: '1px solid #333' } })}
+            onClick={() => setActiveCallType('audio')}
           />
           <Video 
             className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
-            onClick={() => toast('Video Calling coming in v2.0! 🚀', { icon: '🎥', style: { background: '#121212', color: '#fff', border: '1px solid #333' } })}
+            onClick={() => setActiveCallType('video')}
           />
           
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 mx-2">
@@ -361,6 +376,24 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         onClose={() => setIsMusicModalOpen(false)} 
         onSelect={handleSendMusic} 
       />
+
+      {activeCallType && (
+        <CallOverlay
+          socket={socket}
+          user={user}
+          partner={participants.find(p => p._id !== user._id)}
+          callType={activeCallType}
+          isReceivingCall={isReceivingCall}
+          callerSignal={callerSignal}
+          callerInfo={callerInfo}
+          onClose={() => {
+            setActiveCallType(null);
+            setIsReceivingCall(false);
+            setCallerSignal(null);
+            setCallerInfo(null);
+          }}
+        />
+      )}
     </div>
   );
 };

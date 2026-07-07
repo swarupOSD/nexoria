@@ -33,6 +33,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
 
     const userInfo = {
       _id: socket.user._id,
+      socketId: socket.id,
       name: socket.user.name,
       username: socket.user.username,
       profileImage: socket.user.profileImage,
@@ -68,6 +69,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
 
     const userInfo = {
       _id: socket.user._id,
+      socketId: socket.id,
       name: socket.user.name,
       username: socket.user.username,
       profileImage: socket.user.profileImage,
@@ -105,6 +107,23 @@ export const registerPrivateChatHandlers = (io, socket) => {
     };
 
     io.to(`private_${teamCode}`).emit('newPrivateMessage', messageObj);
+  });
+
+  // WebRTC Signaling Events
+  socket.on('callUser', ({ userToCall, signalData, from, name, type }) => {
+    io.to(userToCall).emit('incomingCall', { signal: signalData, from, name, type });
+  });
+
+  socket.on('answerCall', ({ to, signal }) => {
+    io.to(to).emit('callAccepted', signal);
+  });
+
+  socket.on('iceCandidate', ({ to, candidate }) => {
+    io.to(to).emit('iceCandidate', candidate);
+  });
+
+  socket.on('endCall', ({ to }) => {
+    io.to(to).emit('callEnded');
   });
 
   // Edit a message
