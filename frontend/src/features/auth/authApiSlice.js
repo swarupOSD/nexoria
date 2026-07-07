@@ -59,6 +59,26 @@ export const authApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    generate2FA: builder.mutation({
+      query: () => ({
+        url: '/auth/2fa/generate',
+        method: 'POST',
+      }),
+    }),
+    verify2FA: builder.mutation({
+      query: (data) => ({
+        url: '/auth/2fa/verify',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    disable2FA: builder.mutation({
+      query: (data) => ({
+        url: '/auth/2fa/disable',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -71,5 +91,8 @@ export const {
   useResetPasswordMutation,
   useUpdatePasswordMutation,
   useUpdateProfileMutation,
-  useGetMeQuery 
+  useGetMeQuery,
+  useGenerate2FAMutation,
+  useVerify2FAMutation,
+  useDisable2FAMutation
 } = authApiSlice;

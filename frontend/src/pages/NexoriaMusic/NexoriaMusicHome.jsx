@@ -96,35 +96,37 @@ const NexoriaMusicHome = () => {
         </section>
 
         {/* New Releases (Albums) */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold">New Releases</h3>
-            <button className="text-sm font-medium text-purple-400 hover:text-purple-300">View All</button>
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">New Releases</h3>
+            <button className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</button>
           </div>
           {loadingAlbums ? (
-            <div className="flex gap-6 overflow-hidden">
-              {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-48 h-64 bg-white/5 rounded-2xl animate-pulse shrink-0" />)}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+              {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-[3/4] bg-white/5 rounded-xl animate-pulse" />)}
             </div>
           ) : (
-            <div className="flex gap-6 overflow-x-auto hide-scrollbar pb-4 snap-x">
-              {albums.slice(0, 10).map(album => (
-                <div key={album._id} className="w-40 md:w-48 shrink-0 snap-start group cursor-pointer">
-                  <div className="relative aspect-square rounded-[1.5rem] overflow-hidden mb-3 shadow-xl ring-1 ring-white/10 group-hover:ring-purple-500/50 group-hover:shadow-purple-500/20 transition-all duration-300">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+              {albums.slice(0, 6).map(album => (
+                <div key={album._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col">
+                  <div className="relative aspect-square rounded-md overflow-hidden mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
                     {album.coverImage ? (
-                      <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                      <div className="w-full h-full bg-[#282828] flex items-center justify-center">
                         <span className="text-slate-500">No Image</span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                      <button className="bg-purple-500 text-white p-4 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl shadow-purple-500/50 hover:scale-110 hover:bg-purple-400">
-                        <Play className="w-6 h-6 fill-current" />
+                    
+                    {/* Spotify-like Green/Purple Play Button on Hover */}
+                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
+                      <button className="bg-purple-500 text-white p-3 rounded-full shadow-xl hover:scale-105 hover:bg-purple-400">
+                        <Play className="w-6 h-6 fill-current translate-x-0.5" />
                       </button>
                     </div>
                   </div>
-                  <h4 className="font-semibold text-white truncate text-base">{album.title}</h4>
-                  <p className="text-slate-400 text-sm truncate">{album.artist?.name || 'Unknown'}</p>
+                  <h4 className="font-bold text-white truncate text-base mb-1">{album.title}</h4>
+                  <p className="text-[#a7a7a7] text-sm truncate font-medium line-clamp-2">{album.artist?.name || 'Unknown'}</p>
                 </div>
               ))}
             </div>
@@ -132,18 +134,18 @@ const NexoriaMusicHome = () => {
         </section>
 
         {/* Top Tracks */}
-        <section>
+        <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold">Trending Tracks</h3>
+            <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Trending Tracks</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1">
             {loadingTracks ? (
-              [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />)
+              [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-16 bg-white/5 rounded-md animate-pulse" />)
             ) : (
-              tracks.slice(0, 9).map((track, idx) => (
+              tracks.slice(0, 10).map((track, idx) => (
                 <div 
                   key={track._id} 
-                  className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/5 group transition-all duration-300 cursor-pointer"
+                  className="flex items-center gap-4 px-4 py-2.5 rounded-md hover:bg-white/10 group transition-colors duration-200 cursor-pointer"
                   onClick={() => {
                     if (currentTrack?._id === track._id) {
                       dispatch(togglePlayPause());
@@ -170,20 +172,20 @@ const NexoriaMusicHome = () => {
                        <Play className="w-4 h-4 fill-current" />
                     )}
                   </div>
-                  <div className="w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
+                  <div className="w-12 h-12 rounded bg-[#282828] flex-shrink-0 overflow-hidden shadow-md">
                     {track.coverImage || track.album?.coverImage || track.artist?.image ? (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20" />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className={`font-bold truncate text-base ${currentTrack?._id === track._id ? 'text-purple-400' : 'text-white'}`}>
+                  <div className="flex-1 min-w-0 pr-4">
+                    <h4 className={`font-medium truncate text-base ${currentTrack?._id === track._id ? 'text-purple-400' : 'text-white'}`}>
                       {track.title}
                     </h4>
-                    <p className="text-slate-400 text-sm truncate">{track.artist?.name || 'Unknown Artist'}</p>
+                    <p className="text-[#a7a7a7] text-sm truncate hover:underline">{track.artist?.name || 'Unknown Artist'}</p>
                   </div>
-                  <div className="text-slate-500 text-sm font-medium mr-4 hidden md:block">
+                  <div className="text-[#a7a7a7] text-sm font-medium mr-4 hidden sm:block w-12 text-right">
                     {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
                   </div>
                   <button 
@@ -247,30 +249,34 @@ const NexoriaMusicHome = () => {
         </section>
 
         {/* Top Artists */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold">Featured Artists</h3>
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Featured Artists</h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {loadingArtists ? (
-              [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-square rounded-full bg-white/5 animate-pulse" />)
+              [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-[3/4] rounded-xl bg-white/5 animate-pulse" />)
             ) : (
               artists.slice(0, 6).map(artist => (
-                <div key={artist._id} className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className="w-32 h-32 rounded-full overflow-hidden relative shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] ring-2 ring-white/5 group-hover:ring-purple-500 group-hover:shadow-purple-500/30 transition-all duration-500">
+                <div key={artist._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col items-center">
+                  <div className="w-full aspect-square rounded-full overflow-hidden relative shadow-[0_8px_24px_rgba(0,0,0,0.5)] mb-4">
                     {artist.image ? (
-                      <img src={artist.image} alt={artist.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-slate-800 flex items-center justify-center text-3xl font-bold text-slate-500">
+                      <div className="w-full h-full bg-[#282828] flex items-center justify-center text-3xl font-bold text-[#a7a7a7]">
                         {artist.name[0]}
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                      <Play className="w-8 h-8 text-white fill-current transform scale-75 group-hover:scale-100 transition-transform" />
+                    
+                    {/* Spotify-like Green/Purple Play Button on Hover */}
+                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
+                      <button className="bg-purple-500 text-white p-3 rounded-full shadow-xl hover:scale-105 hover:bg-purple-400">
+                        <Play className="w-6 h-6 fill-current translate-x-0.5" />
+                      </button>
                     </div>
                   </div>
-                  <h4 className="font-semibold text-white truncate text-center w-full">{artist.name}</h4>
-                  <p className="text-xs text-slate-400 bg-white/5 px-2 py-1 rounded-full uppercase tracking-wider font-bold">Artist</p>
+                  <h4 className="font-bold text-white truncate text-center w-full mb-1">{artist.name}</h4>
+                  <p className="text-[#a7a7a7] text-sm text-center font-medium">Artist</p>
                 </div>
               ))
             )}
