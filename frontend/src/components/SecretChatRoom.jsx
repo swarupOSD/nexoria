@@ -228,6 +228,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               )}
               
               <div className={`flex flex-col max-w-[70%] ${isMe ? 'items-end' : 'items-start'}`}>
+                <span className={`text-[10px] text-gray-500 mb-1 ${isMe ? 'mr-1' : 'ml-1'}`}>
+                  {msg.sender.name}
+                </span>
                 
                 <div className={`relative px-4 py-2.5 ${
                     isMe 
