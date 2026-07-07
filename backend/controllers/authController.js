@@ -189,7 +189,7 @@ export const register = async (req, res) => {
 // @access  Public
 export const login = async (req, res) => {
   try {
-    let { email, password, captchaAnswer, captchaToken } = req.body;
+    let { email, password, captchaAnswer, captchaToken, twoFactorCode } = req.body;
     email = email ? email.trim() : email;
 
     const settings = await SiteSettings.findOne() || {};
@@ -210,7 +210,7 @@ export const login = async (req, res) => {
     }
 
     console.log('Login query for email:', email);
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password +twoFactorSecret');
     console.log('Found user:', user ? user.email : 'null');
 
     if (user) {
@@ -221,6 +221,22 @@ export const login = async (req, res) => {
       // Check account status
       if (user.status === 'banned' || user.status === 'deleted') {
          return res.status(403).json({ success: false, message: `Account is ${user.status}` });
+      }
+
+      // Check 2FA
+      if (user.twoFactorEnabled) {
+         if (!twoFactorCode) {
+            return res.status(200).json({ success: false, require2FA: true, message: '2FA code required' });
+         }
+         const speakeasy = (await import('speakeasy')).default;
+         const verified = speakeasy.totp.verify({
+           secret: user.twoFactorSecret,
+           encoding: 'base32',
+           token: twoFactorCode
+         });
+         if (!verified) {
+           return res.status(400).json({ success: false, message: 'Invalid 2FA code' });
+         }
       }
 
       // Daily Login Reward (10 Coins) & Streaks
@@ -591,5 +607,62 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     logger.error(`Update Profile Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+export const generate2FA = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const speakeasy = (await import('speakeasy')).default;
+    const qrcode = (await import('qrcode')).default;
+    
+    const secret = speakeasy.generateSecret({ name: `Nexoria (${user.email})` });
+    user.twoFactorSecret = secret.base32;
+    await user.save();
+
+    qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
+      res.json({ success: true, secret: secret.base32, qrcode: data_url });
+    });
+  } catch (error) {
+    logger.error(`Generate 2FA Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to generate 2FA' });
+  }
+};
+
+export const verify2FA = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const user = await User.findById(req.user.id).select('+twoFactorSecret');
+    const speakeasy = (await import('speakeasy')).default;
+    
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token
+    });
+
+    if (verified) {
+      user.twoFactorEnabled = true;
+      await user.save();
+      res.json({ success: true, message: '2FA Enabled successfully' });
+    } else {
+      res.status(400).json({ success: false, message: 'Invalid 2FA code' });
+    }
+  } catch (error) {
+    logger.error(`Verify 2FA Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to verify 2FA' });
+  }
+};
+
+export const disable2FA = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    user.twoFactorEnabled = false;
+    user.twoFactorSecret = undefined;
+    await user.save();
+    res.json({ success: true, message: '2FA Disabled successfully' });
+  } catch (error) {
+    logger.error(`Disable 2FA Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to disable 2FA' });
   }
 };

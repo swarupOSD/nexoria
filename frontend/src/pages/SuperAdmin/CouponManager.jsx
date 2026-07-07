@@ -18,7 +18,7 @@ const CouponManager = () => {
 
   const fetchCoupons = async () => {
     try {
-      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/coupons', {
+      const res = await fetch('/api/coupons', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();
@@ -39,7 +39,7 @@ const CouponManager = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/coupons', {
+      const res = await fetch('/api/coupons', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

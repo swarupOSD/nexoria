@@ -11,7 +11,7 @@ const AppRequestModeration = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/app-requests', {
+      const res = await fetch('/api/app-requests', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();

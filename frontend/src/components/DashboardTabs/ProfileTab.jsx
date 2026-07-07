@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { User, Mail, Shield, Star, Crown, Image as ImageIcon, CheckCircle, XCircle, MessageSquare, Video, Send, Globe, Disc, Camera } from 'lucide-react';
 import FallbackImage from '../FallbackImage';
 import ImageCropper from '../ImageCropper';
-import { useUpdateProfileMutation } from '../../features/auth/authApiSlice';
+import { useUpdateProfileMutation, useGenerate2FAMutation, useVerify2FAMutation, useDisable2FAMutation } from '../../features/auth/authApiSlice';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../features/auth/authSlice';
 import { toast } from 'react-hot-toast';
@@ -33,6 +33,13 @@ const ProfileTab = ({ user, token, refetchUser }) => {
 
   const [cropType, setCropType] = useState(null); // 'avatar' | 'banner' | null
   const [tempImageSrc, setTempImageSrc] = useState(null);
+
+  // 2FA States
+  const [generate2FA, { isLoading: isGenerating2FA }] = useGenerate2FAMutation();
+  const [verify2FA, { isLoading: isVerifying2FA }] = useVerify2FAMutation();
+  const [disable2FA, { isLoading: isDisabling2FA }] = useDisable2FAMutation();
+  const [twoFactorSetup, setTwoFactorSetup] = useState(null);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
 
   // File selection for cropping
   const onFileChange = async (e, type) => {
@@ -80,7 +87,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
         const fd = new FormData();
         fd.append('image', blob, 'image.jpg');
         
-        const uploadRes = await fetch('https://nexoria-backend-mt5e.onrender.com/api/upload/profile', {
+        const uploadRes = await fetch('/api/upload/profile', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: fd
@@ -121,6 +128,38 @@ const ProfileTab = ({ user, token, refetchUser }) => {
     if (user?.profileImage && user?.profileImage !== 'default.jpg') score += 20;
     if (user?.coverBanner) score += 20;
     return score;
+  };
+
+  const handleGenerate2FA = async () => {
+    try {
+      const res = await generate2FA().unwrap();
+      setTwoFactorSetup(res);
+    } catch (err) {
+      toast.error('Failed to generate 2FA');
+    }
+  };
+
+  const handleVerify2FA = async () => {
+    try {
+      await verify2FA({ token: twoFactorCode }).unwrap();
+      toast.success('Two-Factor Authentication enabled successfully!');
+      setTwoFactorSetup(null);
+      setTwoFactorCode('');
+      refetchUser();
+    } catch (err) {
+      toast.error(err?.data?.message || 'Invalid 2FA code');
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    if (!window.confirm('Are you sure you want to disable 2FA? This will reduce your account security.')) return;
+    try {
+      await disable2FA().unwrap();
+      toast.success('Two-Factor Authentication disabled');
+      refetchUser();
+    } catch (err) {
+      toast.error('Failed to disable 2FA');
+    }
   };
 
   return (
@@ -380,6 +419,61 @@ const ProfileTab = ({ user, token, refetchUser }) => {
                 <p className="text-sm text-slate-500">No badges earned yet. Keep interacting to unlock achievements!</p>
               </div>
             )}
+          </motion.div>
+          
+          {/* Security & 2FA */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-6">
+            <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-500" /> Security</h3>
+            
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-white/10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="font-bold text-slate-800 dark:text-white text-sm">Two-Factor Authentication (2FA)</h4>
+                  <p className="text-xs text-slate-500 mt-1">Protect your account with a secondary verification code.</p>
+                </div>
+                <div className={`px-2 py-1 rounded text-xs font-bold ${user?.twoFactorEnabled ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
+                  {user?.twoFactorEnabled ? 'ENABLED' : 'DISABLED'}
+                </div>
+              </div>
+              
+              {!user?.twoFactorEnabled ? (
+                !twoFactorSetup ? (
+                  <button 
+                    onClick={handleGenerate2FA} disabled={isGenerating2FA}
+                    className="w-full py-2 bg-slate-900 dark:bg-white text-white dark:text-black rounded-lg text-sm font-bold hover:opacity-90 transition disabled:opacity-50"
+                  >
+                    {isGenerating2FA ? 'Generating...' : 'Set up 2FA'}
+                  </button>
+                ) : (
+                  <div className="mt-4 p-4 border border-blue-500/30 bg-blue-500/5 rounded-xl text-center space-y-4">
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Scan this QR code with Google Authenticator or Authy:</p>
+                    <img src={twoFactorSetup.qrcode} alt="2FA QR Code" className="w-32 h-32 mx-auto rounded-lg shadow-sm" />
+                    <p className="text-xs text-slate-500 break-all font-mono">Secret: {twoFactorSetup.secret}</p>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" value={twoFactorCode} onChange={(e) => setTwoFactorCode(e.target.value)}
+                        placeholder="Enter 6-digit code" maxLength="6"
+                        className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:border-blue-500 font-mono text-center tracking-widest"
+                      />
+                      <button 
+                        onClick={handleVerify2FA} disabled={isVerifying2FA || twoFactorCode.length !== 6}
+                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-bold transition disabled:opacity-50"
+                      >
+                        Verify
+                      </button>
+                    </div>
+                    <button onClick={() => setTwoFactorSetup(null)} className="text-xs text-slate-500 hover:underline">Cancel setup</button>
+                  </div>
+                )
+              ) : (
+                <button 
+                  onClick={handleDisable2FA} disabled={isDisabling2FA}
+                  className="w-full py-2 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold transition disabled:opacity-50 border border-red-500/20"
+                >
+                  {isDisabling2FA ? 'Disabling...' : 'Disable 2FA'}
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>

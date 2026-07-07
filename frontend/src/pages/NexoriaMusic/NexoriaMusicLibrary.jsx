@@ -41,7 +41,7 @@ const NexoriaMusicLibrary = () => {
             <h2 className="text-5xl font-black text-white mb-2">Your Library</h2>
             <p className="text-slate-400 text-lg">All your favorite tracks and playlists in one place.</p>
           </div>
-          <div className="flex gap-4 hidden md:flex">
+          <div className="flex gap-4">
             <button 
               className="px-6 py-2 rounded-full bg-white text-black font-bold hover:scale-105 transition-transform flex items-center gap-2 disabled:opacity-50"
               disabled={myLikedSongs.length === 0}
@@ -49,7 +49,7 @@ const NexoriaMusicLibrary = () => {
                 if (myLikedSongs.length > 0) {
                   const audioEl = document.getElementById('nexoria-global-audio');
                   if (audioEl) {
-                    const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                    const baseUrl = 'http://localhost:5000';
                     const newSrc = myLikedSongs[0].telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${myLikedSongs[0].telegramFileId}` : myLikedSongs[0].audioUrl || "";
                     audioEl.src = newSrc;
                     audioEl.play().catch(e => console.log(e));
@@ -94,7 +94,7 @@ const NexoriaMusicLibrary = () => {
                   } else {
                     const audioEl = document.getElementById('nexoria-global-audio');
                     if (audioEl) {
-                      const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                      const baseUrl = 'http://localhost:5000';
                       const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                       audioEl.src = newSrc;
                       audioEl.play().catch(err => console.log(err));
@@ -140,6 +140,7 @@ const NexoriaMusicLibrary = () => {
                   width="w-48"
                   trigger={
                     <button 
+                      onClick={(e) => e.stopPropagation()}
                       className="w-10 h-10 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                     >
                       <MoreVertical className="w-4 h-4" />
@@ -161,7 +162,7 @@ const NexoriaMusicLibrary = () => {
                       className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
                       onClick={(e) => { 
                         e.stopPropagation(); 
-                        const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                        const baseUrl = 'http://localhost:5000';
                         const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
                         window.open(url, '_blank');
                       }}

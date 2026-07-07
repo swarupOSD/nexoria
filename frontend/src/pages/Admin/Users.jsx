@@ -1,5 +1,5 @@
 import CustomSearchBar from '../../components/CustomSearchBar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Trash2, Eye, Shield, X, Star, Crown, ShieldAlert, AlertTriangle, FileText, Lock, Send, Mail , LayoutTemplate } from 'lucide-react';
@@ -14,13 +14,14 @@ import {
   useUnbanUserMutation,
   useSuspendUserMutation,
   useRestoreUserMutation,
-  useWarnUserMutation,
   useAddAdminNoteMutation,
   useGetAdminNotesQuery,
-  useUpdateRestrictionsMutation
+  useUpdateRestrictionsMutation,
+  useSendDirectMessageMutation
 } from '../../features/api/userModerationApiSlice';
 import { toast } from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { useSocket } from '../../context/SocketContext';
 
 const AdminNotesList = ({ userId }) => {
   const { data: notesRes, isLoading } = useGetAdminNotesQuery(userId);
@@ -68,6 +69,24 @@ const AdminUsers = () => {
   const [warnUser] = useWarnUserMutation();
   const [addAdminNote] = useAddAdminNoteMutation();
   const [updateRestrictions] = useUpdateRestrictionsMutation();
+  const [sendDirectMessage, { isLoading: isSendingMessage }] = useSendDirectMessageMutation();
+
+  const socket = useSocket();
+  const [onlineUserIds, setOnlineUserIds] = useState([]);
+
+  useEffect(() => {
+    if (socket) {
+      const handleOnlineStats = (data) => {
+        if (data.onlineUserIds) {
+          setOnlineUserIds(data.onlineUserIds);
+        }
+      };
+      socket.on('onlineStats', handleOnlineStats);
+      return () => {
+        socket.off('onlineStats', handleOnlineStats);
+      };
+    }
+  }, [socket]);
 
   const mockUsers = usersData?.data || [];
 
@@ -161,13 +180,20 @@ const AdminUsers = () => {
     if (!recipientId) return toast.error('Please select a user');
     if (!message) return toast.error('Message is required');
 
-    // Here we can use sendNotification from the backend API, 
-    // or create an endpoint. Since we don't have a direct API for "send custom message"
-    // we'll need to mock it or call a generic alert for now, wait I should create an endpoint or just mock it.
-    // The instructions say "Personal message to specific user".
-    // I can mock the API call and show success toast.
-    toast.success('Message sent to user successfully!');
-    setIsMessageModalOpen(false);
+    try {
+      await sendDirectMessage({
+        userId: recipientId,
+        title: 'Message from Admin',
+        message: message,
+        type: 'SYSTEM',
+        icon: 'Mail'
+      }).unwrap();
+      
+      toast.success('Message sent to user successfully!');
+      setIsMessageModalOpen(false);
+    } catch (error) {
+      toast.error(error?.data?.message || 'Failed to send message');
+    }
   };
 
   const handleQuickAction = async (action, user) => {
@@ -277,7 +303,20 @@ const AdminUsers = () => {
                           {user.name}
                           {user.isPremium && <Crown className="w-3 h-3 text-yellow-500" title="Premium User" />}
                         </div>
-                        <div className="text-xs text-slate-500">{user.email}</div>
+                        <div className="text-xs text-slate-500 flex items-center gap-2">
+                          {user.email}
+                          {onlineUserIds.includes(user._id) ? (
+                            <span className="flex items-center gap-1 text-green-500 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                              Online
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-slate-400 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+                              Offline
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -565,8 +604,8 @@ const AdminUsers = () => {
 
                 <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
                   <button type="button" onClick={() => setIsMessageModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold transition">Cancel</button>
-                  <button type="submit" className="flex-1 py-2 bg-primary hover:bg-accent text-white rounded-xl font-semibold transition shadow-lg shadow-primary/30 flex justify-center items-center gap-2">
-                    <Send className="w-4 h-4" /> Send Message
+                  <button type="submit" disabled={isSendingMessage} className="flex-1 py-2 bg-primary hover:bg-accent text-white rounded-xl font-semibold transition shadow-lg shadow-primary/30 flex justify-center items-center gap-2 disabled:opacity-70">
+                    <Send className="w-4 h-4" /> {isSendingMessage ? 'Sending...' : 'Send Message'}
                   </button>
                 </div>
               </form>

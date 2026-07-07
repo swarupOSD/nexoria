@@ -262,8 +262,11 @@ export const uploadTrackAudio = async (req, res) => {
     });
 
     const { title, artistName } = req.body;
-    if (title) formData.append('title', title);
-    if (artistName) formData.append('performer', artistName);
+    // Telegram's sendDocument endpoint rejects 'title' and 'performer' parameters
+    if (endpoint === 'sendAudio') {
+      if (title) formData.append('title', title);
+      if (artistName) formData.append('performer', artistName);
+    }
 
     const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
       headers: {

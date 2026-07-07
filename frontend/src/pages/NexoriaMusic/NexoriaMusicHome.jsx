@@ -74,7 +74,7 @@ const NexoriaMusicHome = () => {
                     if (tracks.length > 0) {
                       if (audioEl) {
                         const track = tracks[0];
-                        const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                        const baseUrl = 'http://localhost:5000';
                         const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                         audioEl.src = newSrc;
                         audioEl.play().catch(e => console.log(e));
@@ -150,7 +150,7 @@ const NexoriaMusicHome = () => {
                     } else {
                       const audioEl = document.getElementById('nexoria-global-audio');
                       if (audioEl) {
-                        const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                        const baseUrl = 'http://localhost:5000';
                         const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                         audioEl.src = newSrc;
                         audioEl.play().catch(err => console.log(err));
@@ -221,7 +221,7 @@ const NexoriaMusicHome = () => {
                         className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
                         onClick={(e) => { 
                           e.stopPropagation(); 
-                          const baseUrl = 'https://nexoria-backend-mt5e.onrender.com';
+                          const baseUrl = 'http://localhost:5000';
                           const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
                           window.open(url, '_blank');
                         }}

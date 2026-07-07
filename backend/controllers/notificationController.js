@@ -33,6 +33,30 @@ export const broadcastNotification = async (req, res) => {
   }
 };
 
+export const sendDirectNotification = async (req, res) => {
+  try {
+    const { userId, title, message, type = 'SYSTEM', actionUrl, icon } = req.body;
+    
+    if (!userId || !title || !message) {
+      return res.status(400).json({ success: false, message: 'User ID, title, and message are required' });
+    }
+
+    const notification = await Notification.create({
+      user: userId,
+      title,
+      message,
+      type,
+      actionUrl,
+      icon: icon || 'Mail',
+      isRead: false
+    });
+
+    res.status(200).json({ success: true, message: 'Message sent successfully', data: notification });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const getNotifications = async (req, res) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;

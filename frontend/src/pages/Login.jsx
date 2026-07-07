@@ -22,6 +22,8 @@ const Login = () => {
   const [captchaError, setCaptchaError] = useState('');
   const [rememberMe, setRememberMe] = useState(() => !!localStorage.getItem('rememberMeEmail'));
   const [errorMsg, setErrorMsg] = useState('');
+  const [show2FA, setShow2FA] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,9 +64,18 @@ const Login = () => {
         payload.captchaAnswer = captchaAnswer;
         payload.captchaToken = captchaToken;
       }
+      if (show2FA && twoFactorCode) {
+        payload.twoFactorCode = twoFactorCode;
+      }
 
       const res = await login(payload).unwrap();
       
+      if (res.require2FA) {
+         setShow2FA(true);
+         toast('2FA required. Please enter your code.', { icon: '🛡️' });
+         return;
+      }
+
       if (rememberMe) {
         localStorage.setItem('rememberMeEmail', email);
       } else {
@@ -214,7 +225,28 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             
-            {/* Email Address - Floating Label */}
+            {show2FA ? (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+                <div className="relative group">
+                  <input
+                    id="twoFactorCode" type="text" inputMode="numeric" pattern="[0-9]*" value={twoFactorCode} onChange={(e) => setTwoFactorCode(e.target.value)}
+                    className="peer w-full h-14 bg-transparent border border-slate-200 dark:border-white/10 focus:border-blue-500 dark:focus:border-white/30 rounded-xl px-4 pt-4 pb-1 text-center tracking-[0.5em] text-2xl text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-mono"
+                    placeholder="000000" maxLength={6} required
+                  />
+                  <label 
+                    htmlFor="twoFactorCode"
+                    className="absolute left-1/2 -translate-x-1/2 top-[18px] text-slate-400 dark:text-white/40 text-base transition-all pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-[16px] peer-focus:top-[6px] peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-blue-500 dark:peer-focus:text-white/60 peer-[&:not(:placeholder-shown)]:top-[6px] peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-semibold uppercase tracking-wider"
+                  >
+                    6-Digit 2FA Code
+                  </label>
+                </div>
+                <button type="button" onClick={() => setShow2FA(false)} className="text-sm font-medium text-blue-500 hover:underline w-full text-center">
+                  Back to Login
+                </button>
+              </motion.div>
+            ) : (
+              <>
+                {/* Email Address - Floating Label */}
             <div className="relative group">
               <input
                 id="emailAddress" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -321,6 +353,8 @@ const Login = () => {
                 </AnimatePresence>
               </motion.div>
             )}
+            </>
+          )}
 
             <div className="pt-6">
               <button

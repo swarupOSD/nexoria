@@ -25,6 +25,7 @@ import {
 } from '../controllers/postController.js';
 import { protect, protectOptional, authorize } from '../middlewares/auth.js';
 import { postValidation, postUpdateValidation } from '../middlewares/validation.js';
+import { cacheResponse } from '../middlewares/cacheMiddleware.js';
 import commentRouter from './commentRoutes.js';
 
 const router = express.Router();
@@ -33,15 +34,15 @@ const router = express.Router();
 router.use('/:postId/comments', commentRouter);
 
 router.route('/')
-  .get(protectOptional, getPosts)
+  .get(cacheResponse(300), protectOptional, getPosts)
   .post(protect, authorize('admin', 'superadmin'), postValidation, createPost);
 
-router.get('/search', searchPosts);
+router.get('/search', cacheResponse(300), searchPosts);
 router.get('/recommendations', protect, getForYouRecommendations);
-router.get('/related/:id', getRelatedPosts);
+router.get('/related/:id', cacheResponse(300), getRelatedPosts);
 router.get('/admin/all', protect, authorize('admin', 'superadmin'), getAdminPosts);
 router.get('/id/:id', getPostById);
-router.get('/:slug', protectOptional, getPostBySlug);
+router.get('/:slug', cacheResponse(300), protectOptional, getPostBySlug);
 
 router.route('/:id')
   .put(protect, authorize('admin', 'superadmin'), postUpdateValidation, updatePost)

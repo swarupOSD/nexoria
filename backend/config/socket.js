@@ -144,10 +144,12 @@ const broadcastOnlineStats = async () => {
   let premium = 0;
   let admins = 0;
   let superAdmins = 0;
+  let onlineUserIds = [];
 
   sockets.forEach(s => {
     if (!s.user) guests++;
     else {
+      onlineUserIds.push(s.user._id.toString());
       if (s.user.isPremium) premium++;
       if (s.user.role === 'admin') admins++;
       if (s.user.role === 'superadmin') superAdmins++;
@@ -169,6 +171,7 @@ const broadcastOnlineStats = async () => {
     premium,
     admins,
     superAdmins,
-    visitors: visitorsArray
+    visitors: visitorsArray,
+    onlineUserIds: [...new Set(onlineUserIds)]
   });
 };

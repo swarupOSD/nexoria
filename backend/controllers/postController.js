@@ -72,18 +72,14 @@ export const getPosts = async (req, res) => {
 
     let pipeline = [];
 
-    // Atlas Search Stage
+    // Standard Regex Search (Fallback for Atlas Search)
     if (req.query.search) {
-      pipeline.push({
-        $search: {
-          index: 'default', // Requires Atlas Search Index named 'default'
-          text: {
-            query: req.query.search,
-            path: ['title', 'tags', 'description', 'publisher'],
-            fuzzy: { maxEdits: 1 }
-          }
-        }
-      });
+      matchStage.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { tags: { $regex: req.query.search, $options: 'i' } },
+        { publisher: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } }
+      ];
     }
 
     // Match Stage

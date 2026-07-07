@@ -203,7 +203,7 @@ const NexoriaTracksManager = () => {
                   <audio 
                     controls 
                     className="h-8 mt-2 w-full max-w-xs opacity-50 hover:opacity-100 transition-opacity" 
-                    src={`https://nexoria-backend-mt5e.onrender.com/api/nexoria-music/stream/${track.telegramFileId}`}
+                    src={`/api/nexoria-music/stream/${track.telegramFileId}`}
                     preload="metadata"
                   />
                 )}

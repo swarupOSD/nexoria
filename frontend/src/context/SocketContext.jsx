@@ -12,7 +12,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Only connect if we want it global or we can just always connect.
-    const newSocket = io(import.meta.env.VITE_API_URL || 'https://nexoria-backend-mt5e.onrender.com', {
+    const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       withCredentials: true,
       autoConnect: true,
       reconnection: true,

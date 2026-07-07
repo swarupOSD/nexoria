@@ -41,7 +41,7 @@ const SystemNoticesManager = () => {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch('https://nexoria-backend-mt5e.onrender.com/api/system-notices/admin', {
+      const res = await fetch('/api/system-notices/admin', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();

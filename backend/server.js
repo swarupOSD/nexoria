@@ -87,11 +87,11 @@ app.use(cors({
 app.use(securityGuard);
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000, // Increased max limit
-  message: { success: false, message: 'Too many authentication attempts. Please try again after 15 minutes.' },
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // STRICT LIMIT: Maximum 20 login/register attempts to prevent Brute Force & Credential Stuffing
+  message: { success: false, message: 'Too many authentication attempts. Your IP has been temporarily blocked for 15 minutes to prevent hacking.' },
   handler: (req, res, next, options) => {
-    logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl } });
+    logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl, type: 'Auth Brute Force Attempt' } });
     res.status(options.statusCode).json(options.message);
   }
 });
@@ -113,6 +113,16 @@ const adminLimiter = rateLimit({
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl } });
     res.status(options.statusCode).json(options.message);
+  }
+});
+
+const spamLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // Max 10 requests per minute for comments/ratings/messages
+  message: { success: false, message: 'Stop spamming! You are doing this too fast. Wait a minute.' },
+  handler: (req, res, next, options) => {
+    logSecurityEvent({ eventType: 'SPAM_VIOLATION', req, details: { route: req.originalUrl } });
+    res.status(429).json(options.message);
   }
 });
 
@@ -179,19 +189,19 @@ app.use('/api', (req, res, next) => {
 });
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/admin/trash', trashRoutes);
 app.use('/api/advertisements', advertisementRoutes);
 app.use('/api/sponsored-content', advertisementRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/api/contact', contactRoutes);
+app.use('/api/contact', spamLimiter, contactRoutes);
 app.use('/api/system', systemRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/ratings', ratingRoutes);
+app.use('/api/comments', spamLimiter, commentRoutes);
+app.use('/api/ratings', spamLimiter, ratingRoutes);
 app.use('/api/downloads', downloadRoutes);
-app.use('/api/reports', reportRoutes);
+app.use('/api/reports', spamLimiter, reportRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/app-requests', appRequestRoutes);

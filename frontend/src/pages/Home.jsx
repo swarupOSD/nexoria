@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download } from 'lucide-react';
+import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useSelector } from 'react-redux';
@@ -30,31 +30,39 @@ const AppCard = React.memo(({ app }) => {
   return (
     <motion.div 
       whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300 }}
-      className="snap-start shrink-0 w-[160px] md:w-[180px] group"
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="snap-start shrink-0 w-[160px] md:w-[180px] group cursor-pointer"
     >
-      <Link to={`/post/${app.slug}`} className="block">
-        <div className="flex flex-col gap-3">
-          <div className="aspect-square w-full rounded-3xl overflow-hidden relative border border-white/10 bg-[#111] shadow-lg group-hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] group-hover:border-purple-500/30 transition-all duration-300">
-            <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500" />
-          {isPremium && (
-            <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-md uppercase tracking-wider">
-              PRO
-            </div>
-          )}
-          {app.auraScore > 0 && (
-            <div className="absolute bottom-2 right-2 z-10">
-              <AuraBadge score={app.auraScore} />
-            </div>
-          )}
-        </div>
-        <div className="space-y-1">
-          <h3 className="font-bold text-white text-sm line-clamp-1 group-hover:text-primary transition-colors">{app.title}</h3>
-          <div className="flex items-center gap-3 text-xs text-slate-400">
-            <span className="flex items-center gap-1"><Star className="w-3 h-3 text-amber-400 fill-amber-400" /> {app.averageRating || '4.5'}</span>
-            <span className="flex items-center gap-1"><Download className="w-3 h-3" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
+      <Link to={`/post/${app.slug}`} className="block relative">
+        {/* Glow behind card */}
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/20 to-blue-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+        
+        <div className="relative z-10 flex flex-col gap-3">
+          <div className="aspect-square w-full rounded-3xl overflow-hidden relative border border-white/5 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] shadow-lg group-hover:shadow-[0_0_30px_rgba(168,85,247,0.25)] group-hover:border-purple-500/50 transition-all duration-300">
+            {/* Glossy overlay effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none rounded-3xl" />
+            
+            <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-500 z-10 relative" />
+            
+            {isPremium && (
+              <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-black px-2.5 py-1 rounded-md shadow-lg uppercase tracking-widest z-30 border border-white/20 backdrop-blur-md">
+                PRO
+              </div>
+            )}
+            {app.auraScore > 0 && (
+              <div className="absolute bottom-2 right-2 z-30">
+                <AuraBadge score={app.auraScore} />
+              </div>
+            )}
           </div>
-        </div>
+          
+          <div className="space-y-1.5 px-1">
+            <h3 className="font-extrabold text-white text-[15px] line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300 tracking-tight">{app.title}</h3>
+            <div className="flex items-center gap-3 text-[11px] font-bold text-slate-400">
+              <span className="flex items-center gap-1 bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded-md"><Star className="w-3 h-3 fill-amber-400" /> {app.averageRating || '4.5'}</span>
+              <span className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded-md text-slate-300"><Download className="w-3 h-3 text-blue-400" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
+            </div>
+          </div>
         </div>
       </Link>
     </motion.div>
@@ -244,11 +252,13 @@ const Home = () => {
 
         {/* Featured Apps */}
         {featuredRes?.data?.length > 0 && (
-          <section>
+          <section className="relative">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">Featured Apps</h2>
+              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
+                <Sparkles className="w-8 h-8 text-amber-400 fill-amber-400/20" /> Featured Picks
+              </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 snap-x hide-scrollbar">
+            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {featuredRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>
@@ -256,11 +266,13 @@ const Home = () => {
 
         {/* Trending Now */}
         {trendingRes?.data?.length > 0 && (
-          <section>
+          <section className="relative mt-12">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">Trending Now</h2>
+              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
+                <Flame className="w-8 h-8 text-rose-500 fill-rose-500/20" /> Trending Now
+              </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 snap-x hide-scrollbar">
+            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {trendingRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>
@@ -268,11 +280,13 @@ const Home = () => {
         
         {/* Editor's Choice */}
         {editorChoiceRes?.data?.length > 0 && (
-          <section>
+          <section className="relative mt-12">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">Editor's Choice</h2>
+              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
+                <Award className="w-8 h-8 text-purple-500 fill-purple-500/20" /> Editor's Choice
+              </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 snap-x hide-scrollbar">
+            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {editorChoiceRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>

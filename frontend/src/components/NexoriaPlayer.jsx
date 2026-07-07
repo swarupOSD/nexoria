@@ -3,14 +3,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2 
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download
 } from 'lucide-react';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
-  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer
+  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
+import DropdownMenu from './DropdownMenu';
+import toast from 'react-hot-toast';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,16 @@ const NexoriaPlayer = () => {
       }
     }
   }, [isPlaying]); // Removed currentTrack so it doesn't interrupt loading
+
+  // Force play when currentTrack changes if it should be playing (fixes auto-play next song)
+  useEffect(() => {
+    if (audioRef.current && isPlaying && currentTrack) {
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+         playPromise.catch(error => console.log("Track change autoplay prevented:", error));
+      }
+    }
+  }, [currentTrack]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -216,9 +228,58 @@ const NexoriaPlayer = () => {
                 >
                   <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]' : ''}`} />
                 </button>
-                <button className="text-slate-400 hover:text-white transition-colors p-2">
-                  <ListMusic className="w-5 h-5" />
-                </button>
+                <DropdownMenu
+                  align="right"
+                  width="w-48"
+                  trigger={
+                    <button className="text-slate-400 hover:text-white transition-colors p-2" onClick={(e) => e.stopPropagation()}>
+                      <MoreVertical className="w-5 h-5" />
+                    </button>
+                  }
+                >
+                  <div className="py-2 text-sm font-medium text-slate-300 bg-slate-900 rounded-xl">
+                    <button 
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        dispatch(toggleShuffle());
+                        toast.success(`Shuffle ${!shuffleMode ? 'On' : 'Off'}`); 
+                      }}
+                    >
+                      <Shuffle className={`w-4 h-4 ${shuffleMode ? 'text-purple-400' : ''}`} /> Shuffle
+                    </button>
+                    <button 
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        dispatch(toggleRepeat());
+                        toast.success(repeatMode === 'none' ? 'Repeat All' : repeatMode === 'all' ? 'Repeat One' : 'Repeat Off'); 
+                      }}
+                    >
+                      {repeatMode === 'one' ? <Repeat1 className="w-4 h-4 text-purple-400" /> : <Repeat className={`w-4 h-4 ${repeatMode === 'all' ? 'text-purple-400' : ''}`} />} Repeat
+                    </button>
+                    <button 
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        const url = currentTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}` : currentTrack.audioUrl;
+                        window.open(url, '_blank');
+                      }}
+                    >
+                      <Download className="w-4 h-4" /> Download
+                    </button>
+                    <button 
+                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        navigator.clipboard.writeText(window.location.href); 
+                        toast.success('Link copied'); 
+                      }}
+                    >
+                      <Link2 className="w-4 h-4" /> Share
+                    </button>
+                  </div>
+                </DropdownMenu>
                 <button 
                   onClick={() => dispatch(clearPlayer())}
                   className="text-slate-400 hover:text-red-500 transition-colors p-2"
@@ -230,7 +291,7 @@ const NexoriaPlayer = () => {
 
             {/* Center: Controls & Desktop Progress */}
             <div className="flex-1 flex flex-col items-center gap-1 sm:gap-2 w-full">
-              <div className="flex items-center justify-center gap-4 sm:gap-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-6">
                 <button 
                   onClick={() => dispatch(toggleShuffle())}
                   className={`hidden sm:block p-2 rounded-full transition-colors ${shuffleMode ? 'text-purple-400 bg-purple-500/10' : 'text-slate-400 hover:text-white'}`}

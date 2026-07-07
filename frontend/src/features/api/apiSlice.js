@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { setCredentials, logout } from '../auth/authSlice';
 
-export const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://nexoria-backend-mt5e.onrender.com/api';
+export const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';
 
 const prepareHeaders = (headers, { getState }) => {
   const token = getState().auth.token;

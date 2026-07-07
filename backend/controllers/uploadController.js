@@ -1,17 +1,31 @@
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
 import logger from '../middlewares/logger.js';
+import sharp from 'sharp';
 
-const uploadToCloudinary = (buffer, folder, resourceType = 'image') => {
+const uploadToCloudinary = async (buffer, folder, resourceType = 'image') => {
+  // If it's an image, optimize it to WebP before uploading
+  let finalBuffer = buffer;
+  if (resourceType === 'image') {
+    try {
+      finalBuffer = await sharp(buffer)
+        .webp({ quality: 80, effort: 4 }) // High-end webp compression
+        .toBuffer();
+    } catch (err) {
+      logger.error('Sharp Image Optimization Error: ' + err.message);
+      // Fallback to original buffer if sharp fails
+    }
+  }
+
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: resourceType },
+      { folder, resource_type: resourceType, format: resourceType === 'image' ? 'webp' : undefined },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
       }
     );
-    streamifier.createReadStream(buffer).pipe(uploadStream);
+    streamifier.createReadStream(finalBuffer).pipe(uploadStream);
   });
 };
 

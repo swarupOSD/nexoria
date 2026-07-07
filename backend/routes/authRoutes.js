@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/User.js';
-import { register, login, logout, refresh, getMe, forgotPassword, resetPassword, updatePassword, updateProfile, generateCaptcha } from '../controllers/authController.js';
+import { register, login, logout, refresh, getMe, forgotPassword, resetPassword, updatePassword, updateProfile, generateCaptcha, generate2FA, verify2FA, disable2FA } from '../controllers/authController.js';
 import { protect } from '../middlewares/auth.js';
 import { registerValidation, loginValidation } from '../middlewares/validation.js';
 
@@ -16,6 +16,10 @@ router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
 router.put('/update-password', protect, updatePassword);
 router.put('/update-profile', protect, updateProfile);
+
+router.post('/2fa/generate', protect, generate2FA);
+router.post('/2fa/verify', protect, verify2FA);
+router.post('/2fa/disable', protect, disable2FA);
 
 export default router;
 

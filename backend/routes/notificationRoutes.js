@@ -5,7 +5,8 @@ import {
   markAsRead, 
   markAllAsRead, 
   deleteNotification,
-  broadcastNotification
+  broadcastNotification,
+  sendDirectNotification
 } from '../controllers/notificationController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -17,6 +18,7 @@ router.route('/')
   .get(getNotifications);
 
 router.post('/broadcast', authorize('admin', 'superadmin'), broadcastNotification);
+router.post('/send', authorize('admin', 'superadmin'), sendDirectNotification);
 
 router.get('/unread', getUnreadNotificationsCount);
 router.put('/read-all', markAllAsRead);

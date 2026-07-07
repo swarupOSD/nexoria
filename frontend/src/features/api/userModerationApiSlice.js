@@ -63,6 +63,13 @@ export const userModerationApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User', 'Users'],
     }),
+    sendDirectMessage: builder.mutation({
+      query: (data) => ({
+        url: `/notifications/send`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -74,5 +81,6 @@ export const {
   useWarnUserMutation,
   useAddAdminNoteMutation,
   useGetAdminNotesQuery,
-  useUpdateRestrictionsMutation
+  useUpdateRestrictionsMutation,
+  useSendDirectMessageMutation
 } = userModerationApiSlice;

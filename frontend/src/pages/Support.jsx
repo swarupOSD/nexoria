@@ -28,7 +28,7 @@ const Support = () => {
   useEffect(() => {
     if (!user) return;
     
-    const socket = io(import.meta.env.VITE_API_URL || 'https://nexoria-backend-mt5e.onrender.com');
+    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
     
     socket.emit('setup', user);
     
