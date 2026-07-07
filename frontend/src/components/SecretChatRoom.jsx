@@ -156,11 +156,37 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-gray-300">
-          <Phone className="w-6 h-6 hidden md:block cursor-pointer hover:text-white transition-colors" />
-          <Video className="w-6 h-6 hidden md:block cursor-pointer hover:text-white transition-colors" />
-          <button onClick={onLeave} className="hover:text-red-500 transition-colors" title="Leave Chat">
-            <Info className="w-6 h-6" />
+        <div className="flex items-center gap-2 md:gap-4 text-gray-300">
+          <Phone 
+            className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
+            onClick={() => toast('Voice Calling coming in v2.0! 🚀', { icon: '📞', style: { background: '#121212', color: '#fff', border: '1px solid #333' } })}
+          />
+          <Video 
+            className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
+            onClick={() => toast('Video Calling coming in v2.0! 🚀', { icon: '🎥', style: { background: '#121212', color: '#fff', border: '1px solid #333' } })}
+          />
+          
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 mx-2">
+            <button 
+              onClick={() => copyToClipboard(roomData.teamCode, 'Room Code')}
+              className="px-2 py-1 bg-[#262626] hover:bg-[#363636] text-[10px] sm:text-xs rounded-md transition-colors font-mono font-medium flex items-center gap-1"
+              title="Copy Code"
+            >
+              C: {roomData.teamCode} <Copy className="w-3 h-3 opacity-50" />
+            </button>
+            {isOwner && (
+              <button 
+                onClick={() => copyToClipboard(roomData.password, 'Password')}
+                className="px-2 py-1 bg-[#262626] hover:bg-[#363636] text-[10px] sm:text-xs rounded-md transition-colors font-mono font-medium flex items-center gap-1"
+                title="Copy Password"
+              >
+                P: {roomData.password} <Copy className="w-3 h-3 opacity-50" />
+              </button>
+            )}
+          </div>
+
+          <button onClick={onLeave} className="p-2 hover:bg-[#262626] hover:text-red-500 rounded-full transition-colors" title="Leave Chat">
+            <LogOut className="w-5 h-5" />
           </button>
         </div>
       </div>
