@@ -173,11 +173,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
         <div className="flex items-center gap-2 md:gap-4 text-gray-300">
           <Phone 
-            className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
+            className="w-5 h-5 md:w-6 md:h-6 cursor-pointer hover:text-white transition-colors" 
             onClick={() => setActiveCallType('audio')}
           />
           <Video 
-            className="w-5 h-5 md:w-6 md:h-6 hidden sm:block cursor-pointer hover:text-white transition-colors" 
+            className="w-5 h-5 md:w-6 md:h-6 cursor-pointer hover:text-white transition-colors" 
             onClick={() => setActiveCallType('video')}
           />
           
