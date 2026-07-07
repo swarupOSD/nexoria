@@ -9,6 +9,8 @@ import {
   useAddMovieReviewMutation
 } from '../features/movie/movieApiSlice';
 import { useGetWatchHistoryQuery, useUpdateWatchHistoryMutation } from '../features/api/watchHistoryApiSlice';
+import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
+import { triggerSmartlinkWithCooldown } from '../utils/adManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Download, Star, Clock, Calendar, Globe,
@@ -25,6 +27,7 @@ const MovieDetail = () => {
   const [incrementDownload] = useIncrementMovieDownloadMutation();
   const [incrementWatch] = useIncrementMovieWatchMutation();
   const [addReview] = useAddMovieReviewMutation();
+  const { data: settingsRes } = useGetSettingsQuery();
 
   const [activeTab, setActiveTab] = useState('watch'); // watch, download, story, cast, reviews
   const [showTrailer, setShowTrailer] = useState(false);
@@ -102,6 +105,17 @@ const MovieDetail = () => {
 
   const handleDownload = async (link) => {
     try {
+      // Premium users bypass ads
+      const isPremiumUser = user && ['premium_user', 'admin', 'superadmin'].includes(user.role);
+      const smartlinkUrl = settingsRes?.data?.ads?.smartlinkUrl;
+      if (settingsRes?.data?.ads?.enabled !== false && smartlinkUrl) {
+        const isFakeClick = triggerSmartlinkWithCooldown(smartlinkUrl, isPremiumUser);
+        if (isFakeClick) {
+          toast('Fetching server link... Please click again if nothing happens.', { icon: '🔗' });
+          return;
+        }
+      }
+
       if (link.url) {
         window.open(link.url, '_blank');
         await incrementDownload(movie._id);

@@ -25,6 +25,8 @@ import { useGetItemAuraQuery, useVibeVoteMutation } from '../features/aura/auraA
 import AuraScore from '../components/AuraScore';
 import { Flame } from 'lucide-react';
 import { triggerAuraStrike } from '../utils/auraStrike';
+import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
+import { triggerSmartlinkWithCooldown } from '../utils/adManager';
 
 const renderContentWithEmbeds = (htmlContent) => {
   if (!htmlContent) return '';
@@ -85,6 +87,7 @@ const SinglePost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { data: postRes, isLoading, isError } = useGetPostBySlugQuery(slug);
+  const { data: settingsRes } = useGetSettingsQuery();
   const { user, token } = useSelector(state => state.auth);
   const { data: commentsRes } = useGetCommentsQuery(postRes?.data?._id, { skip: !postRes?.data?._id });
   const { data: ratingsRes } = useGetRatingsQuery(postRes?.data?._id, { skip: !postRes?.data?._id });
@@ -294,6 +297,16 @@ const SinglePost = () => {
 
     // Premium users bypass timer
     const isPremiumUser = user && ['premium_user', 'admin', 'superadmin'].includes(user.role);
+    
+    // Trigger Smartlink Ad (if enabled) with a strict cooldown to prevent annoyance
+    const smartlinkUrl = settingsRes?.data?.ads?.smartlinkUrl;
+    if (settingsRes?.data?.ads?.enabled !== false && smartlinkUrl) {
+      const isFakeClick = triggerSmartlinkWithCooldown(smartlinkUrl, isPremiumUser);
+      if (isFakeClick) {
+        toast('Starting link... Please click again if nothing happens.', { icon: '🔗' });
+        return; // Abort real download for Fake Click logic
+      }
+    }
     
     if (isPremiumUser) {
       try {
