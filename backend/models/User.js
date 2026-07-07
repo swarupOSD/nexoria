@@ -225,6 +225,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['default', 'cyberpunk', 'synthwave', 'neon'],
       default: 'default'
+    },
+    moderationStrikes: {
+      type: Number,
+      default: 0
     }
   },
   {

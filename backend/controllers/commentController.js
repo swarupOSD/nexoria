@@ -2,6 +2,7 @@ import Comment from '../models/Comment.js';
 import Post from '../models/Post.js';
 import logger from '../middlewares/logger.js';
 import { logActivity, sendNotification } from '../utils/tracker.js';
+import { hasBadWords, handleViolation } from '../utils/autoModerator.js';
 
 // @desc    Get comments for a post
 // @route   GET /api/comments/post/:postId
@@ -65,6 +66,19 @@ export const addComment = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Your commenting privileges have been disabled.' });
     }
 
+    // AI Auto-Moderator Check
+    if (hasBadWords(content)) {
+      const modResult = await handleViolation(req.user.id, req);
+      const actionMsg = modResult.actionTaken === 'MUTED' 
+        ? 'You have been muted for 24 hours.' 
+        : `Strike ${modResult.strikes}/3.`;
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: `Your comment was blocked for containing inappropriate language. ${actionMsg}` 
+      });
+    }
+
     const comment = await Comment.create({
       post: postId,
       user: req.user.id,
@@ -101,6 +115,19 @@ export const addReply = async (req, res) => {
     }
     if (req.user.restrictions?.disableCommenting) {
       return res.status(403).json({ success: false, message: 'Your commenting privileges have been disabled.' });
+    }
+
+    // AI Auto-Moderator Check
+    if (hasBadWords(content)) {
+      const modResult = await handleViolation(req.user.id, req);
+      const actionMsg = modResult.actionTaken === 'MUTED' 
+        ? 'You have been muted for 24 hours.' 
+        : `Strike ${modResult.strikes}/3.`;
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: `Your reply was blocked for containing inappropriate language. ${actionMsg}` 
+      });
     }
 
     const reply = await Comment.create({

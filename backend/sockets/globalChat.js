@@ -1,5 +1,6 @@
 import ChatMessage from '../models/ChatMessage.js';
 import User from '../models/User.js';
+import { hasBadWords, handleViolation } from '../utils/autoModerator.js';
 
 export const registerGlobalChatHandlers = (io, socket) => {
   socket.on('joinGlobalChat', async () => {
@@ -27,9 +28,21 @@ export const registerGlobalChatHandlers = (io, socket) => {
 
     try {
       // Check if user is suspended or banned
-      const currentUser = await User.findById(socket.user._id).select('status');
-      if (!currentUser || currentUser.status === 'suspended' || currentUser.status === 'banned') {
+      const currentUser = await User.findById(socket.user._id).select('status restrictions');
+      if (!currentUser || currentUser.status === 'suspended' || currentUser.status === 'banned' || currentUser.restrictions?.disableCommenting) {
         return socket.emit('globalChatError', { message: 'You are suspended from the chat.' });
+      }
+
+      // AI Auto-Moderator Check
+      if (hasBadWords(content)) {
+        const modResult = await handleViolation(socket.user._id);
+        const actionMsg = modResult.actionTaken === 'MUTED' 
+          ? 'You have been muted for 24 hours.' 
+          : `Strike ${modResult.strikes}/3.`;
+        
+        return socket.emit('globalChatError', { 
+          message: `Your message was blocked for inappropriate language. ${actionMsg}` 
+        });
       }
 
       // Save message to DB
@@ -99,6 +112,18 @@ export const registerGlobalChatHandlers = (io, socket) => {
       const message = await ChatMessage.findById(messageId);
       if (!message || message.sender.toString() !== socket.user._id.toString()) return;
       
+      // AI Auto-Moderator Check
+      if (hasBadWords(newContent)) {
+        const modResult = await handleViolation(socket.user._id);
+        const actionMsg = modResult.actionTaken === 'MUTED' 
+          ? 'You have been muted for 24 hours.' 
+          : `Strike ${modResult.strikes}/3.`;
+        
+        return socket.emit('globalChatError', { 
+          message: `Your edited message was blocked for inappropriate language. ${actionMsg}` 
+        });
+      }
+
       message.message = newContent.trim();
       message.isEdited = true;
       await message.save();

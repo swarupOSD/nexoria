@@ -2,6 +2,7 @@ import Review from '../models/Review.js';
 import Post from '../models/Post.js';
 import logger from '../middlewares/logger.js';
 import { logActivity } from '../utils/tracker.js';
+import { hasBadWords, handleViolation } from '../utils/autoModerator.js';
 
 // @desc    Get reviews for a post
 // @route   GET /api/reviews/post/:postId
@@ -29,6 +30,22 @@ export const createReview = async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ success: false, message: 'App not found' });
+    }
+
+    if (req.user.restrictions?.disableRatings) {
+      return res.status(403).json({ success: false, message: 'Your rating/review privileges have been disabled.' });
+    }
+
+    if (comment && hasBadWords(comment)) {
+      const modResult = await handleViolation(req.user._id, req);
+      const actionMsg = modResult.actionTaken === 'MUTED' 
+        ? 'You have been muted for 24 hours.' 
+        : `Strike ${modResult.strikes}/3.`;
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: `Your review was blocked for containing inappropriate language. ${actionMsg}` 
+      });
     }
 
     // Check if user already reviewed
@@ -68,6 +85,22 @@ export const updateReview = async (req, res) => {
     // Check ownership
     if (review.user.toString() !== req.user._id.toString() && req.user.role !== 'admin' && req.user.role !== 'superadmin') {
       return res.status(403).json({ success: false, message: 'Not authorized to update this review' });
+    }
+
+    if (req.user.restrictions?.disableRatings) {
+      return res.status(403).json({ success: false, message: 'Your rating/review privileges have been disabled.' });
+    }
+
+    if (req.body.comment && hasBadWords(req.body.comment)) {
+      const modResult = await handleViolation(req.user._id, req);
+      const actionMsg = modResult.actionTaken === 'MUTED' 
+        ? 'You have been muted for 24 hours.' 
+        : `Strike ${modResult.strikes}/3.`;
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: `Your review update was blocked for containing inappropriate language. ${actionMsg}` 
+      });
     }
 
     review.rating = req.body.rating || review.rating;
