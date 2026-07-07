@@ -1,4 +1,4 @@
-const COOLDOWN_MINUTES = 21;
+const COOLDOWN_MINUTES = 2;
 const COOLDOWN_MS = COOLDOWN_MINUTES * 60 * 1000;
 
 /**
@@ -16,7 +16,7 @@ export const triggerSmartlinkWithCooldown = (smartlinkUrl, isAdminOrPremium = fa
   const lastAdShownStr = localStorage.getItem('last_smartlink_shown');
   let lastAdShown = parseInt(lastAdShownStr || '0', 10);
 
-  // If we've never shown it, or the 21-minute cooldown has expired
+  // If we've never shown it, or the 2-minute cooldown has expired
   if (!lastAdShown || (now - lastAdShown) >= COOLDOWN_MS) {
     // Open Smartlink in new tab (Pop-up/Pop-under style)
     window.open(smartlinkUrl, '_blank');
