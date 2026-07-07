@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
+import MusicShareModal from './MusicShareModal';
 
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
@@ -11,6 +12,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [inputValue, setInputValue] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
+  const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
+  const [playingAudioId, setPlayingAudioId] = useState(null);
+  const audioRefs = useRef({});
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -81,6 +85,28 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const handleSendMusic = (trackData) => {
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'music', content: trackData });
+  };
+
+  const handlePlayMusic = (msgId) => {
+    if (playingAudioId && playingAudioId !== msgId) {
+      // Pause currently playing audio
+      audioRefs.current[playingAudioId]?.pause();
+    }
+    
+    const audioEl = audioRefs.current[msgId];
+    if (audioEl) {
+      if (playingAudioId === msgId) {
+        audioEl.pause();
+        setPlayingAudioId(null);
+      } else {
+        audioEl.play();
+        setPlayingAudioId(msgId);
+      }
+    }
+  };
+
   const handleEdit = (id) => {
     if (!editValue.trim()) return;
     socket.emit('editPrivateMessage', { teamCode: roomData.teamCode, messageId: id, newContent: editValue.trim() });
@@ -98,86 +124,69 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-green-500 font-mono flex flex-col relative overflow-hidden select-none">
-      {/* Glitch Background */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #00ff00 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+    <div className="min-h-screen bg-[#000000] text-gray-100 font-sans flex flex-col relative overflow-hidden select-none">
       
-      {/* Header */}
-      <div className="bg-black border-b border-green-900/50 p-4 flex flex-col md:flex-row items-center justify-between gap-4 z-10 shadow-[0_4px_30px_rgba(34,197,94,0.1)]">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-green-950 border border-green-500/30 flex items-center justify-center relative">
-            <ShieldAlert className="w-6 h-6 text-green-500" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+      {/* IG Style Header */}
+      <div className="bg-[#000000] border-b border-gray-900 p-4 flex items-center justify-between z-10 sticky top-0">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            {/* Show partner's avatar if there is one, else default */}
+            {participants.length > 1 ? (
+              <img src={participants.find(p => p._id !== user._id)?.profileImage || '/default-avatar.png'} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
+                <Users className="w-5 h-5 text-gray-400" />
+              </div>
+            )}
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black"></div>
           </div>
           <div>
-            <h2 className="text-xl font-black text-green-400 tracking-widest uppercase">Encrypted Node</h2>
-            <div className="flex items-center gap-3 text-xs mt-1">
-              <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {participants.length} Active</span>
-              <span className="text-green-800">|</span>
-              <span className="text-red-400 animate-pulse">Zero Trace Active</span>
-            </div>
+            <h2 className="text-base font-semibold text-white">
+              {participants.length > 1 ? participants.find(p => p._id !== user._id)?.name || 'User' : 'Waiting for partner...'}
+            </h2>
+            <p className="text-xs text-gray-400">
+              {participants.length > 1 ? 'Active now' : 'Room Code: ' + roomData.teamCode}
+            </p>
           </div>
         </div>
 
-        {/* Credentials (Only visible to owner, or both can see code) */}
-        <div className="flex items-center gap-3 bg-green-950/30 p-2 border border-green-900/50">
-          <div className="text-right">
-            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => copyToClipboard(roomData.teamCode, 'Team Code')}>
-              <span className="text-xs text-green-600 uppercase">Code:</span>
-              <span className="font-bold text-green-400 tracking-widest">{roomData.teamCode}</span>
-              <Copy className="w-3 h-3 text-green-700 group-hover:text-green-400" />
-            </div>
-            {isOwner && (
-              <div className="flex items-center gap-2 cursor-pointer group mt-1" onClick={() => copyToClipboard(roomData.password, 'Password')}>
-                <span className="text-xs text-green-600 uppercase">Pass:</span>
-                <span className="font-bold text-green-400 tracking-widest">{roomData.password}</span>
-                <Copy className="w-3 h-3 text-green-700 group-hover:text-green-400" />
-              </div>
-            )}
-          </div>
-          <button 
-            onClick={onLeave}
-            className="ml-2 p-2 bg-red-950/30 hover:bg-red-900/50 border border-red-900/50 text-red-500 transition-colors flex flex-col items-center justify-center gap-1"
-            title={isOwner ? "Destroy Room" : "Disconnect"}
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="text-[9px] uppercase tracking-wider">{isOwner ? 'Destroy' : 'Leave'}</span>
+        <div className="flex items-center gap-4 text-gray-300">
+          <Phone className="w-6 h-6 hidden md:block cursor-pointer hover:text-white transition-colors" />
+          <Video className="w-6 h-6 hidden md:block cursor-pointer hover:text-white transition-colors" />
+          <button onClick={onLeave} className="hover:text-red-500 transition-colors" title="Leave Chat">
+            <Info className="w-6 h-6" />
           </button>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 z-10 scrollbar-thin scrollbar-thumb-green-900 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 z-10 scrollbar-hide">
         {messages.map((msg, idx) => {
           if (msg.type === 'system') {
             return (
-              <div key={idx} className="flex justify-center my-2">
-                <span className="text-[10px] text-green-700 tracking-widest uppercase bg-green-950/20 px-3 py-1 border border-green-900/30">
-                  {msg.content}
+              <div key={idx} className="flex justify-center my-4">
+                <span className="text-[11px] text-gray-500 font-medium">
+                  {msg.content.replace('[SYSTEM] ', '')}
                 </span>
               </div>
             );
           }
 
           const isMe = msg.sender._id === user._id;
-          const isMsgOwner = roomData.participants?.[0]?._id === msg.sender._id;
 
           return (
-            <div key={msg._id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''} group`}>
-              <div className="relative">
-                <img src={msg.sender.profileImage} alt="" className="w-10 h-10 border border-green-800 object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
-                {isMsgOwner && <div className="absolute -bottom-1 -right-1 bg-red-600 text-white text-[8px] px-1 font-bold">ROOT</div>}
-              </div>
+            <div key={msg._id} className={`flex gap-2 ${isMe ? 'flex-row-reverse' : ''} group`}>
+              {!isMe && (
+                <img src={msg.sender.profileImage || '/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover self-end mb-1" />
+              )}
               
-              <div className={`flex flex-col max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs text-green-600 font-bold">{msg.sender.username}</span>
-                </div>
+              <div className={`flex flex-col max-w-[70%] ${isMe ? 'items-end' : 'items-start'}`}>
                 
-                <div className={`relative p-3 border ${isMe ? 'bg-green-950/40 border-green-700 text-green-100' : 'bg-black border-green-900 text-green-400'}`}>
-                  {/* Edges styling for hacker vibe */}
-                  <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-green-400"></div>
-                  <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-green-400"></div>
+                <div className={`relative px-4 py-2.5 ${
+                    isMe 
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-br-sm' 
+                      : 'bg-[#262626] text-white rounded-2xl rounded-bl-sm'
+                  }`}>
                   
                   {editingId === msg._id ? (
                     <div className="flex items-center gap-2">
@@ -185,26 +194,52 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                         type="text"
                         value={editValue}
                         onChange={e => setEditValue(e.target.value)}
-                        className="bg-black text-green-400 outline-none border-b border-green-700 w-full font-mono text-sm"
+                        className="bg-transparent text-white outline-none w-full text-sm"
                         autoFocus
                         onKeyDown={(e) => e.key === 'Enter' && handleEdit(msg._id)}
                       />
-                      <button onClick={() => handleEdit(msg._id)} className="text-green-500 hover:text-green-300"><Check className="w-4 h-4" /></button>
-                      <button onClick={() => setEditingId(null)} className="text-red-500 hover:text-red-300"><X className="w-4 h-4" /></button>
+                      <button onClick={() => handleEdit(msg._id)} className="text-white opacity-80 hover:opacity-100"><Check className="w-4 h-4" /></button>
+                      <button onClick={() => setEditingId(null)} className="text-white opacity-80 hover:opacity-100"><X className="w-4 h-4" /></button>
                     </div>
                   ) : (
                     <>
                       {msg.type === 'text' ? (
-                        <p className="text-sm whitespace-pre-wrap font-mono break-words">{msg.content}</p>
-                      ) : (
-                        <img src={msg.content} alt="Encrypted Media" className="max-w-full rounded border border-green-900/50 opacity-80 hover:opacity-100 transition-opacity" />
+                        <p className="text-[15px] whitespace-pre-wrap break-words">{msg.content}</p>
+                      ) : msg.type === 'image' ? (
+                        <img src={msg.content} alt="Media" className="max-w-full rounded-xl" />
+                      ) : msg.type === 'music' ? (
+                        <div className={`flex items-center gap-3 p-1 rounded-xl min-w-[200px] max-w-[280px] ${isMe ? 'bg-white/10' : 'bg-[#121212]'}`}>
+                          <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src={msg.content.coverImage || '/default-music-cover.jpg'} alt="cover" className="w-full h-full object-cover" />
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer hover:bg-black/60 transition-colors"
+                              onClick={() => handlePlayMusic(msg._id)}
+                            >
+                              {playingAudioId === msg._id ? (
+                                <Pause className="w-5 h-5 text-white" />
+                              ) : (
+                                <Play className="w-5 h-5 text-white ml-1" />
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0 pr-2">
+                            <h4 className="text-sm font-semibold text-white truncate">{msg.content.title}</h4>
+                            <p className="text-[11px] text-gray-300 truncate">{msg.content.artist}</p>
+                          </div>
+                          <audio 
+                            ref={el => audioRefs.current[msg._id] = el}
+                            src={msg.content.audioUrl} 
+                            onEnded={() => setPlayingAudioId(null)}
+                            preload="none"
+                          />
+                        </div>
                       )}
-                      {msg.isEdited && <span className="text-[9px] text-green-700 ml-2 uppercase">(Edited)</span>}
+                      {msg.isEdited && <span className="text-[10px] opacity-60 mt-1 block">(Edited)</span>}
                       
                       {isMe && msg.type === 'text' && (
-                        <div className="absolute top-1/2 -translate-y-1/2 -left-16 hidden group-hover:flex gap-1 bg-black p-1 border border-green-900">
-                          <button onClick={() => { setEditingId(msg._id); setEditValue(msg.content); }} className="p-1 text-green-700 hover:text-green-400"><Edit2 className="w-3 h-3" /></button>
-                          <button onClick={() => handleDelete(msg._id)} className="p-1 text-green-700 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                        <div className="absolute top-1/2 -translate-y-1/2 -left-14 hidden group-hover:flex gap-2">
+                          <button onClick={() => { setEditingId(msg._id); setEditValue(msg.content); }} className="text-gray-400 hover:text-white"><Edit2 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => handleDelete(msg._id)} className="text-gray-400 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
                         </div>
                       )}
                     </>
@@ -218,39 +253,62 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSendText} className="bg-black border-t border-green-900/50 p-4 z-10 flex gap-3">
-        <input 
-          type="file" 
-          accept="image/*" 
-          ref={fileInputRef} 
-          onChange={handleSendImage} 
-          className="hidden" 
-        />
-        <button 
-          type="button" 
-          onClick={() => fileInputRef.current?.click()}
-          className="p-3 bg-green-950/30 border border-green-900 hover:bg-green-900/50 text-green-500 transition-colors"
-          title="Send Encrypted Image"
-        >
-          <ImageIcon className="w-5 h-5" />
-        </button>
-        <div className="flex-1 relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-700 font-bold">$</span>
+      <div className="p-4 bg-[#000000] border-t border-gray-900 z-10">
+        <form onSubmit={handleSendText} className="flex items-center gap-2 max-w-4xl mx-auto">
+          
           <input 
-            type="text" 
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Encrypt message..."
-            className="w-full bg-black border border-green-900 focus:border-green-500 text-green-400 p-3 pl-8 outline-none font-mono transition-colors"
+            type="file" 
+            accept="image/*" 
+            ref={fileInputRef} 
+            onChange={handleSendImage} 
+            className="hidden" 
           />
-        </div>
-        <button 
-          type="submit"
-          className="px-6 bg-green-600 hover:bg-green-500 text-black font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
-        >
-          <Send className="w-4 h-4" />
-        </button>
-      </form>
+          
+          <div className="flex-1 bg-[#262626] rounded-full flex items-center px-2 py-1.5 border border-transparent focus-within:border-gray-600 transition-colors">
+            <button 
+              type="button" 
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors shrink-0"
+            >
+              <ImageIcon className="w-4 h-4" />
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setIsMusicModalOpen(true)}
+              className="p-2 ml-1 text-white bg-purple-500 rounded-full hover:bg-purple-600 transition-colors shrink-0"
+            >
+              <Music className="w-4 h-4" />
+            </button>
+            
+            <input 
+              type="text" 
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Message..."
+              className="flex-1 bg-transparent text-white px-3 py-2 outline-none text-[15px]"
+            />
+          </div>
+
+          {inputValue.trim() ? (
+            <button 
+              type="submit"
+              className="p-3 text-white font-semibold hover:text-gray-300 transition-colors"
+            >
+              Send
+            </button>
+          ) : (
+            <div className="p-3 text-white cursor-pointer hover:text-gray-300 transition-colors">
+              <Send className="w-6 h-6" />
+            </div>
+          )}
+        </form>
+      </div>
+      
+      <MusicShareModal 
+        isOpen={isMusicModalOpen} 
+        onClose={() => setIsMusicModalOpen(false)} 
+        onSelect={handleSendMusic} 
+      />
     </div>
   );
 };
