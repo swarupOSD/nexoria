@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile } from 'lucide-react';
+import EmojiPicker from 'emoji-picker-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
@@ -13,6 +14,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState(null);
   const audioRefs = useRef({});
   const messagesEndRef = useRef(null);
@@ -121,6 +123,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard!`, { style: { background: '#000', color: '#4ade80', border: '1px solid #22c55e' }});
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setInputValue(prev => prev + emojiObject.emoji);
   };
 
   return (
@@ -279,6 +285,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             >
               <Music className="w-4 h-4" />
             </button>
+            <button 
+              type="button" 
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 ml-1 text-gray-400 hover:text-white transition-colors shrink-0"
+            >
+              <Smile className="w-5 h-5" />
+            </button>
             
             <input 
               type="text" 
@@ -302,6 +315,19 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             </div>
           )}
         </form>
+        
+        {showEmojiPicker && (
+          <div className="absolute bottom-[80px] left-4 z-50">
+            <EmojiPicker 
+              onEmojiClick={onEmojiClick} 
+              theme="dark"
+              searchDisabled={true}
+              skinTonesDisabled={true}
+              height={300}
+              width={320}
+            />
+          </div>
+        )}
       </div>
       
       <MusicShareModal 

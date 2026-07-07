@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown } from 'lucide-react';
+import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown, Smile } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 
 // Keep socket outside to prevent reconnection on re-renders, but only connect if needed.
@@ -14,6 +15,7 @@ const GlobalChatBubble = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
@@ -118,6 +120,10 @@ const GlobalChatBubble = () => {
       case 'Rising': return 'text-emerald-400 font-medium';
       default: return 'text-slate-300';
     }
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setInputValue(prev => prev + emojiObject.emoji);
   };
 
   return (
@@ -257,22 +263,43 @@ const GlobalChatBubble = () => {
 
             {/* Input Area */}
             {user ? (
-              <form onSubmit={handleSend} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-                <input 
-                  type="text" 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Say something to the world..."
-                  className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
-                />
-                <button 
-                  type="submit"
-                  disabled={!inputValue.trim()}
-                  className="p-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors disabled:opacity-50 disabled:hover:bg-purple-600 shrink-0"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </form>
+              <div className="relative">
+                <form onSubmit={handleSend} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0"
+                  >
+                    <Smile className="w-5 h-5" />
+                  </button>
+                  <input 
+                    type="text" 
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Say something to the world..."
+                    className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
+                  />
+                  <button 
+                    type="submit"
+                    disabled={!inputValue.trim()}
+                    className="p-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors disabled:opacity-50 disabled:hover:bg-purple-600 shrink-0"
+                  >
+                    <Send className="w-5 h-5" />
+                  </button>
+                </form>
+                {showEmojiPicker && (
+                  <div className="absolute bottom-[65px] left-2 z-50">
+                    <EmojiPicker 
+                      onEmojiClick={onEmojiClick} 
+                      theme="dark"
+                      searchDisabled={true}
+                      skinTonesDisabled={true}
+                      height={300}
+                      width={300}
+                    />
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="p-4 bg-slate-900 border-t border-slate-800 text-center">
                 <p className="text-xs text-slate-400 font-medium">Login to join the conversation</p>
