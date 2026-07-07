@@ -239,7 +239,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                             preload="none"
                           />
                         </div>
-                      )}
+                      ) : null}
                       {msg.isEdited && <span className="text-[10px] opacity-60 mt-1 block">(Edited)</span>}
                       
                       {isMe && msg.type === 'text' && (
