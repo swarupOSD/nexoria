@@ -10,19 +10,6 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
   const [previewAudio, setPreviewAudio] = useState(null);
   const [playingId, setPlayingId] = useState(null);
 
-  // Fetch initial popular tracks or all tracks when opened
-  useEffect(() => {
-    if (isOpen && !searchQuery) {
-      fetchTracks();
-    }
-    
-    return () => {
-      if (previewAudio) {
-        previewAudio.pause();
-      }
-    };
-  }, [isOpen]);
-
   const fetchTracks = async (query = '') => {
     setLoading(true);
     try {
@@ -50,6 +37,19 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
       setLoading(false);
     }
   };
+
+  // Fetch initial popular tracks or all tracks when opened
+  useEffect(() => {
+    if (isOpen && !searchQuery) {
+      fetchTracks();
+    }
+    
+    return () => {
+      if (previewAudio) {
+        previewAudio.pause();
+      }
+    };
+  }, [isOpen, searchQuery]);
 
   // Debounced search
   useEffect(() => {
@@ -87,9 +87,9 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
     setPreviewAudio(audio);
     setPlayingId(track._id);
 
-    audio.onended = () => {
+    audio.addEventListener('ended', () => {
       setPlayingId(null);
-    };
+    });
   };
 
   const handleSelect = (track) => {
