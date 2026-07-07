@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, 
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -286,17 +286,22 @@ const Navbar = () => {
             <Link to="/" className={`text-sm font-bold transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
               Home
             </Link>
-            <Link to="/requests" className={`text-sm font-bold transition-colors flex items-center gap-1 ${location.pathname === '/requests' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
-              Requests
+            
+            <Link to="/apps" className={`text-sm font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
+              Apps
             </Link>
             
+            <Link to="/moviebox/games" className={`text-sm font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
+              Games
+            </Link>
+
             {/* Categories Dropdown */}
             <DropdownMenu 
               align="left" 
               width="w-[500px]"
               closeOnClickInside={true}
               trigger={
-                <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
+                <button className={`flex items-center gap-1 text-sm font-bold transition-colors ${location.pathname.startsWith('/category') ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
                   <LayoutGrid className="w-4 h-4" /> Categories <ChevronDown className="w-3 h-3" />
                 </button>
               }
@@ -322,35 +327,43 @@ const Navbar = () => {
                 </Link>
               </div>
             </DropdownMenu>
-            
-            <Link to="/apps" className={`text-sm font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
-              Apps
-            </Link>
-            
-            <Link to="/moviebox/games" className={`text-sm font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
-              Games
-            </Link>
-            <Link to="/sound" className={`text-sm font-bold transition-colors ${location.pathname.startsWith('/sound') ? 'text-purple-500' : 'text-slate-700 dark:text-slate-300 hover:text-purple-500'}`}>
-              Classic Sound
-            </Link>
-            <Link to="/nexoria-music" className={`text-sm font-bold transition-colors ${location.pathname.startsWith('/nexoria-music') ? 'text-pink-500' : 'text-slate-700 dark:text-slate-300 hover:text-pink-500'}`}>
-              Nexoria Music
-            </Link>
 
-            <Link to="/nexoria-arena" className={`text-sm font-bold flex items-center gap-1 transition-colors ${location.pathname === '/nexoria-arena' ? 'text-red-500' : 'text-slate-700 dark:text-slate-300 hover:text-red-500'}`}>
-              🎮 Arena
-            </Link>
-
-            <Link to="/aura" className={`text-sm font-bold flex items-center gap-1 transition-colors ${location.pathname.startsWith('/aura') ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
-              🔥 Aura
-            </Link>
-
-            <Link to="/premium" className={`text-sm font-bold transition-colors ${location.pathname === '/premium' ? 'text-accent' : 'text-slate-700 dark:text-slate-300 hover:text-accent'}`}>
-              Premium 💎
-            </Link>
-            <Link to="/vip-lounge" className={`text-sm font-bold transition-colors ${location.pathname === '/vip-lounge' ? 'text-amber-500' : 'text-slate-700 dark:text-slate-300 hover:text-amber-500'}`}>
-              VIP 👑
-            </Link>
+            {/* Explore More Dropdown */}
+            <DropdownMenu
+              align="left"
+              width="w-[220px]"
+              closeOnClickInside={true}
+              trigger={
+                <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
+                  <Compass className="w-4 h-4" /> Explore <ChevronDown className="w-3 h-3" />
+                </button>
+              }
+            >
+              <div className="flex flex-col p-2">
+                <Link to="/requests" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Compass className="w-4 h-4 text-indigo-500" /> Requests
+                </Link>
+                <Link to="/sound" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Music className="w-4 h-4 text-purple-500" /> Classic Sound
+                </Link>
+                <Link to="/nexoria-music" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Music className="w-4 h-4 text-pink-500" /> Nexoria Music
+                </Link>
+                <Link to="/nexoria-arena" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Gamepad2 className="w-4 h-4 text-red-500" /> Arena
+                </Link>
+                <Link to="/aura" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Flame className="w-4 h-4 text-amber-500" /> Aura Leaderboard
+                </Link>
+                <div className="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+                <Link to="/premium" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Star className="w-4 h-4" /> Premium
+                </Link>
+                <Link to="/vip-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Crown className="w-4 h-4" /> VIP Lounge
+                </Link>
+              </div>
+            </DropdownMenu>
 
             {/* Advanced Search Bar */}
             <div className="relative w-full max-w-[200px] xl:max-w-xs transition-all duration-300 focus-within:max-w-[250px] xl:focus-within:max-w-sm" ref={searchRef}>
@@ -466,30 +479,34 @@ const Navbar = () => {
           </div>
 
           {/* Right Side Tools */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
+            {/* Adult/Kids Mode Toggle (Compact) */}
             <button
               onClick={() => setIsParentalModalOpen(true)}
-              className="flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-1 shadow-inner border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer group"
+              className="hidden xl:flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-0.5 shadow-inner border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer group"
               title="Change Content Mode"
             >
-              <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] sm:text-xs font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white'}`}>
-                🔞 ADULT
+              <div className={`px-2 py-1 rounded-full flex items-center text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                🔞
               </div>
-              <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] sm:text-xs font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white'}`}>
-                🧸 KIDS
+              <div className={`px-2 py-1 rounded-full flex items-center text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
+                🧸
               </div>
             </button>
 
-            <button onClick={toggleCyberpunk} className={`p-2.5 rounded-full transition-all duration-300 ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400 shadow-[0_0_15px_rgba(255,0,255,0.5)]' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`} title="Toggle Cyberpunk Mode">
-              <Gamepad2 className="w-5 h-5" />
-            </button>
+            {/* Extra toggles hidden on small desktops to save space */}
+            <div className="hidden xl:flex items-center gap-1">
+              <button onClick={toggleCyberpunk} className={`p-2 rounded-full transition-all duration-300 ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400 shadow-[0_0_15px_rgba(255,0,255,0.5)]' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`} title="Toggle Cyberpunk Mode">
+                <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5" />
+              </button>
 
-            <button onClick={handleSurpriseMe} className="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors hover:rotate-180 duration-500" title="Surprise Me!">
-              <Dices className="w-5 h-5 text-indigo-500" />
-            </button>
+              <button onClick={handleSurpriseMe} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors hover:rotate-180 duration-500" title="Surprise Me!">
+                <Dices className="w-4 h-4 xl:w-5 xl:h-5 text-indigo-500" />
+              </button>
+            </div>
 
-            <button onClick={toggleTheme} className="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+              {isDarkMode ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
             </button>
             
             {user && (
