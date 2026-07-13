@@ -82,6 +82,7 @@ const AdminLayout = () => {
         { name: 'Posts', icon: <FileText className="w-4 h-4" />, path: '/admin/posts' },
         { name: 'Categories', icon: <Folder className="w-4 h-4" />, path: '/admin/categories' },
         { name: 'Downloads', icon: <Download className="w-4 h-4" />, path: '/admin/downloads' },
+        { name: 'YT Downloader', icon: <Download className="w-4 h-4" />, path: '/admin/yt-downloader' },
         { name: 'App Requests', icon: <FileText className="w-4 h-4" />, path: '/admin/app-requests' },
         { name: 'User Requests', icon: <User className="w-4 h-4" />, path: '/admin/user-requests' },
       ]

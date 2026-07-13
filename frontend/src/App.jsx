@@ -83,6 +83,7 @@ const AdminDownloads = lazy(() => import('./pages/Admin/AdminDownloads'));
 const CreatePost = lazy(() => import('./pages/Admin/CreatePost'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
 const SecretLounge = lazy(() => import('./pages/SecretLounge'));
+const AdminYTDownloader = lazy(() => import('./pages/Admin/AdminYTDownloader'));
 
 const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
 // Legacy Admin Contact Messages removed, replaced by SupportCenter
@@ -316,6 +317,7 @@ function App() {
             <Route path="downloads" element={<AdminDownloads />} />
             <Route path="reports" element={<AdminReports />} />
             <Route path="users" element={<AdminUsers />} />
+            <Route path="yt-downloader" element={<AdminYTDownloader />} />
             <Route path="contact" element={<SupportCenter />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="adblock-analytics" element={<AdminAdblockAnalytics />} />
