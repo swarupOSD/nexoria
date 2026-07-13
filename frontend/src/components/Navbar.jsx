@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, 
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -355,6 +355,9 @@ const Navbar = () => {
                 <Link to="/aura" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Flame className="w-4 h-4 text-amber-500" /> Aura Leaderboard
                 </Link>
+                <Link to="/video-downloader" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <DownloadCloud className="w-4 h-4 text-emerald-500" /> YT Downloader
+                </Link>
                 <div className="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
                 <Link to="/premium" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Star className="w-4 h-4" /> Premium
@@ -684,6 +687,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
                       🔥 Aura Leaderboard
+                    </Link>
+                    <Link to="/video-downloader" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                      <DownloadCloud className="w-5 h-5 text-emerald-500" /> YT Downloader
                     </Link>
                     <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-indigo-500" /> Requests

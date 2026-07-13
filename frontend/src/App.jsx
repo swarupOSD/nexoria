@@ -12,6 +12,7 @@ import FeatureRequests from './pages/FeatureRequests';
 import ChangePassword from './pages/ChangePassword';
 import Notifications from './pages/Notifications';
 import UserActivity from './pages/UserActivity';
+import VideoDownloader from './pages/VideoDownloader';
 import AdBlockDetector from './components/AdBlockDetector';
 import SecretLoungeButton from './components/SecretLoungeButton';
 import CategoryPage from './pages/CategoryPage';
@@ -241,6 +242,7 @@ function App() {
               <Route path="about-us" element={<AboutUs />} />
               <Route path="sitemap" element={<Sitemap />} />
               <Route path="legal/:pageSlug" element={<Legal />} />
+              <Route path="video-downloader" element={<VideoDownloader />} />
 
               {/* Protected Routes inside Layout */}
               <Route element={<PrivateRoute />}>
