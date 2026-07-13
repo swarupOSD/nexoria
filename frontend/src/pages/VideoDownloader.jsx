@@ -106,7 +106,7 @@ const VideoDownloader = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.6 }}
-          className="w-full flex-1 min-h-[700px] bg-black rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl shadow-primary/20 overflow-hidden relative group"
+          className="w-full flex-1 min-h-[1000px] md:min-h-[700px] bg-black rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl shadow-primary/20 overflow-hidden relative group"
         >
           {/* Cyberpunk Accent Lines */}
           <div className="absolute top-0 left-10 w-20 h-1 bg-primary z-10 shadow-[0_0_10px_var(--color-primary)]"></div>
@@ -119,7 +119,7 @@ const VideoDownloader = () => {
             width="100%"
             height="100%"
             frameBorder="0"
-            className="w-full h-full min-h-[700px] absolute inset-0"
+            className="w-full h-full min-h-[1000px] md:min-h-[700px] absolute inset-0"
             allowFullScreen
           ></iframe>
         </motion.div>
