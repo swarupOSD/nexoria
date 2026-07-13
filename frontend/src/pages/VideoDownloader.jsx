@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { DownloadCloud, Zap, ShieldCheck, HardDrive, CheckCircle2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import AdPlacement from '../components/AdPlacement';
 
 const VideoDownloader = () => {
   const features = [
@@ -98,6 +99,8 @@ const VideoDownloader = () => {
           ))}
         </div>
 
+        <AdPlacement location="YTDownloaderTop" />
+
         {/* Downloader App Container */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -120,6 +123,8 @@ const VideoDownloader = () => {
             allowFullScreen
           ></iframe>
         </motion.div>
+
+        <AdPlacement location="YTDownloaderBottom" />
 
         {/* Disclaimer */}
         <p className="text-center text-xs text-slate-500 mt-8 font-medium max-w-3xl mx-auto">

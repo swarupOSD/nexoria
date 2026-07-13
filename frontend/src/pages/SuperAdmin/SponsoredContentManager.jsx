@@ -11,7 +11,7 @@ import {
   useToggleAdvertisementMutation
 } from '../../features/advertisement/advertisementApiSlice';
 
-const LOCATIONS = ['Header', 'Sidebar', 'BetweenContent', 'Footer', 'DownloadSection'];
+const LOCATIONS = ['Header', 'Sidebar', 'BetweenContent', 'Footer', 'DownloadSection', 'YTDownloaderTop', 'YTDownloaderBottom'];
 
 const SkeletonRow = () => (
   <tr className="border-b border-slate-100 dark:border-slate-800 animate-pulse">

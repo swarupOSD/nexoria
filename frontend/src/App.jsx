@@ -242,7 +242,6 @@ function App() {
               <Route path="about-us" element={<AboutUs />} />
               <Route path="sitemap" element={<Sitemap />} />
               <Route path="legal/:pageSlug" element={<Legal />} />
-              <Route path="video-downloader" element={<VideoDownloader />} />
 
               {/* Protected Routes inside Layout */}
               <Route element={<PrivateRoute />}>
@@ -268,6 +267,7 @@ function App() {
                 <Route path="post/:slug" element={<SinglePost />} />
                 <Route path="download/:slug" element={<DownloadFlow />} />
                 <Route path="premium" element={<Premium />} />
+                <Route path="video-downloader" element={<VideoDownloader />} />
         {/* VIP Lounge */}
         <Route path="/vip-lounge" element={<UnderDevelopmentGuard moduleName="vipLounge"><VIPLounge /></UnderDevelopmentGuard>} />
                 
