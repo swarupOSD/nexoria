@@ -629,6 +629,109 @@ textarea:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(0,240
     display: flex; align-items: center; gap: 10px;
     transition: 0.2s;
 }
-#folder-list li:hover { background: rgba(0,240,255,0.1); color: #fff; }
 #folder-list li i { color: var(--secondary); font-size: 1.2rem; }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 1px solid var(--card-border);
+    }
+    
+    .logo-area {
+        margin-bottom: 15px;
+        justify-content: center;
+    }
+    
+    .user-profile {
+        margin-bottom: 15px;
+        justify-content: center;
+    }
+    
+    .nav-links {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        gap: 5px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .nav-links::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .nav-links::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 4px;
+    }
+    
+    .nav-links li {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    
+    .content-area {
+        padding: 15px;
+    }
+    
+    .glass-container {
+        padding: 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .stats-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .mode-toggle {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 5px;
+    }
+    
+    .mode-toggle span {
+        text-align: center;
+    }
+    
+    .platform-selector {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .platform-btn {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+    }
+    
+    .preview-card {
+        flex-direction: column;
+    }
+    
+    .trim-container {
+        padding: 10px;
+    }
+    
+    .trim-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-buttons, .post-actions {
+        flex-direction: column;
+    }
+}
+
 
