@@ -13,9 +13,9 @@ const AdminYTDownloader = () => {
       </div>
 
       <div className="flex-1 w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative bg-black">
-        {/* We assume the Flask app is running on localhost:5000 */}
+        {/* Python Flask Backend running on Render.com */}
         <iframe
-          src="http://localhost:5000"
+          src="https://yt-downloader-jm3g.onrender.com"
           title="Nexoria YT Downloader"
           width="100%"
           height="100%"
