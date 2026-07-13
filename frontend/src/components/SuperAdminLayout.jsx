@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Shield, Key, Settings, 
   MonitorPlay, Database, Activity, FileWarning, 
   LogOut, ShieldAlert, Moon, Sun, Menu, X, Bell, Gamepad2,
-  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle
+  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, DownloadCloud
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -86,7 +86,8 @@ const SuperAdminLayout = () => {
       title: 'Core',
       items: [
         { name: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" />, path: '/superadmin' },
-        { name: 'Analytics', icon: <Activity className="w-4 h-4" />, path: '/superadmin/analytics' },
+        { name: 'Global Analytics', icon: <Activity className="w-4 h-4" />, path: '/superadmin/analytics' },
+        { name: 'Module Analytics', icon: <Activity className="w-4 h-4 text-indigo-400" />, path: '/superadmin/module-analytics' },
       ]
     },
     {
@@ -101,6 +102,7 @@ const SuperAdminLayout = () => {
       title: 'Nexoria Studio (Apps)',
       items: [
         { name: 'App Management', icon: <Activity className="w-4 h-4" />, path: '/superadmin/apps' },
+        { name: 'YT Downloader', icon: <DownloadCloud className="w-4 h-4 text-emerald-400" />, path: '/superadmin/yt-downloader' },
         { name: 'Studio Categories', icon: <Database className="w-4 h-4" />, path: '/superadmin/categories' },
         { name: 'Studio Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/categories' },
         { name: 'App Requests', icon: <Activity className="w-4 h-4" />, path: '/superadmin/app-requests' },

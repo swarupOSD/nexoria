@@ -112,6 +112,7 @@ const SiteSettings = lazy(() => import('./pages/SuperAdmin/SiteSettings'));
 const SponsoredContent = lazy(() => import('./pages/SuperAdmin/SponsoredContentManager'));
 const DatabaseManagement = lazy(() => import('./pages/SuperAdmin/DatabaseManagement'));
 const SuperAnalytics = lazy(() => import('./pages/SuperAdmin/SuperAnalytics'));
+const ModuleAnalytics = lazy(() => import('./pages/SuperAdmin/ModuleAnalytics'));
 const SecurityLogs = lazy(() => import('./pages/SuperAdmin/SecurityLogs'));
 const ManagePlans = lazy(() => import('./pages/SuperAdmin/ManagePlans'));
 const ManagePremiumUsers = lazy(() => import('./pages/SuperAdmin/ManagePremiumUsers'));
@@ -356,6 +357,7 @@ function App() {
             <Route path="sponsored-content" element={<SponsoredContent />} />
             <Route path="database" element={<DatabaseManagement />} />
             <Route path="analytics" element={<SuperAnalytics />} />
+            <Route path="module-analytics" element={<ModuleAnalytics />} />
             <Route path="security-logs" element={<SecurityLogs />} />
             <Route path="manage-plans" element={<ManagePlans />} />
             <Route path="premium-users" element={<ManagePremiumUsers />} />
@@ -382,6 +384,7 @@ function App() {
             <Route path="push-campaigns" element={<PushCampaigns />} />
             <Route path="trash-bin" element={<TrashBin />} />
             <Route path="aura-recalc" element={<AuraRecalculate />} />
+            <Route path="yt-downloader" element={<AdminYTDownloader />} />
             
             {/* Nexoria Sound Admin */}
             <Route path="sound/dashboard" element={<SoundDashboard />} />

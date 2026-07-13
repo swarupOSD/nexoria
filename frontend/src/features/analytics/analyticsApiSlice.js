@@ -14,6 +14,10 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
       query: () => '/analytics/superadmin',
       providesTags: ['Analytics'],
     }),
+    getModuleAnalytics: builder.query({
+      query: (module) => `/analytics/superadmin/module/${module}`,
+      providesTags: ['Analytics'],
+    }),
     trackAdblock: builder.mutation({
       query: (data) => ({
         url: '/analytics/adblock',
@@ -32,6 +36,7 @@ export const {
   useGetDashboardAnalyticsQuery,
   useGetAdminAnalyticsQuery,
   useGetSuperAdminAnalyticsQuery,
+  useGetModuleAnalyticsQuery,
   useTrackAdblockMutation,
   useGetAdblockAnalyticsQuery,
 } = analyticsApiSlice;
