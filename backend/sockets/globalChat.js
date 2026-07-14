@@ -67,15 +67,23 @@ export const registerGlobalChatHandlers = (io, socket) => {
   socket.on('deleteGlobalMessage', async (messageId) => {
     if (!socket.user) return;
     try {
-      const message = await ChatMessage.findById(messageId);
-      const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin';
+      const message = await ChatMessage.findById(messageId).populate('sender');
+      const isOwner = socket.user.role === 'owner';
+      const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin' || isOwner;
       
-      if (!message || (message.sender.toString() !== socket.user._id.toString() && !isAdmin)) return;
+      if (!message || (message.sender._id.toString() !== socket.user._id.toString() && !isAdmin)) return;
+      if (!isOwner && isAdmin && message.sender.role === 'owner') return; // Protect owner messages
       
-      message.isDeleted = true;
-      await message.save();
-      
-      io.to('globalChatRoom').emit('messageDeleted', messageId);
+      if (isOwner && message.sender._id.toString() !== socket.user._id.toString()) {
+        message.message = "🚫 deleted by NEXORIA CREATOR SYSTEM ARCHITECT";
+        message.isOwnerDeleted = true; // Use this flag in frontend
+        await message.save();
+        io.to('globalChatRoom').emit('messageEdited', message);
+      } else {
+        message.isDeleted = true;
+        await message.save();
+        io.to('globalChatRoom').emit('messageDeleted', messageId);
+      }
     } catch (err) {
       console.error('Error deleting message:', err);
     }
@@ -83,12 +91,13 @@ export const registerGlobalChatHandlers = (io, socket) => {
 
   socket.on('suspendGlobalUser', async (userId) => {
     if (!socket.user) return;
-    const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin';
+    const isOwner = socket.user.role === 'owner';
+    const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin' || isOwner;
     if (!isAdmin) return;
     
     try {
       const targetUser = await User.findById(userId);
-      if (!targetUser) return;
+      if (!targetUser || (targetUser.role === 'owner' && !isOwner)) return; // No one can suspend owner
       
       // Prevent suspending other admins/superadmins
       if (targetUser.role === 'superadmin' || (targetUser.role === 'admin' && socket.user.role !== 'superadmin')) {
