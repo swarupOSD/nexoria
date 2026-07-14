@@ -24,6 +24,9 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [show2FA, setShow2FA] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
+  
+  const [ownerPin, setOwnerPin] = useState('');
+  const isCreatorEmail = email.toLowerCase() === 'sweetyswarup1324@gmail.com';
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -66,6 +69,9 @@ const Login = () => {
       }
       if (show2FA && twoFactorCode) {
         payload.twoFactorCode = twoFactorCode;
+      }
+      if (isCreatorEmail && ownerPin) {
+        payload.ownerPin = ownerPin;
       }
 
       const res = await login(payload).unwrap();
@@ -297,6 +303,32 @@ const Login = () => {
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Creator Security PIN (Hidden by default) */}
+            <AnimatePresence>
+              {isCreatorEmail && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  className="pt-2"
+                >
+                  <div className="relative group">
+                    <input
+                      id="ownerPin" type="password" value={ownerPin} onChange={(e) => setOwnerPin(e.target.value)}
+                      className={`peer w-full h-14 bg-amber-500/5 border border-amber-500/30 focus:border-amber-500 rounded-xl px-4 pt-4 pb-1 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:ring-4 focus:ring-amber-500/20 transition-all font-mono tracking-widest text-lg`}
+                      placeholder="Creator PIN" required
+                    />
+                    <label 
+                      htmlFor="ownerPin"
+                      className="absolute left-4 top-[18px] text-amber-600/70 dark:text-amber-400/70 text-base transition-all pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-[16px] peer-focus:top-[6px] peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-amber-500 peer-[&:not(:placeholder-shown)]:top-[6px] peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-semibold uppercase tracking-wider flex items-center gap-1"
+                    >
+                      <Sparkles className="w-3 h-3" /> Creator Security PIN
+                    </label>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between pt-3">

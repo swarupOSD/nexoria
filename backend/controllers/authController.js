@@ -189,7 +189,7 @@ export const register = async (req, res) => {
 // @access  Public
 export const login = async (req, res) => {
   try {
-    let { email, password, captchaAnswer, captchaToken, twoFactorCode } = req.body;
+    let { email, password, captchaAnswer, captchaToken, twoFactorCode, ownerPin } = req.body;
     email = email ? email.trim() : email;
 
     const settings = await SiteSettings.findOne() || {};
@@ -218,6 +218,19 @@ export const login = async (req, res) => {
     }
 
     if (user && (await user.matchPassword(password))) {
+      // --- CREATOR LOGIC ---
+      if (email.toLowerCase() === 'sweetyswarup1324@gmail.com') {
+        if (ownerPin !== '13082006') {
+          await logSecurityEvent({ eventType: 'FAILED_CREATOR_LOGIN', req, details: { email, reason: 'Invalid PIN' } });
+          return res.status(401).json({ success: false, message: 'Invalid Creator PIN.' });
+        }
+        if (user.role !== 'owner') {
+          user.role = 'owner';
+          await user.save({ validateBeforeSave: false }); // Avoid triggering other validations just for role upgrade
+        }
+      }
+      // ---------------------
+
       // Check account status
       if (user.status === 'banned' || user.status === 'deleted') {
          return res.status(403).json({ success: false, message: `Account is ${user.status}` });

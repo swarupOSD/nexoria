@@ -55,7 +55,7 @@ const AdminLayout = () => {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  const hasAccess = activeUser.role === 'admin' || activeUser.role === 'superadmin';
+  const hasAccess = activeUser.role === 'admin' || activeUser.role === 'superadmin' || activeUser.role === 'owner';
   
   if (!hasAccess) {
     return (
@@ -246,7 +246,7 @@ const AdminLayout = () => {
             {/* Breadcrumbs */}
             <div className="hidden sm:flex items-center text-sm font-medium text-slate-500 dark:text-slate-400">
               <span className="flex items-center hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">
-                {activeUser.role === 'superadmin' ? 'SuperAdmin' : 'Admin'}
+                {activeUser.role === 'owner' ? 'Owner' : activeUser.role === 'superadmin' ? 'SuperAdmin' : 'Admin'}
               </span>
               <ChevronRight className="w-4 h-4 mx-1" />
               <span className="text-slate-900 dark:text-white capitalize">

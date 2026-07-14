@@ -548,8 +548,8 @@ const Navbar = () => {
                 <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
                   <UserIcon className="w-4 h-4 text-primary" /> Profile Dashboard
                 </Link>
-                {['admin', 'superadmin'].includes(user.role) && (
-                  <Link to={user.role === 'superadmin' ? '/superadmin' : '/admin'} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
+                {['admin', 'superadmin', 'owner'].includes(user.role) && (
+                  <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
                     <ShieldAlert className="w-4 h-4 text-accent" /> Admin Panel
                   </Link>
                 )}
@@ -727,8 +727,8 @@ const Navbar = () => {
                       <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                         <UserIcon className="w-5 h-5 text-slate-400" /> My Dashboard
                       </Link>
-                      {['admin', 'superadmin'].includes(user.role) && (
-                        <Link to={user.role === 'superadmin' ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
+                      {['admin', 'superadmin', 'owner'].includes(user.role) && (
+                        <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                           <ShieldAlert className="w-5 h-5 text-slate-400" /> Admin Panel
                         </Link>
                       )}

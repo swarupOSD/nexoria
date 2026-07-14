@@ -65,6 +65,10 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    if (user.role === 'owner' && req.user.role !== 'owner') {
+      return res.status(403).json({ success: false, message: 'You cannot perform this action on the system creator' });
+    }
+
     if (req.user.role === 'admin' && user.role === 'superadmin') {
       return res.status(403).json({ success: false, message: 'Admin cannot modify superadmin' });
     }
@@ -103,6 +107,10 @@ export const managePremium = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.role === 'owner' && req.user.role !== 'owner') {
+      return res.status(403).json({ success: false, message: 'You cannot perform this action on the system creator' });
     }
 
     if (action === 'grant') {
@@ -162,6 +170,10 @@ export const deleteUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.role === 'owner') {
+      return res.status(403).json({ success: false, message: 'You cannot perform this action on the system creator' });
     }
 
     await user.deleteOne();

@@ -195,6 +195,11 @@ const GlobalChatBubble = () => {
                           {msg.sender?.name || 'User'}
                         </span>
                         {/* VIP Badges */}
+                        {senderRole === 'owner' && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-gradient-to-r from-amber-500/20 to-cyan-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                            <Crown className="w-2.5 h-2.5 text-cyan-400" /> CREATOR
+                          </span>
+                        )}
                         {senderRole === 'superadmin' && (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 shadow-[0_0_8px_rgba(244,63,94,0.3)]">
                             <ShieldAlert className="w-2.5 h-2.5" /> SUPER ADMIN
@@ -215,7 +220,9 @@ const GlobalChatBubble = () => {
                         )}
                       </div>
                       <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
-                        senderRole === 'superadmin' || senderRole === 'admin'
+                        senderRole === 'owner'
+                          ? `bg-gradient-to-r from-amber-950 to-slate-900 text-amber-100 border border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                          : senderRole === 'superadmin' || senderRole === 'admin'
                           ? `bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                           : senderPremium
                             ? `bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
@@ -240,13 +247,13 @@ const GlobalChatBubble = () => {
                           <>
                             {msg.message}
                             {msg.isEdited && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
-                            {(isMe || user?.role === 'admin' || user?.role === 'superadmin') && (
+                            {(isMe || user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (
                               <div className={`absolute top-1/2 -translate-y-1/2 ${isMe ? '-left-20' : '-right-20'} hidden group-hover:flex gap-1`}>
                                 {isMe && (
                                   <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
                                 )}
                                 <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500" title="Delete Message"><Trash2 className="w-3 h-3" /></button>
-                                {!isMe && (user?.role === 'admin' || user?.role === 'superadmin') && msg.sender?.role !== 'superadmin' && (
+                                {!isMe && (user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (msg.sender?.role !== 'superadmin' && msg.sender?.role !== 'owner') && (
                                   <button onClick={() => handleSuspend(msg.sender._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-orange-500" title="Suspend User"><ShieldAlert className="w-3 h-3" /></button>
                                 )}
                               </div>

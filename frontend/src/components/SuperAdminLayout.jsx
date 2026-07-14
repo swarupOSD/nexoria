@@ -68,7 +68,7 @@ const SuperAdminLayout = () => {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  const hasAccess = activeUser.role === 'superadmin';
+  const hasAccess = activeUser.role === 'superadmin' || activeUser.role === 'owner';
   
   if (!hasAccess) {
     return (
@@ -309,7 +309,7 @@ const SuperAdminLayout = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{activeUser?.name}</p>
-            <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest truncate">Super Admin</p>
+            <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest truncate">{activeUser?.role === 'owner' ? 'Platform Creator' : 'Super Admin'}</p>
           </div>
         </div>
         <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold text-red-500 hover:text-red-600 dark:hover:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 rounded-xl transition-all active:scale-95">

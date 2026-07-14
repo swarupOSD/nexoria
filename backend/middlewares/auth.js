@@ -22,8 +22,8 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Not authorized, user no longer exists' });
       }
 
-      // Automatically grant Lifetime Premium status to superadmins in memory
-      if (req.user.role === 'superadmin') {
+      // Automatically grant Lifetime Premium status to superadmins and owners in memory
+      if (req.user.role === 'superadmin' || req.user.role === 'owner') {
         req.user.isPremium = true;
         req.user.premiumType = 'Lifetime';
         req.user.premiumStatus = 'Active';
@@ -53,7 +53,7 @@ export const protectOptional = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded._id).select('-password');
       
-      if (req.user && req.user.role === 'superadmin') {
+      if (req.user && (req.user.role === 'superadmin' || req.user.role === 'owner')) {
         req.user.isPremium = true;
         req.user.premiumType = 'Lifetime';
         req.user.premiumStatus = 'Active';
@@ -72,8 +72,8 @@ export const authorize = (...roles) => {
       return res.status(401).json({ success: false, message: 'Not authorized, no user found' });
     }
     
-    // Superadmin bypasses all role checks
-    if (req.user.role !== 'superadmin' && !roles.includes(req.user.role)) {
+    // Superadmin and Owner bypasses all role checks
+    if (req.user.role !== 'superadmin' && req.user.role !== 'owner' && !roles.includes(req.user.role)) {
       await logSecurityEvent({ 
         eventType: 'UNAUTHORIZED_ADMIN_ACCESS', 
         req, 
