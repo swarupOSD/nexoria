@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
 import CallOverlay from './CallOverlay';
+import UserActionModal from './UserActionModal';
 
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
@@ -23,6 +24,16 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [isReceivingCall, setIsReceivingCall] = useState(false);
   const [callerSignal, setCallerSignal] = useState(null);
   const [callerInfo, setCallerInfo] = useState(null);
+
+  // Voice Recording States
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const recordingTimerRef = useRef(null);
+  
+  // User Action Modal
+  const [selectedUserAction, setSelectedUserAction] = useState(null);
 
   const audioRefs = useRef({});
   const messagesEndRef = useRef(null);
@@ -144,6 +155,58 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     setInputValue(prev => prev + emojiObject.emoji);
   };
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'voice', content: base64Audio });
+        };
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= 60) {
+            stopRecording();
+            return 60;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      toast.error('Microphone permission denied.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      clearInterval(recordingTimerRef.current);
+    }
+  };
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   return (
     <div className="min-h-screen bg-[#000000] text-gray-100 font-sans flex flex-col relative overflow-hidden select-none">
       
@@ -224,7 +287,12 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           return (
             <div key={msg._id} className={`flex gap-2 ${isMe ? 'flex-row-reverse' : ''} group`}>
               {!isMe && (
-                <img src={msg.sender.profileImage || '/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover self-end mb-1" />
+                <img 
+                  src={msg.sender.profileImage || '/default-avatar.png'} 
+                  alt="" 
+                  onClick={() => setSelectedUserAction(msg.sender)}
+                  className="w-8 h-8 rounded-full object-cover self-end mb-1 cursor-pointer hover:opacity-80 transition-opacity" 
+                />
               )}
               
               <div className={`flex flex-col max-w-[70%] ${isMe ? 'items-end' : 'items-start'}`}>
@@ -283,6 +351,27 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                             preload="none"
                           />
                         </div>
+                      ) : msg.type === 'voice' ? (
+                        <div className={`flex items-center gap-3 py-1 px-1 rounded-xl min-w-[180px] ${isMe ? 'text-white' : 'text-white'}`}>
+                          <button 
+                            onClick={() => handlePlayMusic(msg._id)}
+                            className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors shrink-0 ${isMe ? 'bg-white/20 hover:bg-white/30' : 'bg-purple-500/20 hover:bg-purple-500/30'}`}
+                          >
+                            {playingAudioId === msg._id ? <Square className="w-3.5 h-3.5 fill-current" /> : <div className="w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-current ml-1"></div>}
+                          </button>
+                          <div className="flex-1">
+                            <div className={`h-1.5 w-full rounded-full overflow-hidden flex items-center ${isMe ? 'bg-white/20' : 'bg-purple-500/20'}`}>
+                              <div className={`h-full w-full animate-pulse opacity-70 ${isMe ? 'bg-white' : 'bg-purple-500'}`}></div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] opacity-80 font-mono">Voice</span>
+                          <audio 
+                            ref={el => audioRefs.current[msg._id] = el}
+                            src={msg.content} 
+                            onEnded={() => setPlayingAudioId(null)}
+                            preload="none"
+                          />
+                        </div>
                       ) : null}
                       {msg.isEdited && <span className="text-[10px] opacity-60 mt-1 block">(Edited)</span>}
                       
@@ -304,61 +393,87 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
       {/* Input Area */}
       <div className="p-4 bg-[#000000] border-t border-gray-900 z-10">
-        <form onSubmit={handleSendText} className="flex items-center gap-2 max-w-4xl mx-auto">
-          
-          <input 
-            type="file" 
-            accept="image/*" 
-            ref={fileInputRef} 
-            onChange={handleSendImage} 
-            className="hidden" 
-          />
-          
-          <div className="flex-1 bg-[#262626] rounded-full flex items-center px-2 py-1.5 border border-transparent focus-within:border-gray-600 transition-colors">
+        {isRecording ? (
+          <div className="flex items-center justify-between max-w-4xl mx-auto bg-[#262626] rounded-full px-4 py-2 border border-purple-500/30">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-red-400 font-mono text-sm font-bold">{formatTime(recordingTime)}</span>
+            </div>
+            <div className="flex-1 text-center text-xs text-purple-400 font-medium animate-pulse">
+              Recording in Secret Lounge...
+            </div>
             <button 
-              type="button" 
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors shrink-0"
+              onClick={stopRecording}
+              className="p-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-full transition-all shadow-lg shadow-red-500/20 shrink-0"
             >
-              <ImageIcon className="w-4 h-4" />
+              <Send className="w-4 h-4" />
             </button>
-            <button 
-              type="button" 
-              onClick={() => setIsMusicModalOpen(true)}
-              className="p-2 ml-1 text-white bg-purple-500 rounded-full hover:bg-purple-600 transition-colors shrink-0"
-            >
-              <Music className="w-4 h-4" />
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-2 ml-1 text-gray-400 hover:text-white transition-colors shrink-0"
-            >
-              <Smile className="w-5 h-5" />
-            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSendText} className="flex items-center gap-2 max-w-4xl mx-auto">
             
             <input 
-              type="text" 
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Message..."
-              className="flex-1 bg-transparent text-white px-3 py-2 outline-none text-[15px]"
+              type="file" 
+              accept="image/*" 
+              ref={fileInputRef} 
+              onChange={handleSendImage} 
+              className="hidden" 
             />
-          </div>
-
-          {inputValue.trim() ? (
-            <button 
-              type="submit"
-              className="p-3 text-white font-semibold hover:text-gray-300 transition-colors"
-            >
-              Send
-            </button>
-          ) : (
-            <div className="p-3 text-white cursor-pointer hover:text-gray-300 transition-colors">
-              <Send className="w-6 h-6" />
+            
+            <div className="flex-1 bg-[#262626] rounded-full flex items-center px-2 py-1.5 border border-transparent focus-within:border-gray-600 transition-colors">
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors shrink-0"
+              >
+                <ImageIcon className="w-4 h-4" />
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setIsMusicModalOpen(true)}
+                className="p-2 ml-1 text-white bg-purple-500 rounded-full hover:bg-purple-600 transition-colors shrink-0"
+              >
+                <Music className="w-4 h-4" />
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="p-2 ml-1 text-gray-400 hover:text-white transition-colors shrink-0"
+              >
+                <Smile className="w-5 h-5" />
+              </button>
+              
+              <input 
+                type="text" 
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Message..."
+                className="flex-1 bg-transparent text-white px-3 py-2 outline-none text-[15px]"
+              />
+              
+              <button 
+                type="button" 
+                onClick={startRecording}
+                className="p-2 ml-1 text-pink-400 hover:text-pink-300 transition-colors shrink-0"
+              >
+                <Mic className="w-5 h-5" />
+              </button>
             </div>
-          )}
-        </form>
+
+            {inputValue.trim() ? (
+              <button 
+                type="submit"
+                className="p-3 text-white font-semibold hover:text-gray-300 transition-colors"
+              >
+                Send
+              </button>
+            ) : (
+              <div className="p-3 text-white cursor-pointer hover:text-gray-300 transition-colors">
+                <Send className="w-6 h-6" />
+              </div>
+            )}
+          </form>
+        )}
         
         {showEmojiPicker && (
           <div className="absolute bottom-[80px] left-4 z-50">
@@ -396,6 +511,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             setCallerSignal(null);
             setCallerInfo(null);
           }}
+        />
+      )}
+
+      {selectedUserAction && (
+        <UserActionModal 
+          user={selectedUserAction} 
+          onClose={() => setSelectedUserAction(null)} 
         />
       )}
     </div>

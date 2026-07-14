@@ -2,6 +2,8 @@ import ChatMessage from '../models/ChatMessage.js';
 import User from '../models/User.js';
 import { hasBadWords, handleViolation } from '../utils/autoModerator.js';
 import { getBotUser, generateBotResponse } from '../utils/aiBot.js';
+import fs from 'fs';
+import path from 'path';
 
 export const registerGlobalChatHandlers = (io, socket) => {
   socket.on('joinGlobalChat', async () => {
@@ -89,6 +91,54 @@ export const registerGlobalChatHandlers = (io, socket) => {
     } catch (err) {
       console.error('Error sending global message:', err);
       socket.emit('globalChatError', { message: 'Failed to send message.' });
+    }
+  });
+
+  socket.on('sendGlobalVoiceMessage', async (audioBase64) => {
+    if (!socket.user) return;
+    
+    try {
+      const currentUser = await User.findById(socket.user._id).select('status restrictions role isPremium');
+      if (!currentUser || currentUser.status === 'suspended' || currentUser.status === 'banned' || currentUser.restrictions?.disableCommenting) {
+        return socket.emit('globalChatError', { message: 'You are suspended from the chat.' });
+      }
+
+      // Role check: Only Premium, Admin, Superadmin, Owner can send voice
+      if (currentUser.role === 'user' && !currentUser.isPremium) {
+        return socket.emit('globalChatError', { message: 'Voice messaging is restricted to Premium users.' });
+      }
+
+      // Convert base64 to file and save
+      const base64Data = audioBase64.replace(/^data:audio\/\w+;base64,/, "");
+      const buffer = Buffer.from(base64Data, 'base64');
+      const filename = `voice_${Date.now()}_${socket.user._id}.webm`;
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'voice');
+      
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      const filePath = path.join(uploadDir, filename);
+      fs.writeFileSync(filePath, buffer);
+      
+      const audioUrl = `/uploads/voice/${filename}`;
+
+      // Save to DB
+      const newMessage = await ChatMessage.create({
+        sender: socket.user._id,
+        type: 'voice',
+        audioUrl: audioUrl,
+        message: '' // optional
+      });
+
+      const populatedMessage = await ChatMessage.findById(newMessage._id)
+        .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
+        .lean();
+
+      io.to('globalChatRoom').emit('newGlobalMessage', populatedMessage);
+    } catch (err) {
+      console.error('Error sending global voice message:', err);
+      socket.emit('globalChatError', { message: 'Failed to send voice message.' });
     }
   });
 

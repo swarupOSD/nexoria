@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown, Smile } from 'lucide-react';
+import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown, Smile, Mic, Lock, Square } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 import UserActionModal from './UserActionModal';
@@ -19,7 +20,17 @@ const GlobalChatBubble = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedUserAction, setSelectedUserAction] = useState(null);
   
+  // Voice Recording States
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const recordingTimerRef = useRef(null);
+  const audioRefs = useRef({}); // Store references to audio elements for playback control
+  const [playingAudioId, setPlayingAudioId] = useState(null);
+
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -95,6 +106,75 @@ const GlobalChatBubble = () => {
     
     socket.emit('sendGlobalMessage', inputValue.trim());
     setInputValue('');
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result;
+          socket.emit('sendGlobalVoiceMessage', base64Audio);
+        };
+        // Cleanup stream
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= 60) {
+            stopRecording();
+            return 60;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      import('react-hot-toast').then(({ default: toast }) => toast.error('Microphone permission denied.'));
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      clearInterval(recordingTimerRef.current);
+    }
+  };
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const handlePlayVoice = (msgId) => {
+    if (playingAudioId && playingAudioId !== msgId) {
+      audioRefs.current[playingAudioId]?.pause();
+    }
+    const audioEl = audioRefs.current[msgId];
+    if (audioEl) {
+      if (playingAudioId === msgId) {
+        audioEl.pause();
+        setPlayingAudioId(null);
+      } else {
+        audioEl.play();
+        setPlayingAudioId(msgId);
+      }
+    }
   };
 
   const handleDelete = (id) => {
@@ -263,7 +343,28 @@ const GlobalChatBubble = () => {
                           </div>
                         ) : (
                           <>
-                            {msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') ? (
+                            {msg.type === 'voice' ? (
+                              <div className="flex items-center gap-3 py-1 px-1 rounded-xl min-w-[180px]">
+                                <button 
+                                  onClick={() => handlePlayVoice(msg._id)}
+                                  className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full transition-colors shrink-0"
+                                >
+                                  {playingAudioId === msg._id ? <Square className="w-3.5 h-3.5 fill-current" /> : <div className="w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-white ml-1"></div>}
+                                </button>
+                                <div className="flex-1">
+                                  <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden flex items-center">
+                                    <div className="h-full bg-white w-full animate-pulse opacity-70"></div>
+                                  </div>
+                                </div>
+                                <span className="text-[10px] opacity-80 font-mono">Voice</span>
+                                <audio 
+                                  ref={el => audioRefs.current[msg._id] = el}
+                                  src={msg.audioUrl?.startsWith('http') ? msg.audioUrl : `${import.meta.env.VITE_API_URL || ''}${msg.audioUrl}`} 
+                                  onEnded={() => setPlayingAudioId(null)}
+                                  preload="none"
+                                />
+                              </div>
+                            ) : msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') ? (
                               <span className="text-red-500 font-bold italic text-xs tracking-wider opacity-90 flex items-center gap-1.5 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">
                                 <ShieldAlert className="w-3.5 h-3.5"/> {msg.message}
                               </span>
@@ -300,7 +401,73 @@ const GlobalChatBubble = () => {
             {/* Input Area */}
             {user ? (
               <div className="relative">
-                <form onSubmit={handleSend} className="p-3 bg-white/5 border-t border-white/10 flex gap-2">
+                {isRecording ? (
+                  <div className="p-3 bg-white/5 border-t border-white/10 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 px-4 py-2 bg-red-500/10 rounded-full border border-red-500/20">
+                      <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="text-red-400 font-mono text-sm font-bold">{formatTime(recordingTime)}</span>
+                    </div>
+                    <div className="flex-1 text-center text-xs text-slate-400 font-medium animate-pulse">
+                      Recording Voice Message...
+                    </div>
+                    <button 
+                      onClick={stopRecording}
+                      className="p-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl transition-all shadow-lg shadow-red-500/20 shrink-0"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSend} className="p-3 bg-white/5 border-t border-white/10 flex gap-2">
+                    <button 
+                      type="button" 
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0"
+                    >
+                      <Smile className="w-5 h-5" />
+                    </button>
+                    <input 
+                      type="text" 
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      placeholder="Say something to the world..."
+                      className="flex-1 bg-black/20 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
+                    />
+                    
+                    {/* Voice Message Button */}
+                    {(user.role === 'user' && !user.isPremium) ? (
+                      <button 
+                        type="button"
+                        onClick={() => navigate('/premium')}
+                        className="p-2.5 bg-slate-800 text-slate-500 rounded-xl relative group shrink-0"
+                        title="Premium Feature"
+                      >
+                        <Mic className="w-5 h-5" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-slate-700 rounded-full flex items-center justify-center">
+                          <Lock className="w-2 h-2 text-amber-500" />
+                        </div>
+                      </button>
+                    ) : (
+                      <button 
+                        type="button"
+                        onClick={startRecording}
+                        className="p-2.5 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 hover:text-purple-300 rounded-xl transition-colors shrink-0"
+                        title="Record Voice Message"
+                      >
+                        <Mic className="w-5 h-5" />
+                      </button>
+                    )}
+
+                    <button 
+                      type="submit"
+                      disabled={!inputValue.trim()}
+                      className="p-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl transition-all disabled:opacity-50 disabled:grayscale shrink-0 shadow-lg shadow-purple-500/20"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </form>
+                )}
+                {showEmojiPicker && !isRecording && (
                   <button 
                     type="button" 
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}

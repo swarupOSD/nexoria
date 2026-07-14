@@ -7,11 +7,18 @@ const chatMessageSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    type: {
+      type: String,
+      enum: ['text', 'voice'],
+      default: 'text',
+    },
     message: {
       type: String,
-      required: true,
       trim: true,
       maxLength: [500, 'Message cannot exceed 500 characters'],
+    },
+    audioUrl: {
+      type: String,
     },
     isDeleted: {
       type: Boolean,
