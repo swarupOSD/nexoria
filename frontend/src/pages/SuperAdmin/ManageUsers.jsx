@@ -293,18 +293,19 @@ const ManageUsers = () => {
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => { setSelectedUser(user); setIsNoteModalOpen(true); }} title="Admin Notes" className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 rounded-lg transition">
-                        <FileText className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => openModerationModal(user, 'warn')} title="Warn User" className="p-1.5 hover:bg-yellow-100 text-yellow-600 rounded-lg transition">
-                        <AlertTriangle className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => openModerationModal(user, 'restrict')} title="Account Restrictions" className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-lg transition">
-                        <Lock className="w-4 h-4" />
-                      </button>
-                      
                       {user.role !== 'owner' && (
-                          user.status === 'active' ? (
+                        <>
+                          <button onClick={() => { setSelectedUser(user); setIsNoteModalOpen(true); }} title="Admin Notes" className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 rounded-lg transition">
+                            <FileText className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => openModerationModal(user, 'warn')} title="Warn User" className="p-1.5 hover:bg-yellow-100 text-yellow-600 rounded-lg transition">
+                            <AlertTriangle className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => openModerationModal(user, 'restrict')} title="Account Restrictions" className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-lg transition">
+                            <Lock className="w-4 h-4" />
+                          </button>
+                          
+                          {user.status === 'active' ? (
                             <>
                               <button onClick={() => openModerationModal(user, 'suspend')} title="Suspend User" className="p-1.5 bg-orange-100 text-orange-600 hover:bg-orange-200 rounded-lg transition">
                                 Suspend
@@ -317,12 +318,13 @@ const ManageUsers = () => {
                             <button onClick={() => handleQuickAction(user.status === 'banned' ? 'unban' : 'restore', user)} className="p-1.5 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition">
                               Restore
                             </button>
-                          )
-                        )}
+                          )}
 
-                      <button onClick={() => setIsPremiumModalOpen(true) || setSelectedUser(user)} title="Manage Premium" className="p-1.5 hover:bg-yellow-100 text-yellow-500 rounded-lg transition">
-                        <Star className="w-4 h-4" />
-                      </button>
+                          <button onClick={() => setIsPremiumModalOpen(true) || setSelectedUser(user)} title="Manage Premium" className="p-1.5 hover:bg-yellow-100 text-yellow-500 rounded-lg transition">
+                            <Star className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
