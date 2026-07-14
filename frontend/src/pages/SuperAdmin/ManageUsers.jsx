@@ -262,14 +262,20 @@ const ManageUsers = () => {
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className={`flex items-center gap-1 text-xs font-semibold capitalize ${
-                      user.role === 'superadmin' ? 'text-red-500' :
-                      user.role === 'admin' ? 'text-purple-500' :
-                      user.isPremium ? 'text-yellow-500' : 'text-blue-500'
-                    }`}>
-                      {user.role === 'superadmin' && <Shield className="w-3 h-3" />}
-                      {user.isPremium && user.role === 'user' ? 'Premium User' : user.role}
-                    </span>
+                      {user.role === 'owner' ? (
+                        <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center gap-1 border border-amber-300/50 uppercase">
+                          <Crown className="w-3 h-3" /> NEXORIA CREATOR
+                        </span>
+                      ) : (
+                        <span className={`flex items-center gap-1 text-xs font-semibold capitalize ${
+                          user.role === 'superadmin' ? 'text-red-500' :
+                          user.role === 'admin' ? 'text-purple-500' :
+                          user.isPremium ? 'text-yellow-500' : 'text-blue-500'
+                        }`}>
+                          {user.role === 'superadmin' && <Shield className="w-3 h-3" />}
+                          {user.isPremium && user.role === 'user' ? 'Premium User' : user.role}
+                        </span>
+                      )}
                   </td>
                   <td className="p-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
@@ -297,20 +303,22 @@ const ManageUsers = () => {
                         <Lock className="w-4 h-4" />
                       </button>
                       
-                      {user.status === 'active' ? (
-                        <>
-                          <button onClick={() => openModerationModal(user, 'suspend')} title="Suspend User" className="p-1.5 bg-orange-100 text-orange-600 hover:bg-orange-200 rounded-lg transition">
-                            Suspend
-                          </button>
-                          <button onClick={() => openModerationModal(user, 'ban')} title="Ban User" className="p-1.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition">
-                            Ban
-                          </button>
-                        </>
-                      ) : (
-                        <button onClick={() => handleQuickAction(user.status === 'banned' ? 'unban' : 'restore', user)} className="p-1.5 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition">
-                          Restore
-                        </button>
-                      )}
+                      {user.role !== 'owner' && (
+                          user.status === 'active' ? (
+                            <>
+                              <button onClick={() => openModerationModal(user, 'suspend')} title="Suspend User" className="p-1.5 bg-orange-100 text-orange-600 hover:bg-orange-200 rounded-lg transition">
+                                Suspend
+                              </button>
+                              <button onClick={() => openModerationModal(user, 'ban')} title="Ban User" className="p-1.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition">
+                                Ban
+                              </button>
+                            </>
+                          ) : (
+                            <button onClick={() => handleQuickAction(user.status === 'banned' ? 'unban' : 'restore', user)} className="p-1.5 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition">
+                              Restore
+                            </button>
+                          )
+                        )}
 
                       <button onClick={() => setIsPremiumModalOpen(true) || setSelectedUser(user)} title="Manage Premium" className="p-1.5 hover:bg-yellow-100 text-yellow-500 rounded-lg transition">
                         <Star className="w-4 h-4" />
