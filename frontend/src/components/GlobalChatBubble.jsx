@@ -325,7 +325,9 @@ const GlobalChatBubble = () => {
                       </div>
                       <div className={`px-4 py-2.5 text-sm rounded-2xl group relative backdrop-blur-md shadow-lg ${
                         msg.isDeleted
-                          ? 'bg-white/5 border border-white/10 text-slate-400'
+                          ? (msg.deletedByRole === 'owner' 
+                              ? `bg-rose-950/40 border border-rose-500/30 shadow-[0_0_15px_rgba(225,29,72,0.2)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                              : 'bg-white/5 border border-white/10 text-slate-400')
                           : senderRole === 'owner'
                           ? `bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-100 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                           : senderRole === 'superadmin' || senderRole === 'admin'
@@ -352,10 +354,16 @@ const GlobalChatBubble = () => {
                         ) : (
                           <>
                             {msg.isDeleted ? (
-                              <span className="italic text-[11px] flex items-center gap-1.5 opacity-80">
-                                <ShieldAlert className="w-3.5 h-3.5" /> 
-                                This message was deleted by {msg.deletedByRole === 'owner' ? 'Owner' : msg.deletedByRole === 'superadmin' ? 'Super Admin' : msg.deletedByRole === 'admin' ? 'Admin' : 'User'}
-                              </span>
+                              msg.deletedByRole === 'owner' ? (
+                                <span className="text-red-500 font-black italic text-[11px] tracking-wider flex items-center gap-1.5 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">
+                                  🚫 DELETED BY NEXORIA CREATOR SYSTEM ARCHITECT
+                                </span>
+                              ) : (
+                                <span className="italic text-[11px] flex items-center gap-1.5 opacity-80">
+                                  <ShieldAlert className="w-3.5 h-3.5" /> 
+                                  This message was deleted by {msg.deletedByRole === 'superadmin' ? 'Super Admin' : msg.deletedByRole === 'admin' ? 'Admin' : 'User'}
+                                </span>
+                              )
                             ) : msg.type === 'voice' ? (
                               <div className="flex items-center gap-3 py-1 px-1 rounded-xl min-w-[180px]">
                                 <button 
