@@ -183,8 +183,14 @@ def upload_cookies():
             return jsonify({'error': 'No selected file'}), 400
             
         dest_path = os.path.join(BASE_DIR, 'cookies.txt')
-        file.save(dest_path)
-        return jsonify({'status': 'success', 'message': 'Cookies uploaded successfully'})
+        new_content = file.read().decode('utf-8', errors='ignore')
+        mode = 'a' if os.path.exists(dest_path) else 'w'
+        with open(dest_path, mode, encoding='utf-8') as f:
+            if mode == 'a':
+                f.write('\n')
+            f.write(new_content)
+            
+        return jsonify({'status': 'success', 'message': 'Cookies uploaded and appended successfully'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
