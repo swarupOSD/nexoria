@@ -22,7 +22,20 @@ export const SocketProvider = ({ children }) => {
 
     setSocket(newSocket);
 
-    return () => newSocket.disconnect();
+    // Global listener for new direct messages to show toast notification
+    const handleNewDM = (message) => {
+      if (user && message.sender._id !== user._id) {
+        import('react-hot-toast').then(({ default: toast }) => {
+          toast(`New message from ${message.sender.name}`, { icon: '💬' });
+        });
+      }
+    };
+    newSocket.on('newDirectMessage', handleNewDM);
+
+    return () => {
+      newSocket.off('newDirectMessage', handleNewDM);
+      newSocket.disconnect();
+    };
   }, [user]); // Reconnect when user changes to update auth/roles if necessary
 
   return (

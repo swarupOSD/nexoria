@@ -3,66 +3,59 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Smile, Minus, Minimize2, Maximize2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
-import toast from 'react-hot-toast';
+import { useSocket } from '../context/SocketContext';
 
 const PrivateChatWidget = ({ activeChat, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
-  const [socket, setSocket] = useState(null);
   
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
+  const socket = useSocket();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    if (!activeChat || !user) return;
+    if (!activeChat || !user || !socket) return;
 
-    // Connect to global socket (or specific DM namespace if configured)
-    const newSocket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000', {
-      withCredentials: true,
-    });
+    // We no longer emit joinDMRoom because the global socket automatically joins the user's ID room.
+    socket.emit('getConversationMessages', activeChat._id);
 
-    setSocket(newSocket);
-
-    newSocket.on('connect', () => {
-      newSocket.emit('joinDMRoom');
-      newSocket.emit('getConversationMessages', activeChat._id);
-    });
-
-    newSocket.on('conversationMessages', (data) => {
+    const handleConversationMessages = (data) => {
       if (data.receiverId === activeChat._id) {
         setMessages(data.messages);
         scrollToBottom();
       }
-    });
+    };
 
-    newSocket.on('newDirectMessage', (message) => {
-      // Check if message belongs to this conversation
+    const handleNewDirectMessage = (message) => {
       const isSenderMe = message.sender._id === user._id;
       const isSenderActiveChat = message.sender._id === activeChat._id;
       
-      // We only append if the message is from us (echo) or from the person we are chatting with
       if (isSenderMe || isSenderActiveChat) {
         setMessages(prev => [...prev, message]);
         scrollToBottom();
-      } else {
-        // Notification for DM from someone else
-        toast(`New message from ${message.sender.name}`, { icon: '💬' });
       }
-    });
+      // Toast notifications for other DMs are handled globally in Navbar or SocketContext
+    };
 
-    newSocket.on('dmError', (err) => {
+    const handleDmError = (err) => {
       toast.error(err.message);
-    });
+    };
+
+    socket.on('conversationMessages', handleConversationMessages);
+    socket.on('newDirectMessage', handleNewDirectMessage);
+    socket.on('dmError', handleDmError);
 
     return () => {
-      newSocket.disconnect();
+      socket.off('conversationMessages', handleConversationMessages);
+      socket.off('newDirectMessage', handleNewDirectMessage);
+      socket.off('dmError', handleDmError);
     };
-  }, [activeChat, user]);
+  }, [activeChat, user, socket]);
 
   useEffect(() => {
     scrollToBottom();
