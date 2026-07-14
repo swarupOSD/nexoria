@@ -152,7 +152,7 @@ def get_info():
     if not url: return jsonify({'error': 'URL is required'}), 400
         
     try:
-        ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'ffmpeg_location': FFMPEG_PATH}
+        ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'ffmpeg_location': FFMPEG_PATH, 'format': 'best'}
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
             ydl_opts['cookiefile'] = cookie_file
