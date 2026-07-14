@@ -153,6 +153,10 @@ def get_info():
         
     try:
         ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'ffmpeg_location': FFMPEG_PATH}
+        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
+        if os.path.exists(cookie_file):
+            ydl_opts['cookiefile'] = cookie_file
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             
@@ -166,6 +170,21 @@ def get_info():
                     'channel': info.get('uploader', 'Unknown Channel'), 'views': info.get('view_count', 0),
                     'formats': extract_clean_formats(info)
                 })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/upload-cookies', methods=['POST'])
+def upload_cookies():
+    try:
+        if 'cookies' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        file = request.files['cookies']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+            
+        dest_path = os.path.join(BASE_DIR, 'cookies.txt')
+        file.save(dest_path)
+        return jsonify({'status': 'success', 'message': 'Cookies uploaded successfully'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -237,6 +256,9 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
             'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH
         }
+        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
+        if os.path.exists(cookie_file):
+            ydl_opts['cookiefile'] = cookie_file
         
         if start_time and end_time:
             s_sec = parse_time_to_seconds(start_time)
@@ -340,6 +362,9 @@ def search_yt():
     if not query: return jsonify({'error': 'Query required'}), 400
     try:
         ydl_opts = {'quiet': True, 'extract_flat': True}
+        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
+        if os.path.exists(cookie_file):
+            ydl_opts['cookiefile'] = cookie_file
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(f"ytsearch5:{query}", download=False)
             entries = [{'title': e.get('title'), 'url': e.get('url'), 'thumbnail': e.get('thumbnails', [{}])[0].get('url')} for e in info.get('entries', [])]
@@ -430,6 +455,9 @@ def batch_download_worker(urls):
         progress_tracker['batch_status'] = f'Downloading {url}...'
         try:
             ydl_opts_info = {'quiet': True, 'ffmpeg_location': FFMPEG_PATH}
+            cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
+            if os.path.exists(cookie_file):
+                ydl_opts_info['cookiefile'] = cookie_file
             with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
                 info = ydl.extract_info(url, download=False)
                 title = info.get('title', 'Unknown')
