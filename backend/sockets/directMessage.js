@@ -2,13 +2,6 @@ import { Conversation, PrivateMessage } from '../models/PrivateChat.js';
 import User from '../models/User.js';
 
 export const registerDirectMessageHandlers = (io, socket) => {
-  // Join a personal room to receive DMs
-  socket.on('joinDMRoom', () => {
-    if (socket.user) {
-      socket.join(`dm_${socket.user._id.toString()}`);
-    }
-  });
-
   socket.on('sendDirectMessage', async ({ receiverId, text }) => {
     if (!socket.user || !receiverId || !text.trim()) return;
 
@@ -39,10 +32,10 @@ export const registerDirectMessageHandlers = (io, socket) => {
       const populatedMessage = await PrivateMessage.findById(message._id).populate('sender', 'name username profileImage role isPremium').lean();
 
       // Emit to receiver's personal room
-      io.to(`dm_${receiverId}`).emit('newDirectMessage', populatedMessage);
+      io.to(receiverId.toString()).emit('newDirectMessage', populatedMessage);
       
       // Emit to sender's own room (for sync across multiple tabs/devices)
-      io.to(`dm_${socket.user._id.toString()}`).emit('newDirectMessage', populatedMessage);
+      io.to(socket.user._id.toString()).emit('newDirectMessage', populatedMessage);
       
     } catch (err) {
       console.error('Error sending DM:', err);
