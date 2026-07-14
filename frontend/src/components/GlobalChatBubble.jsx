@@ -196,9 +196,16 @@ const GlobalChatBubble = () => {
                         </span>
                         {/* VIP Badges */}
                         {senderRole === 'owner' && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-gradient-to-r from-amber-500/20 to-cyan-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                            <Crown className="w-2.5 h-2.5 text-cyan-400" /> CREATOR
-                          </span>
+                          <div className="flex gap-1 ml-1">
+                            <span className="px-2 py-0.5 rounded-[4px] text-[9px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center gap-1 border border-amber-300/50 relative overflow-hidden group">
+                              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                              <Crown className="w-2.5 h-2.5" /> NEXORIA CREATOR
+                            </span>
+                            <span className="px-2 py-0.5 rounded-[4px] text-[9px] font-black bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_12px_rgba(6,182,212,0.5)] flex items-center gap-1 border border-cyan-300/50 relative overflow-hidden group">
+                              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                              <ShieldAlert className="w-2.5 h-2.5" /> SYSTEM ARCHITECT
+                            </span>
+                          </div>
                         )}
                         {senderRole === 'superadmin' && (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 shadow-[0_0_8px_rgba(244,63,94,0.3)]">

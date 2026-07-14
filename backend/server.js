@@ -18,6 +18,7 @@ import { csrfTokenRoute } from './middlewares/csrf.js';
 import { startPremiumExpiryJob } from './utils/premiumExpiryJob.js';
 import { startUserExpiryJob } from './utils/userExpiryJob.js';
 import { securityGuard } from './middlewares/securityGuard.js';
+import { checkMaintenance } from './middlewares/maintenance.js';
 import { initFirebase } from './utils/firebase.js';
 
 dotenv.config();
@@ -175,6 +176,7 @@ import campaignRoutes from './routes/campaignRoutes.js';
 import arenaGameRoutes from './routes/arenaGameRoutes.js';
 import offerwallRoutes from './routes/offerwallRoutes.js';
 import nexoriaMusicRoutes from './routes/nexoriaMusicRoutes.js';
+import creatorRoutes from './routes/creatorRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -187,6 +189,9 @@ app.use('/api', (req, res, next) => {
   res.setHeader('Surrogate-Control', 'no-store');
   next();
 });
+
+// Apply Maintenance Mode block (bypassed for owner inside middleware)
+app.use(checkMaintenance);
 
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
@@ -231,6 +236,7 @@ app.use('/api/aura', auraRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/webhooks/offerwall', offerwallRoutes);
 app.use('/api/nexoria-music', nexoriaMusicRoutes);
+app.use('/api/creator', adminLimiter, creatorRoutes);
 
 import path from 'path';
 

@@ -59,6 +59,7 @@ import CyberpunkParticles from './components/CyberpunkParticles';
 import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
 import PrivateRoute from './components/PrivateRoute';
+import SystemBroadcastManager from './components/SystemBroadcastManager';
 import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
 import Games from './pages/Games';
 import VIPLounge from './pages/VIPLounge';
@@ -130,6 +131,7 @@ const UserRequestsAdmin = lazy(() => import('./pages/SuperAdmin/UserRequestsAdmi
 const PushCampaigns = lazy(() => import('./pages/SuperAdmin/PushCampaigns'));
 const TrashBin = lazy(() => import('./pages/SuperAdmin/TrashBin'));
 const AuraRecalculate = lazy(() => import('./pages/SuperAdmin/AuraRecalculate'));
+const CreatorControlPanel = lazy(() => import('./pages/SuperAdmin/CreatorControlPanel'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 
 // MovieBox Admin Routes (Lazy Loaded)
@@ -215,6 +217,7 @@ function App() {
 
   return (
     <Router>
+      <SystemBroadcastManager />
       <AuraSurgeBanner />
       <Toaster position="top-right" />
       <KidsModeGuard>
@@ -384,6 +387,7 @@ function App() {
             <Route path="push-campaigns" element={<PushCampaigns />} />
             <Route path="trash-bin" element={<TrashBin />} />
             <Route path="aura-recalc" element={<AuraRecalculate />} />
+            <Route path="creator-panel" element={<CreatorControlPanel />} />
             <Route path="yt-downloader" element={<AdminYTDownloader />} />
             
             {/* Nexoria Sound Admin */}
