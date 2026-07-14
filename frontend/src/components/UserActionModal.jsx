@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus, MessageCircle, AlertTriangle, ShieldAlert, Crown, Star } from 'lucide-react';
-import { useSendFriendRequestMutation } from '../../features/api/friendApiSlice';
+import { useSendFriendRequestMutation } from '../features/api/friendApiSlice';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

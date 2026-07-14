@@ -468,29 +468,6 @@ const GlobalChatBubble = () => {
                   </form>
                 )}
                 {showEmojiPicker && !isRecording && (
-                  <button 
-                    type="button" 
-                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0"
-                  >
-                    <Smile className="w-5 h-5" />
-                  </button>
-                  <input 
-                    type="text" 
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Say something to the world..."
-                    className="flex-1 bg-black/20 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
-                  />
-                  <button 
-                    type="submit"
-                    disabled={!inputValue.trim()}
-                    className="p-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl transition-all disabled:opacity-50 disabled:grayscale shrink-0 shadow-lg shadow-purple-500/20"
-                  >
-                    <Send className="w-5 h-5" />
-                  </button>
-                </form>
-                {showEmojiPicker && (
                   <div className="absolute bottom-[65px] left-2 z-50">
                     <EmojiPicker 
                       onEmojiClick={onEmojiClick} 
