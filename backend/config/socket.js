@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import { registerWatchPartyHandlers } from '../sockets/watchParty.js';
 import { registerGlobalChatHandlers } from '../sockets/globalChat.js';
 import { registerPrivateChatHandlers } from '../sockets/privateChat.js';
+import { registerDirectMessageHandlers } from '../sockets/directMessage.js';
+import { registerVoiceRoomHandlers } from '../sockets/voiceRoom.js';
 
 let io;
 
@@ -110,6 +112,8 @@ export const initSocket = (server) => {
     registerWatchPartyHandlers(io, socket);
     registerGlobalChatHandlers(io, socket);
     registerPrivateChatHandlers(io, socket);
+    registerDirectMessageHandlers(io, socket);
+    registerVoiceRoomHandlers(io, socket);
 
     broadcastOnlineStats();
 

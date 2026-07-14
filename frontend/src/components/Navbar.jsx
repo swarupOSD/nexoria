@@ -21,12 +21,25 @@ import { toast } from 'react-hot-toast';
 import CustomSearchBar from './CustomSearchBar';
 import ParentalGateModal from './ParentalGateModal';
 import BottomNavigation from './Layout/BottomNavigation';
+import FriendsDrawer from './FriendsDrawer';
+import PrivateChatWidget from './PrivateChatWidget';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme, isCyberpunk, toggleCyberpunk } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isParentalModalOpen, setIsParentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  
+  const [isFriendsDrawerOpen, setIsFriendsDrawerOpen] = useState(false);
+  const [activeChatUser, setActiveChatUser] = useState(null);
+
+  useEffect(() => {
+    const handleOpenChat = (e) => {
+      setActiveChatUser(e.detail);
+    };
+    window.addEventListener('openPrivateChat', handleOpenChat);
+    return () => window.removeEventListener('openPrivateChat', handleOpenChat);
+  }, []);
   
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -365,6 +378,9 @@ const Navbar = () => {
                 <Link to="/vip-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Crown className="w-4 h-4" /> VIP Lounge
                 </Link>
+                <Link to="/voice-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Mic className="w-4 h-4" /> Voice Lounge
+                </Link>
               </div>
             </DropdownMenu>
 
@@ -527,7 +543,18 @@ const Navbar = () => {
               </div>
             )}
             
-            {user && <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />}
+            {user && (
+              <>
+                <button 
+                  onClick={() => setIsFriendsDrawerOpen(true)}
+                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
+                  title="Friends & Messages"
+                >
+                  <Users className="w-5 h-5" />
+                </button>
+                <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
+              </>
+            )}
 
             {user ? (
               <DropdownMenu 
@@ -574,7 +601,15 @@ const Navbar = () => {
               <Search className="w-5 h-5" />
             </button>
             {user && (
-              <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
+              <>
+                <button 
+                  onClick={() => setIsFriendsDrawerOpen(true)}
+                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
+                >
+                  <Users className="w-5 h-5" />
+                </button>
+                <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
+              </>
             )}
             {user && (
               <Link to="/dashboard" className="hidden sm:block ml-1">
@@ -700,6 +735,9 @@ const Navbar = () => {
                     <Link to="/vip-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
                       <Crown className="w-5 h-5" /> VIP Lounge 👑
                     </Link>
+                    <Link to="/voice-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-400/10 to-pink-500/10 hover:from-purple-400/20 hover:to-pink-500/20 border border-purple-400/20 rounded-2xl font-bold text-sm text-purple-600 dark:text-purple-400 transition-colors">
+                      <Mic className="w-5 h-5" /> Voice Lounge 🎤
+                    </Link>
                   </div>
 
                   {user && (
@@ -770,6 +808,21 @@ const Navbar = () => {
           onSuccess={() => dispatch(toggleKidsMode())}
         />
       </nav>
+
+      {user && (
+        <>
+          <FriendsDrawer 
+            isOpen={isFriendsDrawerOpen} 
+            onClose={() => setIsFriendsDrawerOpen(false)} 
+            onOpenChat={(friendUser) => setActiveChatUser(friendUser)} 
+          />
+          <PrivateChatWidget 
+            activeChat={activeChatUser} 
+            onClose={() => setActiveChatUser(null)} 
+          />
+        </>
+      )}
+
       {/* Spacer to prevent content overlap */}
       <div className="h-24"></div>
       

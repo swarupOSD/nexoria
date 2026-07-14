@@ -4,6 +4,7 @@ import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, Shie
 import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
+import UserActionModal from './UserActionModal';
 
 // Keep socket outside to prevent reconnection on re-renders, but only connect if needed.
 let socket;
@@ -16,6 +17,7 @@ const GlobalChatBubble = () => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [selectedUserAction, setSelectedUserAction] = useState(null);
   
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
@@ -187,7 +189,8 @@ const GlobalChatBubble = () => {
                     <img 
                       src={msg.sender?.profileImage?.startsWith('http') ? msg.sender.profileImage : `${import.meta.env.VITE_API_URL || ''}/uploads/avatars/${msg.sender?.profileImage || 'default.jpg'}`}
                       alt="Avatar" 
-                      className={`w-8 h-8 rounded-full object-cover shrink-0 mt-1 ${
+                      onClick={() => !isMe && setSelectedUserAction(msg.sender)}
+                      className={`w-8 h-8 rounded-full object-cover shrink-0 mt-1 cursor-pointer transition-transform hover:scale-110 ${
                         msg.sender?.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_10px_orange]' :
                         msg.sender?.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_15px_cyan]' :
                         msg.sender?.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_10px_fuchsia]' :
@@ -341,6 +344,11 @@ const GlobalChatBubble = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <UserActionModal 
+        isOpen={!!selectedUserAction}
+        onClose={() => setSelectedUserAction(null)}
+        targetUser={selectedUserAction}
+      />
     </>
   );
 };

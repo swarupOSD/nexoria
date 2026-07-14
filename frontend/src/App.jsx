@@ -85,6 +85,8 @@ const AdminDownloads = lazy(() => import('./pages/Admin/AdminDownloads'));
 const CreatePost = lazy(() => import('./pages/Admin/CreatePost'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
 const SecretLounge = lazy(() => import('./pages/SecretLounge'));
+const VoiceLounge = lazy(() => import('./pages/VoiceLounge'));
+const Messages = lazy(() => import('./pages/Messages'));
 const AdminYTDownloader = lazy(() => import('./pages/Admin/AdminYTDownloader'));
 
 const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
@@ -274,6 +276,7 @@ function App() {
                 <Route path="video-downloader" element={<VideoDownloader />} />
         {/* VIP Lounge */}
         <Route path="/vip-lounge" element={<UnderDevelopmentGuard moduleName="vipLounge"><VIPLounge /></UnderDevelopmentGuard>} />
+        <Route path="/voice-lounge" element={<UnderDevelopmentGuard moduleName="voiceLounge"><VoiceLounge /></UnderDevelopmentGuard>} />
                 
                 {/* User Dashboard Routes */}
                 <Route path="dashboard" element={<UserDashboard />} />
@@ -281,6 +284,7 @@ function App() {
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="activity" element={<UserActivity />} />
                 <Route path="secret-lounge" element={<SecretLounge />} />
+                <Route path="messages" element={<Messages />} />
               </Route>
             </Route>
 

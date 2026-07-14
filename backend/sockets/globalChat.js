@@ -76,17 +76,16 @@ export const registerGlobalChatHandlers = (io, socket) => {
               message: botResponse,
             });
 
-            const populatedBotMessage = await ChatMessage.findById(botMessage._id)
+            const populatedBotMsg = await ChatMessage.findById(botMessage._id)
               .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
               .lean();
 
-            io.to('globalChatRoom').emit('newGlobalMessage', populatedBotMessage);
-          } catch (botErr) {
-            console.error('Error with AI Bot:', botErr);
+            io.to('globalChatRoom').emit('newGlobalMessage', populatedBotMsg);
+          } catch (err) {
+            console.error('AI Bot Error in chat:', err);
           }
-        })();
+        }, 1500); // Slight delay to seem human
       }
-
     } catch (err) {
       console.error('Error sending global message:', err);
       socket.emit('globalChatError', { message: 'Failed to send message.' });

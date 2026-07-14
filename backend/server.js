@@ -177,6 +177,7 @@ import arenaGameRoutes from './routes/arenaGameRoutes.js';
 import offerwallRoutes from './routes/offerwallRoutes.js';
 import nexoriaMusicRoutes from './routes/nexoriaMusicRoutes.js';
 import creatorRoutes from './routes/creatorRoutes.js';
+import friendRoutes from './routes/friendRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -237,6 +238,7 @@ app.use('/api/campaigns', campaignRoutes);
 app.use('/api/webhooks/offerwall', offerwallRoutes);
 app.use('/api/nexoria-music', nexoriaMusicRoutes);
 app.use('/api/creator', adminLimiter, creatorRoutes);
+app.use('/api/friends', apiLimiter, friendRoutes);
 
 import path from 'path';
 

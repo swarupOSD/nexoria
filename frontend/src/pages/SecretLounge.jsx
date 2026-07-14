@@ -26,6 +26,12 @@ const SecretLounge = () => {
       return;
     }
 
+    if (user.role === 'user' && !user.isPremium) {
+      toast.error('The Secret Lounge is restricted to Premium Users and Admins only.');
+      navigate('/');
+      return;
+    }
+
     const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       withCredentials: true,
     });
