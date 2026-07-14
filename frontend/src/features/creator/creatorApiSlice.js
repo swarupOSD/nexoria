@@ -3,30 +3,30 @@ import { apiSlice } from "../api/apiSlice";
 export const creatorApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAuditLogs: builder.query({
-      query: () => '/api/creator/audit',
+      query: () => '/creator/audit',
       providesTags: ['AuditLogs'],
     }),
     updateAuraGodMode: builder.mutation({
       query: ({ userId, data }) => ({
-        url: `/api/creator/god-mode/${userId}`,
+        url: `/creator/god-mode/${userId}`,
         method: 'PUT',
         body: data,
       }),
       invalidatesTags: ['User'],
     }),
     databaseBackup: builder.query({
-      query: () => '/api/creator/backup',
+      query: () => '/creator/backup',
     }),
     databaseWipe: builder.mutation({
       query: (collections) => ({
-        url: '/api/creator/wipe',
+        url: '/creator/wipe',
         method: 'DELETE',
         body: { collections },
       }),
     }),
     overrideBranding: builder.mutation({
       query: (data) => ({
-        url: '/api/creator/branding',
+        url: '/creator/branding',
         method: 'PUT',
         body: data,
       }),
@@ -34,7 +34,7 @@ export const creatorApiSlice = apiSlice.injectEndpoints({
     }),
     systemBroadcast: builder.mutation({
       query: (data) => ({
-        url: '/api/creator/broadcast',
+        url: '/creator/broadcast',
         method: 'POST',
         body: data,
       }),

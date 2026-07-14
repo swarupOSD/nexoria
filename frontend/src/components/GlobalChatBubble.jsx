@@ -149,12 +149,12 @@ const GlobalChatBubble = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-28 right-6 z-[110] w-full max-w-sm h-[500px] sm:w-[380px] bg-[#0f1219] border border-slate-800 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
+            className="fixed bottom-28 right-6 z-[110] w-full max-w-sm h-[500px] sm:w-[380px] bg-[#0f1219]/85 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden ring-1 ring-white/5"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800">
+            <div className="flex items-center justify-between p-4 bg-white/5 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
                   <MessageSquare className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
@@ -297,11 +297,11 @@ const GlobalChatBubble = () => {
             {/* Input Area */}
             {user ? (
               <div className="relative">
-                <form onSubmit={handleSend} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
+                <form onSubmit={handleSend} className="p-3 bg-white/5 border-t border-white/10 flex gap-2">
                   <button 
                     type="button" 
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0"
+                    className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0"
                   >
                     <Smile className="w-5 h-5" />
                   </button>
@@ -310,12 +310,12 @@ const GlobalChatBubble = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Say something to the world..."
-                    className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
+                    className="flex-1 bg-black/20 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
                   />
                   <button 
                     type="submit"
                     disabled={!inputValue.trim()}
-                    className="p-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors disabled:opacity-50 disabled:hover:bg-purple-600 shrink-0"
+                    className="p-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl transition-all disabled:opacity-50 disabled:grayscale shrink-0 shadow-lg shadow-purple-500/20"
                   >
                     <Send className="w-5 h-5" />
                   </button>

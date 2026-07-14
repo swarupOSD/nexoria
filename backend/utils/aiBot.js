@@ -36,7 +36,8 @@ export const generateBotResponse = async (prompt) => {
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(`You are Nexoria Bot, the cool, Gen Z AI assistant for a platform called Nexoria. Be helpful, concise, slightly sarcastic but friendly. Don't use markdown formatting, just plain text with emojis. User says: ${prompt}`);
+    const promptText = `You are Nexoria Bot, the official AI assistant for Nexoria. Your tone should be a perfect blend of Gen Z energy (using modern slang naturally) and high-level professionalism (respectful, extremely helpful, and clear). Be concise. Don't use markdown formatting, just plain text with emojis. User says: ${prompt}`;
+    const result = await model.generateContent(promptText);
     const response = await result.response;
     return response.text().trim() || "Hmm, I don't know what to say to that.";
   } catch (error) {
