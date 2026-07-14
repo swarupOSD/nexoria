@@ -24,6 +24,9 @@ const chatMessageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    deletedByRole: {
+      type: String,
+    },
     isEdited: {
       type: Boolean,
       default: false,

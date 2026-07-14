@@ -72,8 +72,8 @@ const GlobalChatBubble = () => {
       );
     });
 
-    socket.on('messageDeleted', (messageId) => {
-      setMessages((prev) => prev.filter(m => m._id !== messageId));
+    socket.on('messageDeleted', ({ messageId, deletedByRole }) => {
+      setMessages((prev) => prev.map(m => m._id === messageId ? { ...m, isDeleted: true, deletedByRole, message: '', audioUrl: '' } : m));
     });
 
     socket.on('userSuspended', ({ userId, username }) => {
@@ -231,10 +231,10 @@ const GlobalChatBubble = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-28 right-6 z-[110] w-full max-w-sm h-[500px] sm:w-[380px] bg-[#0f1219]/85 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden ring-1 ring-white/5"
+            className="fixed bottom-28 right-6 z-[110] w-[calc(100%-3rem)] max-w-sm h-[550px] sm:w-[400px] bg-black/40 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden ring-1 ring-white/10 before:absolute before:inset-0 before:bg-gradient-to-br before:from-purple-500/10 before:to-pink-500/10 before:-z-10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-white/5 border-b border-white/10">
+            <div className="flex items-center justify-between p-4 bg-white/5 border-b border-white/10 backdrop-blur-md relative z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
                   <MessageSquare className="w-5 h-5 text-purple-400" />
@@ -278,9 +278,9 @@ const GlobalChatBubble = () => {
                       }`}
                     />
                     <div className={`flex flex-col max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex items-center gap-1.5 mb-1.5">
                         <span 
-                          className={`text-[11px] font-bold ${!msg.sender?.chatNameColor ? getRankColor(msg.sender?.auraRank) : ''}`}
+                          className={`text-[11px] font-bold tracking-wide ${!msg.sender?.chatNameColor ? getRankColor(msg.sender?.auraRank) : ''}`}
                           style={msg.sender?.chatNameColor ? { color: msg.sender.chatNameColor, textShadow: `0 0 8px ${msg.sender.chatNameColor}60` } : {}}
                         >
                           {msg.sender?.name || 'User'}
@@ -317,16 +317,19 @@ const GlobalChatBubble = () => {
                           <Trophy className="w-3 h-3 text-amber-400" />
                         )}
                       </div>
-                      <div className={`px-4 py-2 text-sm rounded-2xl group relative ${
-                        senderRole === 'owner'
-                          ? `bg-gradient-to-r from-amber-950 to-slate-900 text-amber-100 border border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                      </div>
+                      <div className={`px-4 py-2.5 text-sm rounded-2xl group relative backdrop-blur-md shadow-lg ${
+                        msg.isDeleted
+                          ? 'bg-white/5 border border-white/10 text-slate-400'
+                          : senderRole === 'owner'
+                          ? `bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-100 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                           : senderRole === 'superadmin' || senderRole === 'admin'
-                          ? `bg-gradient-to-r from-rose-950 to-rose-900 text-rose-100 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                          ? `bg-gradient-to-r from-rose-500/20 to-rose-700/20 text-rose-100 border border-rose-500/30 shadow-[0_0_20px_rgba(244,63,94,0.15)] ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                           : senderPremium
-                            ? `bg-gradient-to-r from-amber-950 to-orange-950 text-amber-100 border border-amber-500/30 ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
+                            ? `bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-100 border border-amber-500/20 ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`
                             : isMe 
-                              ? 'bg-purple-600 text-white rounded-tr-sm' 
-                              : 'bg-slate-800 text-slate-200 border border-slate-700/50 rounded-tl-sm'
+                              ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-tr-sm border border-white/10 shadow-purple-500/20' 
+                              : 'bg-white/10 text-slate-200 border border-white/5 rounded-tl-sm shadow-black/20'
                       }`}>
                         {editingId === msg._id ? (
                           <div className="flex items-center gap-2">
@@ -343,20 +346,25 @@ const GlobalChatBubble = () => {
                           </div>
                         ) : (
                           <>
-                            {msg.type === 'voice' ? (
+                            {msg.isDeleted ? (
+                              <span className="italic text-[11px] flex items-center gap-1.5 opacity-80">
+                                <ShieldAlert className="w-3.5 h-3.5" /> 
+                                This message was deleted by {msg.deletedByRole === 'owner' ? 'Owner' : msg.deletedByRole === 'superadmin' ? 'Super Admin' : msg.deletedByRole === 'admin' ? 'Admin' : 'User'}
+                              </span>
+                            ) : msg.type === 'voice' ? (
                               <div className="flex items-center gap-3 py-1 px-1 rounded-xl min-w-[180px]">
                                 <button 
                                   onClick={() => handlePlayVoice(msg._id)}
-                                  className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full transition-colors shrink-0"
+                                  className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full transition-colors shrink-0 backdrop-blur-md"
                                 >
                                   {playingAudioId === msg._id ? <Square className="w-3.5 h-3.5 fill-current" /> : <div className="w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-white ml-1"></div>}
                                 </button>
                                 <div className="flex-1">
-                                  <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden flex items-center">
-                                    <div className="h-full bg-white w-full animate-pulse opacity-70"></div>
+                                  <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden flex items-center shadow-inner">
+                                    <div className="h-full bg-white/80 w-full animate-pulse"></div>
                                   </div>
                                 </div>
-                                <span className="text-[10px] opacity-80 font-mono">Voice</span>
+                                <span className="text-[10px] opacity-80 font-mono tracking-widest">Voice</span>
                                 <audio 
                                   ref={el => audioRefs.current[msg._id] = el}
                                   src={msg.audioUrl?.startsWith('http') ? msg.audioUrl : `${import.meta.env.VITE_API_URL || ''}${msg.audioUrl}`} 
@@ -372,19 +380,19 @@ const GlobalChatBubble = () => {
                               <span className="break-words font-medium">{msg.message}</span>
                             )}
                             
-                            {msg.isEdited && !msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
+                            {msg.isEdited && !msg.isDeleted && !msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
                             
-                            {(isMe || user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (
-                              <div className={`absolute top-1/2 -translate-y-1/2 ${isMe ? '-left-20' : '-right-20'} hidden group-hover:flex gap-1`}>
+                            {!msg.isDeleted && (isMe || user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (
+                              <div className={`absolute top-1/2 -translate-y-1/2 ${isMe ? '-left-20' : '-right-20'} hidden group-hover:flex gap-1 bg-black/40 backdrop-blur-md rounded-full p-1 border border-white/10 shadow-xl z-10`}>
                                 {isMe && !msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') && (
-                                  <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
+                                  <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-white/5 rounded-full text-slate-300 hover:text-white hover:bg-white/20 transition-all"><Edit2 className="w-3 h-3" /></button>
                                 )}
-                                <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500" title="Delete Message"><Trash2 className="w-3 h-3" /></button>
+                                <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-white/5 rounded-full text-slate-300 hover:text-red-400 hover:bg-white/20 transition-all" title="Delete Message"><Trash2 className="w-3 h-3" /></button>
                                 {!isMe && (
                                   (user?.role === 'owner' && msg.sender?.role !== 'owner') ||
                                   ((user?.role === 'admin' || user?.role === 'superadmin') && msg.sender?.role !== 'owner' && msg.sender?.role !== 'superadmin')
                                 ) && (
-                                  <button onClick={() => handleSuspend(msg.sender._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-orange-500" title="Suspend User"><ShieldAlert className="w-3 h-3" /></button>
+                                  <button onClick={() => handleSuspend(msg.sender._id)} className="p-1.5 bg-white/5 rounded-full text-slate-300 hover:text-orange-400 hover:bg-white/20 transition-all" title="Suspend User"><ShieldAlert className="w-3 h-3" /></button>
                                 )}
                               </div>
                             )}
@@ -431,7 +439,7 @@ const GlobalChatBubble = () => {
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       placeholder="Say something to the world..."
-                      className="flex-1 bg-black/20 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500"
+                      className="flex-1 bg-black/40 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500 backdrop-blur-md"
                     />
                     
                     {/* Voice Message Button */}

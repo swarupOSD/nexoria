@@ -9,8 +9,8 @@ export const registerGlobalChatHandlers = (io, socket) => {
   socket.on('joinGlobalChat', async () => {
     socket.join('globalChatRoom');
     try {
-      // Send last 50 messages
-      const history = await ChatMessage.find({ isDeleted: false })
+      // Send last 50 messages (including soft deleted for tombstones)
+      const history = await ChatMessage.find({})
         .sort({ createdAt: -1 })
         .limit(50)
         .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
@@ -149,19 +149,24 @@ export const registerGlobalChatHandlers = (io, socket) => {
       const isOwner = socket.user.role === 'owner';
       const isAdmin = socket.user.role === 'admin' || socket.user.role === 'superadmin' || isOwner;
       
-      if (!message || (message.sender._id.toString() !== socket.user._id.toString() && !isAdmin)) return;
-      if (!isOwner && isAdmin && message.sender.role === 'owner') return; // Protect owner messages
-      
-      if (isOwner && message.sender._id.toString() !== socket.user._id.toString()) {
-        message.message = "🚫 deleted by NEXORIA CREATOR SYSTEM ARCHITECT";
-        message.isOwnerDeleted = true; // Use this flag in frontend
-        await message.save();
-        io.to('globalChatRoom').emit('messageEdited', message);
-      } else {
-        message.isDeleted = true;
-        await message.save();
-        io.to('globalChatRoom').emit('messageDeleted', messageId);
+      if (!message || (message.sender._id.toString() !== socket.user._id.toString() && !isAdmin)) {
+        return socket.emit('globalChatError', { message: 'Not authorized to delete this message' });
       }
+      if (!isOwner && isAdmin && message.sender.role === 'owner') return; // Protect owner messages
+
+      // Soft delete: clear content, set isDeleted and deletedByRole
+      message.isDeleted = true;
+      message.deletedByRole = socket.user.role;
+      message.message = '';
+      if (message.audioUrl) {
+        message.audioUrl = ''; // Optionally delete the file from disk here too
+      }
+      await message.save();
+
+      io.to('globalChatRoom').emit('messageDeleted', { 
+        messageId, 
+        deletedByRole: socket.user.role 
+      });
     } catch (err) {
       console.error('Error deleting message:', err);
     }
