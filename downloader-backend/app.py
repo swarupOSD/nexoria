@@ -152,7 +152,13 @@ def get_info():
     if not url: return jsonify({'error': 'URL is required'}), 400
         
     try:
-        ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'ffmpeg_location': FFMPEG_PATH, 'format': 'best'}
+        ydl_opts = {
+            'quiet': True, 
+            'extract_flat': 'in_playlist', 
+            'ffmpeg_location': FFMPEG_PATH, 
+            'format': 'best',
+            'extractor_args': {'youtube': {'player_client': ['default', 'ios']}}
+        }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
             ydl_opts['cookiefile'] = cookie_file
@@ -184,13 +190,12 @@ def upload_cookies():
             
         dest_path = os.path.join(BASE_DIR, 'cookies.txt')
         new_content = file.read().decode('utf-8', errors='ignore')
-        mode = 'a' if os.path.exists(dest_path) else 'w'
-        with open(dest_path, mode, encoding='utf-8') as f:
-            if mode == 'a':
-                f.write('\n')
+        
+        # Always overwrite to prevent corrupted cookie files
+        with open(dest_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
             
-        return jsonify({'status': 'success', 'message': 'Cookies uploaded and appended successfully'})
+        return jsonify({'success': True, 'message': 'Cookies updated successfully!'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -260,7 +265,8 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             
         ydl_opts = {
             'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
-            'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH
+            'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH,
+            'extractor_args': {'youtube': {'player_client': ['default', 'ios']}}
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
