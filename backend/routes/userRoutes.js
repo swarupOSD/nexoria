@@ -22,6 +22,20 @@ router.route('/')
   .get(protect, authorize('admin', 'superadmin'), getUsers);
 
 // Static routes must come BEFORE /:id
+router.post('/me/claim-owner', protect, async (req, res) => {
+  try {
+    if (req.user.email === 'sweetyswarup1324@gmail.com') {
+      req.user.role = 'owner';
+      await req.user.save();
+      res.json({ success: true, message: 'Successfully upgraded to Owner status!' });
+    } else {
+      res.status(403).json({ success: false, message: 'Unauthorized email.' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 router.post('/push-subscribe', protect, subscribeToPush);
 router.post('/push-unsubscribe', protect, unsubscribeFromPush);
 router.post('/fcm-token', protect, updateFCMToken);
