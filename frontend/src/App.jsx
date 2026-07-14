@@ -254,17 +254,17 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="/post/:slug" element={<SinglePost />} />
                 <Route path="/download-timer" element={<DownloadTimer />} />
-                <Route path="/apps" element={<UnderDevelopmentGuard moduleName="apps"><CategoryPage type="App" /></UnderDevelopmentGuard>} />
+                <Route path="/apps" element={<CategoryPage type="App" />} />
                 <Route path="requests" element={<FeatureRequests />} />
                 <Route path="/search" element={<SearchPage />} />
-                <Route path="/sound" element={<UnderDevelopmentGuard moduleName="classicSound"><NexoriaSound /></UnderDevelopmentGuard>} />
-                <Route path="/sound/search" element={<UnderDevelopmentGuard moduleName="classicSound"><GlobalMusicSearch /></UnderDevelopmentGuard>} />
-                <Route path="/sound/queue" element={<UnderDevelopmentGuard moduleName="classicSound"><SoundQueue /></UnderDevelopmentGuard>} />
+                <Route path="/sound" element={<NexoriaSound />} />
+                <Route path="/sound/search" element={<GlobalMusicSearch />} />
+                <Route path="/sound/queue" element={<SoundQueue />} />
                 
                 {/* Proprietary Nexoria Music Platform */}
-                <Route path="/nexoria-music" element={<UnderDevelopmentGuard moduleName="music"><NexoriaMusicHome /></UnderDevelopmentGuard>} />
-                <Route path="/nexoria-music/search" element={<UnderDevelopmentGuard moduleName="music"><NexoriaMusicSearch /></UnderDevelopmentGuard>} />
-                <Route path="/nexoria-music/library" element={<UnderDevelopmentGuard moduleName="music"><NexoriaMusicLibrary /></UnderDevelopmentGuard>} />
+                <Route path="/nexoria-music" element={<NexoriaMusicHome />} />
+                <Route path="/nexoria-music/search" element={<NexoriaMusicSearch />} />
+                <Route path="/nexoria-music/library" element={<NexoriaMusicLibrary />} />
 
                 <Route path="/category/:slug" element={<CategoryPage />} />
                 <Route path="categories" element={<AllCategories />} />
@@ -275,8 +275,8 @@ function App() {
                 <Route path="premium" element={<Premium />} />
                 <Route path="video-downloader" element={<VideoDownloader />} />
         {/* VIP Lounge */}
-        <Route path="/vip-lounge" element={<UnderDevelopmentGuard moduleName="vipLounge"><VIPLounge /></UnderDevelopmentGuard>} />
-        <Route path="/voice-lounge" element={<UnderDevelopmentGuard moduleName="voiceLounge"><VoiceLounge /></UnderDevelopmentGuard>} />
+        <Route path="/vip-lounge" element={<VIPLounge />} />
+        <Route path="/voice-lounge" element={<VoiceLounge />} />
                 
                 {/* User Dashboard Routes */}
                 <Route path="dashboard" element={<UserDashboard />} />
@@ -290,7 +290,7 @@ function App() {
 
           {/* MovieBox Public Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="moviebox" element={<UnderDevelopmentGuard moduleName="movies"><MovieBoxLayout /></UnderDevelopmentGuard>}>
+            <Route path="moviebox" element={<MovieBoxLayout />}>
               <Route index element={<Navigate to="games" replace />} />
               <Route path="movie/:slug" element={<MovieDetail />} />
               <Route path="category/:slug" element={<MovieCategory />} />
@@ -301,14 +301,14 @@ function App() {
               <Route path="movies" element={<MovieBrowse type="movies" />} />
               <Route path="animation" element={<MovieBrowse type="animation" />} />
               <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
-              <Route path="games" element={<UnderDevelopmentGuard moduleName="games"><Games /></UnderDevelopmentGuard>} />
+              <Route path="games" element={<Games />} />
               <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
               <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
               <Route path="fm-download" element={<Navigate to="/sound" replace />} />
             </Route>
           </Route>
           
-          <Route path="nexoria-arena" element={<UnderDevelopmentGuard moduleName="arena"><NexoriaArena /></UnderDevelopmentGuard>} />
+          <Route path="nexoria-arena" element={<NexoriaArena />} />
           <Route path="/aura" element={<AuraLeaderboard />} />
           <Route path="/aura/battle" element={<AuraBattle />} />
 

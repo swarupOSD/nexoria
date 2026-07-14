@@ -514,12 +514,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         />
       )}
 
-      {selectedUserAction && (
-        <UserActionModal 
-          user={selectedUserAction} 
-          onClose={() => setSelectedUserAction(null)} 
-        />
-      )}
+      <UserActionModal 
+        isOpen={!!selectedUserAction}
+        onClose={() => setSelectedUserAction(null)}
+        targetUser={selectedUserAction}
+      />
     </div>
   );
 };
