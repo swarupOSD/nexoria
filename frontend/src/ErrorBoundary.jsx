@@ -13,20 +13,19 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error("ErrorBoundary caught an error", error, errorInfo);
     
-    // Check if it's a chunk loading error from Vite/Vercel
     const errorStr = error?.toString() || '';
-    if (
-      errorStr.includes('Failed to fetch dynamically imported module') ||
-      errorStr.includes('ChunkLoadError') ||
-      errorStr.includes('Importing a module script failed') ||
-      errorStr.includes('Load failed') ||
-      errorStr.includes('Unexpected token')
-    ) {
-      console.log('Chunk load error detected, forcing reload to get latest assets...');
+    
+    // Always try to auto-reload once for any error (handles stale chunks after deploy)
+    const hasAutoReloaded = sessionStorage.getItem('errorBoundaryReloaded');
+    
+    if (!hasAutoReloaded) {
+      console.log('Auto-reloading to get latest assets...');
+      sessionStorage.setItem('errorBoundaryReloaded', 'true');
       window.location.reload(true);
       return;
     }
 
+    // If already reloaded and still erroring, show the error screen
     this.setState({ error, errorInfo });
   }
 
