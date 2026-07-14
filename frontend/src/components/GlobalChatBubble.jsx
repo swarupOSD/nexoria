@@ -185,13 +185,21 @@ const GlobalChatBubble = () => {
                 return (
                   <div key={msg._id || idx} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
                     <img 
-                      src={msg.sender?.profileImage || '/default.jpg'} 
+                      src={msg.sender?.profileImage?.startsWith('http') ? msg.sender.profileImage : `${import.meta.env.VITE_API_URL || ''}/uploads/avatars/${msg.sender?.profileImage || 'default.jpg'}`}
                       alt="Avatar" 
-                      className="w-8 h-8 rounded-full object-cover shrink-0 mt-1"
+                      className={`w-8 h-8 rounded-full object-cover shrink-0 mt-1 ${
+                        msg.sender?.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_10px_orange]' :
+                        msg.sender?.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_15px_cyan]' :
+                        msg.sender?.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_10px_fuchsia]' :
+                        msg.sender?.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_10px_yellow]' : ''
+                      }`}
                     />
                     <div className={`flex flex-col max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
                       <div className="flex items-center gap-1.5 mb-1">
-                        <span className={`text-[11px] ${getRankColor(msg.sender?.auraRank)}`}>
+                        <span 
+                          className={`text-[11px] font-bold ${!msg.sender?.chatNameColor ? getRankColor(msg.sender?.auraRank) : ''}`}
+                          style={msg.sender?.chatNameColor ? { color: msg.sender.chatNameColor, textShadow: `0 0 8px ${msg.sender.chatNameColor}60` } : {}}
+                        >
                           {msg.sender?.name || 'User'}
                         </span>
                         {/* VIP Badges */}

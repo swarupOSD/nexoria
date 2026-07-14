@@ -311,32 +311,38 @@ export const removeFromWishlist = async (req, res) => {
   }
 };
 
-// @desc    Update Profile Theme
-// @route   PUT /api/users/theme
+// @desc    Update Profile Customization (Theme, Color, Border)
+// @route   PUT /api/users/customization
 // @access  Private (Premium/Admin only)
-export const updateTheme = async (req, res) => {
+export const updateCustomization = async (req, res) => {
   try {
-    const { theme } = req.body;
+    const { theme, chatNameColor, profileBorder } = req.body;
     
-    if (!theme) return res.status(400).json({ success: false, message: 'Theme is required' });
-
     const user = await User.findById(req.user._id);
     
     if (user.role === 'user' && !user.isPremium) {
-      return res.status(403).json({ success: false, message: 'Premium is required to change themes' });
+      return res.status(403).json({ success: false, message: 'Premium is required for customizations' });
     }
 
-    const allowedThemes = ['default', 'cyberpunk', 'synthwave', 'neon'];
-    if (!allowedThemes.includes(theme)) {
-      return res.status(400).json({ success: false, message: 'Invalid theme' });
+    if (theme) {
+      const allowedThemes = ['default', 'cyberpunk', 'synthwave', 'neon'];
+      if (allowedThemes.includes(theme)) user.profileTheme = theme;
+    }
+    
+    if (chatNameColor !== undefined) {
+      user.chatNameColor = chatNameColor;
+    }
+    
+    if (profileBorder) {
+      const allowedBorders = ['none', 'fire', 'neon', 'holographic', 'gold'];
+      if (allowedBorders.includes(profileBorder)) user.profileBorder = profileBorder;
     }
 
-    user.profileTheme = theme;
     await user.save();
 
-    res.status(200).json({ success: true, message: 'Theme updated successfully', data: user.profileTheme });
-  } catch (error) {
-    logger.error(`Update Theme Error: ${error.message}`);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(200).json({ success: true, message: 'Customization updated successfully', data: { profileTheme: user.profileTheme, chatNameColor: user.chatNameColor, profileBorder: user.profileBorder } });
+  } catch (err) {
+    console.error('Error updating customization:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };

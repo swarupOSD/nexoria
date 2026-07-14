@@ -1,6 +1,7 @@
 import ChatMessage from '../models/ChatMessage.js';
 import User from '../models/User.js';
 import { hasBadWords, handleViolation } from '../utils/autoModerator.js';
+import { getBotUser, generateBotResponse } from '../utils/aiBot.js';
 
 export const registerGlobalChatHandlers = (io, socket) => {
   socket.on('joinGlobalChat', async () => {
@@ -10,7 +11,7 @@ export const registerGlobalChatHandlers = (io, socket) => {
       const history = await ChatMessage.find({ isDeleted: false })
         .sort({ createdAt: -1 })
         .limit(50)
-        .populate('sender', 'name username profileImage auraRank badges role isPremium')
+        .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
         .lean();
       
       socket.emit('globalChatHistory', history.reverse());
@@ -53,11 +54,39 @@ export const registerGlobalChatHandlers = (io, socket) => {
 
       // Populate sender info before broadcasting
       const populatedMessage = await ChatMessage.findById(newMessage._id)
-        .populate('sender', 'name username profileImage auraRank badges role isPremium')
+        .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
         .lean();
 
       // Broadcast to everyone in the room
       io.to('globalChatRoom').emit('newGlobalMessage', populatedMessage);
+
+      // --- AI Bot Integration ---
+      const lowerContent = content.toLowerCase();
+      if (lowerContent.includes('@bot') || lowerContent.includes('@nexoriabot')) {
+        // Trigger AI Bot in background
+        (async () => {
+          try {
+            const botUser = await getBotUser();
+            
+            // Show typing indicator? (Optional, but let's just send message directly for now)
+            const botResponse = await generateBotResponse(content);
+            
+            const botMessage = await ChatMessage.create({
+              sender: botUser._id,
+              message: botResponse,
+            });
+
+            const populatedBotMessage = await ChatMessage.findById(botMessage._id)
+              .populate('sender', 'name username profileImage auraRank badges role isPremium chatNameColor profileBorder')
+              .lean();
+
+            io.to('globalChatRoom').emit('newGlobalMessage', populatedBotMessage);
+          } catch (botErr) {
+            console.error('Error with AI Bot:', botErr);
+          }
+        })();
+      }
+
     } catch (err) {
       console.error('Error sending global message:', err);
       socket.emit('globalChatError', { message: 'Failed to send message.' });

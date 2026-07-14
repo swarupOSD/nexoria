@@ -226,6 +226,15 @@ const userSchema = new mongoose.Schema(
       enum: ['default', 'cyberpunk', 'synthwave', 'neon'],
       default: 'default'
     },
+    chatNameColor: {
+      type: String,
+      default: ''
+    },
+    profileBorder: {
+      type: String,
+      enum: ['none', 'fire', 'neon', 'holographic', 'gold'],
+      default: 'none'
+    },
     moderationStrikes: {
       type: Number,
       default: 0

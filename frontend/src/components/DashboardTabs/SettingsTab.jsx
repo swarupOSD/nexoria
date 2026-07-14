@@ -7,7 +7,7 @@ import { useLogoutMutation, useUpdateProfileMutation } from '../../features/auth
 import { logout as logoutAction } from '../../features/auth/authSlice';
 import { useSubscribeToPushMutation } from '../../features/user/userApiSlice';
 import { toast } from 'react-hot-toast';
-import ThemeSelector from '../ThemeSelector';
+import PremiumCustomization from '../PremiumCustomization';
 
 const SettingsTab = ({ user }) => {
   const dispatch = useDispatch();
@@ -126,7 +126,7 @@ const SettingsTab = ({ user }) => {
               System Default
             </div>
           </div>
-          <ThemeSelector />
+          <PremiumCustomization />
           <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
             <div>
               <p className="font-bold dark:text-white flex items-center gap-2"><Bell className="w-4 h-4 text-amber-500"/> Push Notifications</p>
