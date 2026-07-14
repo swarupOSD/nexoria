@@ -252,15 +252,26 @@ const GlobalChatBubble = () => {
                           </div>
                         ) : (
                           <>
-                            {msg.message}
-                            {msg.isEdited && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
+                            {msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') ? (
+                              <span className="text-red-500 font-bold italic text-xs tracking-wider opacity-90 flex items-center gap-1.5 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">
+                                <ShieldAlert className="w-3.5 h-3.5"/> {msg.message}
+                              </span>
+                            ) : (
+                              <span className="break-words font-medium">{msg.message}</span>
+                            )}
+                            
+                            {msg.isEdited && !msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') && <span className="text-[10px] opacity-60 ml-2">(edited)</span>}
+                            
                             {(isMe || user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (
                               <div className={`absolute top-1/2 -translate-y-1/2 ${isMe ? '-left-20' : '-right-20'} hidden group-hover:flex gap-1`}>
-                                {isMe && (
+                                {isMe && !msg.message?.includes('deleted by NEXORIA CREATOR SYSTEM ARCHITECT') && (
                                   <button onClick={() => { setEditingId(msg._id); setEditValue(msg.message); }} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Edit2 className="w-3 h-3" /></button>
                                 )}
                                 <button onClick={() => handleDelete(msg._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-red-500" title="Delete Message"><Trash2 className="w-3 h-3" /></button>
-                                {!isMe && (user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'owner') && (msg.sender?.role !== 'superadmin' && msg.sender?.role !== 'owner') && (
+                                {!isMe && (
+                                  (user?.role === 'owner' && msg.sender?.role !== 'owner') ||
+                                  ((user?.role === 'admin' || user?.role === 'superadmin') && msg.sender?.role !== 'owner' && msg.sender?.role !== 'superadmin')
+                                ) && (
                                   <button onClick={() => handleSuspend(msg.sender._id)} className="p-1.5 bg-slate-800 rounded-full text-slate-400 hover:text-orange-500" title="Suspend User"><ShieldAlert className="w-3 h-3" /></button>
                                 )}
                               </div>
