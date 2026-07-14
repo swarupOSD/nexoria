@@ -17,7 +17,8 @@ import {
   useAddAdminNoteMutation,
   useGetAdminNotesQuery,
   useUpdateRestrictionsMutation,
-  useSendDirectMessageMutation
+  useSendDirectMessageMutation,
+  useWarnUserMutation
 } from '../../features/api/userModerationApiSlice';
 import { toast } from 'react-hot-toast';
 import BackButton from '../../components/BackButton';

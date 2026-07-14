@@ -12,3 +12,6 @@ test-results
 
 # Firebase
 firebase-service-account.json
+
+.vercel
+.env*

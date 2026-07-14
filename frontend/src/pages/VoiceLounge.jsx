@@ -145,7 +145,7 @@ const VoiceLounge = () => {
     };
   }, [user._id]); // Added dependency array
 
-  const createPeerConnection = (targetUserId) => {
+  function createPeerConnection(targetUserId) {
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     });
@@ -182,7 +182,7 @@ const VoiceLounge = () => {
     return peer;
   };
 
-  const setupSpeechDetection = (stream, userId) => {
+  function setupSpeechDetection(stream, userId) {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
     }

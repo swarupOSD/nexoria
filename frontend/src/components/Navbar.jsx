@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, 
+  Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, Users,
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
   Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud
 } from 'lucide-react';

@@ -85,7 +85,7 @@ const Messages = () => {
     }
   }, [targetUserId, friendsList]);
 
-  const scrollToBottom = () => {
+  function scrollToBottom() {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
