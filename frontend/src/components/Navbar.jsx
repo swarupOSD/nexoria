@@ -562,13 +562,32 @@ const Navbar = () => {
                 width="w-64"
                 trigger={
                   <button className="flex items-center gap-2 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 pl-2 pr-4 py-1.5 rounded-full transition-all shadow-sm">
-                    <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
-                    <span className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate max-w-[100px]">{user.name.split(' ')[0]}</span>
+                    <div className={`shrink-0 rounded-full ${
+                        user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_10px_orange]' :
+                        user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_15px_cyan]' :
+                        user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_10px_fuchsia]' :
+                        user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_10px_yellow]' : ''
+                    }`}>
+                      <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
+                    </div>
+                    <span 
+                      className="text-sm font-bold truncate max-w-[100px]"
+                      style={user.chatNameColor ? { color: user.chatNameColor, textShadow: `0 0 8px ${user.chatNameColor}60` } : {}}
+                    >
+                      {user.chatNameColor ? user.name.split(' ')[0] : <span className="text-slate-700 dark:text-slate-200">{user.name.split(' ')[0]}</span>}
+                    </span>
                   </button>
                 }
               >
                 <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 mb-2">
-                  <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-primary object-cover" alt="Profile" />
+                  <div className={`mx-auto w-16 h-16 rounded-full mb-2 ${
+                      user.profileBorder === 'fire' ? 'ring-4 ring-orange-500 shadow-[0_0_15px_orange]' :
+                      user.profileBorder === 'neon' ? 'ring-4 ring-cyan-400 shadow-[0_0_20px_cyan]' :
+                      user.profileBorder === 'holographic' ? 'ring-4 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
+                      user.profileBorder === 'gold' ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary'
+                  }`}>
+                    <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-full h-full rounded-full object-cover" alt="Profile" />
+                  </div>
                   <p className="font-bold text-slate-900 dark:text-white">{user.name}</p>
                   <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{user.role}</p>
                 </div>
@@ -656,7 +675,14 @@ const Navbar = () => {
                   
                   {user ? (
                     <div className="flex items-center gap-4 group">
-                      <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-14 h-14 rounded-2xl border-2 border-primary/50 object-cover shadow-lg" alt="Profile" />
+                      <div className={`shrink-0 rounded-2xl ${
+                          user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_15px_orange]' :
+                          user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_20px_cyan]' :
+                          user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
+                          user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary/50'
+                      }`}>
+                        <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-14 h-14 rounded-2xl object-cover shadow-lg" alt="Profile" />
+                      </div>
                       <div>
                         <p className="font-bold text-lg text-slate-900 dark:text-white line-clamp-1">{user.name}</p>
                         <p className="text-xs text-primary font-bold uppercase tracking-wider">{user.role}</p>
