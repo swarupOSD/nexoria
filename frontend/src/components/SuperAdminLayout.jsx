@@ -82,6 +82,12 @@ const SuperAdminLayout = () => {
   }
 
   const navGroups = [
+    ...(activeUser.role === 'owner' ? [{
+      title: 'Creator God Mode',
+      items: [
+        { name: 'Creator Control Panel', icon: <Crown className="w-4 h-4 text-amber-500" />, path: '/superadmin/creator-panel' },
+      ]
+    }] : []),
     {
       title: 'Core',
       items: [
