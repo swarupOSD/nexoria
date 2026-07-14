@@ -39,7 +39,7 @@ const FriendsDrawer = ({ isOpen, onClose, onOpenChat }) => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-[350px] bg-[#0a0d14]/90 backdrop-blur-xl border-l border-white/10 z-[130] shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 h-full w-[350px] bg-slate-900/95 backdrop-blur-3xl border-l border-white/10 z-[130] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/10 bg-white/5">

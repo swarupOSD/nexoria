@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, ChevronDown, Trophy, Trash2, Edit2, Check, ShieldAlert, Crown, Smile, Mic, Lock, Square } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 import UserActionModal from './UserActionModal';
@@ -31,6 +31,7 @@ const GlobalChatBubble = () => {
 
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const location = useLocation();
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -208,6 +209,11 @@ const GlobalChatBubble = () => {
     setInputValue(prev => prev + emojiObject.emoji);
   };
 
+  // Hide global chat completely on voice lounge page to prevent overlapping
+  if (location.pathname.includes('/voice-lounge')) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Button */}
@@ -316,7 +322,6 @@ const GlobalChatBubble = () => {
                         {msg.sender?.badges?.includes('aura_legend') && (
                           <Trophy className="w-3 h-3 text-amber-400" />
                         )}
-                      </div>
                       </div>
                       <div className={`px-4 py-2.5 text-sm rounded-2xl group relative backdrop-blur-md shadow-lg ${
                         msg.isDeleted
