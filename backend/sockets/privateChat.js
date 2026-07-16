@@ -111,19 +111,19 @@ export const registerPrivateChatHandlers = (io, socket) => {
 
   // WebRTC Signaling Events
   socket.on('callUser', ({ userToCall, signalData, from, name, type }) => {
-    io.to(userToCall).emit('incomingCall', { signal: signalData, from, name, type });
+    socket.to(userToCall).emit('incomingCall', { signal: signalData, from, name, type });
   });
 
   socket.on('answerCall', ({ to, signal }) => {
-    io.to(to).emit('callAccepted', signal);
+    socket.to(to).emit('callAccepted', signal);
   });
 
   socket.on('iceCandidate', ({ to, candidate }) => {
-    io.to(to).emit('iceCandidate', candidate);
+    socket.to(to).emit('iceCandidate', candidate);
   });
 
   socket.on('endCall', ({ to }) => {
-    io.to(to).emit('callEnded');
+    socket.to(to).emit('callEnded');
   });
 
   // Edit a message

@@ -207,8 +207,17 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const handleCall = (type) => {
+    // participants includes the user themselves, so check if length <= 1
+    if (participants.length <= 1) {
+      toast.error('You need at least one partner in the room to make a call!');
+      return;
+    }
+    setActiveCallType(type);
+  };
+
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-100 font-sans flex flex-col relative overflow-hidden select-none">
+    <motion.div className="min-h-screen bg-[#000000] text-gray-100 font-sans flex flex-col relative overflow-hidden select-none">
       
       {/* IG Style Header */}
       <div className="bg-[#000000] border-b border-gray-900 p-4 flex items-center justify-between z-10 sticky top-0">
@@ -237,11 +246,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         <div className="flex items-center gap-2 md:gap-4 text-gray-300">
           <Phone 
             className="w-5 h-5 md:w-6 md:h-6 cursor-pointer hover:text-white transition-colors" 
-            onClick={() => setActiveCallType('audio')}
+            onClick={() => handleCall('audio')}
           />
           <Video 
             className="w-5 h-5 md:w-6 md:h-6 cursor-pointer hover:text-white transition-colors" 
-            onClick={() => setActiveCallType('video')}
+            onClick={() => handleCall('video')}
           />
           
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 mx-2">
@@ -519,7 +528,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         onClose={() => setSelectedUserAction(null)}
         targetUser={selectedUserAction}
       />
-    </div>
+    </motion.div>
   );
 };
 
