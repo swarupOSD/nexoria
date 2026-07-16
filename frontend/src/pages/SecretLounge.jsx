@@ -8,7 +8,7 @@ import SecretChatRoom from '../components/SecretChatRoom';
 import { useNavigate } from 'react-router-dom';
 
 const SecretLounge = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   
   const [socket, setSocket] = useState(null);
@@ -29,6 +29,7 @@ const SecretLounge = () => {
 
     const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       withCredentials: true,
+      auth: { token }
     });
     setSocket(newSocket);
 
