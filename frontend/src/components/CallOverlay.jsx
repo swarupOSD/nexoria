@@ -70,27 +70,25 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
     });
   };
 
-  // Initialize media
+  // Initialize media for caller
   useEffect(() => {
-    let currentStream = null;
-    
-    navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
-      .then((mediaStream) => {
-        setStream(mediaStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = mediaStream;
-        }
-        
-        // If we are the caller, we need to wait for media, then call
-        if (!isReceivingCall && partner) {
-          initiateCall(mediaStream);
-        }
-      })
-      .catch(err => {
-        console.error("Error accessing media devices.", err);
-        toast.error("Camera or Microphone permission denied. Please allow permissions in your browser.");
-        onClose();
-      });
+    if (!isReceivingCall) {
+      navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
+        .then((mediaStream) => {
+          setStream(mediaStream);
+          if (myVideo.current) {
+            myVideo.current.srcObject = mediaStream;
+          }
+          if (partner) {
+            initiateCall(mediaStream);
+          }
+        })
+        .catch(err => {
+          console.error("Error accessing media devices.", err);
+          toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+          onClose();
+        });
+    }
 
     // Cleanup listeners
     const handleCallEnded = () => {
@@ -109,14 +107,19 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
   }, []);
 
   const answerCall = () => {
-    setCallAccepted(true);
-    const peer = new RTCPeerConnection(ICE_SERVERS);
-    connectionRef.current = peer;
+    navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
+      .then((mediaStream) => {
+        setStream(mediaStream);
+        if (myVideo.current) myVideo.current.srcObject = mediaStream;
 
-    // Add tracks
-    stream.getTracks().forEach(track => peer.addTrack(track, stream));
+        setCallAccepted(true);
+        const peer = new RTCPeerConnection(ICE_SERVERS);
+        connectionRef.current = peer;
 
-    // Handle ICE candidates
+        // Add tracks
+        mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
+
+        // Handle ICE candidates
     peer.onicecandidate = (event) => {
       if (event.candidate) {
         socket.emit('iceCandidate', { to: callerInfo.from, candidate: event.candidate });
@@ -143,6 +146,12 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
       .then(answer => peer.setLocalDescription(answer))
       .then(() => {
         socket.emit('answerCall', { to: callerInfo.from, signal: peer.localDescription });
+      });
+      })
+      .catch(err => {
+        console.error("Error accessing media for answer.", err);
+        toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+        rejectCall();
       });
   };
 
