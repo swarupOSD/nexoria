@@ -64,9 +64,9 @@ export const registerGlobalChatHandlers = (io, socket) => {
 
       // --- AI Bot Integration ---
       const lowerContent = content.toLowerCase();
-      if (lowerContent.includes('@bot') || lowerContent.includes('@nexoriabot')) {
+      if (lowerContent.includes('@bot') || lowerContent.includes('@nexoria')) {
         // Trigger AI Bot in background
-        (async () => {
+        setTimeout(async () => {
           try {
             const botUser = await getBotUser();
             
