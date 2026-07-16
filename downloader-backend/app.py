@@ -156,7 +156,6 @@ def get_info():
             'quiet': True, 
             'extract_flat': 'in_playlist', 
             'ffmpeg_location': FFMPEG_PATH, 
-            'format': 'best',
             'extractor_args': {'youtube': {'player_client': ['default', 'ios']}}
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
