@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff, Maximize, Minimize } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const ICE_SERVERS = {
   iceServers: [
@@ -85,9 +86,9 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
           initiateCall(mediaStream);
         }
       })
-      .catch((err) => {
-        console.error("Failed to get local stream", err);
-        alert("Could not access camera/microphone.");
+      .catch(err => {
+        console.error("Error accessing media devices.", err);
+        toast.error("Camera or Microphone permission denied. Please allow permissions in your browser.");
         onClose();
       });
 
