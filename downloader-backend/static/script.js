@@ -870,7 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await fetch('/api/upload-cookies', { method: 'POST', body: formData });
                 const data = await res.json();
-                if (data.status === 'success') {
+                if (data.status === 'success' || data.success === true) {
                     Swal.fire('Success', 'Cookies uploaded successfully! YouTube downloads should work now.', 'success');
                 } else {
                     Swal.fire('Error', data.error || 'Failed to upload cookies.', 'error');
