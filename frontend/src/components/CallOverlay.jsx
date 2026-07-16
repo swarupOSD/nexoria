@@ -85,7 +85,11 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
         })
         .catch(err => {
           console.error("Error accessing media devices.", err);
-          toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+          if (err.name === 'NotFoundError') {
+            toast.error("No Camera or Microphone found on your device!");
+          } else {
+            toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+          }
           onClose();
         });
     }
@@ -150,7 +154,11 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
       })
       .catch(err => {
         console.error("Error accessing media for answer.", err);
-        toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+        if (err.name === 'NotFoundError') {
+          toast.error("No Camera or Microphone found on your device!");
+        } else {
+          toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+        }
         rejectCall();
       });
   };
