@@ -15,8 +15,8 @@ const VideoDownloader = () => {
   return (
     <div className="min-h-screen pt-24 pb-20 relative overflow-hidden flex flex-col">
       <Helmet>
-        <title>Free Video Downloader | Nexoria</title>
-        <meta name="description" content="Download YouTube videos and music in ultra-high quality for free. No limits, no credits, just lightning fast downloads." />
+        <title>Universal Video Downloader | Nexoria</title>
+        <meta name="description" content="Download Facebook, Instagram, X (Twitter), and TikTok videos in ultra-high quality for free. No limits, no credits, just lightning fast downloads." />
       </Helmet>
 
       {/* Animated Background */}
@@ -54,10 +54,19 @@ const VideoDownloader = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto font-medium"
+            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-6 max-w-2xl mx-auto font-medium"
           >
-            Download your favorite videos and music instantly. No hidden fees, no credit limits. Just pure, unadulterated high-speed downloading.
+            Download your favorite videos and music instantly. No hidden fees, no credit limits. Just pure, unadulterated high-speed downloading for all major social platforms.
           </motion.p>
+
+          <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ delay: 0.25 }}
+             className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-xl max-w-3xl mx-auto mb-8 text-sm text-left shadow-lg shadow-red-500/5 backdrop-blur-sm"
+          >
+             <strong><i className="fa-solid fa-circle-info mr-2"></i>Note on YouTube:</strong> Due to aggressive anti-bot protections rolled out by YouTube for cloud servers, YouTube downloads are currently restricted. However, <strong>Instagram, Facebook, X (Twitter), TikTok, and Reddit</strong> are 100% supported and working flawlessly!
+          </motion.div>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -67,7 +76,7 @@ const VideoDownloader = () => {
           >
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
               <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span className="text-sm font-bold text-slate-700 dark:text-slate-300">YouTube Supported</span>
+              <span className="text-sm font-bold text-slate-700 dark:text-slate-300">FB, Insta, X Supported</span>
             </div>
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
               <CheckCircle2 className="w-4 h-4 text-primary" />
