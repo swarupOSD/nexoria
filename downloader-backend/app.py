@@ -287,6 +287,9 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             'outtmpl': os.path.join(download_dir, '%(title).100s.%(ext)s'),
             'restrictfilenames': True,
             'progress_hooks': [my_hook], 'noplaylist': True,
+            'socket_timeout': 15,
+            'retries': 10,
+            'fragment_retries': 10,
             'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
