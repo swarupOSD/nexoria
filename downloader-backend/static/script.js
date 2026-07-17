@@ -392,9 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
             shareMobileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
             
             try {
-                const res = await fetch('/api/local-ip');
-                const data = await res.json();
-                const ip = data.ip || '127.0.0.1';
                 const filename = shareMobileBtn.dataset.filename;
                 
                 if(!filename) {
@@ -402,13 +399,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                const downloadUrl = `http://${ip}:5000/download-file/${encodeURIComponent(filename)}`;
+                const protocol = window.location.protocol;
+                const host = window.location.host;
+                const downloadUrl = `${protocol}//${host}/download-file/${encodeURIComponent(filename)}`;
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(downloadUrl)}`;
                 
                 document.getElementById('qr-code-img').src = qrUrl;
                 document.getElementById('qr-code-area').style.display = 'block';
             } catch(e) {
-                Swal.fire('Error', 'Could not fetch local IP address.', 'error');
+                Swal.fire('Error', 'Could not generate QR code.', 'error');
             }
             
             shareMobileBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> Share to Mobile';
