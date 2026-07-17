@@ -323,7 +323,11 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
                 ]
             })
         else:
-            ydl_opts.update({'format': format_id, 'merge_output_format': 'mp4'})
+            ydl_opts.update({
+                'format': format_id, 
+                'merge_output_format': 'mp4',
+                'postprocessors': [{'key': 'FFmpegVideoConvertor', 'preferedformat': 'mp4'}]
+            })
             
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=True)
