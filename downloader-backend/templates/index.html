@@ -74,6 +74,16 @@
                     <div class="header">
                         <h1>Start <span>Download</span></h1>
                         
+                        <!-- Cookies Uploader for Bot Bypass -->
+                        <div class="setting-group" style="margin-bottom: 25px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--card-border);">
+                            <label style="color: var(--secondary); margin-bottom: 10px; display: block;"><i class="fa-solid fa-shield-halved"></i> Bot Detection Bypass</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                                <input type="file" id="cookie-upload-input" accept=".txt" class="setting-input" style="flex: 1; padding: 8px; font-size: 0.9rem;">
+                                <button id="upload-cookie-btn" style="width: auto; padding: 8px 15px; border-radius: 8px; background: rgba(0, 240, 255, 0.15); color: var(--secondary); font-size: 0.9rem;"><i class="fa-solid fa-upload"></i> Upload</button>
+                            </div>
+                            <small style="color: var(--text-muted); font-size: 0.8rem;">Upload cookies.txt to fix "Empty media response" or Bot detection errors for Facebook/Instagram.</small>
+                        </div>
+                        
                         <div class="mode-toggle">
                             <span id="single-mode-btn" class="active"><i class="fa-solid fa-link"></i> Download Link</span>
                             <span id="search-mode-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
@@ -313,14 +323,6 @@
                                 <button id="change-folder-btn" style="width: auto; padding: 10px 20px; border-radius: 12px; background: rgba(0, 240, 255, 0.15); color: var(--secondary);"><i class="fa-solid fa-folder-tree"></i> Change</button>
                             </div>
                             <small>Absolute path where files will be saved on your PC.</small>
-                        </div>
-                        <div class="setting-group">
-                            <label>Platform Bot Bypass (cookies.txt)</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="file" id="cookie-upload-input" accept=".txt" class="setting-input" style="flex: 1; padding: 8px; background: rgba(0,0,0,0.2);">
-                                <button id="upload-cookie-btn" style="width: auto; padding: 10px 20px; border-radius: 12px; background: rgba(0, 240, 255, 0.15); color: var(--secondary);"><i class="fa-solid fa-upload"></i> Upload</button>
-                            </div>
-                            <small>If platforms like Facebook, Instagram, or YouTube block your server (Empty media response/Bot detection), use a browser extension to export your cookies as a .txt file and upload it here to bypass blocks.</small>
                         </div>
                         <button id="save-settings-btn"><i class="fa-solid fa-check"></i> Save Settings</button>
                     </div>
