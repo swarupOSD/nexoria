@@ -213,34 +213,32 @@ document.addEventListener('DOMContentLoaded', () => {
         ytPlatformBtn.classList.add('active');
         ytPlatformBtn.style.background = 'var(--primary)';
         ytPlatformBtn.style.color = 'white';
-        platformIcon.className = 'fa-brands fa-youtube input-icon';
+        platformIcon.className = 'fa-brands fa-x-twitter input-icon';
         platformIcon.style.color = 'var(--primary)';
-        urlInput.placeholder = 'Paste YouTube link here...';
-        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch YouTube Info';
-        document.getElementById('search-mode-btn').style.display = 'inline-block';
+        urlInput.placeholder = 'Paste X (Twitter) or Other link here...';
+        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch Video Info';
     });
 
     igPlatformBtn.addEventListener('click', () => {
         resetPlatforms();
         igPlatformBtn.classList.add('active');
-        igPlatformBtn.style.background = 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
+        igPlatformBtn.style.background = 'var(--primary)';
         igPlatformBtn.style.color = 'white';
         platformIcon.className = 'fa-brands fa-instagram input-icon';
-        platformIcon.style.color = '#e6683c';
-        urlInput.placeholder = 'Paste Instagram Reel/IGTV link here...';
-        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch Instagram Info';
-        document.getElementById('search-mode-btn').style.display = 'none';
+        platformIcon.style.color = '#E1306C';
+        urlInput.placeholder = 'Paste Instagram link here...';
+        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch Video Info';
     });
 
     fbPlatformBtn.addEventListener('click', () => {
         resetPlatforms();
         fbPlatformBtn.classList.add('active');
-        fbPlatformBtn.style.background = '#1877f2';
+        fbPlatformBtn.style.background = 'var(--primary)';
         fbPlatformBtn.style.color = 'white';
         platformIcon.className = 'fa-brands fa-facebook input-icon';
-        platformIcon.style.color = '#1877f2';
-        urlInput.placeholder = 'Paste Facebook Video link here...';
-        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch Facebook Info';
+        platformIcon.style.color = '#1877F2';
+        urlInput.placeholder = 'Paste Facebook link here...';
+        fetchBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fetch Video Info';
         document.getElementById('search-mode-btn').style.display = 'none';
     });
 

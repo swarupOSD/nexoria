@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexoria YT Downloader</title>
+    <title>Nexoria Media Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,8 +14,8 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="logo-area">
-                <i class="fa-brands fa-youtube logo-icon"></i>
-                <h2 style="font-size: 1.5rem;">Nexoria <span>YT</span></h2>
+                <i class="fa-solid fa-photo-film logo-icon"></i>
+                <h2 style="font-size: 1.5rem;">Nexoria <span>Media</span></h2>
             </div>
             
             <div class="user-profile">
@@ -84,24 +84,24 @@
                         <!-- Single/Playlist Input -->
                         <div id="single-input-area" style="margin-top:20px;">
                             <div class="platform-selector" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-                                <button id="yt-platform-btn" class="platform-btn active" style="padding:8px 15px; border-radius:20px; border:none; cursor:pointer; font-weight:600; background:var(--primary); color:white;"><i class="fa-brands fa-youtube"></i> YouTube</button>
-                                <button id="ig-platform-btn" class="platform-btn" style="padding:8px 15px; border-radius:20px; border:none; cursor:pointer; font-weight:600; background:rgba(255,255,255,0.1); color:var(--text);"><i class="fa-brands fa-instagram"></i> Instagram</button>
+                                <button id="ig-platform-btn" class="platform-btn active" style="padding:8px 15px; border-radius:20px; border:none; cursor:pointer; font-weight:600; background:var(--primary); color:white;"><i class="fa-brands fa-instagram"></i> Instagram</button>
                                 <button id="fb-platform-btn" class="platform-btn" style="padding:8px 15px; border-radius:20px; border:none; cursor:pointer; font-weight:600; background:rgba(255,255,255,0.1); color:var(--text);"><i class="fa-brands fa-facebook"></i> Facebook</button>
+                                <button id="yt-platform-btn" class="platform-btn" style="padding:8px 15px; border-radius:20px; border:none; cursor:pointer; font-weight:600; background:rgba(255,255,255,0.1); color:var(--text);"><i class="fa-brands fa-x-twitter"></i> X / Other</button>
                             </div>
                             <div class="input-group">
-                                <i id="platform-icon" class="fa-brands fa-youtube input-icon" style="color:var(--primary);"></i>
-                                <input type="text" id="yt-url" placeholder="Paste YouTube link here...">
+                                <i id="platform-icon" class="fa-brands fa-instagram input-icon" style="color:var(--primary);"></i>
+                                <input type="text" id="yt-url" placeholder="Paste Instagram, Facebook, X, TikTok link here...">
                             </div>
-                            <button id="fetch-btn" style="transition: all 0.3s;"><i class="fa-solid fa-bolt"></i> Fetch YouTube Info</button>
+                            <button id="fetch-btn" style="transition: all 0.3s;"><i class="fa-solid fa-bolt"></i> Fetch Video Info</button>
                         </div>
                         
                         <!-- Search Input -->
                         <div id="search-input-area" style="display:none; margin-top:20px;">
                             <div class="input-group">
                                 <i class="fa-solid fa-magnifying-glass input-icon"></i>
-                                <input type="text" id="search-query" placeholder="e.g. Bangla Lofi Song...">
+                                <input type="text" id="search-query" placeholder="e.g. Funny cat video...">
                             </div>
-                            <button id="search-btn"><i class="fa-solid fa-search"></i> Search YouTube</button>
+                            <button id="search-btn"><i class="fa-solid fa-search"></i> Search Media</button>
                         </div>
                         
                         <!-- GIF Maker Input -->
@@ -109,7 +109,7 @@
                             <h4 style="margin-bottom:15px; color:var(--text-muted); text-align:center;">Create fun GIFs from Videos</h4>
                             <div class="input-group">
                                 <i class="fa-solid fa-link input-icon"></i>
-                                <input type="text" id="gif-yt-url" placeholder="Paste YouTube/Instagram link here to make GIF...">
+                                <input type="text" id="gif-yt-url" placeholder="Paste Instagram, Facebook, X link here to make GIF...">
                             </div>
                             <button id="fetch-gif-btn" style="background: linear-gradient(135deg, #ff0055, #ff00aa);"><i class="fa-solid fa-film"></i> Start GIF Maker</button>
                         </div>
@@ -123,7 +123,7 @@
 
                     <!-- Batch Mode Form -->
                     <div class="form-container" id="batch-form" style="display: none;">
-                        <textarea id="batch-urls" rows="6" placeholder="Paste multiple YouTube, Instagram, or TikTok links here (One per line)"></textarea>
+                        <textarea id="batch-urls" rows="6" placeholder="Paste multiple Instagram, Facebook, or TikTok links here (One per line)"></textarea>
                         <button id="batch-download-btn" style="margin-top: 15px;">
                             <i class="fa-solid fa-layer-group"></i> Start Batch Download
                         </button>
@@ -313,14 +313,6 @@
                                 <button id="change-folder-btn" style="width: auto; padding: 10px 20px; border-radius: 12px; background: rgba(0, 240, 255, 0.15); color: var(--secondary);"><i class="fa-solid fa-folder-tree"></i> Change</button>
                             </div>
                             <small>Absolute path where files will be saved on your PC.</small>
-                        </div>
-                        <div class="setting-group">
-                            <label>YouTube Bot Bypass (cookies.txt)</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="file" id="cookie-upload-input" accept=".txt" class="setting-input" style="flex: 1; padding: 8px; background: rgba(0,0,0,0.2);">
-                                <button id="upload-cookie-btn" style="width: auto; padding: 10px 20px; border-radius: 12px; background: rgba(0, 240, 255, 0.15); color: var(--secondary);"><i class="fa-solid fa-upload"></i> Upload</button>
-                            </div>
-                            <small>If you get a "Sign in to confirm you're not a bot" error, use a browser extension to export your YouTube cookies and upload the file here.</small>
                         </div>
                         <button id="save-settings-btn"><i class="fa-solid fa-check"></i> Save Settings</button>
                     </div>
