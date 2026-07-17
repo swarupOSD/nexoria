@@ -10,8 +10,12 @@ import shutil
 import sys
 import socket
 import speech_recognition as sr
+import static_ffmpeg
 from pytubefix import YouTube
 from datetime import datetime
+
+# Initialize static ffmpeg binaries (downloads if missing, adds to PATH)
+static_ffmpeg.add_paths()
 
 # Increase recursion depth for some complex playlists
 sys.setrecursionlimit(2000)
@@ -25,13 +29,6 @@ HISTORY_FILE = os.path.join(BASE_DIR, 'history.json')
 SETTINGS_FILE = os.path.join(BASE_DIR, 'settings.json')
 DEFAULT_DOWNLOAD_DIR = os.path.join(BASE_DIR, 'Downloads')
 AVATARS_DIR = os.path.join(BASE_DIR, 'static', 'avatars')
-if sys.platform == "win32":
-    FFMPEG_DIR = r'C:\Users\USER\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1.2-full_build\bin'
-    FFMPEG_PATH = os.path.join(FFMPEG_DIR, 'ffmpeg.exe')
-    if FFMPEG_DIR not in os.environ['PATH']:
-        os.environ['PATH'] = FFMPEG_DIR + os.pathsep + os.environ['PATH']
-else:
-    FFMPEG_PATH = 'ffmpeg'
 
 for d in [DEFAULT_DOWNLOAD_DIR, AVATARS_DIR]:
     if not os.path.exists(d): os.makedirs(d)
@@ -159,7 +156,6 @@ def get_info():
         ydl_opts = {
             'quiet': True, 
             'extract_flat': 'in_playlist', 
-            'ffmpeg_location': FFMPEG_PATH,
             'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
             'format': 'bestaudio/best'
         }
@@ -290,7 +286,7 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             
         ydl_opts = {
             'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
-            'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH,
+            'progress_hooks': [my_hook], 'noplaylist': True,
             'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
@@ -491,7 +487,7 @@ def batch_download_worker(urls):
     for url in urls:
         progress_tracker['batch_status'] = f'Downloading {url}...'
         try:
-            ydl_opts_info = {'quiet': True, 'ffmpeg_location': FFMPEG_PATH}
+            ydl_opts_info = {'quiet': True}
             cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
             if os.path.exists(cookie_file):
                 ydl_opts_info['cookiefile'] = cookie_file
