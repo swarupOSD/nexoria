@@ -156,8 +156,7 @@ def get_info():
         ydl_opts = {
             'quiet': True, 
             'extract_flat': 'in_playlist', 
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
-            'format': 'bestaudio/best'
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
@@ -179,7 +178,7 @@ def get_info():
     except Exception as e:
         # Fallback to pytubefix if yt-dlp fails
         try:
-            yt = YouTube(url, use_po_token=True)
+            yt = YouTube(url)
             formats = []
             for s in yt.streams:
                 formats.append({
