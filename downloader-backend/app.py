@@ -324,9 +324,8 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             })
         else:
             ydl_opts.update({
-                'format': format_id, 
-                'merge_output_format': 'mp4',
-                'postprocessors': [{'key': 'FFmpegVideoConvertor', 'preferedformat': 'mp4'}]
+                'format': format_id,
+                'overwrites': True
             })
             
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -334,21 +333,34 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             downloaded_file = ydl.prepare_filename(info_dict)
             base_name, _ = os.path.splitext(downloaded_file)
             
+            import glob
+            
             if is_audio:
                 final_path = base_name + '.mp3'
                 type_label = 'Audio (MP3)'
             elif is_gif:
                 progress_tracker[url] = 'Converting to GIF...'
                 import subprocess
-                mp4_file = base_name + '.mp4'
+                
+                # Find the downloaded video file to convert
+                possible_files = glob.glob(glob.escape(base_name) + '.*')
+                vid_exts = ['.mp4', '.mkv', '.webm']
+                vid_files = [f for f in possible_files if os.path.splitext(f)[1].lower() in vid_exts]
+                src_file = vid_files[0] if vid_files else base_name + '.mp4'
+                
                 final_path = base_name + '.gif'
-                subprocess.run([FFMPEG_PATH, '-i', mp4_file, '-vf', 'fps=15,scale=480:-1:flags=lanczos', '-y', final_path], check=True)
-                if os.path.exists(mp4_file):
-                    os.remove(mp4_file)
+                subprocess.run([FFMPEG_PATH, '-i', src_file, '-vf', 'fps=15,scale=480:-1:flags=lanczos', '-y', final_path], check=True)
+                if os.path.exists(src_file):
+                    os.remove(src_file)
                 type_label = 'Animated GIF'
             else:
-                final_path = base_name + '.mp4'
-                type_label = 'Video (MP4)'
+                # Dynamically find the final file since yt-dlp might output mkv or webm if mp4 is incompatible
+                possible_files = glob.glob(glob.escape(base_name) + '.*')
+                vid_exts = ['.mp4', '.mkv', '.webm']
+                vid_files = [f for f in possible_files if os.path.splitext(f)[1].lower() in vid_exts]
+                final_path = vid_files[0] if vid_files else base_name + '.mp4'
+                
+                type_label = 'Video'
                 
                 # Smart Auto-Organizer for Shorts/Reels
                 duration = info_dict.get('duration', 0)
