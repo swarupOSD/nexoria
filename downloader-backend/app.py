@@ -155,8 +155,7 @@ def get_info():
         ydl_opts = {
             'quiet': True, 
             'extract_flat': 'in_playlist', 
-            'ffmpeg_location': FFMPEG_PATH, 
-            'extractor_args': {'youtube': {'player_client': ['default', 'ios']}}
+            'ffmpeg_location': FFMPEG_PATH
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
@@ -264,8 +263,7 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
             
         ydl_opts = {
             'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
-            'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH,
-            'extractor_args': {'youtube': {'player_client': ['default', 'ios']}}
+            'progress_hooks': [my_hook], 'noplaylist': True, 'ffmpeg_location': FFMPEG_PATH
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
