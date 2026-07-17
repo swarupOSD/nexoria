@@ -10,7 +10,11 @@ import shutil
 import sys
 import socket
 import speech_recognition as sr
+from pytubefix import YouTube
 from datetime import datetime
+
+# Increase recursion depth for some complex playlists
+sys.setrecursionlimit(2000)
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)  # Enable CORS for all routes (to allow Vercel to access APIs)
@@ -156,7 +160,8 @@ def get_info():
             'quiet': True, 
             'extract_flat': 'in_playlist', 
             'ffmpeg_location': FFMPEG_PATH,
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'format': 'bestaudio/best'
         }
         cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
         if os.path.exists(cookie_file):
@@ -176,7 +181,28 @@ def get_info():
                     'formats': extract_clean_formats(info)
                 })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Fallback to pytubefix if yt-dlp fails
+        try:
+            yt = YouTube(url, use_po_token=True)
+            formats = []
+            for s in yt.streams:
+                formats.append({
+                    'id': str(s.itag),
+                    'resolution': getattr(s, 'resolution', '') or 'Audio',
+                    'size': round(s.filesize / 1024 / 1024, 1) if getattr(s, 'filesize', 0) else 0,
+                    'type': 'video' if s.includes_video_track else 'audio',
+                    'ext': s.subtype,
+                    'vcodec': getattr(s, 'video_codec', ''),
+                    'acodec': getattr(s, 'audio_codec', '')
+                })
+            return jsonify({
+                'is_playlist': False, 'id': yt.video_id, 'title': yt.title,
+                'thumbnail': yt.thumbnail_url, 'duration': str(yt.length),
+                'channel': yt.author, 'views': yt.views,
+                'formats': formats
+            })
+        except Exception as fallback_e:
+            return jsonify({'error': f"yt-dlp error: {str(e)} | pytubefix error: {str(fallback_e)}"}), 500
 
 @app.route('/api/upload-cookies', methods=['POST'])
 def upload_cookies():
