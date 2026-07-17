@@ -914,4 +914,38 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openFolder = async (path) => {
         try { await fetch('/api/open-folder', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({path})}); } catch(e){}
     };
+    
+    // --- Cookies Uploader ---
+    const uploadCookieBtn = document.getElementById('upload-cookie-btn');
+    const cookieUploadInput = document.getElementById('cookie-upload-input');
+
+    if (uploadCookieBtn && cookieUploadInput) {
+        uploadCookieBtn.addEventListener('click', async () => {
+            const file = cookieUploadInput.files[0];
+            if (!file) {
+                return Swal.fire('Oops', 'Please select a cookies.txt file first.', 'warning');
+            }
+            
+            const formData = new FormData();
+            formData.append('cookies', file);
+            
+            uploadCookieBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+            uploadCookieBtn.disabled = true;
+            
+            try {
+                const res = await fetch('/api/upload-cookies', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.status === 'success' || data.success === true) {
+                    Swal.fire('Success', 'Cookies uploaded successfully! Downloads should work now.', 'success');
+                } else {
+                    Swal.fire('Error', data.error || 'Failed to upload cookies.', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Network error during upload.', 'error');
+            }
+            
+            uploadCookieBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
+            uploadCookieBtn.disabled = false;
+        });
+    }
 });

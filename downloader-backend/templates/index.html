@@ -314,6 +314,14 @@
                             </div>
                             <small>Absolute path where files will be saved on your PC.</small>
                         </div>
+                        <div class="setting-group">
+                            <label>Platform Bot Bypass (cookies.txt)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="file" id="cookie-upload-input" accept=".txt" class="setting-input" style="flex: 1; padding: 8px; background: rgba(0,0,0,0.2);">
+                                <button id="upload-cookie-btn" style="width: auto; padding: 10px 20px; border-radius: 12px; background: rgba(0, 240, 255, 0.15); color: var(--secondary);"><i class="fa-solid fa-upload"></i> Upload</button>
+                            </div>
+                            <small>If platforms like Facebook, Instagram, or YouTube block your server (Empty media response/Bot detection), use a browser extension to export your cookies as a .txt file and upload it here to bypass blocks.</small>
+                        </div>
                         <button id="save-settings-btn"><i class="fa-solid fa-check"></i> Save Settings</button>
                     </div>
                 </div>
