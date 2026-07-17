@@ -284,7 +284,8 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
         if not os.path.exists(download_dir): os.makedirs(download_dir)
             
         ydl_opts = {
-            'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
+            'outtmpl': os.path.join(download_dir, '%(title).100s.%(ext)s'),
+            'restrictfilenames': True,
             'progress_hooks': [my_hook], 'noplaylist': True,
             'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
         }
