@@ -70,34 +70,35 @@ const ImageUpload = ({ type = 'image', value, onChange, label = 'Upload Image' }
       {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
 
       {!value ? (
-        <div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer">
+        <div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-5 flex flex-col items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer group">
           <input 
             type="file" 
             accept="image/png, image/jpeg, image/jpg, image/webp" 
             onChange={handleUpload}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             disabled={isUploading}
           />
           {isUploading ? (
-            <div className="flex flex-col items-center text-blue-500">
-              <Loader2 className="w-8 h-8 animate-spin mb-2" />
-              <p className="text-sm font-medium">Uploading...</p>
+            <div className="flex flex-col items-center text-blue-500 py-2">
+              <Loader2 className="w-6 h-6 animate-spin mb-2" />
+              <p className="text-xs font-semibold">Uploading...</p>
             </div>
           ) : (
-            <div className="flex flex-col items-center text-slate-500 dark:text-slate-400">
-              <UploadCloud className="w-10 h-10 mb-2 text-slate-400" />
-              <p className="text-sm font-medium">Click or drag image to upload</p>
-              <p className="text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
+            <div className="flex flex-col items-center text-slate-500 dark:text-slate-400 group-hover:text-blue-500 transition-colors">
+              <UploadCloud className="w-8 h-8 mb-2 opacity-70 group-hover:opacity-100 transition-opacity" />
+              <p className="text-sm font-semibold">Click or drag image</p>
+              <p className="text-[10px] uppercase font-bold tracking-wider mt-1 opacity-60">Max 5MB</p>
             </div>
           )}
         </div>
       ) : (
-        <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex items-center justify-center min-h-[150px]">
-          <img src={value} alt="Uploaded preview" className="max-h-[200px] object-contain" />
-          <button 
-            type="button"
-            onClick={handleRemove}
-            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow-lg"
+        <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex items-center justify-center group h-[140px]">
+          <img src={value} alt="Uploaded preview" className="h-full w-full object-contain p-2" />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+            <button 
+              type="button"
+              onClick={handleRemove}
+              className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition shadow-xl transform scale-90 group-hover:scale-100"
             title="Remove Image"
           >
             <X className="w-4 h-4" />

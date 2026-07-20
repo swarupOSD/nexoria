@@ -591,31 +591,31 @@ const CreatePost = () => {
               </div>
 
               {/* Gallery Images Array Manager */}
-              <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+              <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-sm dark:text-white">Gallery Images</h3>
-                  <button type="button" onClick={addGalleryImage} className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-blue-200 transition">
+                  <button type="button" onClick={addGalleryImage} className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-blue-200 transition">
                     <Plus className="w-3 h-3" /> Add Image
                   </button>
                 </div>
-                <div className="space-y-3">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                   {galleryImages.map((img, index) => (
-                    <div key={index} className="flex flex-col md:flex-row items-center gap-3">
+                    <div key={index} className="relative group">
                       <ImageUpload 
                         type="image" 
                         label="" 
                         value={img} 
                         onChange={(url) => updateGalleryImage(index, url)} 
                       />
-                      <div className="flex md:flex-col gap-2">
-                        <button type="button" onClick={() => moveGalleryImage(index, 'up')} disabled={index === 0} className="p-2 bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 disabled:opacity-50">↑</button>
-                        <button type="button" onClick={() => moveGalleryImage(index, 'down')} disabled={index === galleryImages.length - 1} className="p-2 bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 disabled:opacity-50">↓</button>
-                        <button type="button" onClick={() => removeGalleryImage(index)} className="p-2 bg-red-100 text-red-600 dark:bg-red-900/30 rounded hover:bg-red-200"><Trash2 className="w-4 h-4" /></button>
+                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        <button type="button" onClick={() => moveGalleryImage(index, 'up')} disabled={index === 0} className="p-1.5 bg-slate-800/80 text-white rounded-md hover:bg-slate-700 disabled:opacity-0 backdrop-blur-sm" title="Move Left">↑</button>
+                        <button type="button" onClick={() => moveGalleryImage(index, 'down')} disabled={index === galleryImages.length - 1} className="p-1.5 bg-slate-800/80 text-white rounded-md hover:bg-slate-700 disabled:opacity-0 backdrop-blur-sm" title="Move Right">↓</button>
+                        <button type="button" onClick={() => removeGalleryImage(index)} className="p-1.5 bg-red-500/80 text-white rounded-md hover:bg-red-600 backdrop-blur-sm" title="Remove"><Trash2 className="w-3 h-3" /></button>
                       </div>
                     </div>
                   ))}
-                  {galleryImages.length === 0 && <p className="text-sm text-slate-500 italic">No gallery images added.</p>}
                 </div>
+                {galleryImages.length === 0 && <p className="text-sm text-slate-500 italic mt-2">No gallery images added.</p>}
               </div>
 
               {/* Mod Features Array Manager */}
@@ -974,31 +974,31 @@ const CreatePost = () => {
                 {/* Mock Banner */}
               </div>
               <div className="px-5 pb-5 relative">
-                <div className="absolute -top-10 left-5 w-20 h-20 bg-white dark:bg-slate-800 rounded-2xl shadow-lg flex items-center justify-center p-1">
+                <div className="absolute -top-8 left-5 w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl shadow-lg flex items-center justify-center p-1 border border-slate-100 dark:border-slate-700">
                   {formData.appLogo ? (
                     <img src={formData.appLogo} alt="Logo" className="w-full h-full rounded-xl object-cover" />
                   ) : (
                     <div className="w-full h-full bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-400">
-                      <ImageIcon className="w-8 h-8" />
+                      <ImageIcon className="w-6 h-6" />
                     </div>
                   )}
                 </div>
                 
-                <div className="mt-12">
+                <div className="mt-10">
                   <h3 className="font-bold text-lg leading-tight dark:text-white line-clamp-2">
                     {formData.title || 'App Title Preview'}
                   </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{formData.publisher || 'Publisher'}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{formData.publisher || 'Publisher Name'}</p>
                   
                   <div className="flex flex-wrap gap-2 mt-4">
                     <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded">
-                      {formData.category}
+                      {categories.find(c => c._id === formData.category)?.name || 'Category'}
                     </span>
                     <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded">
-                      {formData.size}
+                      {formData.size || 'Size'}
                     </span>
-                    <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold rounded">
-                      {formData.price}
+                    <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold rounded">
+                      {formData.price || 'Free'}
                     </span>
                   </div>
 
