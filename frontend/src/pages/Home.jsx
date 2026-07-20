@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award } from 'lucide-react';
+import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award, Gamepad2, Film, Music, Smartphone, User, Rocket, Gem } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useSelector } from 'react-redux';
@@ -112,13 +112,21 @@ const Home = () => {
           className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full blur-[150px] mix-blend-screen pointer-events-none"
         />
         
-        {/* Floating Emojis / Icons background */}
-        <motion.div animate={{ y: [0, -20, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] left-[10%] text-4xl opacity-20 hidden md:block">🎮</motion.div>
-        <motion.div animate={{ y: [0, 20, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[30%] right-[15%] text-5xl opacity-20 hidden md:block">🍿</motion.div>
-        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[20%] text-4xl opacity-20 hidden md:block">🎧</motion.div>
-        <motion.div animate={{ y: [0, 25, 0], rotate: [0, -15, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[30%] right-[10%] text-5xl opacity-20 hidden md:block">🎬</motion.div>
+        {/* Floating 3D Elements */}
+        <motion.div animate={{ y: [0, -20, 0], rotateX: [0, 15, 0], rotateY: [0, 20, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] left-[10%] hidden md:flex items-center justify-center w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-2xl backdrop-blur-xl shadow-[0_0_30px_rgba(59,130,246,0.2)]" style={{ transformStyle: 'preserve-3d' }}>
+          <Gamepad2 className="w-10 h-10 text-blue-400" />
+        </motion.div>
+        <motion.div animate={{ y: [0, 20, 0], rotateX: [0, -10, 0], rotateY: [0, -25, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[30%] right-[15%] hidden md:flex items-center justify-center w-24 h-24 bg-purple-500/10 border border-purple-500/20 rounded-full backdrop-blur-xl shadow-[0_0_40px_rgba(168,85,247,0.2)]" style={{ transformStyle: 'preserve-3d' }}>
+          <Film className="w-10 h-10 text-purple-400" />
+        </motion.div>
+        <motion.div animate={{ y: [0, -15, 0], rotateX: [0, 20, 0], rotateY: [0, -15, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[20%] hidden md:flex items-center justify-center w-16 h-16 bg-rose-500/10 border border-rose-500/20 rounded-3xl backdrop-blur-xl shadow-[0_0_30px_rgba(244,63,94,0.2)]" style={{ transformStyle: 'preserve-3d', transform: 'rotate(10deg)' }}>
+          <Music className="w-8 h-8 text-rose-400" />
+        </motion.div>
+        <motion.div animate={{ y: [0, 25, 0], rotateX: [0, -15, 0], rotateY: [0, 15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[30%] right-[10%] hidden md:flex items-center justify-center w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl backdrop-blur-xl shadow-[0_0_30px_rgba(16,185,129,0.2)]" style={{ transformStyle: 'preserve-3d', transform: 'rotate(-15deg)' }}>
+          <Smartphone className="w-10 h-10 text-emerald-400" />
+        </motion.div>
 
-        <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center mt-10">
+        <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center mt-10 perspective-1000">
           {/* Top Badge */}
           <motion.div 
             initial={{ opacity: 0, y: -20, scale: 0.8 }}
@@ -131,7 +139,7 @@ const Home = () => {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </span>
             <span className="text-sm md:text-base font-bold tracking-widest uppercase text-slate-200">
-              Welcome to Nexoria Universe ✨
+              Welcome to Nexoria Universe
             </span>
           </motion.div>
           
@@ -145,30 +153,34 @@ const Home = () => {
             Everything You <span className="text-purple-400">Watch</span>, Play & <span className="text-blue-400">Create</span>
           </motion.h1>
           
-          {/* Subtitle */}
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-xl md:text-3xl text-slate-300 font-medium max-w-4xl mb-12 leading-relaxed"
-          >
-            One account ⚡ One app 📱 Every story 🍿 Every game 🕹️ Every beat 🎵
-          </motion.p>
-          
-          {/* Call to Actions */}
+          {/* Subtitle Badges */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-4 text-sm md:text-base font-medium text-slate-300 max-w-3xl mb-12"
           >
-            <Link to="/moviebox" className="group relative px-8 py-5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl font-black text-lg md:text-xl shadow-[0_0_40px_rgba(168,85,247,0.4)] transition-all hover:scale-105 active:scale-95 overflow-hidden flex items-center gap-3 text-white">
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md hover:bg-white/10 transition-colors shadow-lg"><User className="w-4 h-4 text-purple-400" /> One Account</span>
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md hover:bg-white/10 transition-colors shadow-lg"><Smartphone className="w-4 h-4 text-blue-400" /> One App</span>
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md hover:bg-white/10 transition-colors shadow-lg"><Film className="w-4 h-4 text-rose-400" /> Every Story</span>
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md hover:bg-white/10 transition-colors shadow-lg"><Gamepad2 className="w-4 h-4 text-emerald-400" /> Every Game</span>
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md hover:bg-white/10 transition-colors shadow-lg"><Music className="w-4 h-4 text-amber-400" /> Every Beat</span>
+          </motion.div>
+          
+          {/* Call to Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20, rotateX: 20 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 perspective-1000"
+          >
+            <Link to="/moviebox" className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl font-black text-lg shadow-[0_15px_30px_rgba(168,85,247,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(168,85,247,0.5)] active:translate-y-1 overflow-hidden flex items-center gap-3 text-white border-t border-white/20">
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-              <span className="relative z-10 flex items-center gap-2">🚀 Explore Universe <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" /></span>
+              <span className="relative z-10 flex items-center gap-2"><Rocket className="w-5 h-5 group-hover:scale-110 transition-transform" /> Explore Universe <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
             </Link>
             
-            <Link to="/premium" className="group px-8 py-5 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 hover:border-purple-500/50 backdrop-blur-xl text-white rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-xl">
-              💎 Go Premium
+            <Link to="/premium" className="group px-8 py-4 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 hover:border-purple-500/50 backdrop-blur-xl text-white rounded-2xl font-black text-lg transition-all hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] active:translate-y-1 flex items-center gap-3">
+              <Gem className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" /> Go Premium
             </Link>
           </motion.div>
 
@@ -189,7 +201,7 @@ const Home = () => {
             </div>
             <div className="flex flex-col items-center gap-2">
               <span className="text-3xl font-black text-white">4.9/5</span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">User Rating ⭐️</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">User Rating <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" /></span>
             </div>
           </motion.div>
         </div>
