@@ -41,11 +41,11 @@ const PermissionModal = ({ isOpen, type, status, onAllow, onDeny }) => {
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className={`relative max-w-md w-full bg-[#111116] border border-white/10 rounded-3xl overflow-hidden shadow-2xl p-8 text-center bg-gradient-to-br ${currentContent.gradient}`}
+          className={`relative max-w-md w-full bg-[#111116] border border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl p-6 sm:p-8 text-center bg-gradient-to-br ${currentContent.gradient}`}
         >
           <button 
             onClick={onDeny}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5 text-slate-400" />
           </button>
@@ -61,25 +61,25 @@ const PermissionModal = ({ isOpen, type, status, onAllow, onDeny }) => {
             </div>
           </div>
 
-          <h3 className="text-2xl font-bold text-white mb-2">{currentContent.title}</h3>
-          <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{currentContent.title}</h3>
+          <p className="text-slate-400 text-xs sm:text-sm mb-6 sm:mb-8 leading-relaxed">
             {isDenied 
               ? `You have previously blocked ${type} access. To use this feature, please click the 🔒 Lock icon in your browser's address bar and change the permission to "Allow".` 
               : currentContent.desc}
           </p>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             {!isDenied ? (
               <button
                 onClick={onAllow}
-                className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                className="w-full py-3 sm:py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)] text-sm sm:text-base"
               >
                 Continue & Allow
               </button>
             ) : (
               <button
                 onClick={onDeny}
-                className="w-full py-4 bg-red-500/20 text-red-400 font-bold rounded-xl border border-red-500/50 hover:bg-red-500/30 transition-colors"
+                className="w-full py-3 sm:py-4 bg-red-500/20 text-red-400 font-bold rounded-xl border border-red-500/50 hover:bg-red-500/30 transition-colors text-sm sm:text-base"
               >
                 I Understand
               </button>
@@ -87,7 +87,7 @@ const PermissionModal = ({ isOpen, type, status, onAllow, onDeny }) => {
             {!isDenied && (
               <button
                 onClick={onDeny}
-                className="w-full py-4 bg-transparent text-slate-400 font-semibold hover:text-white transition-colors"
+                className="w-full py-3 sm:py-4 bg-transparent text-slate-400 font-semibold hover:text-white transition-colors text-sm sm:text-base"
               >
                 Not Now
               </button>
