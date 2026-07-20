@@ -16,12 +16,19 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       const { user, token } = action.payload;
-      if (user) user.isPremium = true;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = !!user;
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
+      
+      let modifiedUser = user;
+      if (user) {
+        // Clone the user object to avoid mutating a frozen RTK Query payload
+        modifiedUser = { ...user, isPremium: true };
+      }
+      
+      state.user = modifiedUser;
+      if (token) state.token = token;
+      state.isAuthenticated = !!modifiedUser;
+      
+      localStorage.setItem('user', JSON.stringify(modifiedUser));
+      if (token) localStorage.setItem('token', token);
     },
     logout: (state) => {
       state.user = null;
