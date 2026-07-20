@@ -102,35 +102,43 @@ const UserDashboard = () => {
 
   const getThemeClass = (theme) => {
     switch(theme) {
-      case 'cyberpunk': return 'bg-gradient-to-br from-[#2b044d] via-[#10194a] to-[#240b36] text-white shadow-[inset_0_0_100px_rgba(255,0,255,0.1)]';
-      case 'synthwave': return 'bg-gradient-to-r from-[#fc00ff] to-[#00dbde] text-white';
-      case 'neon': return 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-rose-900 via-purple-900 to-indigo-900 text-white';
-      default: return 'bg-slate-50 dark:bg-[#030303] text-slate-900 dark:text-white';
+      case 'cyberpunk': return 'bg-gradient-to-br from-[#2b044d] via-[#10194a] to-[#240b36] text-white selection:bg-fuchsia-500/30';
+      case 'synthwave': return 'bg-gradient-to-r from-[#fc00ff] to-[#00dbde] text-white selection:bg-cyan-500/30';
+      case 'neon': return 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-rose-900 via-purple-900 to-indigo-900 text-white selection:bg-rose-500/30';
+      default: return 'bg-[#030303] text-white selection:bg-blue-500/30';
     }
   };
 
   const themeClass = getThemeClass(user?.profileTheme || 'default');
 
   return (
-    <div className={`min-h-screen pb-12 transition-colors duration-500 ${themeClass}`}>
+    <div className={`font-jakarta min-h-screen pb-12 transition-colors duration-500 ${themeClass} relative overflow-hidden`}>
+      
+      {/* Global Background Glows if default theme */}
+      {(!user?.profileTheme || user?.profileTheme === 'default') && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+           <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[150px]"></div>
+           <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[150px]"></div>
+        </div>
+      )}
       <Helmet>
         <title>Dashboard - {user?.name}</title>
       </Helmet>
 
       {/* Top Navigation Bar for Dashboard */}
-      <div className="sticky top-0 z-30 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-3xl border-b border-black/5 dark:border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
+      <div className="sticky top-0 z-30 bg-white/5 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition hidden sm:block">
+            <button onClick={() => navigate('/')} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/70 hover:text-white transition-all hidden sm:block backdrop-blur-md">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-              <span className="bg-gradient-to-r from-primary to-indigo-500 text-transparent bg-clip-text">Dashboard</span>
+            <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
+              Dashboard
             </h1>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(true)}
-            className="lg:hidden p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300"
+            className="lg:hidden p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-white transition-colors backdrop-blur-md"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -141,19 +149,19 @@ const UserDashboard = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Desktop Sidebar */}
-          <div className="hidden lg:block w-64 shrink-0">
-            <div className="glass-card p-4 space-y-2 sticky top-24">
+          <div className="hidden lg:block w-72 shrink-0 relative z-10">
+            <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-3xl space-y-2 sticky top-24 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)] translate-x-1'
+                      : 'text-white/50 hover:text-white hover:bg-white/10 hover:translate-x-1'
                   }`}
                 >
-                  <tab.icon className="w-5 h-5" />
+                  <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'animate-pulse' : ''}`} />
                   {tab.label}
                 </button>
               ))}
@@ -169,18 +177,18 @@ const UserDashboard = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setIsSidebarOpen(false)}
-                  className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+                  className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-md"
                 />
                 <motion.div
                   initial={{ x: '-100%' }}
                   animate={{ x: 0 }}
                   exit={{ x: '-100%' }}
                   transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                  className="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-slate-900 z-50 p-6 lg:hidden shadow-2xl border-r border-slate-200 dark:border-slate-800 overflow-y-auto"
+                  className="fixed top-0 left-0 bottom-0 w-72 bg-[#030303]/90 backdrop-blur-3xl z-50 p-6 lg:hidden shadow-[20px_0_40px_rgba(0,0,0,0.5)] border-r border-white/10 overflow-y-auto"
                 >
                   <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-xl font-black text-slate-800 dark:text-white">Menu</h2>
-                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500">
+                    <h2 className="text-2xl font-black text-white">Menu</h2>
+                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors">
                       <X className="w-5 h-5" />
                     </button>
                   </div>
@@ -192,10 +200,10 @@ const UserDashboard = () => {
                           setActiveTab(tab.id);
                           setIsSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl font-bold transition-all ${
+                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl font-bold transition-all ${
                           activeTab === tab.id
-                            ? 'bg-primary text-white'
-                            : 'text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-slate-800/50'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)]'
+                            : 'text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10'
                         }`}
                       >
                         <tab.icon className="w-5 h-5" />
