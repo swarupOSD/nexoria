@@ -4,6 +4,7 @@ import { X, Send, Smile, Minus, Minimize2, Maximize2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { useSocket } from '../context/SocketContext';
+import toast from 'react-hot-toast';
 
 const PrivateChatWidget = ({ activeChat, onClose }) => {
   const [messages, setMessages] = useState([]);

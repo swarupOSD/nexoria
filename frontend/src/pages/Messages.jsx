@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, ArrowLeft, Search, User as UserIcon } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Search, User as UserIcon, Phone, Video } from 'lucide-react';
+import CallOverlay from '../components/CallOverlay';
 import { useGetFriendsListQuery } from '../features/api/friendApiSlice';
 import toast from 'react-hot-toast';
 
@@ -23,6 +24,18 @@ const Messages = () => {
   const [inputValue, setInputValue] = useState('');
   const [activeChat, setActiveChat] = useState(null); // The user object we are chatting with
   const messagesEndRef = useRef(null);
+
+  // Call State
+  const [callData, setCallData] = useState(null);
+  const [isReceivingCall, setIsReceivingCall] = useState(false);
+  const [callerSignal, setCallerSignal] = useState(null);
+  const [callerInfo, setCallerInfo] = useState(null);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -61,15 +74,24 @@ const Messages = () => {
       socket.emit('getConversations');
     };
 
+    const handleIncomingCall = (data) => {
+      setIsReceivingCall(true);
+      setCallerInfo({ from: data.from, name: data.name });
+      setCallerSignal(data.signal);
+      setCallData({ type: data.type });
+    };
+
     socket.on('conversationsList', handleConversationsList);
     socket.on('conversationMessages', handleConversationMessages);
     socket.on('newDirectMessage', handleNewDirectMessage);
+    socket.on('incomingCall', handleIncomingCall);
     socket.on('dmError', (err) => toast.error(err.message));
 
     return () => {
       socket.off('conversationsList', handleConversationsList);
       socket.off('conversationMessages', handleConversationMessages);
       socket.off('newDirectMessage', handleNewDirectMessage);
+      socket.off('incomingCall', handleIncomingCall);
       socket.off('dmError');
     };
   }, [user, token, activeChat]);
@@ -85,11 +107,6 @@ const Messages = () => {
     }
   }, [targetUserId, friendsList]);
 
-  function scrollToBottom() {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -100,6 +117,12 @@ const Messages = () => {
       text: inputValue
     });
     setInputValue('');
+  };
+
+  const startCall = (type) => {
+    if (!activeChat) return;
+    setIsReceivingCall(false);
+    setCallData({ type });
   };
 
   if (!user) return <div className="p-10 text-center text-white">Please login to view messages.</div>;
@@ -156,6 +179,15 @@ const Messages = () => {
                 <h3 className="font-bold text-white">{activeChat.name}</h3>
                 <span className="text-xs text-slate-400">@{activeChat.username}</span>
               </div>
+              
+              <div className="flex-1" />
+              
+              <button onClick={() => startCall('audio')} className="p-2.5 text-slate-300 hover:text-green-500 bg-slate-800 hover:bg-slate-700 rounded-full transition-colors hidden md:block">
+                <Phone className="w-5 h-5" />
+              </button>
+              <button onClick={() => startCall('video')} className="p-2.5 text-slate-300 hover:text-blue-500 bg-slate-800 hover:bg-slate-700 rounded-full transition-colors">
+                <Video className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Messages */}
@@ -197,6 +229,25 @@ const Messages = () => {
         )}
       </div>
 
+    </div>
+      
+      {/* Call Overlay UI */}
+      {callData && (
+        <CallOverlay 
+          socket={socket} 
+          user={user} 
+          partner={{ socketId: activeChat ? activeChat._id : callerInfo?.from }} 
+          roomData={{ teamCode: user._id }} // required prop fallback
+          callType={callData.type}
+          isReceivingCall={isReceivingCall}
+          callerSignal={callerSignal}
+          callerInfo={callerInfo}
+          onClose={() => {
+            setCallData(null);
+            setIsReceivingCall(false);
+          }}
+        />
+      )}
     </div>
   );
 };

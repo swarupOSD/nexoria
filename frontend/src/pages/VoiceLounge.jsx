@@ -27,6 +27,85 @@ const VoiceLounge = () => {
 
   const roomId = 'secret-lounge';
 
+  const setupSpeechDetection = (stream, userId) => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const ctx = audioContextRef.current;
+    
+    // Resume context if suspended (browser policy)
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const analyser = ctx.createAnalyser();
+    const source = ctx.createMediaStreamSource(stream);
+    source.connect(analyser);
+    
+    analyser.fftSize = 256;
+    analyserRefs.current[userId] = analyser;
+    
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    
+    const checkAudioLevel = () => {
+      if (!analyserRefs.current[userId]) return;
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const average = sum / bufferLength;
+      
+      // Update speaking state
+      const isSpeaking = average > 10;
+      setParticipants(prev => {
+        if (!prev[userId] || prev[userId].isSpeaking === isSpeaking) return prev;
+        return { ...prev, [userId]: { ...prev[userId], isSpeaking } };
+      });
+      
+      requestAnimationFrame(checkAudioLevel);
+    };
+    checkAudioLevel();
+  };
+
+  const createPeerConnection = (targetUserId) => {
+    const peer = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    });
+
+    peer.onicecandidate = (event) => {
+      if (event.candidate && socketRef.current) {
+        socketRef.current.emit('webrtc-ice-candidate', { targetUserId, candidate: event.candidate });
+      }
+    };
+
+    peer.ontrack = (event) => {
+      const [remoteStream] = event.streams;
+      
+      // Update participant with stream
+      setParticipants(prev => {
+        if (!prev[targetUserId]) return prev;
+        return {
+          ...prev,
+          [targetUserId]: {
+            ...prev[targetUserId],
+            stream: remoteStream
+          }
+        };
+      });
+
+      // Attach stream to audio element
+      if (audioRefs.current[targetUserId]) {
+        audioRefs.current[targetUserId].srcObject = remoteStream;
+      }
+      
+      setupSpeechDetection(remoteStream, targetUserId);
+    };
+
+    return peer;
+  };
+
   useEffect(() => {
     // 1. Get Local Audio Stream
     const initLocalStream = async () => {
@@ -145,84 +224,6 @@ const VoiceLounge = () => {
     };
   }, [user._id]); // Added dependency array
 
-  function createPeerConnection(targetUserId) {
-    const peer = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    });
-
-    peer.onicecandidate = (event) => {
-      if (event.candidate && socketRef.current) {
-        socketRef.current.emit('webrtc-ice-candidate', { targetUserId, candidate: event.candidate });
-      }
-    };
-
-    peer.ontrack = (event) => {
-      const [remoteStream] = event.streams;
-      
-      // Update participant with stream
-      setParticipants(prev => {
-        if (!prev[targetUserId]) return prev;
-        return {
-          ...prev,
-          [targetUserId]: {
-            ...prev[targetUserId],
-            stream: remoteStream
-          }
-        };
-      });
-
-      // Attach stream to audio element
-      if (audioRefs.current[targetUserId]) {
-        audioRefs.current[targetUserId].srcObject = remoteStream;
-      }
-      
-      setupSpeechDetection(remoteStream, targetUserId);
-    };
-
-    return peer;
-  };
-
-  function setupSpeechDetection(stream, userId) {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    const ctx = audioContextRef.current;
-    
-    // Resume context if suspended (browser policy)
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-    }
-
-    const analyser = ctx.createAnalyser();
-    const source = ctx.createMediaStreamSource(stream);
-    source.connect(analyser);
-    
-    analyser.fftSize = 256;
-    analyserRefs.current[userId] = analyser;
-    
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    
-    const checkAudioLevel = () => {
-      if (!analyserRefs.current[userId]) return;
-      analyser.getByteFrequencyData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < bufferLength; i++) {
-        sum += dataArray[i];
-      }
-      const average = sum / bufferLength;
-      
-      // Update speaking state
-      const isSpeaking = average > 10;
-      setParticipants(prev => {
-        if (!prev[userId] || prev[userId].isSpeaking === isSpeaking) return prev;
-        return { ...prev, [userId]: { ...prev[userId], isSpeaking } };
-      });
-      
-      requestAnimationFrame(checkAudioLevel);
-    };
-    checkAudioLevel();
-  };
 
   const toggleMute = () => {
     if (localStreamRef.current) {
