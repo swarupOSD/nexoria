@@ -159,7 +159,7 @@ const MovieBoxLayout = () => {
 
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-64 h-full shrink-0 z-40 relative">
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
       {/* Mobile Sidebar Overlay */}
@@ -180,7 +180,7 @@ const MovieBoxLayout = () => {
               transition={{ type: 'tween', duration: 0.3 }}
               className="fixed inset-y-0 left-0 w-72 h-full z-50 lg:hidden shadow-2xl"
             >
-              <SidebarContent />
+              {renderSidebarContent()}
             </motion.aside>
           </>
         )}

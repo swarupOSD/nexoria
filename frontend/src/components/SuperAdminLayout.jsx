@@ -320,7 +320,7 @@ const SuperAdminLayout = () => {
 
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex z-20">
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
       {/* Mobile Sidebar */}
@@ -333,7 +333,7 @@ const SuperAdminLayout = () => {
             transition={{ type: 'tween', duration: 0.2 }}
             className="fixed inset-y-0 left-0 z-50 flex flex-col md:hidden"
           >
-            <SidebarContent />
+            {renderSidebarContent()}
           </motion.div>
         )}
       </AnimatePresence>

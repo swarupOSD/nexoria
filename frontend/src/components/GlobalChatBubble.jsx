@@ -7,6 +7,7 @@ import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 import UserActionModal from './UserActionModal';
 import { usePermissions } from '../contexts/PermissionContext';
+import toast from 'react-hot-toast';
 
 // Keep socket outside to prevent reconnection on re-renders, but only connect if needed.
 let socket;

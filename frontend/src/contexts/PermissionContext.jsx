@@ -16,35 +16,26 @@ export const PermissionProvider = ({ children }) => {
   });
 
   const requestPermission = useCallback(async (type) => {
-    return new Promise(async (resolve) => {
-      // type can be 'microphone', 'camera', 'notifications'
-      let status = 'prompt';
-      
-      try {
-        // Query the permissions API
-        if (navigator.permissions && navigator.permissions.query) {
-          const res = await navigator.permissions.query({ name: type });
-          status = res.state; // 'granted', 'prompt', 'denied'
-        } else {
-          // Safari fallback: permissions.query might not support 'microphone' or 'camera'
-          status = 'prompt';
-        }
-      } catch (err) {
-        // If unsupported or throws an error, default to prompt
-        status = 'prompt';
+    let permStatus = 'prompt';
+    try {
+      if (navigator.permissions && navigator.permissions.query) {
+        const res = await navigator.permissions.query({ name: type });
+        permStatus = res.state;
       }
+    } catch (err) {
+      permStatus = 'prompt';
+    }
 
-      if (status === 'granted') {
-        resolve(true);
-        return;
-      }
+    if (permStatus === 'granted') {
+      return true;
+    }
 
-      // Show custom modal
+    return new Promise((resolve) => {
       setModalState({
         isOpen: true,
         type,
         resolve,
-        status
+        status: permStatus
       });
     });
   }, []);

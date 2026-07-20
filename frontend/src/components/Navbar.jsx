@@ -23,6 +23,7 @@ import ParentalGateModal from './ParentalGateModal';
 import BottomNavigation from './Layout/BottomNavigation';
 import FriendsDrawer from './FriendsDrawer';
 import PrivateChatWidget from './PrivateChatWidget';
+import { usePermissions } from '../contexts/PermissionContext';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme, isCyberpunk, toggleCyberpunk } = useTheme();
