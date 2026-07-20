@@ -7,9 +7,11 @@ import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
 import CallOverlay from './CallOverlay';
 import UserActionModal from './UserActionModal';
+import { usePermissions } from '../contexts/PermissionContext';
 
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
+  const { requestPermission } = usePermissions();
   const [messages, setMessages] = useState([]);
   const [participants, setParticipants] = useState(roomData.participants || []);
   const [inputValue, setInputValue] = useState('');
@@ -158,6 +160,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
   const startRecording = async () => {
     try {
+      const granted = await requestPermission('microphone');
+      if (!granted) {
+        toast.error('Microphone permission denied.');
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];

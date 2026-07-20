@@ -58,6 +58,7 @@ import MovieBrowse from './pages/MovieBrowse';
 import CyberpunkParticles from './components/CyberpunkParticles';
 import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
+import { PermissionProvider } from './contexts/PermissionContext';
 import PrivateRoute from './components/PrivateRoute';
 import SystemBroadcastManager from './components/SystemBroadcastManager';
 import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
@@ -218,9 +219,10 @@ function App() {
   }, [settings.favicon]);
 
   return (
-    <Router>
-      <SystemBroadcastManager />
-      <AuraSurgeBanner />
+    <PermissionProvider>
+      <Router>
+        <SystemBroadcastManager />
+        <AuraSurgeBanner />
       <Toaster position="top-right" />
       <KidsModeGuard>
         <Suspense fallback={<PageLoader />}>

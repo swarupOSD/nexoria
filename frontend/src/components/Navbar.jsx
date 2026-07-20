@@ -94,6 +94,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const { user, isKidsMode } = useSelector((state) => state.auth);
+  const { requestPermission } = usePermissions();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
@@ -195,10 +196,15 @@ const Navbar = () => {
   // Web Speech API
   const startVoiceSearch = async () => {
     try {
+      const granted = await requestPermission('microphone');
+      if (!granted) {
+        toast.error('Microphone permission denied.');
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach(track => track.stop());
     } catch (err) {
-      toast.error('Microphone permission denied. Please allow microphone access in your browser settings.');
+      toast.error('Microphone access blocked. Please click 🔒 in URL bar to allow.');
       return;
     }
 

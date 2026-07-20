@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff, Maximize, Minimize } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { usePermissions } from '../contexts/PermissionContext';
 
 const ICE_SERVERS = {
   iceServers: [
@@ -10,8 +11,9 @@ const ICE_SERVERS = {
   ]
 };
 
-const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCall, callerSignal, callerInfo, onClose }) => {
+const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isReceivingCall, callerSignal, callerInfo, onClose }) => {
   const [stream, setStream] = useState(null);
+  const { requestPermission } = usePermissions();
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   
@@ -81,18 +83,29 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
     socket.on('iceCandidate', handleIceCandidate);
 
     if (!isReceivingCall) {
-      navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
-        .then((mediaStream) => {
-          setStream(mediaStream);
-          if (myVideo.current) myVideo.current.srcObject = mediaStream;
-          if (partner) initiateCall(mediaStream);
-        })
-        .catch(err => {
-          console.error("Error accessing media devices.", err);
-          if (err.name === 'NotFoundError') toast.error("No Camera or Microphone found on your device!");
-          else toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+      const initCall = async () => {
+        const requiredPermission = callType === 'video' ? 'camera' : 'microphone';
+        const granted = await requestPermission(requiredPermission);
+        if (!granted) {
+          toast.error(`${requiredPermission} permission was denied.`);
           onClose();
-        });
+          return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
+          .then((mediaStream) => {
+            setStream(mediaStream);
+            if (myVideo.current) myVideo.current.srcObject = mediaStream;
+            if (partner) initiateCall(mediaStream);
+          })
+          .catch(err => {
+            console.error("Error accessing media devices.", err);
+            if (err.name === 'NotFoundError') toast.error("No Camera or Microphone found on your device!");
+            else toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
+            onClose();
+          });
+      };
+      initCall();
     }
 
     const handleCallEnded = () => {
@@ -112,7 +125,15 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
     };
   }, []);
 
-  const answerCall = () => {
+  const answerCall = async () => {
+    const requiredPermission = callType === 'video' ? 'camera' : 'microphone';
+    const granted = await requestPermission(requiredPermission);
+    if (!granted) {
+      toast.error(`${requiredPermission} permission was denied.`);
+      rejectCall();
+      return;
+    }
+
     navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
       .then((mediaStream) => {
         setStream(mediaStream);

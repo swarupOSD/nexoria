@@ -6,11 +6,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import { io } from 'socket.io-client';
 import UserActionModal from './UserActionModal';
+import { usePermissions } from '../contexts/PermissionContext';
 
 // Keep socket outside to prevent reconnection on re-renders, but only connect if needed.
 let socket;
 
 const GlobalChatBubble = () => {
+  const { user } = useSelector(state => state.auth);
+  const { requestPermission } = usePermissions();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -111,6 +114,11 @@ const GlobalChatBubble = () => {
 
   const startRecording = async () => {
     try {
+      const granted = await requestPermission('microphone');
+      if (!granted) {
+        toast.error('Microphone permission denied.');
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];

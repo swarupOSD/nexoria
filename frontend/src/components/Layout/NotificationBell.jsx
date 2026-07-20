@@ -12,6 +12,7 @@ import { formatDistanceToNow } from 'date-fns';
 import DropdownMenu from '../DropdownMenu';
 import { useSocket } from '../../context/SocketContext';
 import { useSubscribeToPushMutation } from '../../features/user/userApiSlice';
+import { usePermissions } from '../../contexts/PermissionContext';
 import toast from 'react-hot-toast';
 
 const PUBLIC_VAPID_KEY = 'BM_qXoG-H3pLd7l561n9yXw0X_6W2R2G-y9-XyYvL8X5LhA8nN9eLq8Z2r5f_7T1D9n6s5F-X5XvHqX2v-L5Q3c';
@@ -66,6 +67,8 @@ const NotificationBell = ({ iconClassName }) => {
   const notifications = notificationsData?.data || [];
 
   const [isOpen, setIsOpen] = useState(false);
+  const { requestPermission } = usePermissions();
+  const dropdownRef = useRef(null);
   const socket = useSocket();
   const { refetch: refetchUnread } = useGetUnreadCountQuery();
   const { refetch: refetchNotifications } = useGetNotificationsQuery({ page: 1, limit: 5 });
@@ -119,6 +122,11 @@ const NotificationBell = ({ iconClassName }) => {
       return toast.error('Push notifications are not supported by your browser.');
     }
     try {
+      const granted = await requestPermission('notifications');
+      if (!granted) {
+        toast.error('Notifications permission was denied.');
+        return;
+      }
       const permission = await Notification.requestPermission();
       setPushPermission(permission);
       

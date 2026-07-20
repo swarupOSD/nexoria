@@ -5,9 +5,11 @@ import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
+import { usePermissions } from '../contexts/PermissionContext';
 
 const VoiceLounge = () => {
   const { user } = useSelector(state => state.auth);
+  const { requestPermission } = usePermissions();
   
   const [participants, setParticipants] = useState({}); // { [userId]: { ...info, stream, isSpeaking, isMuted } }
   const [isMuted, setIsMuted] = useState(false);
@@ -121,6 +123,12 @@ const VoiceLounge = () => {
     // 1. Get Local Audio Stream
     const initLocalStream = async () => {
       try {
+        const granted = await requestPermission('microphone');
+        if (!granted) {
+          toast.error("Microphone permission was denied.");
+          return;
+        }
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
         localStreamRef.current = stream;
         
