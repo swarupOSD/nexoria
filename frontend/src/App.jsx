@@ -455,7 +455,8 @@ function App() {
       <SecretLoungeButton />
       <AdBlockDetector />
     </KidsModeGuard>
-  </Router>
+      </Router>
+    </PermissionProvider>
   );
 }
 

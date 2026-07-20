@@ -31,8 +31,6 @@ const GlobalChatBubble = () => {
   const recordingTimerRef = useRef(null);
   const audioRefs = useRef({}); // Store references to audio elements for playback control
   const [playingAudioId, setPlayingAudioId] = useState(null);
-
-  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
   const messagesEndRef = useRef(null);
