@@ -194,9 +194,9 @@ const MovieDetail = () => {
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="hidden md:block w-48 lg:w-64 shrink-0 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-white/10 z-10"
+            className="hidden md:block w-48 lg:w-64 shrink-0 rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/20 bg-white/5 backdrop-blur-md p-2 z-10 hover:scale-105 transition-transform duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-500/50"
           >
-            <img src={movie.posterImage} alt={movie.title} className="w-full h-auto aspect-[2/3] object-cover" />
+            <img src={movie.posterImage} alt={movie.title} className="w-full h-auto aspect-[2/3] object-cover rounded-xl" />
           </motion.div>
 
           {/* Info */}
@@ -236,20 +236,20 @@ const MovieDetail = () => {
                   setActiveTab('watch');
                   window.scrollBy({ top: 500, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold transition-colors shadow-xl shadow-purple-600/30"
+                className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(168,85,247,0.3)] hover:shadow-[0_15px_30px_rgba(168,85,247,0.5)] hover:-translate-y-1 group"
               >
-                <Play className="w-5 h-5 fill-white" /> Play Movie
+                <Play className="w-5 h-5 fill-white group-hover:animate-pulse drop-shadow-md" /> Play Movie
               </button>
               <Link 
                 to={`/moviebox/watch-party/${movie.slug}`}
-                className="flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-colors shadow-xl shadow-amber-500/30"
+                className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_30px_rgba(245,158,11,0.5)] hover:-translate-y-1 group border border-white/10"
               >
-                <Users className="w-5 h-5 fill-amber-500 text-white" /> Watch Party
+                <Users className="w-5 h-5 fill-white text-white drop-shadow-md" /> Watch Party
               </Link>
               {movie.trailerUrl && (
                 <button 
                   onClick={() => setShowTrailer(true)}
-                  className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold backdrop-blur-md transition-colors border border-white/10"
+                  className="flex items-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-black backdrop-blur-xl transition-all duration-300 border border-white/20 hover:border-white/40 hover:-translate-y-1 shadow-lg"
                 >
                   <Video className="w-5 h-5" /> Trailer
                 </button>
@@ -277,13 +277,13 @@ const MovieDetail = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all duration-300 whitespace-nowrap ${
                   activeTab === tab.id 
-                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' 
-                    : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                    ? 'bg-white/10 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] backdrop-blur-md border border-white/20 scale-105' 
+                    : 'bg-transparent text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
                 }`}
               >
-                <tab.icon className="w-4 h-4" /> {tab.label}
+                <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-purple-400' : ''}`} /> {tab.label}
               </button>
             ))}
           </div>
@@ -299,21 +299,24 @@ const MovieDetail = () => {
               {activeTab === 'watch' && (
                 <div className="space-y-6">
                   {!hasAccess ? (
-                    <div className="bg-[#111] border border-amber-500/20 rounded-2xl p-8 text-center">
-                      <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Star className="w-8 h-8 text-amber-500 fill-amber-500" />
+                    <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl border border-amber-500/30 rounded-3xl p-8 text-center shadow-[0_20px_40px_rgba(245,158,11,0.1)] relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 to-transparent pointer-events-none"></div>
+                      <div className="w-20 h-20 bg-gradient-to-tr from-amber-500/20 to-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(245,158,11,0.2)] border border-amber-500/20 relative z-10">
+                        <Star className="w-10 h-10 text-amber-500 fill-amber-500 drop-shadow-md" />
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2">Premium Movie</h3>
-                      <p className="text-slate-400 mb-6">You need to purchase this movie to watch or download it.</p>
+                      <h3 className="text-2xl font-black text-white mb-2 relative z-10">Premium Movie</h3>
+                      <p className="text-slate-300 mb-8 relative z-10 font-medium">You need to purchase this movie to watch or download it.</p>
                       <button 
                         onClick={() => toast('Purchase flow coming soon!')}
-                        className="px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-colors"
+                        className="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl font-black shadow-[0_10px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_30px_rgba(245,158,11,0.4)] transition-all hover:-translate-y-1 relative z-10 border border-white/10"
                       >
                         Buy Now for ${movie.price}
                       </button>
                     </div>
                   ) : (
-                    <div className="aspect-video w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative">
+                    <div className="aspect-video w-full bg-black/50 backdrop-blur-3xl rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/10 relative p-1 group">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      <div className="w-full h-full rounded-[1.75rem] overflow-hidden relative z-10 bg-black">
                       {movie.videoFile || movie.videoUrl ? (
                         <video 
                           ref={videoRef}
@@ -332,6 +335,7 @@ const MovieDetail = () => {
                           <p className="text-slate-500 font-medium">No streaming source available</p>
                         </div>
                       )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -339,10 +343,13 @@ const MovieDetail = () => {
 
               {activeTab === 'download' && (
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold text-white">Download Links</h3>
+                  <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                    <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+                    Download Links
+                  </h3>
                   {!hasAccess ? (
-                     <div className="p-6 bg-[#111] border border-amber-500/20 rounded-xl text-center">
-                       <p className="text-amber-500 font-medium">Purchase required to view download links.</p>
+                     <div className="p-8 bg-white/5 backdrop-blur-xl border border-amber-500/30 rounded-3xl text-center shadow-[0_10px_30px_rgba(245,158,11,0.1)]">
+                       <p className="text-amber-500 font-bold text-lg">Purchase required to view download links.</p>
                      </div>
                   ) : movie.downloadLinks && movie.downloadLinks.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -350,24 +357,24 @@ const MovieDetail = () => {
                         <button
                           key={idx}
                           onClick={() => handleDownload(link)}
-                          className="flex items-center justify-between p-4 bg-[#111] hover:bg-white/5 border border-white/10 rounded-xl transition-colors group text-left"
+                          className="flex items-center justify-between p-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 group text-left shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-purple-500/30 backdrop-blur-md"
                         >
                           <div>
-                            <p className="font-bold text-white group-hover:text-purple-400 transition-colors">{link.label || `Server ${idx + 1}`}</p>
-                            <p className="text-xs text-slate-500 mt-1">{movie.fileSize || 'Unknown Size'}</p>
+                            <p className="font-black text-white group-hover:text-purple-400 transition-colors text-lg">{link.label || `Server ${idx + 1}`}</p>
+                            <p className="text-sm text-slate-400 mt-1 font-medium">{movie.fileSize || 'Unknown Size'}</p>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <span className="px-2 py-1 bg-white/10 text-white text-xs font-bold rounded">{link.quality}</span>
-                            <div className="w-10 h-10 rounded-full bg-purple-600/10 flex items-center justify-center group-hover:bg-purple-600 transition-colors">
-                              <Download className="w-4 h-4 text-purple-500 group-hover:text-white transition-colors" />
+                          <div className="flex items-center gap-4">
+                            <span className="px-3 py-1.5 bg-black/40 border border-white/10 text-white text-xs font-black tracking-widest uppercase rounded-lg">{link.quality}</span>
+                            <div className="w-12 h-12 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center group-hover:bg-purple-600 group-hover:border-purple-500 transition-all duration-300 shadow-[0_0_15px_rgba(168,85,247,0.2)] group-hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]">
+                              <Download className="w-5 h-5 text-purple-400 group-hover:text-white transition-colors" />
                             </div>
                           </div>
                         </button>
                       ))}
                     </div>
                   ) : (
-                    <div className="p-8 bg-[#111] rounded-xl text-center border border-white/5">
-                      <p className="text-slate-500">No download links available currently.</p>
+                    <div className="p-8 bg-white/5 backdrop-blur-xl rounded-3xl text-center border border-white/10 shadow-lg">
+                      <p className="text-slate-400 font-medium text-lg">No download links available currently.</p>
                     </div>
                   )}
                 </div>
@@ -375,21 +382,29 @@ const MovieDetail = () => {
 
               {activeTab === 'story' && (
                 <div className="space-y-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-4">Synopsis</h3>
+                  <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <h3 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white">
+                      <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+                      Synopsis
+                    </h3>
                     <div 
-                      className="text-slate-300 leading-relaxed space-y-4"
+                      className="text-slate-700 dark:text-slate-300 leading-relaxed space-y-4 relative z-10"
                       dangerouslySetInnerHTML={{ __html: movie.description }}
                     />
                   </div>
                   
                   {movie.galleryImages && movie.galleryImages.length > 0 && (
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-4">Screenshots</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden mt-8">
+                      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                      <h3 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white relative z-10">
+                        <span className="w-1.5 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                        Screenshots
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
                         {movie.galleryImages.map((img, idx) => (
-                          <div key={idx} className="aspect-video rounded-lg overflow-hidden bg-[#111] border border-white/5">
-                            <img src={img} alt={`Screenshot ${idx+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer" />
+                          <div key={idx} className="aspect-video rounded-2xl overflow-hidden border border-slate-200/50 dark:border-white/10 shadow-lg group">
+                            <img src={img} alt={`Screenshot ${idx+1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer" />
                           </div>
                         ))}
                       </div>
@@ -401,21 +416,27 @@ const MovieDetail = () => {
               {activeTab === 'cast' && (
                 <div className="space-y-8">
                   {movie.director && (
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-3 text-purple-400">Director</h3>
-                      <p className="text-slate-300 font-medium text-lg">{movie.director}</p>
+                    <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+                      <h3 className="text-xl font-black mb-3 flex items-center gap-3 text-slate-900 dark:text-white">
+                        <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+                        Director
+                      </h3>
+                      <p className="text-slate-700 dark:text-slate-300 font-medium text-lg ml-4">{movie.director}</p>
                     </div>
                   )}
                   {movie.cast && movie.cast.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-4 text-purple-400">Top Cast</h3>
+                    <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+                      <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white">
+                        <span className="w-1.5 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                        Top Cast
+                      </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         {movie.cast.map((actor, idx) => (
-                          <div key={idx} className="flex items-center gap-3 p-3 bg-[#111] rounded-xl border border-white/5">
-                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
-                              <Users className="w-5 h-5 text-slate-500" />
+                          <div key={idx} className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-colors group shadow-lg">
+                            <div className="w-14 h-14 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform">
+                              <Users className="w-6 h-6 text-slate-500" />
                             </div>
-                            <span className="font-medium text-slate-300">{actor}</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors text-lg">{actor}</span>
                           </div>
                         ))}
                       </div>
@@ -427,8 +448,12 @@ const MovieDetail = () => {
               {activeTab === 'reviews' && (
                 <div className="space-y-8">
                   {/* Review Form */}
-                  <div className="bg-[#111] p-6 rounded-2xl border border-white/5">
-                    <h3 className="text-xl font-bold text-white mb-4">Leave a Review</h3>
+                  <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <h3 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white relative z-10">
+                      <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+                      Leave a Review
+                    </h3>
                     <form onSubmit={handleReviewSubmit} className="space-y-4">
                       <div>
                         <label className="block text-slate-400 text-sm mb-2">Rating</label>
@@ -453,7 +478,7 @@ const MovieDetail = () => {
                         <label className="block text-slate-400 text-sm mb-2">Your Review</label>
                         <textarea
                           rows="4"
-                          className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                          className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors backdrop-blur-md relative z-10"
                           placeholder="What did you think of the movie?"
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
@@ -471,17 +496,20 @@ const MovieDetail = () => {
 
                   {/* Reviews List */}
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-6">User Reviews ({reviews.length})</h3>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                      <span className="w-1.5 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                      User Reviews ({reviews.length})
+                    </h3>
                     {reviewsLoading ? (
                       <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-purple-500" /></div>
                     ) : reviews.length === 0 ? (
-                      <p className="text-slate-500 text-center py-8 bg-[#111] rounded-2xl border border-white/5">
+                      <p className="text-slate-500 text-center py-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
                         No reviews yet. Be the first to review!
                       </p>
                     ) : (
                       <div className="space-y-4">
                         {reviews.map((rev) => (
-                          <div key={rev._id} className="bg-[#111] p-6 rounded-2xl border border-white/5">
+                          <div key={rev._id} className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:bg-white/10 transition-colors">
                             <div className="flex items-center justify-between mb-4">
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold overflow-hidden">
@@ -520,8 +548,11 @@ const MovieDetail = () => {
         <div className="lg:w-80 shrink-0 space-y-8">
           
           {/* Movie Details Card */}
-          <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Movie Info</h3>
+          <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4 border-b border-white/10 pb-3 flex items-center gap-2">
+              <span className="w-1.5 h-5 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+              Movie Info
+            </h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center pb-2 border-b border-white/5">
                 <span className="text-slate-500 text-sm">Status</span>
@@ -548,12 +579,15 @@ const MovieDetail = () => {
 
           {/* Related Movies */}
           {relatedMovies.length > 0 && (
-            <div>
-              <h3 className="text-lg font-bold text-white mb-4">You May Also Like</h3>
+            <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)]">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                <span className="w-1.5 h-5 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                You May Also Like
+              </h3>
               <div className="space-y-4">
                 {relatedMovies.map(related => (
-                  <Link key={related._id} to={`/moviebox/movie/${related.slug}`} className="flex gap-4 group">
-                    <div className="w-16 h-24 shrink-0 rounded-lg overflow-hidden bg-[#111]">
+                  <Link key={related._id} to={`/moviebox/movie/${related.slug}`} className="flex gap-4 group hover:bg-white/5 p-2 rounded-2xl transition-colors">
+                    <div className="w-16 h-24 shrink-0 rounded-xl overflow-hidden bg-[#111] border border-white/10 shadow-lg">
                       <img src={related.posterImage} alt={related.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <div className="flex-1 py-1">

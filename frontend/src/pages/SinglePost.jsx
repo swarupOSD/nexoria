@@ -392,10 +392,15 @@ const SinglePost = () => {
       />
 
       {/* Header Section */}
-      <div className="bg-[#111] rounded-2xl border border-white/5 p-6 flex flex-col md:flex-row gap-6 items-center md:items-start">
-        <img src={post.appLogo} alt={post.title} className="w-32 h-32 rounded-3xl shadow-lg object-cover bg-[#1a1a1a] border border-white/10 p-1 shrink-0" />
-        <div className="flex-1 text-center md:text-left space-y-2">
-          <h1 className="text-3xl font-extrabold text-white">{post.title}</h1>
+      <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center md:items-start shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden group/header">
+        <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-blue-500/10 pointer-events-none opacity-50 z-0"></div>
+        
+        <div className="relative z-10 w-36 h-36 rounded-[2rem] overflow-hidden bg-black/5 dark:bg-white/5 shadow-2xl border border-white/20 dark:border-white/10 p-3 shrink-0 group-hover/header:scale-105 transition-transform duration-500 group-hover/header:shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+          <img src={post.appLogo} alt={post.title} className="w-full h-full object-contain drop-shadow-2xl" />
+        </div>
+        
+        <div className="flex-1 text-center md:text-left space-y-3 relative z-10">
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white drop-shadow-md tracking-tight">{post.title}</h1>
           <p className="text-primary dark:text-accent font-semibold">{post.publisher}</p>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1"><Star className="w-4 h-4 text-warning fill-current" /> {(post.averageRating || 5).toFixed(1)} ({post.totalVotes || 0} reviews)</span>
@@ -403,7 +408,7 @@ const SinglePost = () => {
             <span className="flex items-center gap-1"><Info className="w-4 h-4" /> v{post.version}</span>
           </div>
         </div>
-        <div className="flex flex-col gap-3 min-w-[200px] items-stretch">
+        <div className="flex flex-col gap-3 min-w-[220px] items-stretch relative z-10 mt-4 md:mt-0">
           <p className="text-center text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">✅ Verified &amp; Safe &bull; {post.downloads || 0} Downloads</p>
           
           <button 
@@ -442,9 +447,9 @@ const SinglePost = () => {
                  <button
                    onClick={(e) => handleDownloadClick(e, link)}
                    disabled={isDownloading || isRequestsLoading}
-                   className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed group"
+                   className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_10px_20px_rgba(168,85,247,0.3)] hover:shadow-[0_15px_30px_rgba(168,85,247,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group border border-white/10"
                  >
-                   <Download className="w-4 h-4 group-hover:animate-bounce" /> {btnText}
+                   <Download className="w-5 h-5 group-hover:animate-bounce drop-shadow-md" /> {btnText}
                  </button>
                  <button onClick={() => handleReportLink(link._id)} className="px-3 bg-danger/10 text-danger hover:bg-danger/20 rounded-xl transition border border-danger/10" title="Report Broken Link">
                    <ShieldAlert className="w-4 h-4" />
@@ -497,18 +502,26 @@ const SinglePost = () => {
       {/* Content & Mod Info */}
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          <div className="bg-[#111] rounded-2xl border border-white/5 p-6">
-            <h2 className="text-xl font-bold mb-4 border-l-4 border-primary pl-3">Description</h2>
-            <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: renderContentWithEmbeds(post.content) }}></div>
+          <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            <h2 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white">
+              <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-indigo-500 rounded-full"></span>
+              Description
+            </h2>
+            <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 relative z-10" dangerouslySetInnerHTML={{ __html: renderContentWithEmbeds(post.content) }}></div>
           </div>
           
           {post.galleryImages && post.galleryImages.length > 0 && (
-            <div className="bg-[#111] rounded-2xl border border-white/5 p-6">
-              <h2 className="text-xl font-bold mb-4 border-l-4 border-accent pl-3">App Screenshots</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-3xl rounded-3xl border border-slate-200/50 dark:border-white/10 p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(168,85,247,0.05)] relative overflow-hidden mt-8">
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+              <h2 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-900 dark:text-white relative z-10">
+                <span className="w-1.5 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                App Screenshots
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
                 {post.galleryImages.map((img, idx) => (
-                  <a key={idx} href={img} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl">
-                    <img src={img} fallbackType="generic" alt={`${post.title} screenshot ${idx + 1}`} className="w-full h-auto object-cover hover:scale-105 transition duration-300" />
+                  <a key={idx} href={img} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-2xl border border-slate-200/50 dark:border-white/10 shadow-lg group">
+                    <img src={img} fallbackType="generic" alt={`${post.title} screenshot ${idx + 1}`} className="w-full h-auto object-cover group-hover:scale-110 transition duration-500" />
                   </a>
                 ))}
               </div>
