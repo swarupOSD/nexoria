@@ -31,6 +31,7 @@ const PwaUpdatePrompt = () => {
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later.
+      window.deferredPrompt = e; // Expose globally for AppDownloadTab
       setInstallPrompt(e);
       setIsInstallable(true);
     };
