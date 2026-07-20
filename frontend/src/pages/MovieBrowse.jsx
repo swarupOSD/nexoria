@@ -55,9 +55,14 @@ const MovieBrowse = ({ type }) => {
         <div className="text-center py-16 bg-white/80 dark:bg-[#111]/80 backdrop-blur-3xl relative overflow-hidden border border-slate-200/50 dark:border-white/5 shadow-xl rounded-3xl group transition-all duration-500 hover:border-purple-500/30 hover:shadow-purple-500/10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/5 blur-[100px] rounded-full pointer-events-none -z-10 group-hover:scale-125 transition-transform duration-1000"></div>
           
-          <div className="text-5xl md:text-7xl mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 inline-block drop-shadow-2xl">
+          <motion.div 
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="text-5xl md:text-7xl mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 inline-block drop-shadow-2xl"
+          >
             {emoji}
-          </div>
+          </motion.div>
           
           <h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 mb-4 tracking-tight drop-shadow-lg">
             {pageTitle}
@@ -67,10 +72,11 @@ const MovieBrowse = ({ type }) => {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
           {movies.map((movie, idx) => (
-            <Link key={movie._id} to={`/moviebox/movie/${movie.slug}`} className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-2">
-              <div className="relative aspect-[2/3] rounded-2xl overflow-hidden bg-slate-100 dark:bg-[#111] mb-3 shadow-lg border border-slate-200/50 dark:border-white/5">
-                <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+            <Link key={movie._id} to={`/moviebox/movie/${movie.slug}`} className="group flex flex-col relative transition-all duration-500 hover:-translate-y-3">
+              <div className="relative aspect-[2/3] rounded-3xl overflow-hidden bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-2xl mb-3 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(168,85,247,0.05)] border border-slate-200/50 dark:border-white/10 group-hover:shadow-[0_20px_40px_rgba(168,85,247,0.2)] group-hover:border-purple-500/50 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-blue-500/10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 z-0 relative" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity z-0" />
                 
                 {/* Badges */}
                 <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
@@ -87,15 +93,15 @@ const MovieBrowse = ({ type }) => {
                 </div>
 
                 {/* Hover Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
-                  <div className="w-12 h-12 rounded-full bg-white text-purple-600 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300 shadow-xl shadow-white/10">
-                    <Play className="w-5 h-5 ml-1 fill-purple-600" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-black/40 backdrop-blur-md z-10">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white flex items-center justify-center transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(168,85,247,0.6)]">
+                    <Play className="w-6 h-6 ml-1 fill-white" />
                   </div>
                 </div>
 
                 {/* Info overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 transition-transform">
-                  <div className="flex items-center justify-between text-white/90 text-xs font-medium mb-1">
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-80 group-hover:opacity-100 transition-all duration-500 z-10">
+                  <div className="flex items-center justify-between text-white text-xs font-bold mb-1 backdrop-blur-md bg-black/20 px-2 py-1 rounded-lg border border-white/10">
                     <span>{movie.releaseYear || 'TBA'}</span>
                     <div className="flex items-center gap-1">
                       <Star className="w-3 h-3 text-amber-400 fill-amber-400" />

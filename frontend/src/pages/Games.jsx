@@ -137,10 +137,12 @@ const Games = () => {
             return (
             <div
               key={game._id}
-              className="block group bg-[#1a1a1f] rounded-2xl overflow-hidden border border-white/5 hover:border-purple-500/30 transition-all hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1"
+              className="block group bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-2xl rounded-3xl overflow-hidden border border-slate-200/50 dark:border-white/10 transition-all hover:shadow-[0_20px_40px_rgba(168,85,247,0.2)] hover:border-purple-500/50 hover:-translate-y-2 relative"
             >
+              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-blue-500/10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+              <div className="relative z-10 h-full flex flex-col">
               {/* Banner / Logo Area */}
-              <div className="relative aspect-video bg-black/50 overflow-hidden">
+              <div className="relative aspect-video bg-black/20 dark:bg-white/5 overflow-hidden">
                 {game.banner || game.logo ? (
                   <img
                     src={game.banner || game.logo}
@@ -154,7 +156,7 @@ const Games = () => {
                 )}
                 
                 {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0A0A0A] via-transparent to-transparent"></div>
                 
                 {/* Version badge */}
                 {game.version && (
@@ -225,22 +227,23 @@ const Games = () => {
                       disabled={isRequestsLoading}
                       className={`px-4 py-2 flex items-center gap-1.5 text-xs font-bold rounded-lg transition-colors ${
                         canPlay 
-                          ? 'bg-purple-600/10 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/20' 
+                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-purple-500/50' 
                           : isPending
                             ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20 cursor-wait'
-                            : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20'
+                            : 'bg-[#111] text-slate-300 border border-white/10 hover:bg-white/5'
                       }`}
                     >
                       {canPlay ? (
                         <>Play Now <ExternalLink className="w-3 h-3" /></>
                       ) : isPending ? (
-                        'Pending Approval'
+                        <>Pending Approval...</>
                       ) : (
-                        <><ShoppingCart className="w-3 h-3" /> Buy (₹{game.price})</>
+                        <>Buy / Unlock</>
                       )}
                     </button>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           )})}

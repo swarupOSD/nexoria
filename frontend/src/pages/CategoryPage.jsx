@@ -17,11 +17,12 @@ const AppCard = React.memo(({ app }) => {
       className="h-full"
     >
       <Link to={`/post/${app.slug}`} className="group block h-full">
-        <div className="bg-[#111] border border-white/5 rounded-3xl p-4 shadow-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:border-purple-500/30 transition-all duration-300 h-full flex flex-col gap-4">
-          <div className="aspect-square w-full rounded-2xl overflow-hidden relative bg-white/5">
-            <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500" />
+        <div className="bg-white/5 dark:bg-[#0A0A0A]/60 backdrop-blur-2xl border border-slate-200/50 dark:border-white/10 rounded-3xl p-4 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(168,85,247,0.05)] hover:shadow-[0_20px_40px_rgba(168,85,247,0.2)] hover:border-purple-500/50 transition-all duration-500 h-full flex flex-col gap-4 relative overflow-hidden group/card">
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-blue-500/10 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
+          <div className="aspect-square w-full rounded-2xl overflow-hidden relative bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-inner z-10 border border-white/5">
+            <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-500 drop-shadow-xl" />
           {isPremium && (
-            <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-md uppercase tracking-wider">
+            <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-lg uppercase tracking-wider backdrop-blur-md border border-white/20">
               PRO
             </div>
           )}
@@ -92,13 +93,22 @@ const CategoryPage = ({ type }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent"></div>
         
-        <div className="relative container mx-auto px-4 pt-16 pb-12 text-center max-w-3xl z-10">
-          <h1 className={`text-4xl md:text-6xl font-black mb-4 drop-shadow-lg tracking-tight ${isAppHub ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500' : 'text-white'}`}>
+        <div className="relative container mx-auto px-4 pt-16 pb-12 text-center max-w-3xl z-10 perspective-1000">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20, rotateX: -20 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            className={`text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl tracking-tight ${isAppHub ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500' : 'text-white'}`}
+          >
             {pageTitle}
-          </h1>
-          <p className="text-slate-300 text-lg md:text-xl font-medium drop-shadow-md">
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-300 text-lg md:text-xl font-medium drop-shadow-md bg-black/20 backdrop-blur-md inline-block px-6 py-2 rounded-full border border-white/5"
+          >
             {pageDesc}
-          </p>
+          </motion.p>
         </div>
       </div>
 
@@ -136,13 +146,13 @@ const CategoryPage = ({ type }) => {
           </div>
 
           {isLoading ? (
-            <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
+            <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary shadow-[0_0_15px_rgba(168,85,247,0.5)]"></div></div>
           ) : isError ? (
-            <div className="text-center py-20 text-rose-500 bg-[#111] rounded-2xl border border-rose-500/20">Failed to load applications.</div>
+            <div className="text-center py-20 text-rose-500 bg-white/5 dark:bg-[#111]/50 backdrop-blur-xl rounded-3xl border border-rose-500/20 shadow-2xl">Failed to load applications.</div>
           ) : posts.length === 0 ? (
-            <div className="bg-[#111] rounded-2xl border border-white/5 p-20 text-center">
-              <h3 className="text-2xl font-bold text-white mb-3">No Apps Found</h3>
-              <p className="text-slate-400">There are currently no apps in this category matching your search.</p>
+            <div className="bg-white/5 dark:bg-[#111]/50 backdrop-blur-xl rounded-3xl border border-white/10 p-20 text-center shadow-2xl">
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">No Apps Found</h3>
+              <p className="text-slate-600 dark:text-slate-400 font-medium">There are currently no apps in this category matching your search.</p>
             </div>
           ) : (
             <>
