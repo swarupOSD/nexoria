@@ -229,14 +229,13 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
             
             {/* Main Remote Video (or empty state if audio) */}
             <div className="w-full h-full relative bg-gray-900">
-              {callAccepted && !callEnded ? (
-                <video 
-                  playsInline 
-                  ref={partnerVideo} 
-                  autoPlay 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
+              <video 
+                playsInline 
+                ref={partnerVideo} 
+                autoPlay 
+                className={`w-full h-full object-cover ${(!callAccepted || callEnded) ? 'hidden' : ''}`}
+              />
+              {(!callAccepted || callEnded) && (
                 <div className="w-full h-full flex flex-col items-center justify-center">
                   <div className="w-24 h-24 bg-[#262626] rounded-full flex items-center justify-center mb-4 animate-pulse">
                     {callType === 'video' ? <Video className="w-10 h-10 text-gray-400" /> : <Phone className="w-10 h-10 text-gray-400" />}
