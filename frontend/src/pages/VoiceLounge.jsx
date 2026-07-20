@@ -16,9 +16,19 @@ const VoiceLounge = () => {
   const socketRef = useRef(null);
   const localStreamRef = useRef(null);
   const peersRef = useRef({}); // { [userId]: RTCPeerConnection }
+  const iceQueuesRef = useRef({}); // { [userId]: RTCIceCandidate[] }
   const audioRefs = useRef({}); // to attach streams to audio elements
   const audioContextRef = useRef(null);
   const analyserRefs = useRef({}); // for speech detection UI
+
+  const flushIceQueue = (userId, peer) => {
+    if (iceQueuesRef.current[userId]) {
+      iceQueuesRef.current[userId].forEach(c => {
+        peer.addIceCandidate(new RTCIceCandidate(c)).catch(console.error);
+      });
+      iceQueuesRef.current[userId] = [];
+    }
+  };
 
   // Redirect if not Premium (unless admin/owner)
   if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) {
@@ -179,6 +189,8 @@ const VoiceLounge = () => {
         }
 
         await peer.setRemoteDescription(new RTCSessionDescription(sdp));
+        flushIceQueue(senderId, peer);
+        
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
 
@@ -188,12 +200,19 @@ const VoiceLounge = () => {
       socket.on('webrtc-answer', async ({ senderId, sdp }) => {
         if (peersRef.current[senderId]) {
           await peersRef.current[senderId].setRemoteDescription(new RTCSessionDescription(sdp));
+          flushIceQueue(senderId, peersRef.current[senderId]);
         }
       });
 
       socket.on('webrtc-ice-candidate', async ({ senderId, candidate }) => {
-        if (peersRef.current[senderId]) {
-          await peersRef.current[senderId].addIceCandidate(new RTCIceCandidate(candidate));
+        const peer = peersRef.current[senderId];
+        if (peer) {
+          if (peer.remoteDescription) {
+            await peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+          } else {
+            if (!iceQueuesRef.current[senderId]) iceQueuesRef.current[senderId] = [];
+            iceQueuesRef.current[senderId].push(candidate);
+          }
         }
       });
 
