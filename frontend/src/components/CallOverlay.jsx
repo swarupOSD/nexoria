@@ -215,63 +215,61 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
         )}
 
         {/* If call is active or calling */}
-        {(!isReceivingCall || callAccepted) && (
-          <div className="relative w-full h-full flex flex-col items-center justify-center">
-            
-            {/* Main Remote Video (or empty state if audio) */}
-            <div className="w-full h-full relative bg-gray-900">
-              <video 
-                playsInline 
-                ref={partnerVideo} 
-                autoPlay 
-                className={`w-full h-full object-cover ${(!callAccepted || callEnded) ? 'hidden' : ''}`}
-              />
-              {(!callAccepted || callEnded) && (
-                <div className="w-full h-full flex flex-col items-center justify-center">
-                  <div className="w-24 h-24 bg-[#262626] rounded-full flex items-center justify-center mb-4 animate-pulse">
-                    {callType === 'video' ? <Video className="w-10 h-10 text-gray-400" /> : <Phone className="w-10 h-10 text-gray-400" />}
-                  </div>
-                  <h2 className="text-xl font-semibold text-white">{callEnded ? 'Call Ended' : 'Calling...'}</h2>
+        <div className={`relative w-full h-full flex-col items-center justify-center ${(!isReceivingCall || callAccepted) ? 'flex' : 'hidden'}`}>
+          
+          {/* Main Remote Video (or empty state if audio) */}
+          <div className="w-full h-full relative bg-gray-900">
+            <video 
+              playsInline 
+              ref={partnerVideo} 
+              autoPlay 
+              className={`w-full h-full object-cover ${(!callAccepted || callEnded) ? 'hidden' : ''}`}
+            />
+            {(!callAccepted || callEnded) && (
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                <div className="w-24 h-24 bg-[#262626] rounded-full flex items-center justify-center mb-4 animate-pulse">
+                  {callType === 'video' ? <Video className="w-10 h-10 text-gray-400" /> : <Phone className="w-10 h-10 text-gray-400" />}
                 </div>
-              )}
-            </div>
-
-            {/* PiP Local Video */}
-            <motion.div 
-              drag
-              dragConstraints={{ top: 0, left: 0, right: 300, bottom: 500 }}
-              className="absolute bottom-28 right-6 w-32 h-48 md:w-48 md:h-72 bg-black border-2 border-gray-800 rounded-2xl overflow-hidden shadow-2xl z-10 cursor-move"
-            >
-              <video 
-                playsInline 
-                muted 
-                ref={myVideo} 
-                autoPlay 
-                className={`w-full h-full object-cover ${isVideoOff ? 'hidden' : 'block'}`}
-              />
-              {isVideoOff && (
-                <div className="w-full h-full bg-[#121212] flex items-center justify-center">
-                  <VideoOff className="w-8 h-8 text-gray-500" />
-                </div>
-              )}
-            </motion.div>
-
-            {/* Call Controls */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-[#121212]/80 backdrop-blur-md px-6 py-4 rounded-full border border-gray-800">
-              <button onClick={toggleMute} className={`p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
-                {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-              </button>
-              
-              <button onClick={leaveCall} className="p-4 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-colors mx-2">
-                <PhoneOff className="w-8 h-8" />
-              </button>
-
-              <button onClick={toggleVideo} className={`p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
-                {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
-              </button>
-            </div>
+                <h2 className="text-xl font-semibold text-white">{callEnded ? 'Call Ended' : 'Calling...'}</h2>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* PiP Local Video */}
+          <motion.div 
+            drag
+            dragConstraints={{ top: 0, left: 0, right: 300, bottom: 500 }}
+            className="absolute bottom-28 right-6 w-32 h-48 md:w-48 md:h-72 bg-black border-2 border-gray-800 rounded-2xl overflow-hidden shadow-2xl z-10 cursor-move"
+          >
+            <video 
+              playsInline 
+              muted 
+              ref={myVideo} 
+              autoPlay 
+              className={`w-full h-full object-cover ${isVideoOff ? 'hidden' : 'block'}`}
+            />
+            {isVideoOff && (
+              <div className="w-full h-full bg-[#121212] flex items-center justify-center">
+                <VideoOff className="w-8 h-8 text-gray-500" />
+              </div>
+            )}
+          </motion.div>
+
+          {/* Call Controls */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-[#121212]/80 backdrop-blur-md px-6 py-4 rounded-full border border-gray-800">
+            <button onClick={toggleMute} className={`p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
+              {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            </button>
+            
+            <button onClick={leaveCall} className="p-4 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-lg transition-colors mx-2">
+              <PhoneOff className="w-8 h-8" />
+            </button>
+
+            <button onClick={toggleVideo} className={`p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500/20 text-red-500' : 'bg-[#262626] text-white hover:bg-[#363636]'}`}>
+              {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );

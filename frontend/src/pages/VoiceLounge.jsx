@@ -102,10 +102,12 @@ const VoiceLounge = () => {
         };
       });
 
-      // Attach stream to audio element
-      if (audioRefs.current[targetUserId]) {
-        audioRefs.current[targetUserId].srcObject = remoteStream;
+      // Attach stream to dynamic audio element to avoid DOM mount race conditions
+      if (!audioRefs.current[targetUserId]) {
+        audioRefs.current[targetUserId] = new Audio();
+        audioRefs.current[targetUserId].autoplay = true;
       }
+      audioRefs.current[targetUserId].srcObject = remoteStream;
       
       setupSpeechDetection(remoteStream, targetUserId);
     };
@@ -177,7 +179,19 @@ const VoiceLounge = () => {
         }));
       });
 
-      socket.on('webrtc-offer', async ({ senderId, sdp }) => {
+      socket.on('webrtc-offer', async ({ senderId, sdp, senderInfo }) => {
+        if (senderInfo) {
+          setParticipants(prev => {
+            if (!prev[senderId]) {
+              return {
+                ...prev,
+                [senderId]: { ...senderInfo, userId: senderId, isMuted: false, isSpeaking: false, isLocal: false }
+              };
+            }
+            return prev;
+          });
+        }
+
         const peer = createPeerConnection(senderId);
         peersRef.current[senderId] = peer;
 
@@ -196,7 +210,19 @@ const VoiceLounge = () => {
         socket.emit('webrtc-answer', { targetUserId: senderId, sdp: answer });
       });
 
-      socket.on('webrtc-answer', async ({ senderId, sdp }) => {
+      socket.on('webrtc-answer', async ({ senderId, sdp, senderInfo }) => {
+        if (senderInfo) {
+          setParticipants(prev => {
+            if (!prev[senderId]) {
+              return {
+                ...prev,
+                [senderId]: { ...senderInfo, userId: senderId, isMuted: false, isSpeaking: false, isLocal: false }
+              };
+            }
+            return prev;
+          });
+        }
+
         if (peersRef.current[senderId]) {
           await peersRef.current[senderId].setRemoteDescription(new RTCSessionDescription(sdp));
           flushIceQueue(senderId, peersRef.current[senderId]);

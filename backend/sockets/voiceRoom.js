@@ -31,6 +31,14 @@ export const registerVoiceRoomHandlers = (io, socket) => {
     if (!socket.user) return;
     socket.to(targetUserId.toString()).emit('webrtc-offer', {
       senderId: socket.user._id,
+      senderInfo: {
+        userId: socket.user._id,
+        name: socket.user.name,
+        username: socket.user.username,
+        profileImage: socket.user.profileImage,
+        role: socket.user.role,
+        isPremium: socket.user.isPremium
+      },
       sdp
     });
   });
@@ -39,6 +47,14 @@ export const registerVoiceRoomHandlers = (io, socket) => {
     if (!socket.user) return;
     socket.to(targetUserId.toString()).emit('webrtc-answer', {
       senderId: socket.user._id,
+      senderInfo: {
+        userId: socket.user._id,
+        name: socket.user.name,
+        username: socket.user.username,
+        profileImage: socket.user.profileImage,
+        role: socket.user.role,
+        isPremium: socket.user.isPremium
+      },
       sdp
     });
   });
