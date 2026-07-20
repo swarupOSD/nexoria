@@ -167,25 +167,26 @@ const MovieDetail = () => {
   const hasAccess = !isPremium || (user && user.purchasedMovies?.includes(movie._id)) || (user && user.role === 'superadmin');
 
   return (
-    <div className="pb-20 text-white min-h-screen">
+    <div className="font-jakarta bg-[#030303] text-white min-h-screen selection:bg-blue-500/30">
       <Helmet>
         <title>{movie.seoTitle || `${movie.title} - Watch Free`}</title>
         <meta name="description" content={movie.seoDescription || movie.shortDescription} />
       </Helmet>
 
       {/* Hero Banner Area */}
-      <div className="relative w-full h-[50vh] md:h-[70vh] bg-[#111]">
+      <div className="relative w-full h-[50vh] md:h-[70vh] bg-[#030303]">
         <img 
           src={movie.bannerImage || movie.posterImage} 
           alt="Banner" 
-          className="w-full h-full object-cover object-top opacity-50"
+          className="w-full h-full object-cover object-top opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/50 to-transparent" />
+        <div className="absolute inset-0 bg-blue-500/10 mix-blend-overlay" />
         
         {/* Back Button */}
-        <Link to="/moviebox" className="absolute top-6 left-6 flex items-center gap-2 text-slate-300 hover:text-white bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 transition-all hover:bg-black/60 z-20">
-          <ChevronLeft className="w-4 h-4" /> Back
+        <Link to="/moviebox" className="absolute top-6 left-6 flex items-center gap-2 text-white/70 hover:text-white bg-white/5 backdrop-blur-3xl px-5 py-2.5 rounded-xl border border-white/10 transition-all hover:bg-white/10 shadow-inner z-20 font-bold">
+          <ChevronLeft className="w-5 h-5" /> Back
         </Link>
 
         {/* Hero Content */}
@@ -194,9 +195,9 @@ const MovieDetail = () => {
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="hidden md:block w-48 lg:w-64 shrink-0 rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/20 bg-white/5 backdrop-blur-md p-2 z-10 hover:scale-105 transition-transform duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:border-purple-500/50"
+            className="hidden md:block w-48 lg:w-64 shrink-0 rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/10 bg-white/5 backdrop-blur-3xl p-3 z-10 hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(59,130,246,0.3)] hover:border-blue-500/30"
           >
-            <img src={movie.posterImage} alt={movie.title} className="w-full h-auto aspect-[2/3] object-cover rounded-xl" />
+            <img src={movie.posterImage} alt={movie.title} className="w-full h-auto aspect-[2/3] object-cover rounded-3xl" />
           </motion.div>
 
           {/* Info */}
@@ -206,25 +207,25 @@ const MovieDetail = () => {
             transition={{ delay: 0.2 }}
             className="flex-1 z-10 w-full"
           >
-            {movie.originalTitle && <p className="text-purple-400 text-sm font-bold tracking-widest uppercase mb-1">{movie.originalTitle}</p>}
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+            {movie.originalTitle && <p className="text-blue-400 text-[13px] font-black tracking-widest uppercase mb-2 drop-shadow-md">{movie.originalTitle}</p>}
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-6 leading-[1.05] tracking-tight drop-shadow-2xl">
               {movie.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-3 md:gap-6 text-sm font-medium text-slate-300 mb-6">
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/5">
-                <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> 
-                <span className="text-white font-bold">{movie.imdbRating > 0 ? movie.imdbRating.toFixed(1) : 'NR'}</span> IMDB
+            <div className="flex flex-wrap items-center gap-3 md:gap-6 text-[15px] font-bold text-white/70 mb-8">
+              <span className="flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/5 shadow-inner">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" /> 
+                <span className="text-white">{movie.imdbRating > 0 ? movie.imdbRating.toFixed(1) : 'NR'}</span> IMDB
               </span>
-              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-purple-400" /> {movie.releaseYear || 'TBA'}</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-purple-400" /> {movie.runtime || 'N/A'}</span>
-              <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-purple-400" /> {movie.country || 'Unknown'}</span>
-              {movie.quality?.[0] && <span className="px-2 py-0.5 border border-purple-500/50 text-purple-400 rounded text-xs">{movie.quality[0]}</span>}
+              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-blue-400" /> {movie.releaseYear || 'TBA'}</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-blue-400" /> {movie.runtime || 'N/A'}</span>
+              <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-blue-400" /> {movie.country || 'Unknown'}</span>
+              {movie.quality?.[0] && <span className="px-2 py-0.5 border border-blue-500/50 text-blue-400 rounded-lg text-[11px] uppercase tracking-wider">{movie.quality[0]}</span>}
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-8">
               {movie.genre?.map(g => (
-                <Link key={g} to={`/moviebox/search?genre=${g}`} className="px-3 py-1 bg-white/5 hover:bg-purple-600/20 hover:text-purple-400 border border-white/10 rounded-full text-xs font-medium transition-colors">
+                <Link key={g} to={`/moviebox/search?genre=${g}`} className="px-4 py-1.5 bg-white/5 hover:bg-blue-500/20 hover:text-blue-300 border border-white/10 rounded-full text-xs font-bold transition-colors shadow-inner">
                   {g}
                 </Link>
               ))}
@@ -236,15 +237,17 @@ const MovieDetail = () => {
                   setActiveTab('watch');
                   window.scrollBy({ top: 500, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(168,85,247,0.3)] hover:shadow-[0_15px_30px_rgba(168,85,247,0.5)] hover:-translate-y-1 group"
+                className="group relative flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-[15px] transition-all duration-300 shadow-[0_15px_30px_rgba(59,130,246,0.3)] hover:shadow-[0_20px_40px_rgba(59,130,246,0.5)] active:translate-y-1 overflow-hidden"
               >
-                <Play className="w-5 h-5 fill-white group-hover:animate-pulse drop-shadow-md" /> Play Movie
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <Play className="relative z-10 w-5 h-5 fill-white drop-shadow-md group-hover:scale-110 transition-transform" /> <span className="relative z-10">Play Movie</span>
               </button>
               <Link 
                 to={`/moviebox/watch-party/${movie.slug}`}
-                className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_30px_rgba(245,158,11,0.5)] hover:-translate-y-1 group border border-white/10"
+                className="group relative flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl font-black text-[15px] transition-all duration-300 shadow-[0_15px_30px_rgba(245,158,11,0.3)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.5)] active:translate-y-1 overflow-hidden border border-white/10"
               >
-                <Users className="w-5 h-5 fill-white text-white drop-shadow-md" /> Watch Party
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <Users className="relative z-10 w-5 h-5 fill-white text-white drop-shadow-md group-hover:scale-110 transition-transform" /> <span className="relative z-10">Watch Party</span>
               </Link>
               {movie.trailerUrl && (
                 <button 

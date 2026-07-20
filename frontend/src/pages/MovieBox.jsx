@@ -64,10 +64,13 @@ const MovieBox = () => {
         {/* Horizontal scroll container */}
         <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-6 px-4 sm:px-8 snap-x">
           {movies.map(movie => (
-            <Link key={movie._id} to={`/moviebox/movie/${movie.slug}`} className="min-w-[160px] md:min-w-[200px] shrink-0 snap-start group/card relative transition-transform duration-300 hover:-translate-y-2">
-              <div className="aspect-[2/3] rounded-xl overflow-hidden bg-[#111] mb-3 relative">
-                <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover/card:opacity-100 transition-opacity" />
+            <Link key={movie._id} to={`/moviebox/movie/${movie.slug}`} className="min-w-[160px] md:min-w-[200px] shrink-0 snap-start group/card relative transition-all duration-300 hover:-translate-y-2">
+              <div className="aspect-[2/3] rounded-[2rem] overflow-hidden bg-black/20 mb-3 relative border border-white/5 shadow-lg group-hover/card:shadow-[0_10px_30px_rgba(59,130,246,0.3)] group-hover/card:border-blue-500/30 transition-all duration-500">
+                <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover/card:opacity-100 transition-opacity duration-500" />
+                
+                {/* Glossy overlay effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-[2rem]" />
                 
                 {movie.appType === 'Premium' && (
                   <div className="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg flex items-center gap-1">
@@ -88,9 +91,9 @@ const MovieBox = () => {
                 )}
 
                 {/* Play button overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
-                  <div className="w-12 h-12 rounded-full bg-white text-purple-600 flex items-center justify-center transform scale-75 group-hover/card:scale-100 transition-transform duration-300 shadow-xl">
-                    <Play className="w-5 h-5 ml-1 fill-purple-600" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-all duration-500 bg-black/40 backdrop-blur-sm z-20">
+                  <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center transform scale-50 group-hover/card:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(255,255,255,0.2)] backdrop-blur-md hover:bg-white/20">
+                    <Play className="w-6 h-6 ml-1 fill-white" />
                   </div>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover/card:translate-y-0 transition-transform">
@@ -103,8 +106,8 @@ const MovieBox = () => {
                   </div>
                 </div>
               </div>
-              <h3 className="text-sm font-bold text-white line-clamp-1 group-hover/card:text-purple-400 transition-colors">{movie.title}</h3>
-              <p className="text-xs text-slate-500 line-clamp-1">{movie.genre?.join(', ') || 'Uncategorized'}</p>
+              <h3 className="text-[15px] font-black text-white line-clamp-1 group-hover/card:text-blue-400 transition-colors tracking-tight">{movie.title}</h3>
+              <p className="text-xs text-white/50 line-clamp-1 font-medium">{movie.genre?.join(', ') || 'Uncategorized'}</p>
             </Link>
           ))}
         </div>
@@ -116,7 +119,7 @@ const MovieBox = () => {
   const currentMovie = heroMovies[currentHeroIndex] || heroMovies[0];
 
   return (
-    <div className="pb-20">
+    <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-20 selection:bg-blue-500/30">
       <Helmet>
         <title>{movieSettings.movieBoxName || 'MovieBox'} | Watch Unlimited Movies & TV Shows</title>
       </Helmet>
@@ -138,15 +141,16 @@ const MovieBox = () => {
               <img 
                 src={currentMovie.bannerImage || currentMovie.posterImage || movieSettings.movieBoxBanner} 
                 alt={currentMovie.title} 
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top opacity-60"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-[#030303]/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#030303] via-[#030303]/50 to-transparent" />
+              <div className="absolute inset-0 bg-blue-500/10 mix-blend-overlay" />
               
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-12 lg:px-24 pb-20 sm:pb-24 lg:pb-32 lg:w-2/3">
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
                   {currentMovie.originalTitle && (
-                    <p className="text-purple-400 text-xs sm:text-sm font-bold tracking-widest uppercase mb-1 sm:mb-2">
+                    <p className="text-blue-400 text-xs sm:text-[13px] font-black tracking-widest uppercase mb-2 drop-shadow-md">
                       {currentMovie.originalTitle}
                     </p>
                   )}

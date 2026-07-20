@@ -73,12 +73,20 @@ const Premium = () => {
   };
 
   return (
-    <div className="bg-[#050505] min-h-screen text-white pb-20 overflow-hidden relative">
+    <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-20 overflow-hidden relative selection:bg-blue-500/30">
       <SEO title="Premium - Elevate Your Experience" />
       
       {/* Background Decorative Elements */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-600/20 rounded-full blur-[150px]"></div>
+        
+        {/* Animated Rings for visual interest */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] aspect-square flex items-center justify-center opacity-20">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} className="absolute w-[100%] h-[100%] rounded-full border border-white/[0.03]" />
+          <motion.div animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="absolute w-[80%] h-[80%] rounded-full border border-white/[0.05]" />
+        </div>
+      </div>
 
       {/* Hero Section */}
       <motion.div 
@@ -91,31 +99,33 @@ const Premium = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium mb-8"
+          className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-sm font-bold mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(255,165,0,0.15)]"
         >
-          <Zap className="w-4 h-4 text-amber-500" />
-          <span className="bg-gradient-to-r from-amber-200 to-orange-400 bg-clip-text text-transparent">One Subscription for Apps & Movies</span>
+          <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center">
+            <Zap className="w-4 h-4 text-amber-500" />
+          </div>
+          <span className="bg-gradient-to-r from-amber-200 to-orange-400 bg-clip-text text-transparent tracking-wide">One Subscription for Apps & Movies</span>
         </motion.div>
 
         <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
           Elevate Your <br className="md:hidden" />
-          <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">Experience</span>
+          <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(236,72,153,0.3)]">Experience</span>
         </h1>
-        <p className="text-lg md:text-2xl text-slate-400 mb-10 max-w-3xl mx-auto font-light">
+        <p className="text-lg md:text-xl text-white/60 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
           Get exclusive access to premium mods and unlimited 4K movie streaming. Remove all advertisements and enjoy lightning-fast servers.
         </p>
         
-        <div className="flex flex-wrap justify-center gap-8 text-sm md:text-base font-semibold">
-          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-emerald-500" /></div>
+        <div className="flex flex-wrap justify-center gap-6 text-sm md:text-base font-bold text-white/80">
+          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-3 bg-white/5 px-6 py-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-emerald-400" /></div>
             Active Users: 10K+
           </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-blue-500" /></div>
+          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-3 bg-white/5 px-6 py-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-blue-400" /></div>
             Apps Unlocked: 5,000+
           </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-amber-500" /></div>
+          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-3 bg-white/5 px-6 py-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><Check className="w-5 h-5 text-amber-400" /></div>
             Ad-Free: 100%
           </motion.div>
         </div>
@@ -147,14 +157,14 @@ const Premium = () => {
               key={idx}
               variants={itemVariants}
               whileHover={{ y: -10, scale: 1.02 }}
-              className={`bg-[#0F0F0F] border border-white/5 rounded-3xl p-8 transition-all duration-300 relative overflow-hidden group shadow-xl ${item.border}`}
+              className={`bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 transition-all duration-300 relative overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] ${item.border}`}
             >
-              <div className={`absolute top-0 right-0 w-32 h-32 ${item.bg} rounded-full blur-[50px] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500`}></div>
-              <div className={`w-14 h-14 ${item.bg} rounded-2xl flex items-center justify-center mb-6 relative z-10 border border-white/5 group-hover:scale-110 transition-transform duration-300`}>
-                <item.icon className={`w-7 h-7 ${item.color}`} />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className={`w-16 h-16 rounded-2xl ${item.bg} flex items-center justify-center mb-6 shadow-inner relative z-10`}>
+                <item.icon className={`w-8 h-8 ${item.color}`} />
               </div>
-              <h3 className="text-2xl font-bold mb-3 relative z-10">{item.title}</h3>
-              <p className="text-slate-400 leading-relaxed relative z-10">{item.desc}</p>
+              <h3 className="text-xl font-black mb-3 text-white relative z-10 tracking-tight">{item.title}</h3>
+              <p className="text-white/60 font-medium leading-relaxed relative z-10 text-[15px]">{item.desc}</p>
             </motion.div>
           ))}
         </motion.div>

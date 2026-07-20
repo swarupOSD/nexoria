@@ -120,45 +120,59 @@ const Notifications = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl min-h-screen">
+    <div className="font-jakarta bg-[#030303] min-h-screen text-white pt-24 pb-12 transition-colors duration-500 relative overflow-hidden selection:bg-blue-500/30">
       <SEO title="Notifications - Premium Apps" description="View your notifications." />
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white mb-2 flex items-center gap-3">
-            <Bell className="w-8 h-8 text-primary" /> Notifications
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400">Stay updated with your account activity.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsMobileFiltersOpen(true)}
-            className="md:hidden p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-300"
-          >
-            <Filter className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => markAllAsRead()}
-            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors text-sm font-bold flex items-center gap-2"
-          >
-            <CheckCircle className="w-4 h-4" /> Mark all as read
-          </button>
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[150px]"></div>
+        
+        {/* Animated Rings for visual interest */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] aspect-square flex items-center justify-center opacity-20">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} className="absolute w-[100%] h-[100%] rounded-full border border-white/[0.03]" />
+          <motion.div animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="absolute w-[80%] h-[80%] rounded-full border border-white/[0.05]" />
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="container mx-auto px-4 max-w-5xl relative z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 bg-white/5 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+          <div>
+            <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3 tracking-tight">
+              <div className="p-3 bg-white/5 rounded-2xl shadow-inner border border-white/5"><Bell className="w-8 h-8 text-blue-400" /></div> Notifications
+            </h1>
+            <p className="text-white/60 font-medium">Stay updated with your account activity.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileFiltersOpen(true)}
+              className="md:hidden p-3 bg-white/5 rounded-xl border border-white/10 text-white shadow-inner"
+            >
+              <Filter className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => markAllAsRead()}
+              className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl transition-colors font-bold flex items-center gap-2 shadow-inner"
+            >
+              <CheckCircle className="w-5 h-5 text-emerald-400" /> Mark all as read
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row gap-6 relative z-10">
         {/* Desktop Sidebar Filters */}
         <div className="hidden md:block w-64 flex-shrink-0 space-y-2">
-          <div className="glass-card p-4 space-y-1 sticky top-24">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">Categories</h3>
+          <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-6 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)] space-y-2 sticky top-24">
+            <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-wider mb-6 px-3">Categories</h3>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => handleTabChange(cat)}
-                className={`w-full text-left px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                className={`w-full text-left px-5 py-3.5 rounded-2xl font-bold transition-all duration-300 shadow-inner ${
                   activeTab.id === cat.id
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)] border border-blue-500/50'
+                    : 'text-white/60 bg-black/20 hover:bg-white/10 hover:text-white border border-transparent hover:border-white/10'
                 }`}
               >
                 {cat.label}
@@ -212,27 +226,33 @@ const Notifications = () => {
         </AnimatePresence>
 
         {/* Main Content */}
-        <div className="flex-1 space-y-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <CustomSearchBar value={searchQuery} placeholder="Search notifications..." name="text"  onChange={(e) => setSearchQuery(e.target.value)} />
+        <div className="flex-1 space-y-6">
+          <div className="relative group">
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search notifications..."
+              className="peer w-full h-14 bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-2xl pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-base shadow-inner backdrop-blur-sm"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 peer-focus:text-blue-400 transition-colors" />
           </div>
 
-          <div className="glass-card rounded-2xl overflow-hidden min-h-[50vh]">
+          <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] overflow-hidden min-h-[50vh] shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
             {isLoading && page === 1 ? (
               <div className="p-12 flex justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
               </div>
             ) : notifications.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-16 text-center flex flex-col items-center justify-center">
-                <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
-                  <Bell className="w-10 h-10 text-slate-400" />
+                <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
+                  <Bell className="w-10 h-10 text-white/30" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">You're all caught up!</h3>
-                <p className="text-slate-500 dark:text-slate-400">No notifications found in this category.</p>
+                <h3 className="text-2xl font-black text-white mb-2 tracking-tight">You're all caught up!</h3>
+                <p className="text-white/50 font-medium">No notifications found in this category.</p>
               </motion.div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
+              <div className="divide-y divide-white/5">
                 <AnimatePresence initial={false}>
                   {notifications.map((notification) => (
                     <motion.div
@@ -242,38 +262,38 @@ const Notifications = () => {
                       exit={{ opacity: 0, scale: 0.95 }}
                       whileHover={{ scale: 1.01 }}
                       onClick={() => handleNotificationClick(notification)}
-                      className={`p-5 flex gap-4 transition-all cursor-pointer group relative ${
-                        !notification.isRead ? 'bg-primary/5 hover:bg-primary/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'
+                      className={`p-6 flex gap-5 transition-all cursor-pointer group relative ${
+                        !notification.isRead ? 'bg-gradient-to-r from-blue-500/10 to-transparent border-l-4 border-blue-500' : 'hover:bg-white/5 border-l-4 border-transparent'
                       }`}
                     >
-                      <div className={`flex-shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${!notification.isRead ? 'bg-white dark:bg-slate-800 shadow-primary/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                      <div className={`flex-shrink-0 mt-1 w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner border border-white/5 ${!notification.isRead ? 'bg-white/10' : 'bg-black/20'}`}>
                         {getIcon(notification.icon, notification.type)}
                       </div>
                       
                       <div className="flex-1 min-w-0 pr-10">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
-                          <h4 className={`text-sm md:text-base font-bold truncate ${!notification.isRead ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
+                          <h4 className={`text-base md:text-lg font-black truncate tracking-tight ${!notification.isRead ? 'text-white' : 'text-white/70'}`}>
                             {notification.title}
                           </h4>
-                          <span className="text-xs font-medium text-slate-400 whitespace-nowrap flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
+                          <span className="text-xs font-bold text-white/40 whitespace-nowrap flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-lg">
+                            <Clock className="w-3.5 h-3.5" />
                             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                           </span>
                         </div>
-                        <p className={`text-sm ${!notification.isRead ? 'text-slate-700 dark:text-slate-300 font-medium' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <p className={`text-[15px] leading-relaxed ${!notification.isRead ? 'text-white/80 font-medium' : 'text-white/50'}`}>
                           {notification.message}
                         </p>
                       </div>
 
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center">
                         {!notification.isRead && (
-                          <span className="w-2.5 h-2.5 bg-primary rounded-full shadow-lg shadow-primary/50 group-hover:opacity-0 transition-opacity"></span>
+                          <span className="w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)] group-hover:opacity-0 transition-opacity"></span>
                         )}
                         <button
                           onClick={(e) => handleDelete(e, notification._id)}
-                          className="absolute right-0 p-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
+                          className="absolute right-0 p-3 text-white/30 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all rounded-xl hover:bg-red-500/20 backdrop-blur-md"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                     </motion.div>
