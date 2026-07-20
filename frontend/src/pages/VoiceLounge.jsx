@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Mic, MicOff, Users, Headphones, VideoOff, Crown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mic, MicOff, Users, Headphones, VideoOff, Crown, Lock, ShieldCheck } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
 import { usePermissions } from '../contexts/PermissionContext';
+import PatternLock from '../components/PatternLock';
 
 const VoiceLounge = () => {
   const { user } = useSelector(state => state.auth);
@@ -14,6 +15,12 @@ const VoiceLounge = () => {
   const [participants, setParticipants] = useState({}); // { [userId]: { ...info, stream, isSpeaking, isMuted } }
   const [isMuted, setIsMuted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  
+  const [isLocked, setIsLocked] = useState(true);
+  const [lockMode, setLockMode] = useState(localStorage.getItem('voiceLoungePattern') ? 'verify' : 'setup');
+  const [lockError, setLockError] = useState(false);
+  const [lockSuccess, setLockSuccess] = useState(false);
+  const [lockFeedback, setLockFeedback] = useState('');
   
   const socketRef = useRef(null);
   const localStreamRef = useRef(null);
@@ -119,7 +126,8 @@ const VoiceLounge = () => {
   };
 
   useEffect(() => {
-    if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) return;
+    if (!user) return;
+    if (isLocked) return; // Wait until unlocked!
 
     // 1. Get Local Audio Stream
     const initLocalStream = async () => {
@@ -275,7 +283,7 @@ const VoiceLounge = () => {
       }
       Object.values(peersRef.current).forEach(peer => peer.close());
     };
-  }, [user]);
+  }, [user, isLocked]);
 
   // Redirect if not Premium (unless admin/owner)
   if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) {
@@ -297,13 +305,108 @@ const VoiceLounge = () => {
     }
   };
 
+  const handlePatternComplete = (pattern) => {
+    if (pattern === 'TOO_SHORT' || pattern.length < 4) {
+      setLockError(true);
+      setLockFeedback('Pattern must connect at least 4 dots');
+      setTimeout(() => setLockError(false), 1000);
+      return;
+    }
+
+    if (lockMode === 'setup') {
+      localStorage.setItem('voiceLoungePattern', pattern);
+      setLockSuccess(true);
+      setLockFeedback('Pattern Saved!');
+      setTimeout(() => {
+        setIsLocked(false);
+      }, 800);
+    } else {
+      const savedPattern = localStorage.getItem('voiceLoungePattern');
+      if (savedPattern && pattern !== savedPattern) {
+        setLockError(true);
+        setLockFeedback('Incorrect pattern');
+        setTimeout(() => setLockError(false), 1000);
+      } else {
+        setLockSuccess(true);
+        setLockFeedback('Pattern Accepted!');
+        setTimeout(() => {
+          setIsLocked(false);
+        }, 800);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0d14] pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
       {/* Background Decor */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-900/30 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/20 rounded-full blur-[150px] pointer-events-none"></div>
 
-      <div className="container mx-auto px-4 z-10 flex-1 flex flex-col items-center">
+      <AnimatePresence>
+        {isLocked ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md"
+          >
+            <div className="w-full max-w-sm bg-[#1a1a1f]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(139,92,246,0.15)] overflow-hidden flex flex-col items-center">
+              <div className="w-full p-6 border-b border-white/5 flex items-center justify-center bg-black/20">
+                <h2 className="text-xl font-black text-white flex items-center gap-2">
+                  {lockMode === 'setup' ? <ShieldCheck className="w-6 h-6 text-purple-400" /> : <Lock className="w-6 h-6 text-purple-400" />}
+                  {lockMode === 'setup' ? 'Setup Lounge Lock' : 'Unlock Lounge'}
+                </h2>
+              </div>
+
+              <div className="p-6 w-full flex flex-col items-center">
+                <p className="text-slate-300 text-sm text-center mb-8 px-2 font-medium">
+                  {lockMode === 'setup' 
+                    ? 'Draw a secret pattern to secure the Voice Lounge on this device.'
+                    : 'Draw your secret pattern to enter the Voice Lounge.'
+                  }
+                </p>
+                
+                <div className="h-[280px] w-full flex items-center justify-center">
+                  <PatternLock 
+                    size={260} 
+                    onComplete={handlePatternComplete} 
+                    error={lockError}
+                    success={lockSuccess}
+                  />
+                </div>
+
+                <div className="mt-8 h-6 flex items-center justify-center w-full">
+                  <AnimatePresence mode="wait">
+                    {lockFeedback ? (
+                      <motion.p
+                        key={lockFeedback}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={`text-sm font-bold ${lockError ? 'text-red-400' : lockSuccess ? 'text-emerald-400' : 'text-slate-400'}`}
+                      >
+                        {lockFeedback}
+                      </motion.p>
+                    ) : (
+                      <motion.p
+                        key="default"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="text-xs text-slate-500 uppercase tracking-widest font-bold"
+                      >
+                        {lockMode === 'setup' ? 'Draw a secure pattern' : 'Draw your pattern'}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      <div className={`container mx-auto px-4 z-10 flex-1 flex flex-col items-center transition-all duration-700 ${isLocked ? 'blur-md opacity-30 pointer-events-none' : ''}`}>
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-400 font-bold mb-4 tracking-wider uppercase text-sm">
             <Crown className="w-4 h-4" /> Premium Exclusive
