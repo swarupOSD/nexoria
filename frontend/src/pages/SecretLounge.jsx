@@ -23,42 +23,40 @@ const SecretLounge = () => {
     if (!user) {
       toast.error('You must be logged in to access the Secret Lounge.');
       navigate('/login');
-      return;
+    } else {
+      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+        withCredentials: true,
+        auth: { token }
+      });
+      setSocket(newSocket);
+
+      newSocket.on('privateRoomCreated', (data) => {
+        setRoomData(data);
+        setInRoom(true);
+        toast.success('Room created successfully. You are the Owner.');
+      });
+
+      newSocket.on('privateRoomJoined', (data) => {
+        setRoomData(data);
+        setInRoom(true);
+        toast.success('Joined Private Room successfully.');
+      });
+
+      newSocket.on('privateChatError', ({ message }) => {
+        toast.error(message);
+      });
+
+      newSocket.on('roomDestroyed', ({ message }) => {
+        toast.error(message, { duration: 5000, icon: '💥' });
+        setInRoom(false);
+        setRoomData(null);
+      });
+
+      return () => {
+        newSocket.emit('leavePrivateRoom');
+        newSocket.disconnect();
+      };
     }
-
-
-    const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
-      withCredentials: true,
-      auth: { token }
-    });
-    setSocket(newSocket);
-
-    newSocket.on('privateRoomCreated', (data) => {
-      setRoomData(data);
-      setInRoom(true);
-      toast.success('Room created successfully. You are the Owner.');
-    });
-
-    newSocket.on('privateRoomJoined', (data) => {
-      setRoomData(data);
-      setInRoom(true);
-      toast.success('Joined Private Room successfully.');
-    });
-
-    newSocket.on('privateChatError', ({ message }) => {
-      toast.error(message);
-    });
-
-    newSocket.on('roomDestroyed', ({ message }) => {
-      toast.error(message, { duration: 5000, icon: '💥' });
-      setInRoom(false);
-      setRoomData(null);
-    });
-
-    return () => {
-      newSocket.emit('leavePrivateRoom');
-      newSocket.disconnect();
-    };
   }, [user, navigate]);
 
   const handleCreateRoom = () => {

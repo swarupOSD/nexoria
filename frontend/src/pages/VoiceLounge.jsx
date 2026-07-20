@@ -30,10 +30,7 @@ const VoiceLounge = () => {
     }
   };
 
-  // Redirect if not Premium (unless admin/owner)
-  if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) {
-    return <Navigate to="/premium" replace />;
-  }
+
 
   const roomId = 'secret-lounge';
 
@@ -117,6 +114,8 @@ const VoiceLounge = () => {
   };
 
   useEffect(() => {
+    if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) return;
+
     // 1. Get Local Audio Stream
     const initLocalStream = async () => {
       try {
@@ -241,7 +240,12 @@ const VoiceLounge = () => {
       }
       Object.values(peersRef.current).forEach(peer => peer.close());
     };
-  }, [user._id]); // Added dependency array
+  }, [user]);
+
+  // Redirect if not Premium (unless admin/owner)
+  if (!user || (!user.isPremium && !['admin', 'superadmin', 'owner'].includes(user.role))) {
+    return <Navigate to="/premium" replace />;
+  }
 
 
   const toggleMute = () => {

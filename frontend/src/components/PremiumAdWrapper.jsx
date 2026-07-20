@@ -14,21 +14,21 @@ import { useSelector } from 'react-redux';
 const PremiumAdWrapper = ({ dataAdSlot = 'TEST_SLOT_ID', dataAdFormat = 'auto', className = '' }) => {
   const { user } = useSelector((state) => state.auth);
 
-  // If the user has an active premium subscription, render nothing
-  if (user?.isPremium) {
-    return null;
-  }
-
   // Load Google Ads script dynamically if not loaded
   useEffect(() => {
     try {
-      if (window && window.adsbygoogle) {
+      if (!user?.isPremium && window && window.adsbygoogle) {
         window.adsbygoogle.push({});
       }
     } catch (e) {
       console.error('AdSense Error:', e);
     }
-  }, []);
+  }, [user?.isPremium]);
+
+  // If the user has an active premium subscription, render nothing
+  if (user?.isPremium) {
+    return null;
+  }
 
   return (
     <div className={`w-full overflow-hidden flex justify-center items-center my-4 ${className}`}>

@@ -75,7 +75,7 @@ const EarnTab = () => {
             className="w-full h-[800px] border-none"
             title="Offerwall"
             onLoad={() => setLoading(false)}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+            sandbox="allow-scripts allow-popups allow-forms"
           ></iframe>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#111]">

@@ -27,52 +27,52 @@ const WatchParty = () => {
 
   // Initialize socket
   useEffect(() => {
-    if (!user || !movie) return;
-
-    const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
-      withCredentials: true
-    });
-
-    setSocket(newSocket);
-
-    newSocket.on('connect', () => {
-      newSocket.emit('join-watch-party', { roomId: `party-${movie._id}`, user });
-    });
-
-    newSocket.on('watch-party-update', (data) => {
-      setRoomData({
-        users: data.users,
-        isPlaying: data.isPlaying,
-        hostId: data.hostId
+    if (user && movie) {
+      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+        withCredentials: true
       });
-      
-      // Sync video time if newly joined
-      if (videoRef.current && Math.abs(videoRef.current.currentTime - data.videoTime) > 2) {
-        videoRef.current.currentTime = data.videoTime;
-      }
-    });
 
-    newSocket.on('sync-video-client', (data) => {
-      if (videoRef.current) {
-        if (Math.abs(videoRef.current.currentTime - data.videoTime) > 2) {
+      setSocket(newSocket);
+
+      newSocket.on('connect', () => {
+        newSocket.emit('join-watch-party', { roomId: `party-${movie._id}`, user });
+      });
+
+      newSocket.on('watch-party-update', (data) => {
+        setRoomData({
+          users: data.users,
+          isPlaying: data.isPlaying,
+          hostId: data.hostId
+        });
+        
+        // Sync video time if newly joined
+        if (videoRef.current && Math.abs(videoRef.current.currentTime - data.videoTime) > 2) {
           videoRef.current.currentTime = data.videoTime;
         }
-        if (data.isPlaying && videoRef.current.paused) {
-          videoRef.current.play().catch(e => console.error(e));
-        } else if (!data.isPlaying && !videoRef.current.paused) {
-          videoRef.current.pause();
+      });
+
+      newSocket.on('sync-video-client', (data) => {
+        if (videoRef.current) {
+          if (Math.abs(videoRef.current.currentTime - data.videoTime) > 2) {
+            videoRef.current.currentTime = data.videoTime;
+          }
+          if (data.isPlaying && videoRef.current.paused) {
+            videoRef.current.play().catch(e => console.error(e));
+          } else if (!data.isPlaying && !videoRef.current.paused) {
+            videoRef.current.pause();
+          }
         }
-      }
-    });
+      });
 
-    newSocket.on('chat-message', (msg) => {
-      setMessages(prev => [...prev, msg]);
-    });
+      newSocket.on('chat-message', (msg) => {
+        setMessages(prev => [...prev, msg]);
+      });
 
-    return () => {
-      newSocket.emit('leave-watch-party', { roomId: `party-${movie._id}` });
-      newSocket.disconnect();
-    };
+      return () => {
+        newSocket.emit('leave-watch-party', { roomId: `party-${movie._id}` });
+        newSocket.disconnect();
+      };
+    }
   }, [user, movie]);
 
   // Auto scroll chat

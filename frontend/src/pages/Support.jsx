@@ -26,26 +26,26 @@ const Support = () => {
 
   // Socket listener for real-time ticket updates
   useEffect(() => {
-    if (!user) return;
-    
-    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
-    
-    socket.emit('setup', user);
-    
-    socket.on('ticket updated', (ticket) => {
-      refetch();
-    });
-    
-    socket.on('ticket replied', (ticket) => {
-      refetch();
-      if (selectedTicket && selectedTicket._id === ticket._id) {
-        setSelectedTicket(ticket);
-      }
-    });
-    
-    return () => {
-      socket.disconnect();
-    };
+    if (user) {
+      const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+      
+      socket.emit('setup', user);
+      
+      socket.on('ticket updated', (ticket) => {
+        refetch();
+      });
+      
+      socket.on('ticket replied', (ticket) => {
+        refetch();
+        if (selectedTicket && selectedTicket._id === ticket._id) {
+          setSelectedTicket(ticket);
+        }
+      });
+      
+      return () => {
+        socket.disconnect();
+      };
+    }
   }, [user, selectedTicket, refetch]);
 
   const handleCreateTicket = async (e) => {

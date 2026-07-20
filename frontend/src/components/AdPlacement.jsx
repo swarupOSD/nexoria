@@ -70,7 +70,7 @@ const AdPlacement = ({ location, className = '' }) => {
                   </body>
                   </html>
                 `}
-                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
                 scrolling="no"
                 frameBorder="0"
                 className="w-full border-none overflow-hidden"

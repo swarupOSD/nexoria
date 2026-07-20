@@ -144,6 +144,7 @@ const NexoriaArena = () => {
                     className="w-full h-full border-none bg-black"
                     title={activeGame.title}
                     allow="autoplay; fullscreen; focus-without-user-activation *;"
+                    sandbox="allow-scripts allow-popups allow-forms allow-downloads"
                     allowFullScreen
                   ></iframe>
                 </div>

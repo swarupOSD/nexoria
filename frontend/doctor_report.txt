@@ -1,0 +1,4264 @@
+[1mReact Doctor[22m [2mv0.8.1[22m
+
+[90m  [39m
+[32m√[39m Scanned 352 files in 3.1s [2m[~7 workers][22m
+
+  [31m✖[39m [31mAccessibility: Image missing alt text[39m [90m×5[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/alt-text[39m
+    Screen reader users cannot access this image without `alt`.
+    Add `alt="image_description"`, or `alt=""` if it is
+    decorative.
+[2m    → Give every meaningful image an `alt`, `aria-label`, or[22m
+[2m    `aria-labelledby`.[22m
+
+[90m    src/pages/Admin/AdminCategories.jsx:164[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 163 |[39m                     {cat[33m.[39micon [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m{c[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 164 |[39m                     {cat[33m.[39mimage [33m&&[39m [33m<[39m[33mimg[39m src[33m=[39m{cat[33m.[39mima[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                   [31m[1m^[22m[39m                  [2m│[22m
+    [2m│[22m  [90m 165 |[39m                     {cat[33m.[39mname}[0m                       [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/SinglePost.jsx:562[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 561 |[39m                       [33m<[39m[33mdiv[39m className[33m=[39m[32m"flex items-ce[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 562 |[39m                         [33m<[39m[33mimg[39m src[33m=[39m{review[33m.[39muser[33m?[39m[33m.[39mprof[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                         [31m[1m^[22m[39m                            [2m│[22m
+    [2m│[22m  [90m 563 |[39m                         [33m<[39m[33mdiv[39m[33m>[39m[0m                        [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/SinglePost.jsx:689[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 688 |[39m                   [33m<[39m[33mLink[39m to[33m=[39m{[32m`/post/${rel.slug}`[39m} ke[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 689 |[39m                     [33m<[39m[33mimg[39m src[33m=[39m{rel[33m.[39mappLogo} fallback[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                     [31m[1m^[22m[39m                                [2m│[22m
+    [2m│[22m  [90m 690 |[39m                     [33m<[39m[33mdiv[39m[33m>[39m[0m                            [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:261[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 260 |[39m                             [33m<[39m[33mdiv[39m className[33m=[39m[32m"flex it[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 261 |[39m                               [33m<[39m[33mimg[39m src[33m=[39m{log[33m.[39muser[33m?[39m[33m.[39mp[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                               [31m[1m^[22m[39m                      [2m│[22m
+    [2m│[22m  [90m 262 |[39m                               [33m<[39m[33mspan[39m className[33m=[39m[32m"font[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/WatchParty.jsx:259[39m
+
+  [31m✖[39m [31mBugs: Hook called conditionally[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/rules-of-hooks[39m
+    `useEffect` changes Hook order between renders when called
+    conditionally, so React can attach state to the wrong Hook.
+[2m    → Call hooks at the top level of a React function component[22m
+[2m    or custom Hook so React sees the same hook order on every[22m
+[2m    render.[22m
+
+[90m    src/components/PremiumAdWrapper.jsx:23[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 22 |[39m   [90m// Load Google Ads script dynamically if not loaded[39m [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 23 |[39m   useEffect(() [33m=>[39m {                                   [2m│[22m
+    [2m│[22m  [90m    |[39m   [31m[1m^[22m[39m                                                   [2m│[22m
+    [2m│[22m  [90m 24 |[39m     [36mtry[39m {[0m                                             [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/VoiceLounge.jsx:109[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 108 |[39m                                                      [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 109 |[39m   useEffect(() [33m=>[39m {                                  [2m│[22m
+    [2m│[22m  [90m     |[39m   [31m[1m^[22m[39m                                                  [2m│[22m
+    [2m│[22m  [90m 110 |[39m     [90m// 1. Get Local Audio Stream[39m[0m                     [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [33m⚠[39m [33mSecurity: HTML injection sink with dynamic content[39m [90m×3[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/dangerous-html-sink[39m
+    HTML is injected from a dynamic-looking source, which can
+    become XSS if the value is user-controlled or unsanitized.
+[2m    → Prefer rendering structured React nodes. If HTML is[22m
+[2m    required, sanitize with a well-reviewed sanitizer and keep[22m
+[2m    the trust boundary close to the sink.[22m
+
+[90m    src/components/GlobalAds.jsx:24[39m
+
+[90m    src/pages/Legal.jsx:116[39m
+
+[90m    src/pages/SinglePost.jsx:502[39m
+
+  [31m✖[39m [31mBugs: Effect subscription or timer never cleaned up[39m [90m×9[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/effect-needs-cleanup[39m
+    `RTCPeerConnection` creates a connection in a function that
+    outlives the render, with no cleanup path. Store the handle
+    and release it, or move this into a useEffect that returns
+    cleanup, so it does not leak after unmount.
+[2m    → Return a cleanup function that stops the subscription or[22m
+[2m    timer: `return () => target.removeEventListener(name,[22m
+[2m    handler)` for listeners, `return () => clearInterval(id)`[22m
+[2m    or `clearTimeout(id)` for timers, `return () =>[22m
+[2m    observer.disconnect()` for observers, `return () =>[22m
+[2m    socket.close()` for connections, or `return unsubscribe` if[22m
+[2m    the subscribe call already gave you one.[22m
+
+[90m    src/components/CallOverlay.jsx:26[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 25 |[39m   [36mconst[39m initiateCall [33m=[39m (mediaStream) [33m=>[39m {             [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 26 |[39m     [36mconst[39m peer [33m=[39m [36mnew[39m [33mRTCPeerConnection[39m([33mICE_SERVERS[39m)[33m;[39m  [2m│[22m
+    [2m│[22m  [90m    |[39m                  [31m[1m^[22m[39m                                    [2m│[22m
+    [2m│[22m  [90m 27 |[39m     connectionRef[33m.[39mcurrent [33m=[39m peer[33m;[39m[0m                     [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:50[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 49 |[39m         [36mconst[39m publicVapidKey [33m=[39m [32m'BM_qXoG-H3pLd7l561n9[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 50 |[39m         subscription [33m=[39m [36mawait[39m registration[33m.[39mpushManage[0m… [2m│[22m
+    [2m│[22m  [90m    |[39m                              [31m[1m^[22m[39m                        [2m│[22m
+    [2m│[22m  [90m 51 |[39m           userVisibleOnly[33m:[39m [36mtrue[39m[33m,[39m[0m                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/Layout/NotificationBell.jsx:130[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 129 |[39m         [36mif[39m ([33m![39msubscription) {                         [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 130 |[39m           subscription [33m=[39m [36mawait[39m registration[33m.[39mpushMan[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                                [31m[1m^[22m[39m                     [2m│[22m
+    [2m│[22m  [90m 131 |[39m             userVisibleOnly[33m:[39m [36mtrue[39m[33m,[39m[0m                   [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/MusicShareModal.jsx:90[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 89 |[39m                                                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 90 |[39m     audio[33m.[39maddEventListener([32m'ended'[39m[33m,[39m () [33m=>[39m {           [2m│[22m
+    [2m│[22m  [90m    |[39m     [31m[1m^[22m[39m                                                 [2m│[22m
+    [2m│[22m  [90m 91 |[39m       setPlayingId([36mnull[39m)[33m;[39m[0m                             [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/SecretChatRoom.jsx:52[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 51 |[39m                                                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 52 |[39m   useEffect(() [33m=>[39m {                                   [2m│[22m
+    [2m│[22m  [90m    |[39m   [31m[1m^[22m[39m                                                   [2m│[22m
+    [2m│[22m  [90m 53 |[39m     [36mif[39m ([33m![39msocket) [36mreturn[39m[33m;[39m[0m                              [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/SecretLounge.jsx:22[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 21 |[39m                                                       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 22 |[39m   useEffect(() [33m=>[39m {                                   [2m│[22m
+    [2m│[22m  [90m    |[39m   [31m[1m^[22m[39m                                                   [2m│[22m
+    [2m│[22m  [90m 23 |[39m     [36mif[39m ([33m![39muser) {[0m                                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Support.jsx:28[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 27 |[39m   [90m// Socket listener for real-time ticket updates[39m     [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 28 |[39m   useEffect(() [33m=>[39m {                                   [2m│[22m
+    [2m│[22m  [90m    |[39m   [31m[1m^[22m[39m                                                   [2m│[22m
+    [2m│[22m  [90m 29 |[39m     [36mif[39m ([33m![39muser) [36mreturn[39m[33m;[39m[0m                                [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/VoiceLounge.jsx:109[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 108 |[39m                                                      [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 109 |[39m   useEffect(() [33m=>[39m {                                  [2m│[22m
+    [2m│[22m  [90m     |[39m   [31m[1m^[22m[39m                                                  [2m│[22m
+    [2m│[22m  [90m 110 |[39m     [90m// 1. Get Local Audio Stream[39m[0m                     [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/WatchParty.jsx:29[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 28 |[39m   [90m// Initialize socket[39m                                [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 29 |[39m   useEffect(() [33m=>[39m {                                   [2m│[22m
+    [2m│[22m  [90m    |[39m   [31m[1m^[22m[39m                                                   [2m│[22m
+    [2m│[22m  [90m 30 |[39m     [36mif[39m ([33m![39muser [33m||[39m [33m![39mmovie) [36mreturn[39m[33m;[39m[0m                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [31m✖[39m [31mBugs: Missing key in list[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/jsx-key[39m
+    Your users can see the wrong data when this list reorders.
+[2m    → Add a stable `key` prop so React can keep list items[22m
+[2m    matched to the right data when the list changes.[22m
+
+[90m    src/components/SuperAdminLayout.jsx:293[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 292 |[39m                   [36mreturn[39m (                           [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 293 |[39m                     [33m<[39m[33ma[39m href[33m=[39m{item[33m.[39mpath} target[33m=[39m[32m"_bl[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                     [31m[1m^[22m[39m                                [2m│[22m
+    [2m│[22m  [90m 294 |[39m                       {content}[0m                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/SuperAdminLayout.jsx:300[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 299 |[39m                 [36mreturn[39m (                             [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 300 |[39m                   [33m<[39m[33mLink[39m to[33m=[39m{item[33m.[39mpath} {[33m...[39mlinkProp[0m… [2m│[22m
+    [2m│[22m  [90m     |[39m                   [31m[1m^[22m[39m                                  [2m│[22m
+    [2m│[22m  [90m 301 |[39m                     {content}[0m                        [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [31m✖[39m [31mBugs: Effect dependency recreated every render[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-effect-with-fresh-deps[39m
+    A dependency inside this custom Hook changes every render
+    because `secretCode` is a new array built fresh each time.
+[2m    → Move the value inside the hook body and depend on its[22m
+[2m    simple inputs instead, or wrap it in useMemo / useCallback[22m
+[2m    so it stays the same between renders.[22m
+
+[90m    src/App.jsx:194[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 193 |[39m   [90m// Initialize Easter Egg Hook[39m                      [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 194 |[39m   useKonamiCode()[33m;[39m                                   [2m│[22m
+    [2m│[22m  [90m     |[39m   [31m[1m^[22m[39m                                                  [2m│[22m
+    [2m│[22m  [90m 195 |[39m[0m                                                      [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [33m⚠[39m [33mPerformance: Component defined inside a component[39m [90m×6[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-unstable-nested-components[39m
+    Your users lose this component's state on every render
+    because it's defined inside another component
+    (`AdminLayout`).
+[2m    → Move nested components to module scope so React does not[22m
+[2m    remount them and lose state on every render.[22m
+
+[90m    src/components/AdminLayout.jsx:139[39m
+
+[90m    src/components/MovieBoxLayout.jsx:67[39m
+
+[90m    src/components/SuperAdminLayout.jsx:194[39m
+
+[90m    src/components/TipTapEditor.jsx:21[39m
+
+[90m    src/pages/MovieBox.jsx:46[39m
+
+[90m    src/pages/MovieBox.jsx:54[39m
+
+  [33m⚠[39m [33mSecurity: Auth token in web storage[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/auth-token-in-web-storage[39m
+    Storing an auth token in `localStorage`/`sessionStorage`
+    exposes it to any XSS on the page: JavaScript can read web
+    storage and exfiltrate the token. Keep tokens in an
+    `HttpOnly`, `Secure`, `SameSite` cookie instead.
+[2m    → Don't persist auth tokens (JWTs, access/refresh tokens,[22m
+[2m    secrets) in `localStorage`/`sessionStorage`; they're[22m
+[2m    readable by any XSS. Use an `HttpOnly` cookie set by the[22m
+[2m    server.[22m
+
+[90m    src/features/auth/authSlice.js:20[39m
+
+  [33m⚠[39m [33mBugs: Missing effect dependencies[39m [90m×12[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/exhaustive-deps[39m
+    `secretCode` is rebuilt every render and reaches a Hook
+    dependency inside this custom Hook.
+[2m    → Don't blindly add missing dependencies. Read the hook[22m
+[2m    callback first.[22m
+[2m    [22m
+[2m    Bad:[22m
+[2m    useEffect(() => {[22m
+[2m      setCount(count + 1);[22m
+[2m    }, [count]);[22m
+[2m    [22m
+[2m    Better:[22m
+[2m    useEffect(() => {[22m
+[2m      setCount((currentCount) => currentCount + 1);[22m
+[2m    }, []);[22m
+[2m    [22m
+[2m    If the missing value is recreated every render, move it[22m
+[2m    inside the hook or stabilize it before adding it to deps.[22m
+
+[90m    src/App.jsx:194[39m
+
+[90m    src/components/AudioVisualizer.jsx:75[39m
+
+[90m    src/components/CallOverlay.jsx:111[39m
+
+[90m    src/components/CyberpunkParticles.jsx:23[39m
+
+[90m    src/components/MusicShareModal.jsx:52[39m
+
+[90m    src/components/NexoriaPlayer.jsx:51[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:290[39m
+
+[90m    src/pages/MovieBox.jsx:41[39m
+
+[90m    src/pages/MovieDetail.jsx:69[39m
+
+[90m    src/pages/NexoriaArena.jsx:20[39m
+
+[90m    src/pages/SecretLounge.jsx:62[39m
+
+[90m    src/pages/VoiceLounge.jsx:225[39m
+
+  [33m⚠[39m [33mBugs: Array index used as a key[39m [90m×65[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-array-index-as-key[39m
+    Your users can see & submit the wrong data when this list
+    reorders or filters, so use a stable id like
+    `key={item.id}`, not the array index "idx".
+[2m    → Use a stable id from the item, like `key={item.id}` or[22m
+[2m    `key={item.slug}`. Index keys break when the list reorders[22m
+[2m    or filters.[22m
+
+[90m    src/components/AdPlacement.jsx:55[39m
+
+[90m    src/components/AdminLayout.jsx:153[39m
+
+[90m    src/components/AuraCard.jsx:129[39m
+
+[90m    src/components/DashboardTabs/AppDownloadTab.jsx:88[39m
+
+[90m    src/components/Footer.jsx:170[39m
+
+[90m    src/components/GlobalChatBubble.jsx:274[39m
+
+[90m    src/components/LyricsModal.jsx:131[39m
+
+[90m    src/components/Navbar.jsx:461[39m
+
+[90m    src/components/PrivateChatWidget.jsx:133[39m
+
+[90m    src/components/SecretChatRoom.jsx:286[39m
+
+[90m    src/components/SuperAdminLayout.jsx:211[39m
+
+[90m    src/components/WrappedModal.jsx:147[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:101[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:114[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:136[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:603[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:631[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:800[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:841[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:890[39m
+
+[90m    src/pages/Admin/Dashboard.jsx:192[39m
+
+[90m    src/pages/Admin/Dashboard.jsx:205[39m
+
+[90m    src/pages/Admin/LiveMonitor.jsx:152[39m
+
+[90m    src/pages/Admin/LiveMonitor.jsx:179[39m
+
+[90m    src/pages/Admin/LiveMonitor.jsx:208[39m
+
+[90m    src/pages/Admin/LiveMonitor.jsx:234[39m
+
+[90m    src/pages/Admin/Sound/SoundCategories.jsx:36[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:158[39m
+
+[90m    src/pages/Contact.jsx:96[39m
+
+[90m    src/pages/MovieBox.jsx:198[39m
+
+[90m    src/pages/MovieDetail.jsx:351[39m
+
+[90m    src/pages/MovieDetail.jsx:391[39m
+
+[90m    src/pages/MovieDetail.jsx:414[39m
+
+[90m    src/pages/Premium.jsx:147[39m
+
+[90m    src/pages/Premium.jsx:210[39m
+
+[90m    src/pages/Register.jsx:183[39m
+
+[90m    src/pages/SinglePost.jsx:510[39m
+
+[90m    src/pages/SinglePost.jsx:659[39m
+
+[90m    src/pages/SinglePost.jsx:676[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:344[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:107[39m
+
+[90m    src/pages/SuperAdmin/ModuleAnalytics.jsx:18[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:327[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:374[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:156[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:551[39m
+
+[90m    src/pages/SuperAdmin/MovieAnalytics.jsx:44[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:596[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:17[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:147[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:193[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:222[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:254[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:22[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:137[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:237[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:363[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:381[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:398[39m
+
+[90m    src/pages/Support.jsx:198[39m
+
+[90m    src/pages/VideoDownloader.jsx:96[39m
+
+[90m    src/pages/WatchParty.jsx:250[39m
+
+[90m    src/pages/legal/AboutUs.jsx:89[39m
+
+[90m    src/pages/legal/Sitemap.jsx:88[39m
+
+[90m    src/pages/legal/Sitemap.jsx:103[39m
+
+  [33m⚠[39m [33mSecurity: BaaS authority map shipped in browser artifact[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/artifact-baas-authority-surface[39m
+    A browser artifact exposes Firebase/Supabase config
+    together with sensitive collections or authorization fields.
+[2m    → Client BaaS config is often public, but shipped[22m
+[2m    collection names plus owner, role, tenant, or admin fields[22m
+[2m    give attackers a precise authorization map. Verify[22m
+[2m    rules/RLS enforce every boundary server-side.[22m
+
+[90m    android/app/src/main/assets/public/assets/index-DnHCMnom.js:198[39m
+
+[90m    dist/assets/index-D9DrFonZ.js:198[39m
+
+  [33m⚠[39m [33mSecurity: iframe missing sandbox attribute[39m [90m×4[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/iframe-missing-sandbox[39m
+    Combining `allow-scripts` & `allow-same-origin` lets the
+    iframe remove its own sandbox, defeating the protection.
+[2m    → Add `sandbox=""` or a curated value so embedded pages[22m
+[2m    cannot get full access to your site by default.[22m
+
+[90m    src/components/AdPlacement.jsx:73[39m
+
+[90m    src/components/DashboardTabs/EarnTab.jsx:78[39m
+
+[90m    src/pages/NexoriaArena.jsx:142[39m
+
+[90m    src/pages/VideoDownloader.jsx:125[39m
+
+  [33m⚠[39m [33mAccessibility: Label missing associated control[39m [90m×341[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/label-has-associated-control[39m
+    Screen reader users can't tell which input this label names
+    because it's tied to none, so add `htmlFor` or wrap the
+    input inside it.
+[2m    → Tie every label to a control with `htmlFor`, or by[22m
+[2m    nesting the input.[22m
+
+[90m    src/components/BroadcastModal.jsx:68[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:119[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:123[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:132[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:140[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:255[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:263[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:274[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:282[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:308[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:329[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:135[39m
+
+[90m    src/components/ImageUpload.jsx:68[39m
+
+[90m    src/components/ParentalGateModal.jsx:96[39m
+
+[90m    src/components/ParentalGateModal.jsx:114[39m
+
+[90m    src/components/ParentalGateModal.jsx:130[39m
+
+[90m    src/components/QRPaymentModal.jsx:125[39m
+
+[90m    src/components/QRPaymentModal.jsx:139[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:227[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:238[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:249[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:259[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:269[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:279[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:289[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:303[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:313[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:557[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:561[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:566[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:570[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:662[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:671[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:680[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:695[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:704[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:708[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:712[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:716[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:720[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:724[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:736[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:740[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:746[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:750[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:754[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:760[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:764[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:803[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:807[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:812[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:892[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:900[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:904[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:908[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:933[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:938[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:943[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:98[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:112[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:148[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:184[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:185[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:198[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:210[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:224[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:236[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:234[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:247[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:264[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:278[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:156[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:169[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:181[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:253[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:266[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:278[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:294[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:305[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:318[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:329[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:339[39m
+
+[90m    src/pages/Admin/Settings.jsx:69[39m
+
+[90m    src/pages/Admin/Settings.jsx:77[39m
+
+[90m    src/pages/Admin/Settings.jsx:81[39m
+
+[90m    src/pages/Admin/Settings.jsx:85[39m
+
+[90m    src/pages/Admin/Settings.jsx:94[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:104[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:108[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:112[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:116[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:122[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:126[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:130[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:122[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:127[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:132[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:137[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:122[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:126[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:130[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:136[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:140[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:144[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:148[39m
+
+[90m    src/pages/Admin/Users.jsx:414[39m
+
+[90m    src/pages/Admin/Users.jsx:420[39m
+
+[90m    src/pages/Admin/Users.jsx:487[39m
+
+[90m    src/pages/Admin/Users.jsx:523[39m
+
+[90m    src/pages/Admin/Users.jsx:531[39m
+
+[90m    src/pages/Admin/Users.jsx:541[39m
+
+[90m    src/pages/Admin/Users.jsx:570[39m
+
+[90m    src/pages/Admin/Users.jsx:597[39m
+
+[90m    src/pages/ChangePassword.jsx:64[39m
+
+[90m    src/pages/ChangePassword.jsx:79[39m
+
+[90m    src/pages/ChangePassword.jsx:95[39m
+
+[90m    src/pages/FeatureRequests.jsx:292[39m
+
+[90m    src/pages/FeatureRequests.jsx:307[39m
+
+[90m    src/pages/FeatureRequests.jsx:319[39m
+
+[90m    src/pages/ForgotPassword.jsx:74[39m
+
+[90m    src/pages/Login.jsx:357[39m
+
+[90m    src/pages/MovieDetail.jsx:434[39m
+
+[90m    src/pages/MovieDetail.jsx:453[39m
+
+[90m    src/pages/ResetPassword.jsx:75[39m
+
+[90m    src/pages/ResetPassword.jsx:91[39m
+
+[90m    src/pages/SearchPage.jsx:101[39m
+
+[90m    src/pages/SearchPage.jsx:108[39m
+
+[90m    src/pages/SearchPage.jsx:116[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:188[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:196[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:206[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:215[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:222[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:152[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:157[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:161[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:166[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:189[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:193[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:197[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:222[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:230[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:64[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:70[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:101[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:271[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:287[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:292[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:297[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:382[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:386[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:390[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:394[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:398[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:402[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:439[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:443[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:447[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:460[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:468[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:478[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:63[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:76[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:107[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:159[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:171[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:186[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:198[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:87[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:99[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:129[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:165[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:181[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:192[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:207[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:218[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:225[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:229[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:233[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:245[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:249[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:255[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:263[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:267[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:173[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:184[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:284[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:309[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:318[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:327[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:336[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:130[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:134[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:139[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:148[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:189[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:199[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:221[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:364[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:370[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:437[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:473[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:481[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:491[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:104[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:108[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:112[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:116[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:126[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:134[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:142[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:152[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:173[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:177[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:187[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:191[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:195[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:199[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:206[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:210[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:216[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:221[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:231[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:239[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:243[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:250[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:254[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:258[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:265[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:269[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:276[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:280[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:284[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:288[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:295[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:299[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:303[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:330[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:334[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:338[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:182[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:186[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:218[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:222[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:226[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:230[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:332[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:336[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:340[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:344[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:354[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:362[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:371[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:379[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:396[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:400[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:411[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:433[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:458[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:462[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:468[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:481[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:485[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:489[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:493[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:497[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:501[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:505[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:509[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:513[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:517[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:521[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:525[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:529[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:206[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:217[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:228[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:237[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:247[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:235[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:64[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:75[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:87[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:104[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:116[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:142[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:151[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:164[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:177[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:195[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:125[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:132[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:236[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:240[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:244[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:248[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:252[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:257[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:261[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:265[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:284[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:353[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:357[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:370[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:384[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:388[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:392[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:396[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:400[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:404[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:408[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:426[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:444[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:448[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:452[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:456[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:474[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:479[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:484[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:489[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:508[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:513[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:220[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:224[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:232[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:240[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:251[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:219[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:223[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:228[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:237[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:243[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:247[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:252[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:260[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:123[39m
+
+[90m    src/pages/Support.jsx:120[39m
+
+[90m    src/pages/Support.jsx:137[39m
+
+[90m    src/pages/Support.jsx:149[39m
+
+  [33m⚠[39m [33mBugs: Prop mirrored into state via effect[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-mirror-prop-effect[39m
+    Your screen shows the old value first because useState
+    "imgSrc" copies prop "src" through this effect.
+[2m    → Delete both the `useState` and the `useEffect` and read[22m
+[2m    the prop directly while rendering. Copying a prop into[22m
+[2m    state shows the old value on the first render before the[22m
+[2m    effect catches up.[22m
+
+[90m    src/components/Logo.jsx:8[39m
+
+  [33m⚠[39m [33mPerformance: await inside a loop[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/async-await-in-loop[39m
+    This makes the for…of loop slow because each await runs one
+    after another, so collect the independent calls & run them
+    together with `await Promise.all(items.map(...))`
+[2m    → Collect the items, then use `await[22m
+[2m    Promise.all(items.map(...))` so independent work runs at[22m
+[2m    the same time[22m
+
+[90m    src/pages/Admin/Users.jsx:122[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:103[39m
+
+  [33m⚠[39m [33mPerformance: Non-passive scroll listener[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/client-passive-event-listeners[39m
+    "touchstart" listener without { passive: true } makes
+    scrolling janky for your users. Only add it if the handler
+    doesn't call event.preventDefault(), since passive
+    listeners silently ignore preventDefault().
+[2m    → Add `{ passive: true }` as the third argument:[22m
+[2m    `addEventListener('touchmove', handler, { passive: true[22m
+[2m    })`. Only do this if the handler doesn't call[22m
+[2m    `event.preventDefault()`, since passive listeners ignore it[22m
+[2m    (which breaks pull-to-refresh, custom gestures, and nested[22m
+[2m    scrolling).[22m
+
+[90m    src/components/DropdownMenu.jsx:26[39m
+
+  [33m⚠[39m [33mBugs: Effects chained together[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-effect-chain[39m
+    Your screen redraws several times from a single action
+    because one useEffect changes "lyrics", which sets off this
+    one.
+[2m    → Compute as much as possible during render (e.g. `const[22m
+[2m    isGameOver = round > 5`) and write all related state inside[22m
+[2m    the event handler that originally fires the chain. Each[22m
+[2m    effect link adds an extra render and makes the code rigid[22m
+[2m    as requirements evolve[22m
+
+[90m    src/components/LyricsModal.jsx:48[39m
+
+[90m    src/components/LyricsModal.jsx:67[39m
+
+  [33m⚠[39m [33mPerformance: Unstable context provider value[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/jsx-no-constructed-context-values[39m
+    Every reader of this context redraws on each render because
+    you build its `value` inline.
+[2m    → Wrap the context value in `useMemo` or move it outside[22m
+[2m    the component so consumers do not redraw every render.[22m
+
+[90m    src/context/ThemeContext.jsx:64[39m
+
+  [33m⚠[39m [33mPerformance: Heavy library loaded eagerly[39m [90m×5[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/prefer-dynamic-import[39m
+    "recharts" ships extra code to your users up front & slows
+    page load. Load it on demand with React.lazy() or
+    next/dynamic.
+[2m    → Load it only when needed: `const Component = dynamic(()[22m
+[2m    => import('library'), { ssr: false })` from next/dynamic,[22m
+[2m    or React.lazy().[22m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:5[39m
+
+[90m    src/pages/Admin/Dashboard.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/ModuleAnalytics.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:8[39m
+
+  [33m⚠[39m [33mBugs: Unknown DOM property[39m [90m×3[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-unknown-property[39m
+    React ignores this prop because it doesn't recognize the
+    name.
+[2m    → Use the prop name React expects, like `className`,[22m
+[2m    `htmlFor`, or `tabIndex`, so the attribute is applied[22m
+[2m    correctly.[22m
+
+[90m    src/pages/SinglePost.jsx:511[39m
+
+[90m    src/pages/SinglePost.jsx:562[39m
+
+[90m    src/pages/SinglePost.jsx:689[39m
+
+  [33m⚠[39m [33mBugs: Data fetching inside an effect[39m [90m×10[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-fetch-in-effect[39m
+    fetch() inside useEffect can race, double-fire, or leak.
+    Use a data-fetching layer or Server Component instead.
+[2m    → Use a data-fetching layer or Server Component so fetches[22m
+[2m    do not race, double-fire, or leak from `useEffect`.[22m
+
+[90m    src/components/AdBlockDetector.jsx:11[39m
+
+[90m    src/components/AuraCard.jsx:16[39m
+
+[90m    src/components/DashboardTabs/RewardsTab.jsx:16[39m
+
+[90m    src/components/MusicShareModal.jsx:42[39m
+
+[90m    src/components/MusicShareModal.jsx:55[39m
+
+[90m    src/pages/SuperAdmin/AppRequestModeration.jsx:28[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:35[39m
+
+[90m    src/pages/SuperAdmin/ReviewModeration.jsx:27[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:38[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:56[39m
+
+  [33m⚠[39m [33mAccessibility: Control missing accessible label[39m [90m×443[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/control-has-associated-label[39m
+    Blind users can't tell what this control does because
+    screen readers find no label, so add visible text,
+    `aria-label`, or `aria-labelledby`.
+[2m    → Give every interactive control a label screen readers can[22m
+[2m    read.[22m
+
+[90m    src/components/AddToPlaylistModal.jsx:73[39m
+
+[90m    src/components/AdminLayout.jsx:146[39m
+
+[90m    src/components/AdminLayout.jsx:242[39m
+
+[90m    src/components/AdminLayout.jsx:265[39m
+
+[90m    src/components/BroadcastModal.jsx:62[39m
+
+[90m    src/components/CallOverlay.jsx:216-219[39m
+
+[90m    src/components/CallOverlay.jsx:271[39m
+
+[90m    src/components/CallOverlay.jsx:275[39m
+
+[90m    src/components/CallOverlay.jsx:279[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:113[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:124[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:133[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:257[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:265[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:276[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:284[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:105[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:136[39m
+
+[90m    src/components/EqualizerModal.jsx:25[39m
+
+[90m    src/components/EqualizerModal.jsx:96[39m
+
+[90m    src/components/ForYouCarousel.jsx:41[39m
+
+[90m    src/components/ForYouCarousel.jsx:47[39m
+
+[90m    src/components/FriendsDrawer.jsx:50[39m
+
+[90m    src/components/FriendsDrawer.jsx:107[39m
+
+[90m    src/components/GlobalChatBubble.jsx:258[39m
+
+[90m    src/components/GlobalChatBubble.jsx:343[39m
+
+[90m    src/components/GlobalChatBubble.jsx:351-352[39m
+
+[90m    src/components/GlobalChatBubble.jsx:369[39m
+
+[90m    src/components/GlobalChatBubble.jsx:401[39m
+
+[90m    src/components/GlobalChatBubble.jsx:434[39m
+
+[90m    src/components/GlobalChatBubble.jsx:443[39m
+
+[90m    src/components/GlobalChatBubble.jsx:482[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:333[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:348[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:354[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:360[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:366[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:382[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:441-444[39m
+
+[90m    src/components/ImageCropper.jsx:51[39m
+
+[90m    src/components/ImageUpload.jsx:74[39m
+
+[90m    src/components/LyricsModal.jsx:104[39m
+
+[90m    src/components/MovieBoxLayout.jsx:194[39m
+
+[90m    src/components/MusicShareModal.jsx:129[39m
+
+[90m    src/components/Navbar.jsx:400[39m
+
+[90m    src/components/Navbar.jsx:410[39m
+
+[90m    src/components/Navbar.jsx:463[39m
+
+[90m    src/components/Navbar.jsx:478[39m
+
+[90m    src/components/Navbar.jsx:527[39m
+
+[90m    src/components/Navbar.jsx:619[39m
+
+[90m    src/components/Navbar.jsx:624[39m
+
+[90m    src/components/Navbar.jsx:638[39m
+
+[90m    src/components/Navbar.jsx:671[39m
+
+[90m    src/components/Navbar.jsx:711[39m
+
+[90m    src/components/Navbar.jsx:720[39m
+
+[90m    src/components/Navbar.jsx:808-814[39m
+
+[90m    src/components/NexoriaPlayer.jsx:222[39m
+
+[90m    src/components/NexoriaPlayer.jsx:283[39m
+
+[90m    src/components/NexoriaPlayer.jsx:295[39m
+
+[90m    src/components/NexoriaPlayer.jsx:301[39m
+
+[90m    src/components/NexoriaPlayer.jsx:307[39m
+
+[90m    src/components/NexoriaPlayer.jsx:319[39m
+
+[90m    src/components/NexoriaPlayer.jsx:325[39m
+
+[90m    src/components/NexoriaPlayer.jsx:355[39m
+
+[90m    src/components/NexoriaPlayer.jsx:361-364[39m
+
+[90m    src/components/NexoriaPlayer.jsx:373[39m
+
+[90m    src/components/NexoriaPlayer.jsx:393[39m
+
+[90m    src/components/ParentalGateModal.jsx:77[39m
+
+[90m    src/components/PremiumCustomization.jsx:137[39m
+
+[90m    src/components/PrivateChatWidget.jsx:106-109[39m
+
+[90m    src/components/PrivateChatWidget.jsx:153[39m
+
+[90m    src/components/QRPaymentModal.jsx:71[39m
+
+[90m    src/components/QRPaymentModal.jsx:144[39m
+
+[90m    src/components/SecretChatRoom.jsx:320[39m
+
+[90m    src/components/SecretChatRoom.jsx:328-329[39m
+
+[90m    src/components/SecretChatRoom.jsx:365[39m
+
+[90m    src/components/SecretChatRoom.jsx:389-390[39m
+
+[90m    src/components/SecretChatRoom.jsx:414[39m
+
+[90m    src/components/SecretChatRoom.jsx:433[39m
+
+[90m    src/components/SecretChatRoom.jsx:440[39m
+
+[90m    src/components/SecretChatRoom.jsx:447[39m
+
+[90m    src/components/SecretChatRoom.jsx:463[39m
+
+[90m    src/components/ShareCardModal.jsx:120[39m
+
+[90m    src/components/ShareFAB.jsx:80[39m
+
+[90m    src/components/SuperAdminLayout.jsx:204[39m
+
+[90m    src/components/SuperAdminLayout.jsx:374[39m
+
+[90m    src/components/SuperAdminLayout.jsx:439[39m
+
+[90m    src/components/SystemBroadcastManager.jsx:64[39m
+
+[90m    src/components/TipTapEditor.jsx:24[39m
+
+[90m    src/components/TipTapEditor.jsx:31[39m
+
+[90m    src/components/TipTapEditor.jsx:46[39m
+
+[90m    src/components/TipTapEditor.jsx:53[39m
+
+[90m    src/components/TipTapEditor.jsx:60[39m
+
+[90m    src/components/UserActionModal.jsx:53[39m
+
+[90m    src/components/WrappedModal.jsx:161[39m
+
+[90m    src/pages/Admin/AdminActivityLogs.jsx:50[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:178[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:184[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:220[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:270[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:290[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:314[39m
+
+[90m    src/pages/Admin/AdminComments.jsx:56[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:75[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:191[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:198[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:137[39m
+
+[90m    src/pages/Admin/AdminRatings.jsx:56[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:613[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:642[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:663[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:672[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:681[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:696[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:705[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:709[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:713[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:721[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:725[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:737[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:741[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:747[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:751[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:755[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:761[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:765[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:808[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:813[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:817[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:852[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:893[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:909[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:914[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:939[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:131[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:167[39m
+
+[90m    src/pages/Admin/MovieSettings.jsx:203[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:163[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:199[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:211[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:225[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:175[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:198[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:120[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:126[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:147[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:184[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:224-227[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:245[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:267[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:279[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:295[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:330[39m
+
+[90m    src/pages/Admin/Settings.jsx:70[39m
+
+[90m    src/pages/Admin/Settings.jsx:78[39m
+
+[90m    src/pages/Admin/Settings.jsx:82[39m
+
+[90m    src/pages/Admin/Settings.jsx:86[39m
+
+[90m    src/pages/Admin/Settings.jsx:95-98[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:105[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:109[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:113[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:117[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:127[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:131[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:89-92[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:115[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:123[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:128[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:133[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:138[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:86-89[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:114[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:123[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:127[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:131[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:141[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:145[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:149[39m
+
+[90m    src/pages/Admin/Users.jsx:245[39m
+
+[90m    src/pages/Admin/Users.jsx:255[39m
+
+[90m    src/pages/Admin/Users.jsx:274[39m
+
+[90m    src/pages/Admin/Users.jsx:283[39m
+
+[90m    src/pages/Admin/Users.jsx:297[39m
+
+[90m    src/pages/Admin/Users.jsx:397[39m
+
+[90m    src/pages/Admin/Users.jsx:421[39m
+
+[90m    src/pages/Admin/Users.jsx:474[39m
+
+[90m    src/pages/Admin/Users.jsx:504[39m
+
+[90m    src/pages/Admin/Users.jsx:524[39m
+
+[90m    src/pages/Admin/Users.jsx:532[39m
+
+[90m    src/pages/Admin/Users.jsx:563[39m
+
+[90m    src/pages/Admin/Users.jsx:572[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:235[39m
+
+[90m    src/pages/DownloadTimer.jsx:85[39m
+
+[90m    src/pages/FeatureRequests.jsx:121[39m
+
+[90m    src/pages/FeatureRequests.jsx:132[39m
+
+[90m    src/pages/FeatureRequests.jsx:146[39m
+
+[90m    src/pages/FeatureRequests.jsx:282[39m
+
+[90m    src/pages/FeatureRequests.jsx:293[39m
+
+[90m    src/pages/GlobalMusicSearch.jsx:171[39m
+
+[90m    src/pages/Login.jsx:292[39m
+
+[90m    src/pages/MovieBox.jsx:187-190[39m
+
+[90m    src/pages/MovieBox.jsx:197[39m
+
+[90m    src/pages/MovieDetail.jsx:437[39m
+
+[90m    src/pages/MovieSearch.jsx:63[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:90[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:123[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:191[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:273[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:129[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:69[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:127[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:162[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:269[39m
+
+[90m    src/pages/Notifications.jsx:134[39m
+
+[90m    src/pages/Notifications.jsx:190[39m
+
+[90m    src/pages/Notifications.jsx:272[39m
+
+[90m    src/pages/Register.jsx:300[39m
+
+[90m    src/pages/Register.jsx:357[39m
+
+[90m    src/pages/SearchPage.jsx:93[39m
+
+[90m    src/pages/SearchPage.jsx:102[39m
+
+[90m    src/pages/SearchPage.jsx:109[39m
+
+[90m    src/pages/SearchPage.jsx:117[39m
+
+[90m    src/pages/SoundQueue.jsx:21[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:133[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:162[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:189[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:197[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:207[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:216[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:223[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:167[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:198[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:223[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:65[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:71[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:102[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:366[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:383[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:387[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:391[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:395[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:399[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:403[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:440[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:444[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:448[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:461[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:469[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/AddGame.jsx:172[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:88[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:100[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:182[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:193[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:208[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/EditGame.jsx:219[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/GamesList.jsx:93[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:171-174[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:219[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:256[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:264[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:128[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:166[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:185[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:100-101[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:123[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:131[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:135[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:140[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:149[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:22[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:190[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:197[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:208[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:227[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:236[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:250[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:347[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:371[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:424[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:454[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:474[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:482[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:105[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:109[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:113[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:117[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:127[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:135[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:153[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:174[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:178[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:188[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:192[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:196[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:200[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:207[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:211[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:232[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:240[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:244[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:255[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:259[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:277[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:281[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:285[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:289[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:296[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:342[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:183[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:187[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:219[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:223[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:227[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:231[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:255[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:237[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:264-267[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:313[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:333[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:337[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:341[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:345[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:355[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:363[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:372[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:380[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:397[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:401[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:421[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:443[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:470[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:482[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:486[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:490[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:494[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:498[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:502[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:506[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:510[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:514[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:518[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:522[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:526[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:530[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:559[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:571[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:157[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:163[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:199[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:229[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:248[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:74[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:147[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:196[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:149[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:153[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:90[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:132[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:90[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:152[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:165[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:197[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:203[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:126[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:183[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:237[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:241[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:245[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:249[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:253[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:258[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:262[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:266[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:286-287[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:354[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:358[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:371[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:385[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:389[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:393[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:397[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:401[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:405[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:409[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:427[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:445[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:449[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:453[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:457[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:475[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:480[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:598[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:605[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:625[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:182-185[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:214[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:225[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:233[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:255[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:262[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:325[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:332[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:400[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:422[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:427[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:170-173[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:213[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:229[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:238[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:108[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:50[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:94[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:112[39m
+
+[90m    src/pages/Support.jsx:121[39m
+
+[90m    src/pages/UserDashboard.jsx:124[39m
+
+[90m    src/pages/UserDashboard.jsx:131[39m
+
+[90m    src/pages/UserDashboard.jsx:183[39m
+
+[90m    src/pages/WatchParty.jsx:152[39m
+
+[90m    src/pages/WatchParty.jsx:165[39m
+
+[90m    src/pages/WatchParty.jsx:218[39m
+
+[90m    src/pages/WatchParty.jsx:289[39m
+
+  [33m⚠[39m [33mBugs: Live state pushed to parent via effect[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-pass-live-state-to-parent[39m
+    Pushing state up to a parent from a useEffect costs your
+    users an extra render.
+[2m    → Move the state up to the parent (or return it from the[22m
+[2m    hook), instead of handing it back up through a prop[22m
+[2m    callback in a useEffect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#notifying-parent-components-about-state-changes[22m
+
+[90m    src/components/EqualizerModal.jsx:9[39m
+
+  [33m⚠[39m [33mBugs: Parent kept in sync with a callback effect[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-prop-callback-in-effect[39m
+    Your parent re-renders on every local state change because
+    this useEffect calls the prop "updateEq" just to stay in
+    sync.
+[2m    → Move the shared state into a Provider so both sides read[22m
+[2m    the same value. Then you don't need a useEffect to keep[22m
+[2m    them in sync.[22m
+
+[90m    src/components/EqualizerModal.jsx:9[39m
+
+  [33m⚠[39m [33mBugs: Derived value copied into state[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-derived-state[39m
+    Storing "imgSrc" in state when you can derive it from other
+    values costs an extra render.
+[2m    → Work out the value while rendering (or with useMemo if[22m
+[2m    it's expensive) instead of copying it into state and[22m
+[2m    synchronizing it during render or through an effect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#updating-state-based-on-props-or-state[22m
+
+[90m    src/components/Logo.jsx:9[39m
+
+  [33m⚠[39m [33mPerformance: Array lookup inside a loop[39m [90m×14[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/js-set-map-lookups[39m
+    This scales poorly because `array.indexOf()` inside a loop
+    scans the whole list every time. Use a Set for
+    constant-time lookups.
+[2m    → Use a `Set` or `Map` when you check for the same items[22m
+[2m    over and over. `Array.includes`/`find` scans the whole list[22m
+[2m    each time[22m
+
+[90m    android/app/src/main/assets/public/assets/ErrorBarContext-Dp1oQHm1.js:1[39m
+
+[90m    src/components/Footer.jsx:130[39m
+
+[90m    src/components/NoticeCenter.jsx:16[39m
+
+[90m    src/pages/Admin/Users.jsx:295-297[39m
+
+[90m    src/pages/Admin/Users.jsx:309[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:198[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:16[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:136[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:169[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:309[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:248-250[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-file[39m [90m×12[39m
+    Unused file is not reachable from any entry point, so it
+    adds maintenance surface without shipping any code.
+[2m    → Delete the file if it is truly unreachable, or import it[22m
+[2m    from an entry point.[22m
+
+[90m    cleanup_search.cjs[39m
+
+[90m    fix_search.cjs[39m
+
+[90m    get_errors.mjs[39m
+
+[90m    replace-urls.cjs[39m
+
+[90m    replace_search.cjs[39m
+
+[90m    src/components/DashboardTabs/LikedSongsTab.jsx[39m
+
+[90m    src/components/PremiumAdWrapper.jsx[39m
+
+[90m    src/components/ScrollReveal.jsx[39m
+
+[90m    src/components/TipTapEditor.jsx[39m
+
+[90m    src/components/WhatsAppChat.jsx[39m
+
+[90m    src/pages/Admin/AdminContactMessages.jsx[39m
+
+[90m    src/pages/Contact.jsx[39m
+
+  [33m⚠[39m [33mPerformance: Full Framer Motion import[39m [90m×127[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/use-lazy-motion[39m
+    Importing "motion" ships about 30 kb of extra code and
+    slows page load. Use "m" with LazyMotion instead.
+[2m    → Use `import { LazyMotion, m } from "framer-motion"` with[22m
+[2m    `domAnimation` features. Saves about 30kb.[22m
+
+[90m    src/components/AdBlockDetector.jsx:2[39m
+
+[90m    src/components/AdminLayout.jsx:14[39m
+
+[90m    src/components/AuraSurgeBanner.jsx:2[39m
+
+[90m    src/components/BackButton.jsx:4[39m
+
+[90m    src/components/BroadcastModal.jsx:2[39m
+
+[90m    src/components/CallOverlay.jsx:3[39m
+
+[90m    src/components/CountUp.jsx:2[39m
+
+[90m    src/components/DashboardTabs/AppDownloadTab.jsx:2[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:3[39m
+
+[90m    src/components/DashboardTabs/DownloadsTab.jsx:3[39m
+
+[90m    src/components/DashboardTabs/OverviewTab.jsx:1[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:2[39m
+
+[90m    src/components/DashboardTabs/PurchasesTab.jsx:1[39m
+
+[90m    src/components/DashboardTabs/RewardsTab.jsx:2[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:2[39m
+
+[90m    src/components/DashboardTabs/WishlistTab.jsx:3[39m
+
+[90m    src/components/DropdownMenu.jsx:2[39m
+
+[90m    src/components/Footer.jsx:7[39m
+
+[90m    src/components/ForYouCarousel.jsx:2[39m
+
+[90m    src/components/FriendsDrawer.jsx:2[39m
+
+[90m    src/components/GlobalChatBubble.jsx:2[39m
+
+[90m    src/components/ImageCropper.jsx:5[39m
+
+[90m    src/components/Layout.jsx:9[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:2[39m
+
+[90m    src/components/Logo.jsx:2[39m
+
+[90m    src/components/MovieBoxLayout.jsx:5[39m
+
+[90m    src/components/MusicShareModal.jsx:2[39m
+
+[90m    src/components/Navbar.jsx:9[39m
+
+[90m    src/components/NexoriaPlayer.jsx:3[39m
+
+[90m    src/components/NoticeCenter.jsx:3[39m
+
+[90m    src/components/ParentalGateModal.jsx:3[39m
+
+[90m    src/components/PremiumCustomization.jsx:3[39m
+
+[90m    src/components/PrivateChatWidget.jsx:2[39m
+
+[90m    src/components/QRPaymentModal.jsx:2[39m
+
+[90m    src/components/ScrollReveal.jsx:1[39m
+
+[90m    src/components/SecretChatRoom.jsx:2[39m
+
+[90m    src/components/SecretLoungeButton.jsx:2[39m
+
+[90m    src/components/ShareFAB.jsx:3[39m
+
+[90m    src/components/SuperAdminLayout.jsx:13[39m
+
+[90m    src/components/SystemBroadcastManager.jsx:3[39m
+
+[90m    src/components/UserActionModal.jsx:2[39m
+
+[90m    src/components/WhatsAppChat.jsx:2[39m
+
+[90m    src/components/WrappedModal.jsx:2[39m
+
+[90m    src/pages/Admin/AdminActivityLogs.jsx:5[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:2[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:3[39m
+
+[90m    src/pages/Admin/AdminComments.jsx:3[39m
+
+[90m    src/pages/Admin/AdminContactMessages.jsx:4[39m
+
+[90m    src/pages/Admin/AdminDownloads.jsx:2[39m
+
+[90m    src/pages/Admin/AdminLoginActivityLogs.jsx:6[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:3[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:5[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:2[39m
+
+[90m    src/pages/Admin/AdminRatings.jsx:3[39m
+
+[90m    src/pages/Admin/AdminReports.jsx:4[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:3[39m
+
+[90m    src/pages/Admin/Dashboard.jsx:2[39m
+
+[90m    src/pages/Admin/LiveMonitor.jsx:3[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaMusicDashboard.jsx:2[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:5[39m
+
+[90m    src/pages/Admin/Users.jsx:4[39m
+
+[90m    src/pages/AllCategories.jsx:4[39m
+
+[90m    src/pages/AuraBattle.jsx:3[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:3[39m
+
+[90m    src/pages/CategoryPage.jsx:3[39m
+
+[90m    src/pages/ChangePassword.jsx:4[39m
+
+[90m    src/pages/Contact.jsx:5[39m
+
+[90m    src/pages/DownloadFlow.jsx:4[39m
+
+[90m    src/pages/FeatureRequests.jsx:2[39m
+
+[90m    src/pages/ForgotPassword.jsx:4[39m
+
+[90m    src/pages/Home.jsx:3[39m
+
+[90m    src/pages/Login.jsx:7[39m
+
+[90m    src/pages/MovieBox.jsx:8[39m
+
+[90m    src/pages/MovieBrowse.jsx:4[39m
+
+[90m    src/pages/MovieCategory.jsx:5[39m
+
+[90m    src/pages/MovieDetail.jsx:14[39m
+
+[90m    src/pages/MovieSearch.jsx:5[39m
+
+[90m    src/pages/NexoriaArena.jsx:5[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:2[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:2[39m
+
+[90m    src/pages/Notifications.jsx:3[39m
+
+[90m    src/pages/Premium.jsx:6[39m
+
+[90m    src/pages/Register.jsx:7[39m
+
+[90m    src/pages/ResetPassword.jsx:4[39m
+
+[90m    src/pages/SearchPage.jsx:5[39m
+
+[90m    src/pages/SecretLounge.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/AppRequestModeration.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/AuraRecalculate.jsx:5[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:11[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:6[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/ModuleAnalytics.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:5[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:12[39m
+
+[90m    src/pages/SuperAdmin/MovieAnalytics.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:9[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:5[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:5[39m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/ReviewModeration.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:3[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:4[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:2[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:2[39m
+
+[90m    src/pages/UserActivity.jsx:6[39m
+
+[90m    src/pages/UserDashboard.jsx:5[39m
+
+[90m    src/pages/VideoDownloader.jsx:2[39m
+
+[90m    src/pages/VoiceLounge.jsx:2[39m
+
+[90m    src/pages/legal/AboutUs.jsx:3[39m
+
+[90m    src/pages/legal/DmcaDisclaimer.jsx:3[39m
+
+[90m    src/pages/legal/PrivacyPolicy.jsx:3[39m
+
+[90m    src/pages/legal/Sitemap.jsx:3[39m
+
+[90m    src/pages/legal/TermsOfService.jsx:3[39m
+
+  [33m⚠[39m [33mAccessibility: Interaction on static element[39m [90m×40[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-static-element-interactions[39m
+    Screen reader users can't tell this click handler is
+    interactive because it has no `role`, so add a `role` or
+    use a button or link.
+[2m    → Give clickable static elements a `role`, or use a button[22m
+[2m    or link.[22m
+
+[90m    src/components/AddToPlaylistModal.jsx:67[39m
+
+[90m    src/components/DashboardTabs/LikedSongsTab.jsx:51[39m
+
+[90m    src/components/DashboardTabs/MusicAnalyticsTab.jsx:70[39m
+
+[90m    src/components/DashboardTabs/MusicAnalyticsTab.jsx:104[39m
+
+[90m    src/components/DropdownMenu.jsx:56[39m
+
+[90m    src/components/EqualizerModal.jsx:17[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:147[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:184[39m
+
+[90m    src/components/MusicShareModal.jsx:180[39m
+
+[90m    src/components/Navbar.jsx:441[39m
+
+[90m    src/components/Navbar.jsx:461[39m
+
+[90m    src/components/Navbar.jsx:486[39m
+
+[90m    src/components/NexoriaPlayer.jsx:188[39m
+
+[90m    src/components/NexoriaPlayer.jsx:336[39m
+
+[90m    src/components/NexoriaPlayer.jsx:376[39m
+
+[90m    src/components/PrivateChatWidget.jsx:88[39m
+
+[90m    src/components/SecretChatRoom.jsx:341[39m
+
+[90m    src/components/ShareCardModal.jsx:112[39m
+
+[90m    src/components/WrappedModal.jsx:166-167[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:183[39m
+
+[90m    src/pages/GlobalMusicSearch.jsx:136[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:146[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:88[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:147[39m
+
+[90m    src/pages/NexoriaSound.jsx:84[39m
+
+[90m    src/pages/NexoriaSound.jsx:121[39m
+
+[90m    src/pages/NexoriaSound.jsx:152[39m
+
+[90m    src/pages/NexoriaSound.jsx:175[39m
+
+[90m    src/pages/NexoriaSound.jsx:199[39m
+
+[90m    src/pages/SoundQueue.jsx:90[39m
+
+[90m    src/pages/SoundQueue.jsx:96[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:268[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:412[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:434[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:140[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:144[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:282[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:253[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:261[39m
+
+  [33m⚠[39m [33mBugs: All state reset on prop change[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-reset-all-state-on-prop-change[39m
+    Your users briefly see stale state when a prop changes
+    because this useEffect clears all state.
+[2m    → Pass the prop as `key` so React resets the component for[22m
+[2m    you when the prop changes, instead of clearing every state[22m
+[2m    value by hand in a useEffect. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes[22m
+
+[90m    src/components/QRPaymentModal.jsx:19[39m
+
+[90m    src/components/WrappedModal.jsx:9[39m
+
+  [33m⚠[39m [33mBugs: State adjusted after a prop changes[39m [90m×11[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-adjust-state-on-prop-change[39m
+    This effect adjusts state after a prop changes, so users
+    briefly see the stale value.
+[2m    → Remove the adjustment effect by deriving values during[22m
+[2m    render, resetting the component with a key, or updating[22m
+[2m    related state in the event that changes the prop. Avoid[22m
+[2m    tracking the previous prop in more state, which preserves[22m
+[2m    the duplication. See[22m
+[2m    https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes[22m
+
+[90m    src/components/FallbackImage.jsx:19[39m
+
+[90m    src/components/ParentalGateModal.jsx:19-24[39m
+
+[90m    src/components/QRPaymentModal.jsx:21-23[39m
+
+[90m    src/components/WrappedModal.jsx:11[39m
+
+[90m    src/hooks/useWebAudio.js:91[39m
+
+  [33m⚠[39m [33mBugs: Button missing explicit type[39m [90m×490[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/button-has-type[39m
+    Your users can submit the form by accident because a
+    `<button>` with no `type` defaults to submit.
+[2m    → Set an explicit button `type` so plain buttons do not[22m
+[2m    submit forms by accident: `type="button"`, `"submit"`, or[22m
+[2m    `"reset"`.[22m
+
+[90m    src/ErrorBoundary.jsx:40[39m
+
+[90m    src/components/AdBlockDetector.jsx:90[39m
+
+[90m    src/components/AddToPlaylistModal.jsx:73[39m
+
+[90m    src/components/AddToPlaylistModal.jsx:114[39m
+
+[90m    src/components/AddToPlaylistModal.jsx:127[39m
+
+[90m    src/components/AdminLayout.jsx:146[39m
+
+[90m    src/components/AdminLayout.jsx:189[39m
+
+[90m    src/components/AdminLayout.jsx:242[39m
+
+[90m    src/components/AdminLayout.jsx:265[39m
+
+[90m    src/components/AuraCard.jsx:168[39m
+
+[90m    src/components/BroadcastModal.jsx:62[39m
+
+[90m    src/components/BroadcastModal.jsx:77[39m
+
+[90m    src/components/BroadcastModal.jsx:83[39m
+
+[90m    src/components/CallOverlay.jsx:216-219[39m
+
+[90m    src/components/CallOverlay.jsx:271[39m
+
+[90m    src/components/CallOverlay.jsx:275[39m
+
+[90m    src/components/CallOverlay.jsx:279[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:56[39m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:113[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:230[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:235-238[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:441[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:458[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:465[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:469[39m
+
+[90m    src/components/DashboardTabs/PurchasesTab.jsx:44[39m
+
+[90m    src/components/DashboardTabs/RewardsTab.jsx:140[39m
+
+[90m    src/components/DashboardTabs/RewardsTab.jsx:181[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:153[39m
+
+[90m    src/components/DashboardTabs/WishlistTab.jsx:100[39m
+
+[90m    src/components/EmojiReactions.jsx:48[39m
+
+[90m    src/components/EqualizerModal.jsx:25[39m
+
+[90m    src/components/EqualizerModal.jsx:74[39m
+
+[90m    src/components/ErrorBoundaries/PurchaseErrorBoundary.jsx:32[39m
+
+[90m    src/components/ForYouCarousel.jsx:41[39m
+
+[90m    src/components/ForYouCarousel.jsx:47[39m
+
+[90m    src/components/FriendsDrawer.jsx:50[39m
+
+[90m    src/components/FriendsDrawer.jsx:57[39m
+
+[90m    src/components/FriendsDrawer.jsx:65[39m
+
+[90m    src/components/FriendsDrawer.jsx:107[39m
+
+[90m    src/components/FriendsDrawer.jsx:146[39m
+
+[90m    src/components/FriendsDrawer.jsx:152[39m
+
+[90m    src/components/GlobalChatBubble.jsx:258[39m
+
+[90m    src/components/GlobalChatBubble.jsx:351-352[39m
+
+[90m    src/components/GlobalChatBubble.jsx:369[39m
+
+[90m    src/components/GlobalChatBubble.jsx:401-403[39m
+
+[90m    src/components/GlobalChatBubble.jsx:408[39m
+
+[90m    src/components/GlobalChatBubble.jsx:434[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:333[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:341[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:348[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:354[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:360[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:366[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:372[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:401[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:409[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:417[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:425[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:429[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:441[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:455[39m
+
+[90m    src/components/ImageCropper.jsx:51[39m
+
+[90m    src/components/ImageCropper.jsx:90[39m
+
+[90m    src/components/ImageCropper.jsx:96[39m
+
+[90m    src/components/Layout/BottomNavigation.jsx:45[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:166[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:218[39m
+
+[90m    src/components/LyricsModal.jsx:104[39m
+
+[90m    src/components/MovieBoxLayout.jsx:143[39m
+
+[90m    src/components/MovieBoxLayout.jsx:194[39m
+
+[90m    src/components/MovieBoxLayout.jsx:209[39m
+
+[90m    src/components/MovieBoxLayout.jsx:237[39m
+
+[90m    src/components/MovieBoxLayout.jsx:277[39m
+
+[90m    src/components/MusicShareModal.jsx:129[39m
+
+[90m    src/components/Navbar.jsx:317[39m
+
+[90m    src/components/Navbar.jsx:350[39m
+
+[90m    src/components/Navbar.jsx:463[39m
+
+[90m    src/components/Navbar.jsx:472[39m
+
+[90m    src/components/Navbar.jsx:478[39m
+
+[90m    src/components/Navbar.jsx:503[39m
+
+[90m    src/components/Navbar.jsx:518[39m
+
+[90m    src/components/Navbar.jsx:522[39m
+
+[90m    src/components/Navbar.jsx:527[39m
+
+[90m    src/components/Navbar.jsx:548[39m
+
+[90m    src/components/Navbar.jsx:564[39m
+
+[90m    src/components/Navbar.jsx:602-605[39m
+
+[90m    src/components/Navbar.jsx:619[39m
+
+[90m    src/components/Navbar.jsx:624[39m
+
+[90m    src/components/Navbar.jsx:638[39m
+
+[90m    src/components/Navbar.jsx:671[39m
+
+[90m    src/components/Navbar.jsx:775[39m
+
+[90m    src/components/Navbar.jsx:808-814[39m
+
+[90m    src/components/Navbar.jsx:820[39m
+
+[90m    src/components/NexoriaPlayer.jsx:222[39m
+
+[90m    src/components/NexoriaPlayer.jsx:235[39m
+
+[90m    src/components/NexoriaPlayer.jsx:241[39m
+
+[90m    src/components/NexoriaPlayer.jsx:251[39m
+
+[90m    src/components/NexoriaPlayer.jsx:261[39m
+
+[90m    src/components/NexoriaPlayer.jsx:271[39m
+
+[90m    src/components/NexoriaPlayer.jsx:283[39m
+
+[90m    src/components/NexoriaPlayer.jsx:295[39m
+
+[90m    src/components/NexoriaPlayer.jsx:301[39m
+
+[90m    src/components/NexoriaPlayer.jsx:307[39m
+
+[90m    src/components/NexoriaPlayer.jsx:319[39m
+
+[90m    src/components/NexoriaPlayer.jsx:325[39m
+
+[90m    src/components/NexoriaPlayer.jsx:355[39m
+
+[90m    src/components/NexoriaPlayer.jsx:361-364[39m
+
+[90m    src/components/NexoriaPlayer.jsx:373[39m
+
+[90m    src/components/NexoriaPlayer.jsx:393[39m
+
+[90m    src/components/NoticeCenter.jsx:73[39m
+
+[90m    src/components/ParentalGateModal.jsx:77[39m
+
+[90m    src/components/PremiumCustomization.jsx:152[39m
+
+[90m    src/components/PremiumCustomization.jsx:178[39m
+
+[90m    src/components/PrivateChatWidget.jsx:106-109[39m
+
+[90m    src/components/QRPaymentModal.jsx:71[39m
+
+[90m    src/components/SecretChatRoom.jsx:257[39m
+
+[90m    src/components/SecretChatRoom.jsx:265[39m
+
+[90m    src/components/SecretChatRoom.jsx:275[39m
+
+[90m    src/components/SecretChatRoom.jsx:328-329[39m
+
+[90m    src/components/SecretChatRoom.jsx:365[39m
+
+[90m    src/components/SecretChatRoom.jsx:389-390[39m
+
+[90m    src/components/SecretChatRoom.jsx:414[39m
+
+[90m    src/components/ShareCardModal.jsx:120[39m
+
+[90m    src/components/ShareCardModal.jsx:142[39m
+
+[90m    src/components/ShareFAB.jsx:80[39m
+
+[90m    src/components/SuperAdminLayout.jsx:204[39m
+
+[90m    src/components/SuperAdminLayout.jsx:221[39m
+
+[90m    src/components/SuperAdminLayout.jsx:321[39m
+
+[90m    src/components/SuperAdminLayout.jsx:374[39m
+
+[90m    src/components/SuperAdminLayout.jsx:393[39m
+
+[90m    src/components/SuperAdminLayout.jsx:419-422[39m
+
+[90m    src/components/SuperAdminLayout.jsx:439[39m
+
+[90m    src/components/SystemBroadcastManager.jsx:64[39m
+
+[90m    src/components/SystemBroadcastManager.jsx:85[39m
+
+[90m    src/components/UserActionModal.jsx:53[39m
+
+[90m    src/components/UserActionModal.jsx:85[39m
+
+[90m    src/components/UserActionModal.jsx:92[39m
+
+[90m    src/components/UserActionModal.jsx:103-106[39m
+
+[90m    src/components/WrappedModal.jsx:161[39m
+
+[90m    src/hooks/usePushNotifications.jsx:49[39m
+
+[90m    src/pages/Admin/AdminActivityLogs.jsx:139[39m
+
+[90m    src/pages/Admin/AdminActivityLogs.jsx:146[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:128[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:178[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:184[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:220[39m
+
+[90m    src/pages/Admin/AdminComments.jsx:114[39m
+
+[90m    src/pages/Admin/AdminComments.jsx:119[39m
+
+[90m    src/pages/Admin/AdminComments.jsx:123[39m
+
+[90m    src/pages/Admin/AdminContactMessages.jsx:124[39m
+
+[90m    src/pages/Admin/AdminContactMessages.jsx:128[39m
+
+[90m    src/pages/Admin/AdminDownloads.jsx:36[39m
+
+[90m    src/pages/Admin/AdminLoginActivityLogs.jsx:130[39m
+
+[90m    src/pages/Admin/AdminLoginActivityLogs.jsx:137[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:114[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:120[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:169[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:174[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:179[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:183-186[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:240-243[39m
+
+[90m    src/pages/Admin/AdminModeration.jsx:248[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:163[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:191[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:198[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:107[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:112-115[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:137[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:169-170[39m
+
+[90m    src/pages/Admin/AdminRatings.jsx:114[39m
+
+[90m    src/pages/Admin/AdminRatings.jsx:119[39m
+
+[90m    src/pages/Admin/AdminRatings.jsx:123[39m
+
+[90m    src/pages/Admin/AdminReports.jsx:109[39m
+
+[90m    src/pages/Admin/AdminReports.jsx:197-200[39m
+
+[90m    src/pages/Admin/AdminReports.jsx:205[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:59-79[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:80-81[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:834[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:852[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:883[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:912-914[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:1006[39m
+
+[90m    src/pages/Admin/Dashboard.jsx:63[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:90[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:126[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:133[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:163[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:85[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:169[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:175[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:198[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:77[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:120[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:126[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:147[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaMusicDashboard.jsx:38[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:148[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:224-227[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:245[39m
+
+[90m    src/pages/Admin/Settings.jsx:40[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:58[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:89-92[39m
+
+[90m    src/pages/Admin/Sound/SoundPlaylists.jsx:115[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:86-89[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:114[39m
+
+[90m    src/pages/Admin/Users.jsx:229[39m
+
+[90m    src/pages/Admin/Users.jsx:271-274[39m
+
+[90m    src/pages/Admin/Users.jsx:350-356[39m
+
+[90m    src/pages/Admin/Users.jsx:362-365[39m
+
+[90m    src/pages/Admin/Users.jsx:370[39m
+
+[90m    src/pages/Admin/Users.jsx:375[39m
+
+[90m    src/pages/Admin/Users.jsx:397[39m
+
+[90m    src/pages/Admin/Users.jsx:474[39m
+
+[90m    src/pages/Admin/Users.jsx:504[39m
+
+[90m    src/pages/Admin/Users.jsx:563[39m
+
+[90m    src/pages/AllCategories.jsx:53[39m
+
+[90m    src/pages/AllCategories.jsx:90[39m
+
+[90m    src/pages/AuraBattle.jsx:226[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:82[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:98[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:199[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:235[39m
+
+[90m    src/pages/CategoryPage.jsx:156[39m
+
+[90m    src/pages/CategoryPage.jsx:166[39m
+
+[90m    src/pages/DownloadFlow.jsx:99[39m
+
+[90m    src/pages/DownloadFlow.jsx:103[39m
+
+[90m    src/pages/DownloadTimer.jsx:85[39m
+
+[90m    src/pages/DownloadTimer.jsx:122[39m
+
+[90m    src/pages/DownloadTimer.jsx:129[39m
+
+[90m    src/pages/FeatureRequests.jsx:196[39m
+
+[90m    src/pages/FeatureRequests.jsx:242[39m
+
+[90m    src/pages/FeatureRequests.jsx:250[39m
+
+[90m    src/pages/FeatureRequests.jsx:282[39m
+
+[90m    src/pages/Games.jsx:223[39m
+
+[90m    src/pages/GlobalMusicSearch.jsx:171[39m
+
+[90m    src/pages/Home.jsx:21[39m
+
+[90m    src/pages/MovieBox.jsx:174[39m
+
+[90m    src/pages/MovieBox.jsx:187-190[39m
+
+[90m    src/pages/MovieBox.jsx:197[39m
+
+[90m    src/pages/MovieDetail.jsx:234[39m
+
+[90m    src/pages/MovieDetail.jsx:250[39m
+
+[90m    src/pages/MovieDetail.jsx:277[39m
+
+[90m    src/pages/MovieDetail.jsx:308[39m
+
+[90m    src/pages/MovieDetail.jsx:350[39m
+
+[90m    src/pages/MovieDetail.jsx:583[39m
+
+[90m    src/pages/NexoriaArena.jsx:90[39m
+
+[90m    src/pages/NexoriaArena.jsx:132[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:70[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:90[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:102[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:123[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:191[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:204[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:212[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:222[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:233[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicHome.jsx:273[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:45[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:69[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:129[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:142[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:151[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:161[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicLibrary.jsx:172[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:69[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:127[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:162[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:175[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:183[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:193[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:204[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:269[39m
+
+[90m    src/pages/NexoriaSound.jsx:86[39m
+
+[90m    src/pages/Notifications.jsx:134[39m
+
+[90m    src/pages/Notifications.jsx:140[39m
+
+[90m    src/pages/Notifications.jsx:155[39m
+
+[90m    src/pages/Notifications.jsx:190[39m
+
+[90m    src/pages/Notifications.jsx:196[39m
+
+[90m    src/pages/Notifications.jsx:272[39m
+
+[90m    src/pages/Premium.jsx:219[39m
+
+[90m    src/pages/SecretLounge.jsx:134[39m
+
+[90m    src/pages/SecretLounge.jsx:149[39m
+
+[90m    src/pages/SecretLounge.jsx:162[39m
+
+[90m    src/pages/SecretLounge.jsx:175[39m
+
+[90m    src/pages/SinglePost.jsx:409[39m
+
+[90m    src/pages/SinglePost.jsx:442[39m
+
+[90m    src/pages/SinglePost.jsx:449[39m
+
+[90m    src/pages/SinglePost.jsx:460[39m
+
+[90m    src/pages/SinglePost.jsx:464[39m
+
+[90m    src/pages/SinglePost.jsx:476-479[39m
+
+[90m    src/pages/SinglePost.jsx:591[39m
+
+[90m    src/pages/SinglePost.jsx:618[39m
+
+[90m    src/pages/SinglePost.jsx:632[39m
+
+[90m    src/pages/SoundQueue.jsx:21[39m
+
+[90m    src/pages/SoundQueue.jsx:61[39m
+
+[90m    src/pages/SoundQueue.jsx:76[39m
+
+[90m    src/pages/SoundQueue.jsx:104[39m
+
+[90m    src/pages/SuperAdmin/AppRequestModeration.jsx:141-147[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:94[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:133[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:162[39m
+
+[90m    src/pages/SuperAdmin/CouponManager.jsx:184[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:129[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:291[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:315[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:52[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:107[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:148[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:185-188[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:231[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:246[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:320[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:338[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:366[39m
+
+[90m    src/pages/SuperAdmin/GameAdmin/GamesList.jsx:93[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:152[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:171-174[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:219[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:68[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:166[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:170[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:240[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:249-252[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:80[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:100-101[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:123[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:22[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:161-164[39m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:168[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:224-227[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:298-304[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:310-313[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:318[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:323[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:347[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:424[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:454[39m
+
+[90m    src/pages/SuperAdmin/ModuleAnalytics.jsx:68[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieApprovalQueue.jsx:37-39[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieReportsAdmin.jsx:102[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieReportsAdmin.jsx:106[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieReviewsAdmin.jsx:104[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieReviewsAdmin.jsx:108[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieReviewsAdmin.jsx:112[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:108[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:155[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:168[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:191-192[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:203-206[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:235-236[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:255[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:223[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:264-267[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:297-299[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:313[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:319[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:109[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:157[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:163[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:199[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:147[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:164[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:172[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:196[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:244[39m
+
+[90m    src/pages/SuperAdmin/MoviePremiumRequests.jsx:252[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:101[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:114-117[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:149[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:105[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:118-121[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:153[39m
+
+[90m    src/pages/SuperAdmin/ReviewModeration.jsx:135[39m
+
+[90m    src/pages/SuperAdmin/ReviewModeration.jsx:139[39m
+
+[90m    src/pages/SuperAdmin/ReviewModeration.jsx:143[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:58[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:90[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:112[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:118[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:162[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:141[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:178[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:182-185[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:214[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:332[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:149[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:170-173[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:213[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:93[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:163[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:171[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:112[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:132[39m
+
+[90m    src/pages/SuperAdmin/UserRequestsAdmin.jsx:138[39m
+
+[90m    src/pages/Support.jsx:184[39m
+
+[90m    src/pages/UserActivity.jsx:92[39m
+
+[90m    src/pages/UserActivity.jsx:102[39m
+
+[90m    src/pages/UserDashboard.jsx:124[39m
+
+[90m    src/pages/UserDashboard.jsx:131[39m
+
+[90m    src/pages/UserDashboard.jsx:147[39m
+
+[90m    src/pages/UserDashboard.jsx:183[39m
+
+[90m    src/pages/UserDashboard.jsx:189[39m
+
+[90m    src/pages/VIPLounge.jsx:120[39m
+
+[90m    src/pages/VIPLounge.jsx:126[39m
+
+[90m    src/pages/VIPLounge.jsx:140[39m
+
+[90m    src/pages/VIPLounge.jsx:211[39m
+
+[90m    src/pages/VIPLounge.jsx:236[39m
+
+[90m    src/pages/VIPLounge.jsx:272[39m
+
+[90m    src/pages/WatchParty.jsx:130[39m
+
+[90m    src/pages/WatchParty.jsx:152[39m
+
+[90m    src/pages/WatchParty.jsx:165[39m
+
+[90m    src/pages/WatchParty.jsx:211[39m
+
+[90m    src/pages/WatchParty.jsx:218[39m
+
+[90m    src/pages/legal/AboutUs.jsx:37[39m
+
+[90m    src/pages/legal/DmcaDisclaimer.jsx:26[39m
+
+[90m    src/pages/legal/PrivacyPolicy.jsx:117[39m
+
+[90m    src/pages/legal/Sitemap.jsx:62[39m
+
+[90m    src/pages/legal/TermsOfService.jsx:105[39m
+
+  [33m⚠[39m [33mPerformance: State only used in handlers[39m [90m×22[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/rerender-state-only-in-handlers[39m
+    Each update to "stream" redraws your component for nothing
+    because this useState is set but never shown on screen.
+[2m    → Use useRef instead of useState when the value is only set[22m
+[2m    and never shown on screen. `ref.current = ...` updates it[22m
+[2m    without redrawing the component.[22m
+
+[90m    src/components/CallOverlay.jsx:14[39m
+
+[90m    src/components/DashboardTabs/AppDownloadTab.jsx:7[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:39[39m
+
+[90m    src/components/ImageCropper.jsx:11[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:68[39m
+
+[90m    src/components/MusicShareModal.jsx:10[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:29-30[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaAlbumsManager.jsx:25[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:20[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaGenresManager.jsx:20[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:34[39m
+
+[90m    src/pages/DownloadFlow.jsx:19[39m
+
+[90m    src/pages/MovieDetail.jsx:34[39m
+
+[90m    src/pages/NexoriaArena.jsx:9[39m
+
+[90m    src/pages/SinglePost.jsx:99-100[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:122[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:26[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:43-44[39m
+
+[90m    src/pages/WatchParty.jsx:18[39m
+
+  [33m⚠[39m [33mAccessibility: Media missing captions[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/media-has-caption[39m
+    Deaf and hard-of-hearing users need captions for this
+    media. Add a `<track kind="captions">` inside the `<audio>`
+    or `<video>`.
+[2m    → Add `<track kind="captions">` inside every `<audio>` /[22m
+[2m    `<video>`.[22m
+
+[90m    src/components/CallOverlay.jsx:233[39m
+
+[90m    src/pages/VoiceLounge.jsx:301[39m
+
+  [33m⚠[39m [33mPerformance: Empty default prop breaks memo[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/rerender-memo-with-default-value[39m
+    This custom Hook default creates a new array every render
+    and forwards it to a Hook dependency.
+[2m    → Move it to the top of the file: `const EMPTY_ITEMS:[22m
+[2m    Item[] = []`, then use that as the default value[22m
+
+[90m    src/App.jsx:194[39m
+
+  [33m⚠[39m [33mAccessibility: Click handler missing keyboard handler[39m [90m×63[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/click-events-have-key-events[39m
+    Keyboard users can't trigger this click handler because
+    there's no keyboard one, so add `onKeyUp`, `onKeyDown`, or
+    `onKeyPress`.
+[2m    → Pair `onClick` with a key handler so keyboard users can[22m
+[2m    trigger it.[22m
+
+[90m    src/components/AddToPlaylistModal.jsx:67[39m
+
+[90m    src/components/AdminLayout.jsx:226[39m
+
+[90m    src/components/BroadcastModal.jsx:38[39m
+
+[90m    src/components/DashboardTabs/LikedSongsTab.jsx:51[39m
+
+[90m    src/components/DashboardTabs/MusicAnalyticsTab.jsx:70[39m
+
+[90m    src/components/DashboardTabs/MusicAnalyticsTab.jsx:104[39m
+
+[90m    src/components/DropdownMenu.jsx:56[39m
+
+[90m    src/components/DropdownMenu.jsx:69[39m
+
+[90m    src/components/EqualizerModal.jsx:17[39m
+
+[90m    src/components/FriendsDrawer.jsx:30[39m
+
+[90m    src/components/GlobalChatBubble.jsx:275[39m
+
+[90m    src/components/Layout/NotificationBell.jsx:184[39m
+
+[90m    src/components/MovieBoxLayout.jsx:168[39m
+
+[90m    src/components/MusicShareModal.jsx:164[39m
+
+[90m    src/components/MusicShareModal.jsx:180[39m
+
+[90m    src/components/Navbar.jsx:441[39m
+
+[90m    src/components/Navbar.jsx:486[39m
+
+[90m    src/components/Navbar.jsx:649[39m
+
+[90m    src/components/NexoriaPlayer.jsx:188[39m
+
+[90m    src/components/NexoriaPlayer.jsx:336[39m
+
+[90m    src/components/NexoriaPlayer.jsx:376[39m
+
+[90m    src/components/QRPaymentModal.jsx:56[39m
+
+[90m    src/components/SecretChatRoom.jsx:299[39m
+
+[90m    src/components/SecretChatRoom.jsx:341[39m
+
+[90m    src/components/ShareCardModal.jsx:112[39m
+
+[90m    src/components/SuperAdminLayout.jsx:358[39m
+
+[90m    src/components/SuperAdminLayout.jsx:405[39m
+
+[90m    src/components/UserActionModal.jsx:40[39m
+
+[90m    src/components/WrappedModal.jsx:166-167[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:203[39m
+
+[90m    src/pages/Admin/AdminPremiumRequests.jsx:133[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:183[39m
+
+[90m    src/pages/Admin/Users.jsx:391[39m
+
+[90m    src/pages/Admin/Users.jsx:468[39m
+
+[90m    src/pages/Admin/Users.jsx:500[39m
+
+[90m    src/pages/Admin/Users.jsx:559[39m
+
+[90m    src/pages/AuraLeaderboard.jsx:222[39m
+
+[90m    src/pages/FeatureRequests.jsx:266[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:147[39m
+
+[90m    src/pages/NexoriaSound.jsx:121[39m
+
+[90m    src/pages/NexoriaSound.jsx:152[39m
+
+[90m    src/pages/NexoriaSound.jsx:175[39m
+
+[90m    src/pages/NexoriaSound.jsx:199[39m
+
+[90m    src/pages/Notifications.jsx:174[39m
+
+[90m    src/pages/SoundQueue.jsx:90[39m
+
+[90m    src/pages/SoundQueue.jsx:96[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:163[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:208[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:268[39m
+
+[90m    src/pages/SuperAdmin/ManageAdmins.jsx:151[39m
+
+[90m    src/pages/SuperAdmin/ManagePlans.jsx:119[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:341[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:418[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:450[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:182[39m
+
+[90m    src/pages/SuperAdmin/SponsoredContentManager.jsx:203[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:282[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:202[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:253[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:261[39m
+
+[90m    src/pages/Support.jsx:237[39m
+
+[90m    src/pages/UserDashboard.jsx:167[39m
+
+  [33m⚠[39m [33mPerformance: Repeated localStorage reads[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/js-cache-storage[39m
+    This is slow because localStorage.getItem("user") runs
+    several times & re-parses the data each call, so read it
+    once & reuse the value
+[2m    → Read `localStorage`/`sessionStorage` once and reuse the[22m
+[2m    value. Every read has to parse the data again, which is slow[22m
+
+[90m    src/features/auth/authSlice.js:4-5[39m
+
+  [33m⚠[39m [33mBugs: Component defined inside another component[39m [90m×6[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-nested-component-definition[39m
+    Your users lose all state in "SidebarContent" on every
+    render because it's defined inside "AdminLayout", so move
+    it out to the top of the file.
+[2m    → Move it to module scope or a separate file so React does[22m
+[2m    not recreate the component and erase its state on every[22m
+[2m    parent render.[22m
+
+[90m    src/components/AdminLayout.jsx:139[39m
+
+[90m    src/components/MovieBoxLayout.jsx:67[39m
+
+[90m    src/components/SuperAdminLayout.jsx:194[39m
+
+[90m    src/components/TipTapEditor.jsx:21[39m
+
+[90m    src/pages/MovieBox.jsx:46[39m
+
+[90m    src/pages/MovieBox.jsx:54[39m
+
+  [33m⚠[39m [33mMaintainability: Static value rebuilt every render[39m [90m×25[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/prefer-module-scope-static-value[39m
+    `navGroups` inside `AdminLayout` uses no local state but is
+    rebuilt every render, so it looks new each time & breaks
+    memoized children. Move it to the top of the file, outside
+    the component.
+[2m    → Move the value above the component, at the top of the[22m
+[2m    file. It doesn't use local state, so rebuilding it each[22m
+[2m    update is wasted and makes it look new every time.[22m
+
+[90m    src/components/AdminLayout.jsx:71[39m
+
+[90m    src/components/AuraScore.jsx:32[39m
+
+[90m    src/components/Layout/BottomNavigation.jsx:11[39m
+
+[90m    src/components/MovieBoxLayout.jsx:58[39m
+
+[90m    src/components/MovieBoxLayout.jsx:63[39m
+
+[90m    src/pages/Admin/AdminActivityLogs.jsx:20[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaMusicDashboard.jsx:12[39m
+
+[90m    src/pages/Admin/Sound/SoundAddSong.jsx:21[39m
+
+[90m    src/pages/Admin/Sound/SoundCategories.jsx:6[39m
+
+[90m    src/pages/Admin/Sound/SoundSongs.jsx:16[39m
+
+[90m    src/pages/Premium.jsx:62[39m
+
+[90m    src/pages/Premium.jsx:70[39m
+
+[90m    src/pages/Register.jsx:100-101[39m
+
+[90m    src/pages/SuperAdmin/DatabaseManagement.jsx:11[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:206[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:8[39m
+
+[90m    src/pages/SuperAdmin/RolesPermissions.jsx:15[39m
+
+[90m    src/pages/SuperAdmin/SuperAnalytics.jsx:39[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:47[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:54[39m
+
+[90m    src/pages/SuperAdmin/SuperDashboard.jsx:64[39m
+
+[90m    src/pages/VideoDownloader.jsx:8[39m
+
+[90m    src/pages/legal/AboutUs.jsx:17[39m
+
+[90m    src/pages/legal/Sitemap.jsx:21[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-export[39m [90m×32[39m
+    Unused export: `useGetDashboardAnalyticsQuery` is exported
+    but no module imports it, so it expands the public surface
+    and can mislead callers about supported API.
+[2m    → Drop the `export` keyword (or remove the declaration) if[22m
+[2m    no other module uses this symbol.[22m
+
+[90m    src/features/analytics/analyticsApiSlice.js:35[39m
+
+[90m    src/features/announcement/announcementApiSlice.js:41[39m
+
+[90m    src/features/api/musicApiSlice.js:169[39m
+
+[90m    src/features/api/planApiSlice.js:39[39m
+
+[90m    src/features/api/postApiSlice.js:35[39m
+
+[90m    src/features/api/watchHistoryApiSlice.js:44[39m
+
+[90m    src/features/appRequest/appRequestApiSlice.js:32[39m
+
+[90m    src/features/movie/moviePurchaseApiSlice.js:33[39m
+
+[90m    src/features/post/postApiSlice.js:144[39m
+
+[90m    src/features/rating/ratingApiSlice.js:43[39m
+
+[90m    src/features/review/reviewApiSlice.js:47[39m
+
+[90m    src/features/user/userApiSlice.js:100[39m
+
+  [31m✖[39m [31mPerformance: Animating a layout property[39m [90m×29[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-layout-property-animation[39m
+    This stutters because animating "width" makes the browser
+    redo page layout every frame, so animate transform or scale
+    instead, or use the layout prop
+[2m    → Use `transform: translateX()` or `scale()` instead. They[22m
+[2m    animate smoothly without making the browser redo layout or[22m
+[2m    repaint[22m
+
+[90m    src/components/DashboardTabs/RewardsTab.jsx:111[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 110 |[39m                 [33m<[39m[33mmotion[39m[33m.[39mdiv                          [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 111 |[39m                   initial[33m=[39m{{ width[33m:[39m [35m0[39m }} animate[33m=[39m{{[0m… [2m│[22m
+    [2m│[22m  [90m 112 |[39m                   className[33m=[39m[32m"h-full bg-blue-500 rou[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/NoticeCenter.jsx:53-55[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 52 |[39m             key[33m=[39m{item[33m.[39m_id}                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 53 |[39m             initial[33m=[39m{{ height[33m:[39m [35m0[39m[33m,[39m opacity[33m:[39m [35m0[39m }}       [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 54 |[39m             animate[33m=[39m{{ height[33m:[39m [32m'auto'[39m[33m,[39m opacity[33m:[39m [35m1[39m }}  [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 55 |[39m             exit[33m=[39m{{ height[33m:[39m [35m0[39m[33m,[39m opacity[33m:[39m [35m0[39m }}          [2m│[22m
+    [2m│[22m  [90m 56 |[39m             transition[33m=[39m{{ duration[33m:[39m [35m0.25[39m }}[0m           [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/SuperAdminLayout.jsx:241-243[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 240 |[39m                           [33m<[39m[33mmotion[39m[33m.[39mdiv                [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 241 |[39m                             initial[33m=[39m{{ height[33m:[39m [35m0[39m[33m,[39m o[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 242 |[39m                             animate[33m=[39m{{ height[33m:[39m [32m'aut[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 243 |[39m                             exit[33m=[39m{{ height[33m:[39m [35m0[39m[33m,[39m opac[0m… [2m│[22m
+    [2m│[22m  [90m 244 |[39m                             className[33m=[39m[32m"overflow-hid[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/WrappedModal.jsx:150-151[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 149 |[39m               className[33m=[39m[32m"h-full bg-white"[39m            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 150 |[39m               initial[33m=[39m{{ width[33m:[39m i [33m<[39m slide [33m?[39m [32m'100%'[39m [0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 151 |[39m               animate[33m=[39m{{ width[33m:[39m i [33m===[39m slide [33m?[39m [32m'100%[0m… [2m│[22m
+    [2m│[22m  [90m 152 |[39m               transition[33m=[39m{{ duration[33m:[39m i [33m===[39m slide [33m?[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Contact.jsx:115[39m
+
+[90m    src/pages/Login.jsx:222[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 221 |[39m               [33m<[39m[33mmotion[39m[33m.[39mdiv                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 222 |[39m                 initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m[33m,[39m y[0m… [2m│[22m
+    [2m│[22m  [90m 223 |[39m                 className[33m=[39m[32m"bg-red-50 dark:bg-red-50[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Login.jsx:311-313[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 310 |[39m                 [33m<[39m[33mmotion[39m[33m.[39mdiv                          [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 311 |[39m                   initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m[33m,[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 312 |[39m                   animate[33m=[39m{{ opacity[33m:[39m [35m1[39m[33m,[39m height[33m:[39m [32m'a[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 313 |[39m                   exit[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m[33m,[39m y[33m:[0m… [2m│[22m
+    [2m│[22m  [90m 314 |[39m                   className[33m=[39m[32m"pt-2"[39m[0m                   [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Register.jsx:225[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 224 |[39m               [33m<[39m[33mmotion[39m[33m.[39mdiv                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 225 |[39m                 initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m[33m,[39m y[0m… [2m│[22m
+    [2m│[22m  [90m 226 |[39m                 className[33m=[39m[32m"bg-red-50 dark:bg-red-50[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Register.jsx:236[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 235 |[39m               [33m<[39m[33mmotion[39m[33m.[39mdiv                            [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 236 |[39m                 initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m[33m,[39m y[0m… [2m│[22m
+    [2m│[22m  [90m 237 |[39m                 className[33m=[39m[32m"bg-emerald-50 dark:bg-em[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/Register.jsx:312[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 311 |[39m                 [33m<[39m[33mmotion[39m[33m.[39mdiv                          [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 312 |[39m                   initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m height[33m:[39m [35m0[39m [0m… [2m│[22m
+    [2m│[22m  [90m 313 |[39m                   className[33m=[39m[32m"space-y-3 overflow-hid[0m… [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/pages/SuperAdmin/PushCampaigns.jsx:131[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 130 |[39m               {formData[33m.[39mscheduleType [33m===[39m [32m'Later'[39m [33m&&[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 131 |[39m                 [33m<[39m[33mmotion[39m[33m.[39mdiv initial[33m=[39m{{ opacity[33m:[39m [35m0[39m[33m,[39m [0m… [2m│[22m
+    [2m│[22m  [90m 132 |[39m                   [33m<[39m[33minput[39m [0m                            [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+  [33m⚠[39m [33mAccessibility: Handler on non-interactive element[39m [90m×3[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-noninteractive-element-interactions[39m
+    Keyboard & screen reader users can't trigger this `<img>`
+    because it isn't interactive, so use a button or link or
+    add an interactive role.
+[2m    → Put interactions on a button or link, or add an[22m
+[2m    interactive role.[22m
+
+[90m    src/components/GlobalChatBubble.jsx:275[39m
+
+[90m    src/components/SecretChatRoom.jsx:299[39m
+
+[90m    src/pages/Support.jsx:237[39m
+
+  [33m⚠[39m [33mPerformance: Spread copy before sort()[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/js-tosorted-immutable[39m
+    This wastes work because [...array].sort() copies the array
+    just to sort it, so use array.toSorted() to sort without
+    the extra copy (ES2023)
+[2m    → Use `array.toSorted()` (ES2023) instead of[22m
+[2m    `[...array].sort()` so you sort without copying the array[22m
+[2m    first[22m
+
+[90m    src/components/HeroDisplay.jsx:22[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:59[39m
+
+  [33m⚠[39m [33mAccessibility: Autofocus on an element[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-autofocus[39m
+    `autoFocus` moves focus on load, which can disrupt screen
+    reader and keyboard users. Remove it and let users choose
+    where to focus.
+[2m    → Do not use `autoFocus`. It disorients users on load.[22m
+
+[90m    src/components/MusicShareModal.jsx:144[39m
+
+[90m    src/pages/NexoriaMusic/NexoriaMusicSearch.jsx:66[39m
+
+  [33m⚠[39m [33mAccessibility: Gray text on colored background[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-gray-on-colored-background[39m
+    Your users see washed-out gray text (text-slate-900) on a
+    colored background (bg-amber-600), so use white or a darker
+    shade of the background color.
+[2m    → Use white or near-white text, or a darker shade of the[22m
+[2m    background color. Gray text on colored backgrounds looks[22m
+[2m    washed out.[22m
+
+[90m    src/pages/SuperAdmin/ManagePremiumUsers.jsx:204[39m
+
+  [33m⚠[39m [33mMaintainability: Large inline style object rebuilds every render[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-inline-exhaustive-style[39m
+    This inline style has 10 properties, which is hard to read
+    & rebuilds every render. Move it to a CSS class, CSS
+    module, or styled component.
+[2m    → Move the styles to a CSS class, CSS module, Tailwind[22m
+[2m    utilities, or a styled component. Big inline objects are[22m
+[2m    hard to read and rebuild on every update.[22m
+
+[90m    src/ErrorBoundary.jsx:35[39m
+
+[90m    src/ErrorBoundary.jsx:42[39m
+
+  [33m⚠[39m [33mMaintainability: Pure function rebuilt every render[39m [90m×37[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/prefer-module-scope-pure-function[39m
+    `getStatusColor` inside `AppRequestsTab` uses no local
+    state but is rebuilt on every render, so it wastes work &
+    breaks memoized children. Move it to the top of the file,
+    outside the component.
+[2m    → Move the function above the component, at the top of the[22m
+[2m    file. It doesn't use local state, so rebuilding it each[22m
+[2m    update is wasted work.[22m
+
+[90m    src/components/DashboardTabs/AppRequestsTab.jsx:33[39m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:54[39m
+
+[90m    src/components/DashboardTabs/SettingsTab.jsx:26[39m
+
+[90m    src/components/GlobalChatBubble.jsx:159[39m
+
+[90m    src/components/GlobalChatBubble.jsx:181[39m
+
+[90m    src/components/GlobalChatBubble.jsx:185[39m
+
+[90m    src/components/GlobalChatBubble.jsx:198[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:202[39m
+
+[90m    src/components/NexoriaPlayer.jsx:120[39m
+
+[90m    src/components/NoticeCenter.jsx:27[39m
+
+[90m    src/components/NoticeCenter.jsx:36[39m
+
+[90m    src/components/SecretChatRoom.jsx:149[39m
+
+[90m    src/components/SecretChatRoom.jsx:204[39m
+
+[90m    src/components/SuperAdminLayout.jsx:53[39m
+
+[90m    src/hooks/useKonamiCode.js:8[39m
+
+[90m    src/pages/Admin/AdminAdblockAnalytics.jsx:20[39m
+
+[90m    src/pages/Admin/AdminPosts.jsx:26[39m
+
+[90m    src/pages/Admin/Settings.jsx:26[39m
+
+[90m    src/pages/FeatureRequests.jsx:62[39m
+
+[90m    src/pages/FeatureRequests.jsx:72[39m
+
+[90m    src/pages/MovieDetail.jsx:50[39m
+
+[90m    src/pages/NexoriaArena.jsx:43[39m
+
+[90m    src/pages/NexoriaArena.jsx:58[39m
+
+[90m    src/pages/SuperAdmin/AppRequestModeration.jsx:57[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:128[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieWatchHistoryAdmin.jsx:10[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:136[39m
+
+[90m    src/pages/SuperAdmin/PremiumRequests.jsx:40[39m
+
+[90m    src/pages/SuperAdmin/PurchaseRequests.jsx:41[39m
+
+[90m    src/pages/SuperAdmin/SEOManager.jsx:96[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:69[39m
+
+[90m    src/pages/SuperAdmin/SecurityLogs.jsx:80[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:188[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:198[39m
+
+[90m    src/pages/SuperAdmin/TrashBin.jsx:58[39m
+
+[90m    src/pages/UserDashboard.jsx:103[39m
+
+[90m    src/pages/WatchParty.jsx:117[39m
+
+  [33m⚠[39m [33mMaintainability: deslop/unused-dependency[39m [90m×9[39m
+    Unused dependency: `@capacitor/android`
+    Unused dependency: `@capacitor/core`
+    Unused dependency: `@capgo/capacitor-media-session`
+    Unused dependency: `clsx`
+    Unused dependency: `cordova-plugin-device`
+    Unused dependency: `html2canvas`
+    Unused dependency: `postinstall-postinstall`
+    Unused dependency: `qrcode.react`
+    Unused dependency: `tailwind-merge`
+[2m    → An unused dependency adds install time and supply-chain[22m
+[2m    surface without being used; remove it from package.json if[22m
+[2m    it is genuinely unused.[22m
+
+  [33m⚠[39m [33mMaintainability: Large component is hard to read and change[39m [90m×26[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-giant-component[39m
+    Component "ProfileTab" is over 300 lines long, which is
+    hard to read & change. Split it into a few smaller
+    components.
+[2m    → Pull each section into its own component so the parent is[22m
+[2m    easier to read, test, and change.[22m
+
+[90m    src/components/DashboardTabs/ProfileTab.jsx:11[39m
+
+[90m    src/components/GlobalChatBubble.jsx:13[39m
+
+[90m    src/components/GlobalMusicPlayer.jsx:29[39m
+
+[90m    src/components/Navbar.jsx:27[39m
+
+[90m    src/components/NexoriaPlayer.jsx:17[39m
+
+[90m    src/components/SecretChatRoom.jsx:11[39m
+
+[90m    src/components/SuperAdminLayout.jsx:18[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:14[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:86[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaArtistsManager.jsx:13[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:22[39m
+
+[90m    src/pages/Admin/Users.jsx:46[39m
+
+[90m    src/pages/FeatureRequests.jsx:9[39m
+
+[90m    src/pages/Login.jsx:12[39m
+
+[90m    src/pages/MovieDetail.jsx:22[39m
+
+[90m    src/pages/Register.jsx:22[39m
+
+[90m    src/pages/SinglePost.jsx:86[39m
+
+[90m    src/pages/SuperAdmin/CreatorControlPanel.jsx:15[39m
+
+[90m    src/pages/SuperAdmin/FooterManagement.jsx:13[39m
+
+[90m    src/pages/SuperAdmin/ManageArenaGames.jsx:14[39m
+
+[90m    src/pages/SuperAdmin/ManageUsers.jsx:44[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/AddMovie.jsx:14[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:20[39m
+
+[90m    src/pages/SuperAdmin/SiteSettings.jsx:11[39m
+
+[90m    src/pages/SuperAdmin/SupportCenter.jsx:49[39m
+
+[90m    src/pages/VoiceLounge.jsx:9[39m
+
+  [33m⚠[39m [33mBugs: Unversioned localStorage key[39m [90m×6[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/client-localstorage-no-version[39m
+    localStorage.setItem("searchHistory", JSON.stringify(...))
+    has no version, so changing the data shape later crashes
+    your users' saved sessions. Add one to the key (e.g.
+    "searchHistory:v1").
+[2m    → Put a version in the storage key (e.g. "myKey:v1"). If[22m
+[2m    you change the data shape later, old saved data can be[22m
+[2m    ignored instead of crashing the app.[22m
+
+[90m    src/components/Navbar.jsx:173[39m
+
+[90m    src/components/Navbar.jsx:189[39m
+
+[90m    src/components/NoticeCenter.jsx:23[39m
+
+[90m    src/features/auth/authSlice.js:19[39m
+
+[90m    src/features/music/musicSlice.js:44[39m
+
+[90m    src/features/music/nexoriaMusicSlice.js:141[39m
+
+  [33m⚠[39m [33mPerformance: Chained array iterations[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/js-combine-iterations[39m
+    This loops over your list twice because .filter().map()
+    makes two passes, so do it in one pass with .reduce() or a
+    for...of loop
+[2m    → Combine `.map().filter()` style chains into one pass with[22m
+[2m    `.reduce()` or a `for...of` loop, so you only loop over the[22m
+[2m    list once[22m
+
+[90m    src/pages/Admin/AdminCategories.jsx:296[39m
+
+[90m    src/pages/Admin/NexoriaMusic/NexoriaTracksManager.jsx:285[39m
+
+  [33m⚠[39m [33mPerformance: Transition duration too long[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-long-transition-duration[39m
+    Your users wait through a sluggish 1500ms transition, so
+    keep UI transitions under 1000ms & save longer ones for big
+    page-load animations.
+[2m    → Keep UI transitions under 1s. Use about 100 to 150ms for[22m
+[2m    instant feedback, 200 to 300ms for state changes, and 300[22m
+[2m    to 500ms for layout. Save longer ones for big page-load[22m
+[2m    animations.[22m
+
+[90m    src/components/AuraScore.jsx:63[39m
+
+  [33m⚠[39m [33mBugs: Many related useState calls[39m [90m×7[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/prefer-useReducer[39m
+    "ParentalGateModal" updates 5 separate useState values in
+    one place — state that changes together is easier to keep
+    consistent as a single useReducer action.
+[2m    → Group state that always changes together into[22m
+[2m    `useReducer` so one dispatched action describes the whole[22m
+[2m    transition instead of a list of setter calls.[22m
+
+[90m    src/components/ParentalGateModal.jsx:5[39m
+
+[90m    src/pages/Admin/AdminCategories.jsx:14[39m
+
+[90m    src/pages/Admin/CreatePost.jsx:86[39m
+
+[90m    src/pages/SuperAdmin/HeroDisplayManager.jsx:23[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MoviesList.jsx:20[39m
+
+[90m    src/pages/SuperAdmin/MovieCategoryManager.jsx:14[39m
+
+[90m    src/pages/SuperAdmin/SystemNoticesManager.jsx:26[39m
+
+  [33m⚠[39m [33mPerformance: Bouncy easing animation[39m [90m×9[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-inline-bounce-easing[39m
+    Your users see a dated, tacky animate-bounce, so use a
+    subtle ease-out transform for a smoother finish.
+[2m    → Use `cubic-bezier(0.16, 1, 0.3, 1)` (ease-out-expo) for a[22m
+[2m    natural finish. Real objects don't bounce.[22m
+
+[90m    src/components/AuraSurgeBanner.jsx:40[39m
+
+[90m    src/components/Leaderboard.jsx:56[39m
+
+[90m    src/components/Navbar.jsx:429[39m
+
+[90m    src/components/SystemBroadcastManager.jsx:72[39m
+
+[90m    src/components/WrappedModal.jsx:36[39m
+
+[90m    src/pages/DownloadTimer.jsx:120[39m
+
+[90m    src/pages/SinglePost.jsx:447[39m
+
+[90m    src/pages/SinglePost.jsx:461[39m
+
+[90m    src/pages/SuperAdmin/AuraRecalculate.jsx:77[39m
+
+  [33m⚠[39m [33mPerformance: Animating scale from zero[39m [90m×4[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-scale-from-zero[39m
+    This looks abrupt to your users because scale: 0 pops the
+    element in from a single point, so use scale: 0.95 with
+    opacity: 0 for a smoother entrance
+[2m    → Use `initial={{ scale: 0.95, opacity: 0 }}`. Elements[22m
+[2m    should gently shrink and fade, not vanish into a point[22m
+
+[90m    src/components/Footer.jsx:83[39m
+
+[90m    src/components/PremiumCustomization.jsx:104[39m
+
+[90m    src/components/WhatsAppChat.jsx:16[39m
+
+[90m    src/pages/AuraBattle.jsx:188[39m
+
+  [33m⚠[39m [33mPerformance: JSON parse/stringify deep clone[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-json-parse-stringify-clone[39m
+    `JSON.parse(JSON.stringify(x))` deep-clones by
+    re-serializing: it is slow on large objects and silently
+    drops `undefined`, functions, `Date`/`Map`/`Set`, and
+    cyclic references. Use `structuredClone(x)`.
+[2m    → Replace `JSON.parse(JSON.stringify(value))` with[22m
+[2m    `structuredClone(value)`. It is faster and preserves Dates,[22m
+[2m    Maps, Sets, and cyclic references.[22m
+
+[90m    android/app/src/main/assets/public/cordova.js:937[39m
+
+[90m    src/pages/SuperAdmin/MovieAdmin/MovieSeriesManager.jsx:27[39m
+
+  [31m✖[39m [31mBugs: State updater has side effects[39m [90m×2[39m
+    [36mLearn more: https://react.doctor/docs/rules/react-doctor/no-impure-state-updater[39m
+    This state updater performs the nested state update
+    "stopRecording()". React may run updater functions more
+    than once, so side effects here can repeat or observe
+    inconsistent external state.
+[2m    → Keep state updater callbacks pure and return only the[22m
+[2m    next state. Move notifications, storage, timers, ref[22m
+[2m    writes, and other external work into the event or effect[22m
+[2m    that queues the update.[22m
+
+[90m    src/components/GlobalChatBubble.jsx:138[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 137 |[39m       recordingTimerRef[33m.[39mcurrent [33m=[39m setInterval(() [33m=>[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 138 |[39m         setRecordingTime(prev [33m=>[39m {                   [2m│[22m
+    [2m│[22m  [90m     |[39m                          [31m[1m^[22m[39m                           [2m│[22m
+    [2m│[22m  [90m 139 |[39m           [36mif[39m (prev [33m>=[39m [35m60[39m) {[0m                          [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+[90m    src/components/SecretChatRoom.jsx:183[39m
+    [2m┌[22m[2m──────────────────────────────────────────────────────────────[22m[2m┐[22m
+    [2m│[22m [0m [90m 182 |[39m       recordingTimerRef[33m.[39mcurrent [33m=[39m setInterval(() [33m=>[0m… [2m│[22m
+    [2m│[22m [31m[1m>[22m[39m[90m 183 |[39m         setRecordingTime(prev [33m=>[39m {                   [2m│[22m
+    [2m│[22m  [90m     |[39m                          [31m[1m^[22m[39m                           [2m│[22m
+    [2m│[22m  [90m 184 |[39m           [36mif[39m (prev [33m>=[39m [35m60[39m) {[0m                          [2m│[22m
+    [2m└[22m[2m──────────────────────────────────────────────────────────────[22m[2m┘[22m
+
+
+[2m  ────────────────────────────────────────────────────────────[22m
+
+  [1mAll 1917 issues[22m
+
+  [1mSecurity[22m [2m>[22m [33m[2m10 warnings[22m[39m
+  [1mBugs[22m [2m>[22m [31m16 errors[39m[2m, [22m[33m[2m618 warnings[22m[39m
+  [1mPerformance[22m [2m>[22m [31m29 errors[39m[2m, [22m[33m[2m201 warnings[22m[39m
+  [1mAccessibility[22m [2m>[22m [31m5 errors[39m[2m, [22m[33m[2m895 warnings[22m[39m
+  [1mMaintainability[22m [2m>[22m [33m[2m143 warnings[22m[39m
+
+  [33m⚠[39m [1mMigration-scale change[22m[2m: sample before you sweep[22m
+    Full Framer Motion import [90m×127 across 127 files[39m
+    Button missing explicit type [90m×490 across 126 files[39m
+    Control missing accessible label [90m×443 across 95 files[39m
+[90m    +3 more rules at this scale[39m
+[2m    Fixing all of them at once is hard to review and prone to[22m
+[2m    subtle mistakes across the whole repo. Fix a representative[22m
+[2m    few first and confirm the recipe holds. Then get the code[22m
+[2m    owner's sign-off before changing the rest.[22m
+    [2mScope it down one area at a time:[22m [36mnpx react-doctor@latest <path>[39m
+
+  [31m┌─────┐[39m  [31m33[39m [2m/ 100[22m [31mCritical[39m
+  [31m│ x x │[39m  [31m█████████████████[39m[2m[31m▓[39m[22m[2m░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░[22m
+  [31m│  ▽  │[39m  React Doctor [2m(https://react.doctor)[22m
+  [31m└─────┘[39m
+
+[90m  You could improve [39m[31m+2%[39m[90m by fixing the top 3 issues[39m
+[90m  Full diagnostics written to C:\Users\user\AppData\Local\Temp\react-doctor-d0fba4bd-d95c-453b-ac95-ed5ace5e93a3[39m
+
+[2m  ────────────────────────────────────────────────────────────[22m
+
+  [1mShare:[22m [36mhttps://react.doctor/share?p=frontend&s=33&e=50&w=1867&f=210[39m
+[2m  Tell others how you did on socials[22m
+
+  [1mDocs:[22m [36mhttps://react.doctor/docs[39m
+[2m  Learn more about fixing issues, setting up CI/CD, and[22m
+[2m  configuring rules with a config file[22m
+
+  [1mGitHub:[22m [36mhttps://github.com/millionco/react-doctor[39m
+[2m  Report issues and star the repository![22m
+

@@ -90,6 +90,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       socket.off('privateMessageDeleted');
       socket.off('userJoinedPrivateRoom');
       socket.off('userLeftPrivateRoom');
+      socket.off('incomingCall');
     };
   }, [socket]);
 

@@ -129,6 +129,7 @@ const VideoDownloader = () => {
             height="100%"
             frameBorder="0"
             className="w-full h-full min-h-[1000px] md:min-h-[700px] absolute inset-0"
+            sandbox="allow-scripts allow-popups allow-forms allow-downloads"
             allowFullScreen
           ></iframe>
         </motion.div>
