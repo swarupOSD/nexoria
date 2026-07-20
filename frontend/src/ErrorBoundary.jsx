@@ -19,9 +19,31 @@ class ErrorBoundary extends React.Component {
     const hasAutoReloaded = sessionStorage.getItem('errorBoundaryReloaded');
     
     if (!hasAutoReloaded) {
-      console.log('Auto-reloading to get latest assets...');
+      console.log('Auto-reloading to get latest assets and clearing PWA cache...');
       sessionStorage.setItem('errorBoundaryReloaded', 'true');
-      window.location.reload(true);
+      
+      // Aggressively clear Service Workers and Caches so the reload actually gets new code
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+      
+      if ('caches' in window) {
+        caches.keys().then((names) => {
+          for (let name of names) {
+            caches.delete(name);
+          }
+        });
+      }
+
+      // Short delay to allow SW unregistration
+      setTimeout(() => {
+        window.location.reload(true);
+      }, 500);
+      
       return;
     }
 
@@ -38,7 +60,26 @@ class ErrorBoundary extends React.Component {
             We just pushed a new update to Nexoria! Please tap the button below to load the latest version.
           </p>
           <button 
-            onClick={() => window.location.reload(true)}
+            onClick={() => {
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for(let registration of registrations) {
+                    registration.unregister();
+                  }
+                });
+              }
+              if ('caches' in window) {
+                caches.keys().then((names) => {
+                  for (let name of names) {
+                    caches.delete(name);
+                  }
+                });
+              }
+              sessionStorage.removeItem('errorBoundaryReloaded');
+              setTimeout(() => {
+                window.location.reload(true);
+              }, 500);
+            }}
             style={{ padding: '1rem 2rem', fontSize: '1.2rem', fontWeight: 'bold', color: 'white', backgroundColor: '#8b5cf6', border: 'none', borderRadius: '12px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)' }}
           >
             Refresh App
