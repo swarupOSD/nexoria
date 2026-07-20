@@ -128,6 +128,7 @@ const Messages = () => {
   if (!user) return <div className="p-10 text-center text-white">Please login to view messages.</div>;
 
   return (
+    <>
     <div className="flex h-[calc(100vh-80px)] mt-20 max-w-6xl mx-auto bg-slate-900 rounded-2xl overflow-hidden border border-slate-800">
       
       {/* Sidebar - Friends & Conversations */}
@@ -248,7 +249,7 @@ const Messages = () => {
           }}
         />
       )}
-    </div>
+    </>
   );
 };
 
