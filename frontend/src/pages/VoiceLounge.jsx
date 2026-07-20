@@ -110,6 +110,7 @@ const VoiceLounge = () => {
         audioRefs.current[targetUserId].autoplay = true;
       }
       audioRefs.current[targetUserId].srcObject = remoteStream;
+      audioRefs.current[targetUserId].play().catch(e => console.error("Audio play error:", e));
       
       setupSpeechDetection(remoteStream, targetUserId);
     };

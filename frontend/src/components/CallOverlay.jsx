@@ -48,6 +48,8 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
     peer.ontrack = (event) => {
       if (partnerVideo.current) {
         partnerVideo.current.srcObject = event.streams[0];
+        // Force play to bypass browser autoplay policies
+        partnerVideo.current.play().catch(e => console.error("Error playing media:", e));
       }
     };
 
@@ -154,6 +156,7 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
         peer.ontrack = (event) => {
           if (partnerVideo.current) {
             partnerVideo.current.srcObject = event.streams[0];
+            partnerVideo.current.play().catch(e => console.error("Error playing media:", e));
           }
         };
 
