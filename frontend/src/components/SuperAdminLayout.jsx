@@ -35,9 +35,9 @@ const SuperAdminLayout = () => {
 
   useEffect(() => {
     if (data?.user) {
-      dispatch(setCredentials({ user: data.user, token: user?.token || localStorage.getItem('token') }));
+      dispatch(setCredentials({ user: data.user, token: localStorage.getItem('token') }));
     }
-  }, [data, dispatch, user]);
+  }, [data, dispatch]);
 
   const handleLogout = async () => {
     try {
