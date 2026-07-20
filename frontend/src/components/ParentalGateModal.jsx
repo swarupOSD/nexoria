@@ -7,12 +7,14 @@ const ParentalGateModal = ({ isOpen, onClose, mode, onSuccess }) => {
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [setupPattern, setSetupPattern] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
       setError(false);
       setSuccess(false);
       setFeedbackMsg('');
+      setSetupPattern(null);
     }
   }, [isOpen, mode]);
 
@@ -25,16 +27,30 @@ const ParentalGateModal = ({ isOpen, onClose, mode, onSuccess }) => {
     }
 
     if (mode === 'enable') {
-      // Setup Mode: Save pattern
-      localStorage.setItem('kidsPattern', pattern);
-      setSuccess(true);
-      setFeedbackMsg('Pattern Saved!');
-      
-      setTimeout(() => {
-        onSuccess();
-        onClose();
-      }, 800);
-
+      if (!setupPattern) {
+        // Step 1: Save first pattern and ask to confirm
+        setSetupPattern(pattern);
+        setSuccess(true);
+        setFeedbackMsg('Draw pattern again to confirm');
+        setTimeout(() => setSuccess(false), 1000);
+      } else {
+        // Step 2: Confirm
+        if (pattern === setupPattern) {
+          localStorage.setItem('kidsPattern', pattern);
+          setSuccess(true);
+          setFeedbackMsg('Pattern Saved!');
+          
+          setTimeout(() => {
+            onSuccess();
+            onClose();
+          }, 800);
+        } else {
+          setError(true);
+          setFeedbackMsg('Patterns do not match. Try again.');
+          setSetupPattern(null);
+          setTimeout(() => setError(false), 1000);
+        }
+      }
     } else {
       // Disable Mode: Verify pattern
       const savedPattern = localStorage.getItem('kidsPattern');
@@ -115,7 +131,7 @@ const ParentalGateModal = ({ isOpen, onClose, mode, onSuccess }) => {
                     exit={{ opacity: 0 }}
                     className="text-xs text-slate-500 uppercase tracking-widest font-semibold"
                   >
-                    Draw your pattern
+                    {mode === 'enable' && setupPattern ? 'Confirm your pattern' : 'Draw your pattern'}
                   </motion.p>
                 )}
               </AnimatePresence>

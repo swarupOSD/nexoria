@@ -18,6 +18,7 @@ const VoiceLounge = () => {
   
   const [isLocked, setIsLocked] = useState(true);
   const [lockMode, setLockMode] = useState(localStorage.getItem('voiceLoungePattern') ? 'verify' : 'setup');
+  const [setupPattern, setSetupPattern] = useState(null); // stores the first drawn pattern
   const [lockError, setLockError] = useState(false);
   const [lockSuccess, setLockSuccess] = useState(false);
   const [lockFeedback, setLockFeedback] = useState('');
@@ -314,12 +315,28 @@ const VoiceLounge = () => {
     }
 
     if (lockMode === 'setup') {
-      localStorage.setItem('voiceLoungePattern', pattern);
-      setLockSuccess(true);
-      setLockFeedback('Pattern Saved!');
-      setTimeout(() => {
-        setIsLocked(false);
-      }, 800);
+      if (!setupPattern) {
+        // Step 1 of Setup: Save the first pattern and ask to confirm
+        setSetupPattern(pattern);
+        setLockSuccess(true);
+        setLockFeedback('Draw pattern again to confirm');
+        setTimeout(() => setLockSuccess(false), 1000);
+      } else {
+        // Step 2 of Setup: Confirm pattern matches
+        if (pattern === setupPattern) {
+          localStorage.setItem('voiceLoungePattern', pattern);
+          setLockSuccess(true);
+          setLockFeedback('Pattern Saved!');
+          setTimeout(() => {
+            setIsLocked(false);
+          }, 800);
+        } else {
+          setLockError(true);
+          setLockFeedback('Patterns do not match. Try again.');
+          setSetupPattern(null);
+          setTimeout(() => setLockError(false), 1000);
+        }
+      }
     } else {
       const savedPattern = localStorage.getItem('voiceLoungePattern');
       if (savedPattern && pattern !== savedPattern) {
@@ -395,7 +412,9 @@ const VoiceLounge = () => {
                         exit={{ opacity: 0 }}
                         className="text-xs text-slate-500 uppercase tracking-widest font-bold"
                       >
-                        {lockMode === 'setup' ? 'Draw a secure pattern' : 'Draw your pattern'}
+                        {lockMode === 'setup' 
+                          ? (setupPattern ? 'Confirm your pattern' : 'Draw a secure pattern') 
+                          : 'Draw your pattern'}
                       </motion.p>
                     )}
                   </AnimatePresence>
