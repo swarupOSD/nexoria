@@ -191,7 +191,7 @@ const PremiumCustomization = () => {
                 ${border.id === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_10px_fuchsia]' : ''}
                 ${border.id === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_10px_yellow]' : ''}
               `}>
-                <img src={user.profileImage?.startsWith('http') ? user.profileImage : `${import.meta.env.VITE_API_URL || ''}/uploads/avatars/${user.profileImage}`} className="w-full h-full rounded-full object-cover" />
+                <img src={user.profileImage?.startsWith('http') ? user.profileImage : `${import.meta.env.VITE_API_URL || ''}/uploads/avatars/${user.profileImage}`} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
               </div>
               <span className={`font-semibold ${user.profileBorder === border.id ? 'text-white' : 'text-slate-300'}`}>
                 {border.name}
