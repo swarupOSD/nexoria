@@ -64,7 +64,7 @@ const MovieBoxLayout = () => {
     { name: 'Requests', path: '/requests', icon: PlaySquare },
   ];
 
-  const SidebarContent = () => (
+  const renderSidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0d0d0f] border-r border-white/5 text-slate-300">
       {/* Logo Area */}
       <div className="h-20 flex items-center px-6 mb-4">
@@ -102,9 +102,10 @@ const MovieBoxLayout = () => {
         {/* App Items (Games, Apps, etc.) - Only visible in Adult mode */}
         {!isKidsMode && (
           <>
-            <div className="mt-8 mb-4 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <div className="px-2 mt-8 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               More Apps & Games
             </div>
+            
             {appItems.map((item) => (
               <NavLink
                 key={item.name}

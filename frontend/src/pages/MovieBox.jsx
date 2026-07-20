@@ -43,7 +43,7 @@ const MovieBox = () => {
   const nextHero = () => setCurrentHeroIndex(prev => (prev + 1) % Math.min(trendingMovies.length, 5));
   const prevHero = () => setCurrentHeroIndex(prev => (prev - 1 + Math.min(trendingMovies.length, 5)) % Math.min(trendingMovies.length, 5));
 
-  const LoadingSkeleton = () => (
+  const renderLoadingSkeleton = () => (
     <div className="flex gap-4 overflow-hidden py-4">
       {[1, 2, 3, 4, 5, 6].map(i => (
         <div key={i} className="min-w-[160px] md:min-w-[200px] aspect-[2/3] bg-white/5 rounded-xl animate-pulse shrink-0" />
@@ -51,8 +51,8 @@ const MovieBox = () => {
     </div>
   );
 
-  const MovieRow = ({ title, movies, loading }) => {
-    if (loading) return <div className="mb-12"><h2 className="text-xl font-bold text-white mb-4 px-4">{title}</h2><LoadingSkeleton /></div>;
+  const renderMovieRow = ({ title, movies, loading }) => {
+    if (loading) return <div className="mb-12"><h2 className="text-xl font-bold text-white mb-4 px-4">{title}</h2>{renderLoadingSkeleton()}</div>;
     if (movies.length === 0) return null;
 
     return (
@@ -75,9 +75,15 @@ const MovieBox = () => {
                   </div>
                 )}
                 
-                {movie.quality && movie.quality[0] && (
-                  <div className="absolute top-2 left-2 bg-purple-600/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg">
-                    {movie.quality[0]}
+                {movie.rating && (
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-medium text-amber-400 border border-white/10">
+                    <Star className="w-3 h-3 fill-amber-400" /> {movie.rating.toFixed(1)}
+                  </div>
+                )}
+                
+                {movie.quality && (
+                  <div className="absolute bottom-2 right-2 bg-white/10 backdrop-blur-md px-1.5 py-0.5 rounded text-[9px] font-bold text-white uppercase border border-white/10">
+                    {movie.quality}
                   </div>
                 )}
 
@@ -87,7 +93,6 @@ const MovieBox = () => {
                     <Play className="w-5 h-5 ml-1 fill-purple-600" />
                   </div>
                 </div>
-
                 <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover/card:translate-y-0 transition-transform">
                   <div className="flex items-center justify-between text-white/90 text-xs font-medium mb-1">
                     <span>{movie.releaseYear || 'TBA'}</span>
@@ -256,13 +261,13 @@ const MovieBox = () => {
           </div>
         )}
 
-        <MovieRow title="Featured Movies" movies={featuredMovies} loading={isLoading} />
-        <MovieRow title="Trending Now" movies={trendingMovies} loading={isLoading} />
-        <MovieRow title="Latest Movies" movies={latestMovies} loading={isLoading} />
-        <MovieRow title="Latest Web Series" movies={latestSeries} loading={isLoading} />
-        <MovieRow title="Latest Animation" movies={latestAnimation} loading={isLoading} />
-        <MovieRow title="Most Watched" movies={mostWatched} loading={isLoading} />
-        <MovieRow title="Coming Soon" movies={comingSoon} loading={isLoading} />
+        {renderMovieRow({ title: "Featured Movies", movies: featuredMovies, loading: isLoading })}
+        {renderMovieRow({ title: "Trending Now", movies: trendingMovies, loading: isLoading })}
+        {renderMovieRow({ title: "Latest Movies", movies: latestMovies, loading: isLoading })}
+        {renderMovieRow({ title: "Latest Web Series", movies: latestSeries, loading: isLoading })}
+        {renderMovieRow({ title: "Latest Animation", movies: latestAnimation, loading: isLoading })}
+        {renderMovieRow({ title: "Most Watched", movies: mostWatched, loading: isLoading })}
+        {renderMovieRow({ title: "Coming Soon", movies: comingSoon, loading: isLoading })}
       </div>
 
     </div>

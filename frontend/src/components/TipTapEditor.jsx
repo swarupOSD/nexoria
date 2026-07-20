@@ -18,7 +18,7 @@ const TipTapEditor = ({ content, onChange }) => {
 
   if (!editor) return null;
 
-  const MenuBar = () => {
+  const renderMenuBar = () => {
     return (
       <div className="flex flex-wrap gap-2 p-3 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-t-xl">
         <button
@@ -57,6 +57,7 @@ const TipTapEditor = ({ content, onChange }) => {
         >
           <ListOrdered className="w-4 h-4" />
         </button>
+        <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 mx-1 self-center"></div>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -70,7 +71,7 @@ const TipTapEditor = ({ content, onChange }) => {
 
   return (
     <div className="flex flex-col">
-      <MenuBar />
+      {renderMenuBar()}
       <EditorContent editor={editor} />
     </div>
   );

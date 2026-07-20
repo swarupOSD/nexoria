@@ -191,7 +191,7 @@ const SuperAdminLayout = () => {
     }
   ];
 
-  const SidebarContent = () => (
+  const renderSidebarContent = () => (
     <div className="flex flex-col h-full bg-white dark:bg-[#080312]/95 backdrop-blur-xl text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-white/5 w-64 flex-shrink-0 shadow-2xl z-50">
       <div className="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 ring-2 ring-white/10">
@@ -201,7 +201,7 @@ const SuperAdminLayout = () => {
           <span className="font-black text-slate-900 dark:text-white tracking-tight leading-tight">Super Console</span>
           <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Enterprise UI</span>
         </div>
-        <button className="md:hidden ml-auto p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+        <button className="lg:hidden ml-auto p-1.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
           <X className="w-5 h-5 text-slate-500" />
         </button>
       </div>
@@ -250,10 +250,10 @@ const SuperAdminLayout = () => {
                                   key={sub.name}
                                   to={sub.path}
                                   onClick={() => setIsMobileMenuOpen(false)}
-                                  className={`flex items-center pl-4 py-1.5 text-xs transition-all ${
+                                  className={`flex items-center pl-4 py-2 text-sm rounded-r-md border-l-2 transition-all ${
                                     isSubActive
-                                      ? 'text-purple-600 dark:text-purple-400 font-medium'
-                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium'
+                                      : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                                   }`}
                                 >
                                   {sub.name}
@@ -269,36 +269,21 @@ const SuperAdminLayout = () => {
 
                 const isActive = location.pathname === item.path || (item.path !== '/superadmin' && location.pathname.startsWith(item.path));
                 
-                const linkProps = {
-                  key: item.name,
-                  onClick: () => setIsMobileMenuOpen(false),
-                  className: `flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm ${
-                    isActive 
-                      ? 'bg-slate-200/50 dark:bg-white/10 text-slate-900 dark:text-white font-medium' 
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
-                  }`
-                };
-
-                const content = (
-                  <>
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm ${
+                      isActive 
+                        ? 'bg-slate-200/50 dark:bg-white/10 text-slate-900 dark:text-white font-medium' 
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
                     <span className={`${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
                       {item.icon}
                     </span>
                     {item.name}
-                  </>
-                );
-
-                if (item.external) {
-                  return (
-                    <a key={item.name} href={item.path} target="_blank" rel="noopener noreferrer" {...linkProps}>
-                      {content}
-                    </a>
-                  );
-                }
-
-                return (
-                  <Link key={item.name} to={item.path} {...linkProps}>
-                    {content}
                   </Link>
                 );
               })}
