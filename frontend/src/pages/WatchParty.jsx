@@ -256,7 +256,7 @@ const WatchParty = () => {
                 <div className={`flex items-end gap-2 ${msg.user?._id === user._id ? 'flex-row-reverse' : ''}`}>
                   {msg.user?._id !== user._id && (
                     <div className="w-6 h-6 rounded-full bg-slate-800 overflow-hidden shrink-0 border border-white/10">
-                      {msg.user?.avatar ? <img src={msg.user.avatar} className="w-full h-full object-cover"/> : <span className="text-[10px] flex justify-center items-center h-full">{msg.user?.name?.charAt(0)}</span>}
+                      {msg.user?.avatar ? <img src={msg.user.avatar} alt={msg.user.name || 'User'} className="w-full h-full object-cover"/> : <span className="text-[10px] flex justify-center items-center h-full">{msg.user?.name?.charAt(0)}</span>}
                     </div>
                   )}
                   <div className={`flex flex-col ${msg.user?._id === user._id ? 'items-end' : 'items-start'}`}>

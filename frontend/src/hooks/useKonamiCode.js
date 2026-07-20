@@ -58,7 +58,7 @@ const useKonamiCode = (secretCode = DEFAULT_CODE) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [secretCode]);
+  }, [JSON.stringify(secretCode)]);
 };
 
 export default useKonamiCode;

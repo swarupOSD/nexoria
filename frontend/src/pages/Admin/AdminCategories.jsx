@@ -161,7 +161,7 @@ const AdminCategories = () => {
                 <tr key={cat._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                   <td className="p-4 font-semibold dark:text-white flex items-center gap-2">
                     {cat.icon && <span className={cat.icon}></span>}
-                    {cat.image && <img src={cat.image} className="w-6 h-6 rounded object-cover" />}
+                    {cat.image && <img src={cat.image} alt={cat.name} className="w-6 h-6 rounded object-cover" />}
                     {cat.name}
                   </td>
                   <td className="p-4 text-sm text-slate-500 dark:text-slate-400">/{cat.slug}</td>

@@ -559,7 +559,7 @@ const SinglePost = () => {
                   <div key={review._id} className="bg-white/30 dark:bg-slate-950/40 border border-slate-200/40 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-3">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
-                        <img src={review.user?.profileImage} fallbackType="avatar" className="w-10 h-10 rounded-full object-cover" />
+                        <img src={review.user?.profileImage} alt={review.user?.name || 'User'} fallbackType="avatar" className="w-10 h-10 rounded-full object-cover" />
                         <div>
                           <span className="font-semibold flex items-center gap-2 text-slate-850 dark:text-white flex-wrap">
                             {review.user?.name || 'Anonymous'}
@@ -686,7 +686,7 @@ const SinglePost = () => {
               <div className="space-y-4">
                 {relatedPosts.map(rel => (
                   <Link to={`/post/${rel.slug}`} key={rel._id} className="flex gap-3 group">
-                    <img src={rel.appLogo} fallbackType="logo" className="w-12 h-12 rounded-xl object-cover bg-white dark:bg-slate-900 p-0.5 border border-slate-200/50 dark:border-white/5" />
+                    <img src={rel.appLogo} alt={rel.title || 'App Logo'} fallbackType="logo" className="w-12 h-12 rounded-xl object-cover bg-white dark:bg-slate-900 p-0.5 border border-slate-200/50 dark:border-white/5" />
                     <div>
                       <h4 className="text-sm font-bold group-hover:text-primary truncate">{rel.title}</h4>
                       <p className="text-xs text-slate-500">{rel.categoryObj?.name || 'App'}</p>

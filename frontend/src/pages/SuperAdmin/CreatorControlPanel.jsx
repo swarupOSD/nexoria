@@ -258,7 +258,7 @@ const CreatorControlPanel = () => {
                         <tr key={log._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <img src={log.user?.profileImage || '/default-avatar.png'} className="w-6 h-6 rounded-full" />
+                              <img src={log.user?.profileImage || '/default-avatar.png'} alt={log.user?.name || 'User'} className="w-6 h-6 rounded-full" />
                               <span className="font-bold text-slate-900 dark:text-white">{log.user?.name}</span>
                               <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700">{log.user?.role}</span>
                             </div>
