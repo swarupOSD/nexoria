@@ -55,8 +55,9 @@ const Footer = () => {
 
         {/* Dynamic Newsletter */}
         {settings.newsletter?.enabled && (
-          <div className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-md border border-slate-200/50 dark:border-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl mb-16">
-            <div className="max-w-xl text-center md:text-left">
+          <div className="bg-white/60 dark:bg-[#0A0A0A]/60 backdrop-blur-2xl border border-slate-200/50 dark:border-white/10 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_15px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_15px_40px_rgba(168,85,247,0.1)] mb-16 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-blue-500/5 pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity"></div>
+            <div className="max-w-xl text-center md:text-left relative z-10">
               <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-2">
                 {settings.newsletter?.title || 'Join the Premium Community'}
               </h3>

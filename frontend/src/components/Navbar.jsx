@@ -286,16 +286,16 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-2xl bg-white/80 dark:bg-[#0A0A0A]/80 border-b border-black/5 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)] py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-3xl bg-white/60 dark:bg-[#050505]/60 border-b border-black/5 dark:border-white/5 shadow-[0_10px_40px_rgba(0,0,0,0.1)] py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
         <div className="container mx-auto px-4 flex items-center justify-between">
           
           {/* Logo */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="relative">
+            <Link to="/" className="flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
+              <div className="relative shadow-[0_0_20px_rgba(168,85,247,0.3)] rounded-full">
                 <Logo src={settings.logo} />
               </div>
-              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent tracking-tight drop-shadow-sm">
+              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent tracking-tight drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
                 {settings?.siteName || 'Nexoria'}
               </span>
             </Link>
@@ -303,15 +303,15 @@ const Navbar = () => {
 
           {/* Desktop Links & Advanced Search */}
           <div className="hidden lg:flex items-center gap-3 xl:gap-5 flex-1 justify-center px-2 xl:px-4 whitespace-nowrap">
-            <Link to="/" className={`text-sm font-bold transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
+            <Link to="/" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/' ? 'text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]'}`}>
               Home
             </Link>
             
-            <Link to="/apps" className={`text-sm font-bold transition-colors ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>
+            <Link to="/apps" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/apps' ? 'text-indigo-500 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500 hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]'}`}>
               Apps
             </Link>
             
-            <Link to="/moviebox/games" className={`text-sm font-bold transition-colors ${location.pathname === '/moviebox/games' ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>
+            <Link to="/moviebox/games" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/moviebox/games' ? 'text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]'}`}>
               Games
             </Link>
 
@@ -321,7 +321,7 @@ const Navbar = () => {
               width="w-[500px]"
               closeOnClickInside={true}
               trigger={
-                <button className={`flex items-center gap-1 text-sm font-bold transition-colors ${location.pathname.startsWith('/category') ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>
+                <button className={`flex items-center gap-1 text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname.startsWith('/category') ? 'text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]'}`}>
                   <LayoutGrid className="w-4 h-4" /> Categories <ChevronDown className="w-3 h-3" />
                 </button>
               }
