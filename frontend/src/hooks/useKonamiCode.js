@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import toast from 'react-hot-toast';
 
-const useKonamiCode = (secretCode = ['n', 'e', 'x', 'o', 'r', 'i', 'a']) => {
+const DEFAULT_CODE = ['n', 'e', 'x', 'o', 'r', 'i', 'a'];
+
+const useKonamiCode = (secretCode = DEFAULT_CODE) => {
   const [inputSequence, setInputSequence] = useState([]);
 
   const triggerEasterEgg = () => {

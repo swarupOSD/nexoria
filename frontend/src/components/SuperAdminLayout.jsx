@@ -290,14 +290,14 @@ const SuperAdminLayout = () => {
 
                 if (item.external) {
                   return (
-                    <a href={item.path} target="_blank" rel="noopener noreferrer" {...linkProps}>
+                    <a key={item.name} href={item.path} target="_blank" rel="noopener noreferrer" {...linkProps}>
                       {content}
                     </a>
                   );
                 }
 
                 return (
-                  <Link to={item.path} {...linkProps}>
+                  <Link key={item.name} to={item.path} {...linkProps}>
                     {content}
                   </Link>
                 );
