@@ -22,28 +22,33 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
   const partnerVideo = useRef();
   const connectionRef = useRef(null);
 
+  const iceQueueRef = useRef([]);
+
+  const flushIceQueue = (peer) => {
+    iceQueueRef.current.forEach(c => {
+      peer.addIceCandidate(new RTCIceCandidate(c)).catch(e => console.error(e));
+    });
+    iceQueueRef.current = [];
+  };
+
   const initiateCall = (mediaStream) => {
     const peer = new RTCPeerConnection(ICE_SERVERS);
     connectionRef.current = peer;
 
-    // Add tracks
     mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
 
-    // Handle ICE candidates
     peer.onicecandidate = (event) => {
       if (event.candidate) {
         socket.emit('iceCandidate', { to: partner?.socketId || `private_${roomData.teamCode}`, candidate: event.candidate });
       }
     };
 
-    // Handle incoming streams
     peer.ontrack = (event) => {
       if (partnerVideo.current) {
         partnerVideo.current.srcObject = event.streams[0];
       }
     };
 
-    // Create offer
     peer.createOffer()
       .then(offer => peer.setLocalDescription(offer))
       .then(() => {
@@ -56,55 +61,52 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
         });
       });
 
-    // Listen for answer
     socket.on('callAccepted', (signal) => {
       setCallAccepted(true);
-      peer.setRemoteDescription(new RTCSessionDescription(signal));
-    });
-
-    // Listen for their ICE candidates
-    socket.on('iceCandidate', (candidate) => {
-      if (peer.remoteDescription) {
-        peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
-      }
+      peer.setRemoteDescription(new RTCSessionDescription(signal)).then(() => {
+        flushIceQueue(peer);
+      });
     });
   };
 
-  // Initialize media for caller
   useEffect(() => {
+    const handleIceCandidate = (candidate) => {
+      const peer = connectionRef.current;
+      if (peer && peer.remoteDescription) {
+        peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+      } else {
+        iceQueueRef.current.push(candidate);
+      }
+    };
+    socket.on('iceCandidate', handleIceCandidate);
+
     if (!isReceivingCall) {
       navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
         .then((mediaStream) => {
           setStream(mediaStream);
-          if (myVideo.current) {
-            myVideo.current.srcObject = mediaStream;
-          }
-          if (partner) {
-            initiateCall(mediaStream);
-          }
+          if (myVideo.current) myVideo.current.srcObject = mediaStream;
+          if (partner) initiateCall(mediaStream);
         })
         .catch(err => {
           console.error("Error accessing media devices.", err);
-          if (err.name === 'NotFoundError') {
-            toast.error("No Camera or Microphone found on your device!");
-          } else {
-            toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
-          }
+          if (err.name === 'NotFoundError') toast.error("No Camera or Microphone found on your device!");
+          else toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
           onClose();
         });
     }
 
-    // Cleanup listeners
     const handleCallEnded = () => {
       setCallEnded(true);
       if (connectionRef.current) connectionRef.current.close();
-      setTimeout(() => onClose(), 1500); // Close after 1.5s
+      setTimeout(() => onClose(), 1500);
     };
 
     socket.on('callEnded', handleCallEnded);
 
     return () => {
+      socket.off('iceCandidate', handleIceCandidate);
       socket.off('callEnded', handleCallEnded);
+      socket.off('callAccepted');
       if (stream) stream.getTracks().forEach(track => track.stop());
       if (connectionRef.current) connectionRef.current.close();
     };
@@ -120,45 +122,34 @@ const CallOverlay = ({ socket, user, partner, roomData, callType, isReceivingCal
         const peer = new RTCPeerConnection(ICE_SERVERS);
         connectionRef.current = peer;
 
-        // Add tracks
         mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
 
-        // Handle ICE candidates
-    peer.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.emit('iceCandidate', { to: callerInfo.from, candidate: event.candidate });
-      }
-    };
+        peer.onicecandidate = (event) => {
+          if (event.candidate) {
+            socket.emit('iceCandidate', { to: callerInfo.from, candidate: event.candidate });
+          }
+        };
 
-    // Handle incoming streams
-    peer.ontrack = (event) => {
-      if (partnerVideo.current) {
-        partnerVideo.current.srcObject = event.streams[0];
-      }
-    };
+        peer.ontrack = (event) => {
+          if (partnerVideo.current) {
+            partnerVideo.current.srcObject = event.streams[0];
+          }
+        };
 
-    // Listen for their ICE candidates
-    socket.on('iceCandidate', (candidate) => {
-      if (peer.remoteDescription) {
-        peer.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
-      }
-    });
-
-    // Accept offer and create answer
-    peer.setRemoteDescription(new RTCSessionDescription(callerSignal))
-      .then(() => peer.createAnswer())
-      .then(answer => peer.setLocalDescription(answer))
-      .then(() => {
-        socket.emit('answerCall', { to: callerInfo.from, signal: peer.localDescription });
-      });
+        peer.setRemoteDescription(new RTCSessionDescription(callerSignal))
+          .then(() => {
+            flushIceQueue(peer);
+            return peer.createAnswer();
+          })
+          .then(answer => peer.setLocalDescription(answer))
+          .then(() => {
+            socket.emit('answerCall', { to: callerInfo.from, signal: peer.localDescription });
+          });
       })
       .catch(err => {
         console.error("Error accessing media for answer.", err);
-        if (err.name === 'NotFoundError') {
-          toast.error("No Camera or Microphone found on your device!");
-        } else {
-          toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
-        }
+        if (err.name === 'NotFoundError') toast.error("No Camera or Microphone found on your device!");
+        else toast.error("Permission blocked! Click 🔒 in URL bar to allow Camera/Microphone.");
         rejectCall();
       });
   };
