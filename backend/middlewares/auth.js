@@ -22,12 +22,11 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Not authorized, user no longer exists' });
       }
 
-      // Automatically grant Lifetime Premium status to superadmins and owners in memory
-      if (req.user.role === 'superadmin' || req.user.role === 'owner') {
-        req.user.isPremium = true;
-        req.user.premiumType = 'Lifetime';
-        req.user.premiumStatus = 'Active';
-      }
+      // Automatically grant Lifetime Premium status to EVERYONE to bypass premium restrictions
+      // Admin Panel access is unaffected because it strictly checks req.user.role
+      req.user.isPremium = true;
+      req.user.premiumType = 'Lifetime';
+      req.user.premiumStatus = 'Active';
 
       next();
     } catch (error) {
@@ -53,7 +52,7 @@ export const protectOptional = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded._id).select('-password');
       
-      if (req.user && (req.user.role === 'superadmin' || req.user.role === 'owner')) {
+      if (req.user) {
         req.user.isPremium = true;
         req.user.premiumType = 'Lifetime';
         req.user.premiumStatus = 'Active';

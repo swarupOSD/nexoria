@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialUser = (localStorage.getItem('user') && localStorage.getItem('user') !== 'undefined') ? JSON.parse(localStorage.getItem('user')) : null;
+if (initialUser) initialUser.isPremium = true;
+
 const initialState = {
-  user: (localStorage.getItem('user') && localStorage.getItem('user') !== 'undefined') ? JSON.parse(localStorage.getItem('user')) : null,
+  user: initialUser,
   token: (localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined') ? localStorage.getItem('token') : null,
   isAuthenticated: !!localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined',
   isKidsMode: localStorage.getItem('isKidsMode') === 'true',
@@ -13,6 +16,7 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       const { user, token } = action.payload;
+      if (user) user.isPremium = true;
       state.user = user;
       state.token = token;
       state.isAuthenticated = !!user;

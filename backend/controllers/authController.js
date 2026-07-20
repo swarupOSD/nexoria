@@ -165,8 +165,8 @@ export const register = async (req, res) => {
           bio: user.bio,
           status: user.status,
           restrictions: user.restrictions,
-          isPremium: user.role === 'superadmin' ? true : user.isPremium,
-          premiumType: user.role === 'superadmin' ? 'Lifetime' : user.premiumType,
+          isPremium: true,
+          premiumType: 'Lifetime',
           rewardPoints: user.rewardPoints,
           badges: user.badges || [],
           currentStreak: user.currentStreak || 0,
@@ -323,8 +323,8 @@ export const login = async (req, res) => {
           bio: user.bio,
           status: user.status,
           restrictions: user.restrictions,
-          isPremium: user.role === 'superadmin' ? true : user.isPremium,
-          premiumType: user.role === 'superadmin' ? 'Lifetime' : user.premiumType,
+          isPremium: true,
+          premiumType: 'Lifetime',
           rewardPoints: user.rewardPoints,
           badges: user.badges || [],
           currentStreak: user.currentStreak || 0,
@@ -427,9 +427,13 @@ export const getMe = async (req, res) => {
       await user.save({ validateBeforeSave: false });
     }
 
+    const userResponse = user.toObject();
+    userResponse.isPremium = true;
+    userResponse.premiumType = 'Lifetime';
+
     res.status(200).json({
       success: true,
-      user,
+      user: userResponse,
     });
   } catch (error) {
     logger.error(`Get Me Error: ${error.message}`);
@@ -605,8 +609,8 @@ export const updateProfile = async (req, res) => {
         socialLinks: user.socialLinks,
         status: user.status,
         restrictions: user.restrictions,
-        isPremium: user.isPremium,
-        premiumType: user.premiumType,
+        isPremium: true,
+        premiumType: 'Lifetime',
         premiumEndDate: user.premiumEndDate,
         badges: user.badges || [],
         currentStreak: user.currentStreak || 0,
