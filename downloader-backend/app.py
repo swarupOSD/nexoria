@@ -35,6 +35,24 @@ for d in [DEFAULT_DOWNLOAD_DIR, AVATARS_DIR]:
 
 progress_tracker = {}
 
+# --- YT-DLP Base Config ---
+def get_base_ydl_opts():
+    opts = {
+        'source_address': '0.0.0.0',
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+        'extractor_args': {
+            'youtube': {'player_client': ['android', 'ios']},
+            'facebook': {'api': 'graphql'},
+            'tiktok': {'api_hostname': 'api16-normal-c-useast1a.tiktokv.com'}
+        }
+    }
+    cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
+    if os.path.exists(cookie_file) and os.path.getsize(cookie_file) > 10:
+        opts['cookiefile'] = cookie_file
+    return opts
+
 # --- Database Helpers ---
 def load_json(filepath, default):
     if not os.path.exists(filepath): return default
@@ -153,14 +171,11 @@ def get_info():
     if not url: return jsonify({'error': 'URL is required'}), 400
         
     try:
-        ydl_opts = {
+        ydl_opts = get_base_ydl_opts()
+        ydl_opts.update({
             'quiet': True, 
-            'extract_flat': 'in_playlist', 
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
-        }
-        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
-        if os.path.exists(cookie_file):
-            ydl_opts['cookiefile'] = cookie_file
+            'extract_flat': 'in_playlist'
+        })
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -283,18 +298,15 @@ def download_task(url, format_id, media_type, start_time, end_time, title, thumb
         download_dir = os.path.join(base_download_dir, category_dir)
         if not os.path.exists(download_dir): os.makedirs(download_dir)
             
-        ydl_opts = {
+        ydl_opts = get_base_ydl_opts()
+        ydl_opts.update({
             'outtmpl': os.path.join(download_dir, '%(title).100s.%(ext)s'),
             'restrictfilenames': True,
             'progress_hooks': [my_hook], 'noplaylist': True,
             'socket_timeout': 15,
             'retries': 10,
-            'fragment_retries': 10,
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
-        }
-        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
-        if os.path.exists(cookie_file):
-            ydl_opts['cookiefile'] = cookie_file
+            'fragment_retries': 10
+        })
         
         if start_time and end_time:
             s_sec = parse_time_to_seconds(start_time)
@@ -413,10 +425,8 @@ def search_yt():
     query = request.json.get('query')
     if not query: return jsonify({'error': 'Query required'}), 400
     try:
-        ydl_opts = {'quiet': True, 'extract_flat': True}
-        cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
-        if os.path.exists(cookie_file):
-            ydl_opts['cookiefile'] = cookie_file
+        ydl_opts = get_base_ydl_opts()
+        ydl_opts.update({'quiet': True, 'extract_flat': True})
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(f"ytsearch5:{query}", download=False)
             entries = [{'title': e.get('title'), 'url': e.get('url'), 'thumbnail': e.get('thumbnails', [{}])[0].get('url')} for e in info.get('entries', [])]
@@ -506,10 +516,8 @@ def batch_download_worker(urls):
     for url in urls:
         progress_tracker['batch_status'] = f'Downloading {url}...'
         try:
-            ydl_opts_info = {'quiet': True}
-            cookie_file = os.path.join(BASE_DIR, 'cookies.txt')
-            if os.path.exists(cookie_file):
-                ydl_opts_info['cookiefile'] = cookie_file
+            ydl_opts_info = get_base_ydl_opts()
+            ydl_opts_info.update({'quiet': True})
             with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
                 info = ydl.extract_info(url, download=False)
                 title = info.get('title', 'Unknown')

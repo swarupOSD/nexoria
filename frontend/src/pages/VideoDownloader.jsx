@@ -59,14 +59,7 @@ const VideoDownloader = () => {
             Download your favorite videos and music instantly. No hidden fees, no credit limits. Just pure, unadulterated high-speed downloading for all major social platforms.
           </motion.p>
 
-          <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.25 }}
-             className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-xl max-w-3xl mx-auto mb-8 text-sm text-left shadow-lg shadow-red-500/5 backdrop-blur-sm"
-          >
-             <strong><i className="fa-solid fa-circle-info mr-2"></i>Note on YouTube:</strong> Due to aggressive anti-bot protections rolled out by YouTube for cloud servers, YouTube downloads are currently restricted. However, <strong>Instagram, Facebook, X (Twitter), TikTok, and Reddit</strong> are 100% supported and working flawlessly!
-          </motion.div>
+
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
