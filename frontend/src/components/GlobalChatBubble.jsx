@@ -216,8 +216,8 @@ const GlobalChatBubble = () => {
     setInputValue(prev => prev + emojiObject.emoji);
   };
 
-  // Hide global chat completely on voice lounge page to prevent overlapping
-  if (location.pathname.includes('/voice-lounge')) {
+  // Hide global chat completely on voice lounge, secret lounge, and watch party pages to prevent overlapping
+  if (location.pathname.includes('/voice-lounge') || location.pathname.includes('/secret-lounge') || location.pathname.includes('/watch-party')) {
     return null;
   }
 
