@@ -113,12 +113,12 @@ const VoiceLounge = () => {
       });
 
       // Attach stream to dynamic audio element to avoid DOM mount race conditions
-      if (!audioRefs.current[targetUserId]) {
-        audioRefs.current[targetUserId] = new Audio();
-        audioRefs.current[targetUserId].autoplay = true;
+      // We rely on the React ref in the render method to attach the stream to the DOM element
+      // But we still attempt to play here if the ref is already set.
+      if (audioRefs.current[targetUserId]) {
+        audioRefs.current[targetUserId].srcObject = remoteStream;
+        audioRefs.current[targetUserId].play().catch(e => console.error("Audio play error:", e));
       }
-      audioRefs.current[targetUserId].srcObject = remoteStream;
-      audioRefs.current[targetUserId].play().catch(e => console.error("Audio play error:", e));
       
       setupSpeechDetection(remoteStream, targetUserId);
     };
@@ -479,8 +479,15 @@ const VoiceLounge = () => {
               {/* Hidden audio element to play remote stream */}
               {!p.isLocal && (
                 <audio 
-                  ref={el => audioRefs.current[p.userId || p._id] = el}
+                  ref={el => {
+                    audioRefs.current[p.userId || p._id] = el;
+                    if (el && p.stream && el.srcObject !== p.stream) {
+                      el.srcObject = p.stream;
+                      el.play().catch(e => console.error("Audio play error:", e));
+                    }
+                  }}
                   autoPlay 
+                  playsInline
                   className="hidden"
                 />
               )}
