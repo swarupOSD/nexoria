@@ -74,10 +74,16 @@ const VoiceLounge = () => {
       }
       const average = sum / bufferLength;
       
-      // Update speaking state
+      // Update speaking state locally and emit to others
       const isSpeaking = average > 10;
       setParticipants(prev => {
         if (!prev[userId] || prev[userId].isSpeaking === isSpeaking) return prev;
+        
+        // Emit to socket if this is the local user
+        if (socketRef.current && prev[userId].isLocal) {
+          socketRef.current.emit('isSpeaking', { isSpeaking, roomId: 'secret-lounge' });
+        }
+        
         return { ...prev, [userId]: { ...prev[userId], isSpeaking } };
       });
       
@@ -120,7 +126,8 @@ const VoiceLounge = () => {
         audioRefs.current[targetUserId].play().catch(e => console.error("Audio play error:", e));
       }
       
-      setupSpeechDetection(remoteStream, targetUserId);
+      // We don't setup speech detection for remote streams because it breaks audio playback on iOS/Safari (WebKit Bug 230623)
+      // Instead, we listen to the 'userSpeaking' socket event.
     };
 
     return peer;
@@ -259,6 +266,13 @@ const VoiceLounge = () => {
         }
       });
 
+      socket.on('userSpeaking', ({ userId, isSpeaking }) => {
+        setParticipants(prev => {
+          if (!prev[userId] || prev[userId].isSpeaking === isSpeaking) return prev;
+          return { ...prev, [userId]: { ...prev[userId], isSpeaking } };
+        });
+      });
+      
       socket.on('userLeftVoice', ({ userId }) => {
         if (peersRef.current[userId]) {
           peersRef.current[userId].close();

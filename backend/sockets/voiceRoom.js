@@ -76,4 +76,9 @@ export const registerVoiceRoomHandlers = (io, socket) => {
       });
     }
   });
+
+  socket.on('isSpeaking', ({ isSpeaking, roomId }) => {
+    if (!socket.user) return;
+    socket.to(roomId).emit('userSpeaking', { userId: socket.user._id, isSpeaking });
+  });
 };
