@@ -69,7 +69,8 @@ const SiteSettings = () => {
       music: false,
       arena: false,
       vipLounge: false,
-      classicSound: false
+      classicSound: false,
+      ytDownloader: false
     }
   });
 
@@ -147,6 +148,7 @@ const SiteSettings = () => {
           arena: settingsRes.data.underDevelopmentModules?.arena ?? false,
           vipLounge: settingsRes.data.underDevelopmentModules?.vipLounge ?? false,
           classicSound: settingsRes.data.underDevelopmentModules?.classicSound ?? false,
+          ytDownloader: settingsRes.data.underDevelopmentModules?.ytDownloader ?? false,
         }
       });
     }
@@ -557,7 +559,7 @@ const SiteSettings = () => {
             If you turn on "Under Development" for a module, regular users will see a Coming Soon page instead of the content. SuperAdmins and Admins can still access and test them normally.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {['apps', 'games', 'movies', 'music', 'arena', 'vipLounge', 'classicSound'].map((mod) => (
+            {['apps', 'games', 'movies', 'music', 'arena', 'vipLounge', 'classicSound', 'ytDownloader'].map((mod) => (
               <div key={mod} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
                 <input 
                   type="checkbox" 
@@ -567,7 +569,7 @@ const SiteSettings = () => {
                   className="w-5 h-5 text-red-600 bg-white border-slate-300 rounded focus:ring-red-500 dark:bg-slate-900 dark:border-slate-600" 
                 />
                 <label htmlFor={`ud_${mod}`} className="text-sm font-bold text-slate-700 dark:text-slate-300 capitalize cursor-pointer flex-1">
-                  {mod.replace(/([A-Z])/g, ' $1').trim()}
+                  {mod === 'ytDownloader' ? 'YT Downloader' : mod.replace(/([A-Z])/g, ' $1').trim()}
                 </label>
               </div>
             ))}

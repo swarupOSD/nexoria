@@ -115,7 +115,8 @@ const siteSettingsSchema = new mongoose.Schema(
       music: { type: Boolean, default: false },
       arena: { type: Boolean, default: false },
       vipLounge: { type: Boolean, default: false },
-      classicSound: { type: Boolean, default: false }
+      classicSound: { type: Boolean, default: false },
+      ytDownloader: { type: Boolean, default: false }
     },
     updatedBy: {
       type: mongoose.Schema.ObjectId,
