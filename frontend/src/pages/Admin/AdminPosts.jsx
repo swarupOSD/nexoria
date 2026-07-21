@@ -1,5 +1,5 @@
 import CustomSearchBar from '../../components/CustomSearchBar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -10,13 +10,20 @@ import BackButton from '../../components/BackButton';
 
 const AdminPosts = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearchQuery(searchQuery), 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const location = useLocation();
   const basePath = location.pathname.includes('/superadmin') ? '/superadmin/apps' : '/admin/posts';
 
   const [statusFilter, setStatusFilter] = useState('');
-  const { data: postsData, isLoading, refetch } = useGetAdminPostsQuery({ page, limit: 10, status: statusFilter });
+  const { data: postsData, isLoading, refetch } = useGetAdminPostsQuery({ page, limit: 10, status: statusFilter, search: debouncedSearchQuery });
   const [deletePost] = useDeletePostMutation();
   const [moderatePost] = useModeratePostMutation();
 

@@ -578,6 +578,9 @@ export const getAdminPosts = async (req, res) => {
     if (req.query.status) {
       matchStage.status = req.query.status;
     }
+    if (req.query.search) {
+      matchStage.title = { $regex: req.query.search, $options: 'i' };
+    }
 
     const total = await Post.countDocuments(matchStage);
     const posts = await Post.find(matchStage)
