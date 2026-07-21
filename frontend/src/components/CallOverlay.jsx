@@ -4,23 +4,33 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { usePermissions } from '../contexts/PermissionContext';
 
-let globalIceServers = [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:global.stun.twilio.com:3478' }
-];
+let globalIceServers = null;
+let fetchPromise = null;
 
-// Fetch TURN servers once when module loads
-fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57")
-  .then(res => res.json())
-  .then(servers => {
-    if (servers && servers.length > 0) {
-      globalIceServers = servers;
-    }
-  })
-  .catch(err => console.error("Failed to fetch TURN servers", err));
-
-const getIceServers = () => {
-  return { iceServers: globalIceServers };
+const getIceServers = async () => {
+  if (globalIceServers) return { iceServers: globalIceServers };
+  
+  if (!fetchPromise) {
+    fetchPromise = fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57")
+      .then(res => res.json())
+      .then(servers => {
+        if (servers && servers.length > 0) {
+          globalIceServers = servers;
+          return servers;
+        }
+        throw new Error("No servers returned");
+      })
+      .catch(err => {
+        console.error("Failed to fetch TURN servers", err);
+        return [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:global.stun.twilio.com:3478' }
+        ];
+      });
+  }
+  
+  const servers = await fetchPromise;
+  return { iceServers: servers };
 };
 
 const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isReceivingCall, callerSignal, callerInfo, onClose }) => {
@@ -45,8 +55,9 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
     iceQueueRef.current = [];
   };
 
-  const initiateCall = (mediaStream) => {
-    const peer = new RTCPeerConnection(getIceServers());
+  const initiateCall = async (mediaStream) => {
+    const iceServers = await getIceServers();
+    const peer = new RTCPeerConnection(iceServers);
     connectionRef.current = peer;
 
     mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
@@ -149,12 +160,13 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
     }
 
     navigator.mediaDevices.getUserMedia({ video: callType === 'video', audio: true })
-      .then((mediaStream) => {
+      .then(async (mediaStream) => {
         setStream(mediaStream);
         if (myVideo.current) myVideo.current.srcObject = mediaStream;
 
         setCallAccepted(true);
-        const peer = new RTCPeerConnection(getIceServers());
+        const iceServers = await getIceServers();
+        const peer = new RTCPeerConnection(iceServers);
         connectionRef.current = peer;
 
         mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));

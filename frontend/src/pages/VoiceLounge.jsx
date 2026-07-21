@@ -95,17 +95,7 @@ const VoiceLounge = () => {
   // Store ICE servers fetched from Metered API
   const iceServersRef = useRef([{ urls: 'stun:stun.l.google.com:19302' }]);
 
-  useEffect(() => {
-    // Fetch Metered TURN servers on mount
-    fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57")
-      .then(res => res.json())
-      .then(servers => {
-        if (servers && servers.length > 0) {
-          iceServersRef.current = servers;
-        }
-      })
-      .catch(err => console.error("Failed to fetch TURN servers", err));
-  }, []);
+  // We fetch Metered credentials before connecting to the socket to avoid race conditions.
 
   const createPeerConnection = (targetUserId) => {
     const peer = new RTCPeerConnection({ iceServers: iceServersRef.current });
@@ -174,6 +164,20 @@ const VoiceLounge = () => {
         }));
 
         setupSpeechDetection(stream, user._id);
+
+        // Fetch Metered TURN servers before connecting
+        if (iceServersRef.current.length === 1) {
+          try {
+            const res = await fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57");
+            const servers = await res.json();
+            if (servers && servers.length > 0) {
+              iceServersRef.current = servers;
+            }
+          } catch (err) {
+            console.error("Failed to fetch TURN servers", err);
+          }
+        }
+
         connectToSocket();
       } catch (err) {
         console.error("Mic error:", err);
