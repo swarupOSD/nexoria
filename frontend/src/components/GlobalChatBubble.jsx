@@ -459,7 +459,7 @@ const GlobalChatBubble = () => {
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       placeholder="Say something to the world..."
-                      className="flex-1 bg-black/40 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500 backdrop-blur-md"
+                      className="flex-1 min-w-0 bg-black/40 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500 backdrop-blur-md"
                     />
                     
                     {/* Voice Message Button */}

@@ -437,7 +437,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               className="hidden" 
             />
             
-            <div className="flex-1 bg-[#262626] rounded-full flex items-center px-2 py-1.5 border border-transparent focus-within:border-gray-600 transition-colors">
+            <div className="flex-1 min-w-0 bg-[#262626] rounded-full flex items-center px-2 py-1.5 border border-transparent focus-within:border-gray-600 transition-colors">
               <button 
                 type="button" 
                 onClick={() => fileInputRef.current?.click()}
