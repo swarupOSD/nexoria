@@ -92,19 +92,23 @@ const VoiceLounge = () => {
     checkAudioLevel();
   };
 
-  const createPeerConnection = (targetUserId) => {
-    const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
-    
-    // Add TURN server if configured
-    if (import.meta.env.VITE_TURN_URL) {
-      iceServers.push({
-        urls: import.meta.env.VITE_TURN_URL,
-        username: import.meta.env.VITE_TURN_USERNAME,
-        credential: import.meta.env.VITE_TURN_PASSWORD
-      });
-    }
+  // Store ICE servers fetched from Metered API
+  const iceServersRef = useRef([{ urls: 'stun:stun.l.google.com:19302' }]);
 
-    const peer = new RTCPeerConnection({ iceServers });
+  useEffect(() => {
+    // Fetch Metered TURN servers on mount
+    fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57")
+      .then(res => res.json())
+      .then(servers => {
+        if (servers && servers.length > 0) {
+          iceServersRef.current = servers;
+        }
+      })
+      .catch(err => console.error("Failed to fetch TURN servers", err));
+  }, []);
+
+  const createPeerConnection = (targetUserId) => {
+    const peer = new RTCPeerConnection({ iceServers: iceServersRef.current });
 
     peer.onicecandidate = (event) => {
       if (event.candidate && socketRef.current) {

@@ -4,21 +4,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { usePermissions } from '../contexts/PermissionContext';
 
+let globalIceServers = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:global.stun.twilio.com:3478' }
+];
+
+// Fetch TURN servers once when module loads
+fetch("https://nexoria.metered.live/api/v1/turn/credentials?apiKey=090219b02a902de22ab9423fad856c945b57")
+  .then(res => res.json())
+  .then(servers => {
+    if (servers && servers.length > 0) {
+      globalIceServers = servers;
+    }
+  })
+  .catch(err => console.error("Failed to fetch TURN servers", err));
+
 const getIceServers = () => {
-  const servers = [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:global.stun.twilio.com:3478' }
-  ];
-  
-  if (import.meta.env.VITE_TURN_URL) {
-    servers.push({
-      urls: import.meta.env.VITE_TURN_URL,
-      username: import.meta.env.VITE_TURN_USERNAME,
-      credential: import.meta.env.VITE_TURN_PASSWORD
-    });
-  }
-  
-  return { iceServers: servers };
+  return { iceServers: globalIceServers };
 };
 
 const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isReceivingCall, callerSignal, callerInfo, onClose }) => {
