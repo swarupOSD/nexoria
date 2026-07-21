@@ -4,11 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { usePermissions } from '../contexts/PermissionContext';
 
-const ICE_SERVERS = {
-  iceServers: [
+const getIceServers = () => {
+  const servers = [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:global.stun.twilio.com:3478' }
-  ]
+  ];
+  
+  if (import.meta.env.VITE_TURN_URL) {
+    servers.push({
+      urls: import.meta.env.VITE_TURN_URL,
+      username: import.meta.env.VITE_TURN_USERNAME,
+      credential: import.meta.env.VITE_TURN_PASSWORD
+    });
+  }
+  
+  return { iceServers: servers };
 };
 
 const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isReceivingCall, callerSignal, callerInfo, onClose }) => {
@@ -34,7 +44,7 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
   };
 
   const initiateCall = (mediaStream) => {
-    const peer = new RTCPeerConnection(ICE_SERVERS);
+    const peer = new RTCPeerConnection(getIceServers());
     connectionRef.current = peer;
 
     mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));
@@ -142,7 +152,7 @@ const CallOverlay = ({ user, socket, partner, roomData, callType = 'audio', isRe
         if (myVideo.current) myVideo.current.srcObject = mediaStream;
 
         setCallAccepted(true);
-        const peer = new RTCPeerConnection(ICE_SERVERS);
+        const peer = new RTCPeerConnection(getIceServers());
         connectionRef.current = peer;
 
         mediaStream.getTracks().forEach(track => peer.addTrack(track, mediaStream));

@@ -93,9 +93,18 @@ const VoiceLounge = () => {
   };
 
   const createPeerConnection = (targetUserId) => {
-    const peer = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    });
+    const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
+    
+    // Add TURN server if configured
+    if (import.meta.env.VITE_TURN_URL) {
+      iceServers.push({
+        urls: import.meta.env.VITE_TURN_URL,
+        username: import.meta.env.VITE_TURN_USERNAME,
+        credential: import.meta.env.VITE_TURN_PASSWORD
+      });
+    }
+
+    const peer = new RTCPeerConnection({ iceServers });
 
     peer.onicecandidate = (event) => {
       if (event.candidate && socketRef.current) {
