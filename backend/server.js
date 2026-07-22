@@ -66,7 +66,12 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 app.use(mongoSanitize());
-app.use(xss());
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/settings')) {
+    return next();
+  }
+  return xss()(req, res, next);
+});
 app.use(hpp());
 // CORS Config
 const allowedOrigins = [
