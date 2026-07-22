@@ -100,7 +100,7 @@ const ManageUsers = () => {
 
     for (const id of selectedUsersIds) {
       try {
-        if (action === 'delete') await deleteUser(id);
+        if (action === 'delete') await deleteUser(id).unwrap();
         if (action === 'ban') await banUser({ id, reason: 'Bulk Ban', days: null });
         if (action === 'suspend') await suspendUser({ id, reason: 'Bulk Suspend', days: 7 });
         if (action === 'restore') await restoreUser(id);

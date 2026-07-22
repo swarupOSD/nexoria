@@ -71,7 +71,7 @@ const AdminModeration = () => {
 
   const handleDeletePost = async (id) => {
     if (window.confirm('Delete this post permanently?')) {
-      await deletePost(id);
+      await deletePost(id).unwrap();
       refetchPosts();
     }
   };
@@ -89,7 +89,7 @@ const AdminModeration = () => {
 
   const handleDeleteReport = async (id) => {
     if (window.confirm('Delete this report?')) {
-      await deleteReport(id);
+      await deleteReport(id).unwrap();
       refetchReports();
     }
   };

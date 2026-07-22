@@ -24,7 +24,7 @@ const ManagePlans = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Delete this plan?')) {
-      await deletePlan(id);
+      await deletePlan(id).unwrap();
       refetch();
     }
   };

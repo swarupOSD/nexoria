@@ -110,7 +110,11 @@ const Notifications = () => {
 
   const handleDelete = async (e, id) => {
     e.stopPropagation();
-    await deleteNotification(id);
+    try {
+      await deleteNotification(id).unwrap();
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+    }
   };
 
   const handleTabChange = (category) => {
