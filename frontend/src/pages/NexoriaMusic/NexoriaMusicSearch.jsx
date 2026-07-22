@@ -26,9 +26,7 @@ const NexoriaMusicSearch = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: searchRes, isLoading, isFetching } = useSearchNexoriaMusicQuery(debouncedTerm, {
-    skip: debouncedTerm.length < 2,
-  });
+  const { data: searchRes, isLoading, isFetching } = useSearchNexoriaMusicQuery(debouncedTerm);
 
   const results = searchRes?.data || { tracks: [], albums: [], artists: [] };
   const hasResults = results.tracks.length > 0 || results.albums.length > 0 || results.artists.length > 0;
@@ -81,31 +79,22 @@ const NexoriaMusicSearch = () => {
         </div>
 
         {/* Loading State */}
-        {(isLoading || isFetching) && debouncedTerm.length >= 2 && (
+        {(isLoading || isFetching) && (
           <div className="flex justify-center my-12">
             <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
-        {/* Empty State / Initial */}
-        {debouncedTerm.length < 2 && (
-          <div className="text-center py-20 text-slate-400">
-            <SearchIcon className="w-16 h-16 mx-auto mb-4 opacity-20" />
-            <h2 className="text-xl font-bold text-white mb-2">Search Nexoria Music</h2>
-            <p>Find your favorite tracks, artists, and albums.</p>
-          </div>
-        )}
-
         {/* No Results */}
-        {debouncedTerm.length >= 2 && !isLoading && !isFetching && !hasResults && (
+        {!isLoading && !isFetching && !hasResults && (
           <div className="text-center py-20 text-slate-400">
-            <h2 className="text-xl font-bold text-white mb-2">No results found for "{debouncedTerm}"</h2>
+            <h2 className="text-xl font-bold text-white mb-2">No results found</h2>
             <p>Please make sure your words are spelled correctly or use less or different keywords.</p>
           </div>
         )}
 
         {/* Results */}
-        {debouncedTerm.length >= 2 && !isLoading && hasResults && (
+        {!isLoading && !isFetching && hasResults && (
           <div className="space-y-12">
             
             {/* Top Result & Songs */}

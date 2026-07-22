@@ -157,6 +157,7 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Trending Tracks</h3>
+            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1">
             {loadingTracks ? (
