@@ -89,7 +89,7 @@ app.use(securityGuard);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // STRICT LIMIT: Maximum 20 login/register attempts to prevent Brute Force & Credential Stuffing
+  max: 500, // Increased to 500 so you can easily test logins without getting blocked
   message: { success: false, message: 'Too many authentication attempts. Your IP has been temporarily blocked for 15 minutes to prevent hacking.' },
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl, type: 'Auth Brute Force Attempt' } });
