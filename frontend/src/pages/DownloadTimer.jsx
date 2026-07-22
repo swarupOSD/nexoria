@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTrackDownloadMutation } from '../features/download/downloadApiSlice';
@@ -11,6 +11,7 @@ const DownloadTimer = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state;
+  const bannerRef = useRef(null);
 
   const [step, setStep] = useState(1);
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer per step
@@ -27,6 +28,22 @@ const DownloadTimer = () => {
     if (user.role === 'admin' || user.role === 'superadmin' || user.role === 'owner') return false;
     return true;
   };
+
+  useEffect(() => {
+    if (shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && bannerRef.current) {
+      const scripts = bannerRef.current.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        if (oldScript.dataset.processed) return;
+        
+        const newScript = document.createElement('script');
+        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+        newScript.dataset.processed = "true";
+      });
+    }
+  }, [settingsRes, user]);
+
   useEffect(() => {
     if (!state?.postId || !state?.linkId) {
       toast.error('Invalid download link!');
@@ -79,18 +96,10 @@ const DownloadTimer = () => {
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 py-12">
       <div className="w-full max-w-4xl mb-6">
         {shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && (
-          <iframe
-            title="Download Timer Ad Top"
-            srcDoc={`
-              <!DOCTYPE html>
-              <html>
-                <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
-                <body>${settingsRes.data.ads.downloadBannerScript}</body>
-              </html>
-            `}
-            className="w-full min-h-[90px] border-none overflow-hidden"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            scrolling="no"
+          <div 
+            ref={bannerRef} 
+            dangerouslySetInnerHTML={{ __html: settingsRes.data.ads.downloadBannerScript }} 
+            className="w-full min-h-[90px] flex justify-center items-center overflow-hidden"
           />
         )}
         <AdPlacement location="DownloadSection" />
