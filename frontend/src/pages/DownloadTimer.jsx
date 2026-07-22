@@ -22,6 +22,9 @@ const DownloadTimer = () => {
 
   const shouldShowAds = () => {
     if (!settingsRes?.data?.ads?.enabled) return false;
+    if (!user) return true;
+    if (user.isPremium) return false;
+    if (user.role === 'admin' || user.role === 'superadmin' || user.role === 'owner') return false;
     return true;
   };
   useEffect(() => {
@@ -75,6 +78,21 @@ const DownloadTimer = () => {
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 py-12">
       <div className="w-full max-w-4xl mb-6">
+        {shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && (
+          <iframe
+            title="Download Timer Ad Top"
+            srcDoc={`
+              <!DOCTYPE html>
+              <html>
+                <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
+                <body>${settingsRes.data.ads.downloadBannerScript}</body>
+              </html>
+            `}
+            className="w-full min-h-[90px] border-none overflow-hidden"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            scrolling="no"
+          />
+        )}
         <AdPlacement location="DownloadSection" />
       </div>
       
@@ -136,6 +154,21 @@ const DownloadTimer = () => {
         )}
         
         <div className="w-full mt-6">
+          {shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && (
+            <iframe
+              title="Download Timer Ad"
+              srcDoc={`
+                <!DOCTYPE html>
+                <html>
+                  <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
+                  <body>${settingsRes.data.ads.downloadBannerScript}</body>
+                </html>
+              `}
+              className="w-full min-h-[250px] border-none overflow-hidden"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              scrolling="no"
+            />
+          )}
           <AdPlacement location="DownloadSection" />
         </div>
       </div>

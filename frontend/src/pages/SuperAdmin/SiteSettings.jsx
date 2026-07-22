@@ -492,6 +492,11 @@ const SiteSettings = () => {
               <input type="text" name="ads_smartlinkUrl" value={formData.ads?.smartlinkUrl || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, smartlinkUrl: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder="https://..." />
               <p className="text-xs text-slate-500 mt-1">This will trigger conditionally (e.g. on Download button click) to generate revenue.</p>
             </div>
+            <div className="pt-4 border-t border-slate-200 dark:border-night-border">
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Page Banner Script (HTML/JS)</label>
+              <textarea rows="3" name="ads_downloadBannerScript" value={formData.ads?.downloadBannerScript || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, downloadBannerScript: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder='<script>...</script>'></textarea>
+              <p className="text-xs text-slate-500 mt-1">This banner ad will be displayed directly inside the 30-second download timer page.</p>
+            </div>
           </div>
         </motion.div>
         

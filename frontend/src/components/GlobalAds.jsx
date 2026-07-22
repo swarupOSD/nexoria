@@ -13,8 +13,8 @@ const GlobalAds = () => {
   useEffect(() => {
     if (isLoading || !settingsRes?.data || scriptInjectedRef.current) return;
     
-    // Check if ads are globally enabled
-    if (settingsRes.data.ads?.enabled === false) return;
+    // Check if ads are globally enabled and user is not exempt
+    if (isAdmin || isPremiumUser || settingsRes.data.ads?.enabled === false) return;
 
     const socialBarScriptCode = settingsRes.data.ads?.socialBarScript;
     if (!socialBarScriptCode) return;
