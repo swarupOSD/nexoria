@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import QRPaymentModal from '../components/QRPaymentModal';
 import SEO from '../components/SEO';
+import BackButton from '../components/BackButton';
 
 const Premium = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -95,6 +96,9 @@ const Premium = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="container mx-auto px-4 pt-24 pb-16 text-center max-w-5xl relative z-10"
       >
+        <div className="absolute top-8 left-4 md:left-8">
+          <BackButton fallbackRoute="/" />
+        </div>
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

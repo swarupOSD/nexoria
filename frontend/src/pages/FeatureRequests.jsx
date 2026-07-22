@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { Heart, Plus, X, Loader2, Film, Gamepad2, Smartphone, Wrench, CheckCircle, AlertCircle, Tv } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 
 const FeatureRequests = () => {
   const { user } = useSelector((state) => state.auth);
@@ -96,6 +97,9 @@ const FeatureRequests = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header Section */}
+        <div className="mb-6">
+          <BackButton fallbackRoute="/" />
+        </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative group bg-white/5 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden">
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-600/20 blur-2xl rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
           <div className="relative z-10">
