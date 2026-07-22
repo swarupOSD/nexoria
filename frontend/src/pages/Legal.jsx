@@ -88,7 +88,6 @@ const Legal = () => {
       </div>
       <div className="max-w-4xl mx-auto space-y-8 relative z-10 px-4">
       <SEO 
-      <SEO 
         title={data.title}
         description={`Read the ${data.title} of ${siteName}.`}
       />
