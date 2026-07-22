@@ -200,22 +200,20 @@ export const deleteTrack = async (req, res) => {
 export const searchMusic = async (req, res) => {
   try {
     const { q } = req.query;
-    if (!q) {
-      return res.status(200).json({ success: true, data: { tracks: [], albums: [], artists: [] } });
-    }
+    const trackQuery = q ? { title: new RegExp(q, 'i') } : {};
+    const albumQuery = q ? { title: new RegExp(q, 'i') } : {};
+    const artistQuery = q ? { name: new RegExp(q, 'i') } : {};
 
-    const regex = new RegExp(q, 'i');
-
-    const tracks = await NexoriaTrack.find({ title: regex })
+    const tracks = await NexoriaTrack.find(trackQuery)
       .populate('artist', 'name image')
       .populate('album', 'title coverImage')
-      .limit(10);
+      .limit(50);
 
-    const albums = await NexoriaAlbum.find({ title: regex })
+    const albums = await NexoriaAlbum.find(albumQuery)
       .populate('artist', 'name image')
-      .limit(10);
+      .limit(20);
 
-    const artists = await NexoriaArtist.find({ name: regex }).limit(10);
+    const artists = await NexoriaArtist.find(artistQuery).limit(50);
 
     res.status(200).json({
       success: true,
