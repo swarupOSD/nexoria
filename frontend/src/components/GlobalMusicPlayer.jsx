@@ -64,8 +64,11 @@ const GlobalMusicPlayer = () => {
       if (isPlaying) {
         audioRef.current.play().then(() => {
           resumeContext(); // Ensure Web Audio API is resumed
-        }).catch(() => {
-          dispatch(setPlaying(false));
+        }).catch((err) => {
+          // Don't pause if the play request was interrupted by a new track loading
+          if (err.name !== 'AbortError') {
+            dispatch(setPlaying(false));
+          }
         });
       } else {
         audioRef.current.pause();
@@ -289,7 +292,9 @@ const GlobalMusicPlayer = () => {
             onCanPlay={() => {
               // onCanPlay fires after mount + src ready — audioRef.current is guaranteed set here
               if (isPlaying && audioRef.current) {
-                audioRef.current.play().catch(() => dispatch(setPlaying(false)));
+                audioRef.current.play().catch((err) => {
+                  if (err.name !== 'AbortError') dispatch(setPlaying(false));
+                });
               }
             }}
             onPlaying={() => dispatch(setPlaying(true))}
