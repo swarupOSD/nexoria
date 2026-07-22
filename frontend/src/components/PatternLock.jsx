@@ -21,17 +21,7 @@ const PatternLock = ({
   // Create an array of 9 dots
   const dots = Array.from({ length: GRID_SIZE * GRID_SIZE }, (_, i) => i);
 
-  const getDotCenter = useCallback((index) => {
-    if (!dotsRef.current[index] || !containerRef.current) return null;
-    const dot = dotsRef.current[index];
-    const rect = dot.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
-    
-    return {
-      x: rect.left - containerRect.left + rect.width / 2,
-      y: rect.top - containerRect.top + rect.height / 2
-    };
-  }, []);
+  const [dotCenters, setDotCenters] = useState({});
 
   // Update layout when window resizes
   useEffect(() => {
@@ -44,6 +34,23 @@ const PatternLock = ({
       clearTimeout(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newCenters = {};
+    dots.forEach(dotIndex => {
+      const dot = dotsRef.current[dotIndex];
+      if (dot) {
+        const rect = dot.getBoundingClientRect();
+        newCenters[dotIndex] = {
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top + rect.height / 2
+        };
+      }
+    });
+    setDotCenters(newCenters);
+  }, [forceRender, dots]);
 
   const handlePointerDown = (e, index) => {
     // Only start if not already drawing and not showing an error/success animation
@@ -142,8 +149,8 @@ const PatternLock = ({
           {/* Static lines for locked pattern */}
           {pattern.map((dotIndex, i) => {
             if (i === 0) return null;
-            const prevDot = getDotCenter(pattern[i - 1]);
-            const currDot = getDotCenter(dotIndex);
+            const prevDot = dotCenters[pattern[i - 1]];
+            const currDot = dotCenters[dotIndex];
             
             if (!prevDot || !currDot) return null;
 
@@ -165,8 +172,8 @@ const PatternLock = ({
           {/* Dynamic line to pointer cursor */}
           {isDrawing && currentPoint && pattern.length > 0 && (
             <line
-              x1={getDotCenter(pattern[pattern.length - 1])?.x || 0}
-              y1={getDotCenter(pattern[pattern.length - 1])?.y || 0}
+              x1={dotCenters[pattern[pattern.length - 1]]?.x || 0}
+              y1={dotCenters[pattern[pattern.length - 1]]?.y || 0}
               x2={currentPoint.x}
               y2={currentPoint.y}
               stroke="#8b5cf6"

@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, Play, Heart, Compass, Library, MoreVertical, X, Download, ListPlus, Link2, ChevronLeft } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 import { useSearchNexoriaMusicQuery } from '../../features/api/nexoriaMusicApiSlice';
-import { playTrack, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
+import { playTrack, toggleLikeTrack, addToQueue, setQueue } from '../../features/music/nexoriaMusicSlice';
 import DropdownMenu from '../../components/DropdownMenu';
 import toast from 'react-hot-toast';
 

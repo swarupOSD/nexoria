@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useGetMyContactMessagesQuery, useCreateContactMessageMutation, useReplyContactMessageMutation } from '../features/contact/contactApiSlice';
 import { toast } from 'react-hot-toast';
 import { io } from 'socket.io-client';
+import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import BackButton from '../components/BackButton';
 
