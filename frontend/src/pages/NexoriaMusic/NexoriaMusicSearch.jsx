@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, Play, Heart, Compass, Library, MoreVertical, X, Download, ListPlus, Link2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchNexoriaMusicQuery } from '../../features/api/nexoriaMusicApiSlice';
 import { playTrack, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
@@ -10,9 +10,13 @@ import toast from 'react-hot-toast';
 
 const NexoriaMusicSearch = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialQuery = queryParams.get('q') || '';
+  
   const { likedTracks } = useSelector(state => state.nexoriaMusic);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedTerm, setDebouncedTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(initialQuery);
+  const [debouncedTerm, setDebouncedTerm] = useState(initialQuery);
 
   // Debounce search term to prevent excessive API calls
   useEffect(() => {

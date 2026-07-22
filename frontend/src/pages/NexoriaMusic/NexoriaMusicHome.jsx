@@ -272,13 +272,18 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Featured Artists</h3>
+            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {loadingArtists ? (
               [1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-[3/4] rounded-xl bg-white/5 animate-pulse" />)
             ) : (
-              artists.slice(0, 6).map(artist => (
-                <div key={artist._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col items-center">
+              artists.slice(0, 12).map(artist => (
+                <div 
+                  key={artist._id} 
+                  className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col items-center"
+                  onClick={() => navigate(`/nexoria-music/search?q=${encodeURIComponent(artist.name)}`)}
+                >
                   <div className="w-full aspect-square rounded-full overflow-hidden relative shadow-[0_8px_24px_rgba(0,0,0,0.5)] mb-4">
                     {artist.image ? (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
@@ -290,7 +295,27 @@ const NexoriaMusicHome = () => {
                     
                     {/* Spotify-like Green/Purple Play Button on Hover */}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
-                      <button className="bg-purple-500 text-white p-3 rounded-full shadow-xl hover:scale-105 hover:bg-purple-400">
+                      <button 
+                        className="bg-purple-500 text-white p-3 rounded-full shadow-xl hover:scale-105 hover:bg-purple-400"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const artistTracks = tracks.filter(t => t.artist?.name === artist.name);
+                          if (artistTracks.length > 0) {
+                            const firstTrack = artistTracks[0];
+                            const audioEl = document.getElementById('nexoria-global-audio');
+                            if (audioEl) {
+                              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                              const newSrc = firstTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${firstTrack.telegramFileId}` : firstTrack.audioUrl || "";
+                              audioEl.src = newSrc;
+                              audioEl.play().catch(err => console.log(err));
+                            }
+                            dispatch(setQueue(artistTracks.slice(1)));
+                            dispatch(playTrack(firstTrack));
+                          } else {
+                            toast.error("No songs found for this artist!");
+                          }
+                        }}
+                      >
                         <Play className="w-6 h-6 fill-current translate-x-0.5" />
                       </button>
                     </div>
