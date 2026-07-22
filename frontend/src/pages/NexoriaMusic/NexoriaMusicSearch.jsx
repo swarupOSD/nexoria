@@ -157,7 +157,7 @@ const NexoriaMusicSearch = () => {
                 <div className={results.artists.length === 0 ? "md:col-span-2" : ""}>
                   <h3 className="text-2xl font-bold mb-6">Songs</h3>
                   <div className="flex flex-col gap-2">
-                    {results.tracks.slice(0, 4).map((track, idx) => (
+                    {results.tracks.map((track, idx) => (
                       <div key={track._id} className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 group transition-colors cursor-pointer">
                         <div className="relative w-12 h-12 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden shadow-md">
                           {track.coverImage || track.album?.coverImage || track.artist?.image ? (
@@ -169,6 +169,14 @@ const NexoriaMusicSearch = () => {
                             className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                             onClick={(e) => {
                               e.stopPropagation();
+                              const audioEl = document.getElementById('nexoria-global-audio');
+                              if (audioEl) {
+                                const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                                const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
+                                audioEl.src = newSrc;
+                                audioEl.play().catch(err => console.log(err));
+                              }
+                              dispatch(setQueue(results.tracks.slice(idx + 1)));
                               dispatch(playTrack(track));
                             }}
                           >
