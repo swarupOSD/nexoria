@@ -7,6 +7,7 @@ import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import CustomSearchBar from '../components/CustomSearchBar';
 import FallbackImage from '../components/FallbackImage';
 import SEO from '../components/SEO';
+import BackButton from '../components/BackButton';
 
 const AppCard = React.memo(({ app }) => {
   const isPremium = app.isPremium || app.premiumOnly;
@@ -81,6 +82,9 @@ const CategoryPage = ({ type }) => {
       
       {/* Category Banner / Hero */}
       <div className="relative bg-[#111] border-b border-white/5 overflow-hidden mb-10">
+        <div className="absolute top-6 left-6 z-20">
+          <BackButton fallbackRoute="/" />
+        </div>
         {currentCategory?.banner && !isAppHub && (
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay" 

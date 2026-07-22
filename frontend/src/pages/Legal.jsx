@@ -3,6 +3,7 @@ import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import SEO from '../components/SEO';
+import BackButton from '../components/BackButton';
 
 const Legal = () => {
   const { pageSlug } = useParams();
@@ -87,9 +88,14 @@ const Legal = () => {
       </div>
       <div className="max-w-4xl mx-auto space-y-8 relative z-10 px-4">
       <SEO 
+      <SEO 
         title={data.title}
         description={`Read the ${data.title} of ${siteName}.`}
       />
+
+      <div className="mb-6">
+        <BackButton fallbackRoute="/" />
+      </div>
 
       <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
         <h1 className="text-4xl font-black mb-8 text-white border-b border-white/10 pb-6 tracking-tight">{data.title}</h1>

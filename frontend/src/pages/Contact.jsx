@@ -5,6 +5,7 @@ import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send, MessageSquare, Briefcase, HelpCircle, AlertCircle, CheckCircle2 } from 'lucide-react';
 import HeroDisplay from '../components/HeroDisplay';
+import BackButton from '../components/BackButton';
 
 const Contact = () => {
   const { data: settingsRes } = useGetSettingsQuery();
@@ -83,6 +84,9 @@ const Contact = () => {
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         
         {/* Header */}
+        <div className="mb-8">
+          <BackButton fallbackRoute="/" />
+        </div>
         <div className="text-center mb-16">
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center justify-center p-4 bg-white/5 border border-white/10 rounded-2xl mb-6 shadow-inner backdrop-blur-md">
             <MessageSquare className="w-8 h-8 text-blue-400" />
