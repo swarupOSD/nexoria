@@ -109,7 +109,7 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">All Songs</h3>
-            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
+            <Link to="/nexoria-music/search?tab=songs" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           {loadingTracks ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -166,7 +166,7 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Trending Tracks</h3>
-            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
+            <Link to="/nexoria-music/search?tab=songs" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1">
             {loadingTracks ? (
@@ -282,7 +282,7 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">Featured Artists</h3>
-            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
+            <Link to="/nexoria-music/search?tab=artists" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {loadingArtists ? (

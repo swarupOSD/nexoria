@@ -18,6 +18,13 @@ const NexoriaMusicSearch = () => {
   const { likedTracks } = useSelector(state => state.nexoriaMusic);
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [debouncedTerm, setDebouncedTerm] = useState(initialQuery);
+  const initialTab = queryParams.get('tab') || 'all';
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    const tab = queryParams.get('tab');
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   // Debounce search term to prevent excessive API calls
   useEffect(() => {
@@ -87,6 +94,21 @@ const NexoriaMusicSearch = () => {
           </div>
         </div>
 
+        {/* Tabs */}
+        {hasResults && (
+          <div className="flex items-center gap-4 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            {['all', 'songs', 'artists', 'albums'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 rounded-full text-sm font-bold capitalize whitespace-nowrap transition-colors ${activeTab === tab ? 'bg-white text-black' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Loading State */}
         {(isLoading || isFetching) && (
           <div className="flex justify-center my-12">
@@ -107,10 +129,11 @@ const NexoriaMusicSearch = () => {
           <div className="space-y-12">
             
             {/* Top Result & Songs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              
-              {/* Left: Top Result (Artists usually, or top track) */}
-              {results.artists.length > 0 && (
+            {(activeTab === 'all' || activeTab === 'songs') && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                {/* Left: Top Result (Artists usually, or top track) */}
+                {activeTab === 'all' && results.artists.length > 0 && (
                 <div>
                   <h3 className="text-2xl font-bold mb-6">Top Result</h3>
                   <div className="bg-white/5 hover:bg-white/10 transition-colors p-6 rounded-3xl cursor-pointer group"
@@ -163,7 +186,7 @@ const NexoriaMusicSearch = () => {
 
               {/* Right: Songs */}
               {results.tracks.length > 0 && (
-                <div className={results.artists.length === 0 ? "md:col-span-2" : ""}>
+                <div className={activeTab === 'all' && results.artists.length === 0 ? "md:col-span-2" : (activeTab === 'songs' ? "md:col-span-2" : "")}>
                   <h3 className="text-2xl font-bold mb-6">Songs</h3>
                   <div className="flex flex-col gap-2">
                     {results.tracks.map((track, idx) => (
@@ -260,13 +283,14 @@ const NexoriaMusicSearch = () => {
                 </div>
               )}
             </div>
+            )}
 
             {/* Artists */}
-            {results.artists.length > 1 && (
+            {(activeTab === 'all' || activeTab === 'artists') && results.artists.length > (activeTab === 'all' ? 1 : 0) && (
               <section>
                 <h3 className="text-2xl font-bold mb-6">Artists</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {results.artists.slice(1).map(artist => (
+                  {results.artists.slice(activeTab === 'all' ? 1 : 0).map(artist => (
                     <div 
                       key={artist._id} 
                       className="flex flex-col items-center gap-3 group cursor-pointer bg-white/5 hover:bg-white/10 p-4 rounded-2xl transition-colors relative"
@@ -321,7 +345,7 @@ const NexoriaMusicSearch = () => {
             )}
 
             {/* Albums */}
-            {results.albums.length > 0 && (
+            {(activeTab === 'all' || activeTab === 'albums') && results.albums.length > 0 && (
               <section>
                 <h3 className="text-2xl font-bold mb-6">Albums</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
