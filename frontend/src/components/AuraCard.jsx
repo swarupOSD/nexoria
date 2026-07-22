@@ -103,7 +103,6 @@ const AuraCard = () => {
             </div>
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight mb-1">{aura.username}</h2>
-          <p className="text-xs text-white/60 font-medium">Ranked #{Math.floor(Math.random() * 500) + 1} Globably</p>
         </div>
 
         {/* Aura Score */}

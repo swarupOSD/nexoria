@@ -14,7 +14,7 @@ const LiveMonitor = () => {
   const [notifications, setNotifications] = useState([]);
   
   // Fake server stats that "update" live for the demo (since we don't have real OS stats from Node)
-  const [serverStats, setServerStats] = useState({ cpu: 12, memory: 45, connections: 0 });
+  const [serverStats, setServerStats] = useState({ connections: 0 });
 
   useEffect(() => {
     if (!socket) return;
@@ -45,22 +45,12 @@ const LiveMonitor = () => {
       setLiveRevenue(prev => [rev, ...prev].slice(0, 10));
     });
 
-    // Mock CPU/Memory fluctuation
-    const interval = setInterval(() => {
-      setServerStats(prev => ({
-        ...prev,
-        cpu: Math.max(5, Math.min(95, prev.cpu + (Math.random() * 10 - 5))),
-        memory: Math.max(20, Math.min(90, prev.memory + (Math.random() * 4 - 2)))
-      }));
-    }, 3000);
-
     return () => {
       socket.off('onlineStats');
       socket.off('newActivity');
       socket.off('liveDownload');
       socket.off('newNotification');
       socket.off('liveRevenue');
-      clearInterval(interval);
     };
   }, [socket]);
 
@@ -115,23 +105,8 @@ const LiveMonitor = () => {
         <div className="glass-card p-6">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Database className="text-blue-500 w-5 h-5"/> Server Status</h3>
           <div className="space-y-6">
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm font-semibold flex items-center gap-1"><Cpu className="w-4 h-4"/> CPU Usage</span>
-                <span className="text-sm font-bold">{serverStats.cpu.toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${serverStats.cpu}%` }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm font-semibold flex items-center gap-1"><HardDrive className="w-4 h-4"/> Memory Usage</span>
-                <span className="text-sm font-bold">{serverStats.memory.toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                <div className="bg-purple-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${serverStats.memory}%` }}></div>
-              </div>
+            <div className="text-sm text-slate-500 italic mb-4">
+              Real-time hardware monitoring is not available on the current host.
             </div>
             <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex justify-between items-center border border-slate-200 dark:border-slate-700">
               <span className="text-sm font-bold">Active Connections</span>
