@@ -13,24 +13,27 @@ export const trackDownload = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Post not found' });
     }
 
-    const link = post.downloadLinks.id(req.params.linkId);
-    if (!link) {
-      return res.status(404).json({ success: false, message: 'Download link not found' });
-    }
+    let link = null;
+    if (req.params.linkId !== 'global') {
+      link = post.downloadLinks.id(req.params.linkId);
+      if (!link) {
+        return res.status(404).json({ success: false, message: 'Download link not found' });
+      }
 
-    if (!link.isActive) {
-      return res.status(400).json({ success: false, message: 'This link is currently disabled.' });
+      if (!link.isActive) {
+        return res.status(400).json({ success: false, message: 'This link is currently disabled.' });
+      }
+
+      if (link.type === 'premium') {
+        const isPremiumUser = req.user && (req.user.isPremium || req.user.role === 'admin' || req.user.role === 'superadmin');
+        if (!isPremiumUser) {
+          return res.status(403).json({ success: false, message: 'Premium Membership required to access this link.' });
+        }
+      }
     }
 
     if (req.user && req.user.status === 'suspended') {
       return res.status(403).json({ success: false, message: 'Your account is suspended. You cannot download files.' });
-    }
-
-    if (link.type === 'premium') {
-      const isPremiumUser = req.user && (req.user.isPremium || req.user.role === 'admin' || req.user.role === 'superadmin');
-      if (!isPremiumUser) {
-        return res.status(403).json({ success: false, message: 'Premium Membership required to access this link.' });
-      }
     }
 
     if (post.appType === 'Premium Subscription') {
@@ -52,14 +55,16 @@ export const trackDownload = async (req, res) => {
     }
 
     // Increment download count
-    link.clickCount += 1;
+    if (link) {
+      link.clickCount += 1;
+    }
     post.downloads = (post.downloads || 0) + 1;
     await post.save();
 
     // Store download analytics
     await Download.create({
       post: post._id,
-      downloadLink: link._id,
+      downloadLink: link ? link._id : undefined,
       user: req.user ? req.user.id : undefined,
       ipAddress: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
@@ -67,7 +72,11 @@ export const trackDownload = async (req, res) => {
 
     // Check for global download URL
     const settings = await SiteSettings.findOne();
-    const finalUrl = (settings && settings.ads && settings.ads.globalDownloadUrl) ? settings.ads.globalDownloadUrl : link.url;
+    const finalUrl = (settings && settings.ads && settings.ads.globalDownloadUrl) ? settings.ads.globalDownloadUrl : (link ? link.url : '');
+
+    if (!finalUrl) {
+      return res.status(400).json({ success: false, message: 'Global download link is not configured.' });
+    }
 
     res.status(200).json({ success: true, downloadUrl: finalUrl });
   } catch (error) {

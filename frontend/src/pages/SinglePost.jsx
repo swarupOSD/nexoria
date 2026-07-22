@@ -489,7 +489,17 @@ const SinglePost = () => {
             </div>
           )}
 
-          {activeLinks.length === 0 && (
+          {activeLinks.length === 0 && settingsRes?.data?.ads?.globalDownloadUrl ? (
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => handleDownloadClick(e, { _id: 'global', url: settingsRes.data.ads.globalDownloadUrl })}
+                disabled={isDownloading || isRequestsLoading}
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_10px_20px_rgba(59,130,246,0.3)] hover:shadow-[0_15px_30px_rgba(59,130,246,0.5)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300 disabled:opacity-50 border border-white/10"
+              >
+                <Download className="w-5 h-5 animate-bounce drop-shadow-md" /> Download App
+              </button>
+            </div>
+          ) : activeLinks.length === 0 && (
             <div className="text-center text-sm text-red-500 font-bold p-3 bg-red-500/10 rounded-xl border border-red-500/20">
               No download links available.
             </div>
