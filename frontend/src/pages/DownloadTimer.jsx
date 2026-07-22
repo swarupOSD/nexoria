@@ -22,9 +22,6 @@ const DownloadTimer = () => {
 
   const shouldShowAds = () => {
     if (!settingsRes?.data?.ads?.enabled) return false;
-    if (!user) return true;
-    if (user.isPremium) return false;
-    if (user.role === 'admin' || user.role === 'superadmin') return false;
     return true;
   };
   useEffect(() => {

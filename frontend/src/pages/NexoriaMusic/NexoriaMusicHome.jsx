@@ -99,35 +99,54 @@ const NexoriaMusicHome = () => {
         {/* New Releases (Albums) */}
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">New Releases</h3>
+            <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">All Songs</h3>
             <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
-          {loadingAlbums ? (
+          {loadingTracks ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-[3/4] bg-white/5 rounded-xl animate-pulse" />)}
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {albums.slice(0, 6).map(album => (
-                <div key={album._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col">
+              {tracks.slice(0, 12).map(track => (
+                <div key={track._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-xl group cursor-pointer transition-all duration-300 flex flex-col"
+                  onClick={() => {
+                    if (currentTrack?._id === track._id) {
+                      dispatch(togglePlayPause());
+                    } else {
+                      const audioEl = document.getElementById('nexoria-global-audio');
+                      if (audioEl) {
+                        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
+                        audioEl.src = newSrc;
+                        audioEl.play().catch(err => console.log(err));
+                      }
+                      dispatch(setQueue(tracks));
+                      dispatch(playTrack(track));
+                    }
+                  }}
+                >
                   <div className="relative aspect-square rounded-md overflow-hidden mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
-                    {album.coverImage ? (
-                      <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
+                    {track.coverImage || track.album?.coverImage || track.artist?.image ? (
+                      <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-[#282828] flex items-center justify-center">
-                        <span className="text-slate-500">No Image</span>
+                      <div className="w-full h-full bg-[#282828] flex items-center justify-center bg-gradient-to-br from-purple-500/20 to-blue-500/20">
+                        <span className="text-slate-500 text-xs text-center px-2">No Image</span>
                       </div>
                     )}
                     
-                    {/* Spotify-like Green/Purple Play Button on Hover */}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
                       <button className="bg-purple-500 text-white p-3 rounded-full shadow-xl hover:scale-105 hover:bg-purple-400">
-                        <Play className="w-6 h-6 fill-current translate-x-0.5" />
+                        {currentTrack?._id === track._id && isPlaying ? (
+                          <Pause className="w-6 h-6 fill-current" />
+                        ) : (
+                          <Play className="w-6 h-6 fill-current translate-x-0.5" />
+                        )}
                       </button>
                     </div>
                   </div>
-                  <h4 className="font-bold text-white truncate text-base mb-1">{album.title}</h4>
-                  <p className="text-[#a7a7a7] text-sm truncate font-medium line-clamp-2">{album.artist?.name || 'Unknown'}</p>
+                  <h4 className="font-bold text-white truncate text-base mb-1">{track.title}</h4>
+                  <p className="text-[#a7a7a7] text-sm truncate font-medium line-clamp-2">{track.artist?.name || 'Unknown'}</p>
                 </div>
               ))}
             </div>
