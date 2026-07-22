@@ -6,6 +6,7 @@ import { useGetNexoriaTracksQuery } from '../../features/api/nexoriaMusicApiSlic
 import { playTrack, setQueue, togglePlayPause, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
 import DropdownMenu from '../../components/DropdownMenu';
 import toast from 'react-hot-toast';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const NexoriaMusicLibrary = () => {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const NexoriaMusicLibrary = () => {
                 if (myLikedSongs.length > 0) {
                   const audioEl = document.getElementById('nexoria-global-audio');
                   if (audioEl) {
-                    const baseUrl = 'http://localhost:5000';
+                    const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                     const newSrc = myLikedSongs[0].telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${myLikedSongs[0].telegramFileId}` : myLikedSongs[0].audioUrl || "";
                     audioEl.src = newSrc;
                     audioEl.play().catch(e => console.log(e));
@@ -94,7 +95,7 @@ const NexoriaMusicLibrary = () => {
                   } else {
                     const audioEl = document.getElementById('nexoria-global-audio');
                     if (audioEl) {
-                      const baseUrl = 'http://localhost:5000';
+                      const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                       const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                       audioEl.src = newSrc;
                       audioEl.play().catch(err => console.log(err));
@@ -161,8 +162,8 @@ const NexoriaMusicLibrary = () => {
                     <button 
                       className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
                       onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const baseUrl = 'http://localhost:5000';
+                        e.stopPropagation();                          
+                        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                         const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
                         window.open(url, '_blank');
                       }}

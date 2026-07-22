@@ -463,28 +463,15 @@ const GlobalChatBubble = () => {
                     />
                     
                     {/* Voice Message Button */}
-                    {(user.role === 'user' && !user.isPremium) ? (
-                      <button 
-                        type="button"
-                        onClick={() => navigate('/premium')}
-                        className="p-2.5 bg-slate-800 text-slate-500 rounded-xl relative group shrink-0"
-                        title="Premium Feature"
-                      >
-                        <Mic className="w-5 h-5" />
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-slate-700 rounded-full flex items-center justify-center">
-                          <Lock className="w-2 h-2 text-amber-500" />
-                        </div>
-                      </button>
-                    ) : (
-                      <button 
-                        type="button"
-                        onClick={startRecording}
-                        className="p-2.5 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 hover:text-purple-300 rounded-xl transition-colors shrink-0"
-                        title="Record Voice Message"
-                      >
-                        <Mic className="w-5 h-5" />
-                      </button>
-                    )}
+                    <button 
+                      type="button"
+                      onClick={startRecording}
+                      className="p-2.5 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 hover:text-purple-300 rounded-xl transition-colors shrink-0"
+                      title="Record Voice Message"
+                    >
+                      <Mic className="w-5 h-5" />
+                    </button>
+
 
                     <button 
                       type="submit"

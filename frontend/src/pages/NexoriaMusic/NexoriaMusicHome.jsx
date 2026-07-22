@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { playTrack, setQueue, togglePlayPause, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
 import DropdownMenu from '../../components/DropdownMenu';
 import toast from 'react-hot-toast';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const NexoriaMusicHome = () => {
                     if (tracks.length > 0) {
                       if (audioEl) {
                         const track = tracks[0];
-                        const baseUrl = 'http://localhost:5000';
+                        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                         const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                         audioEl.src = newSrc;
                         audioEl.play().catch(e => console.log(e));
@@ -99,7 +100,7 @@ const NexoriaMusicHome = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold tracking-tight text-white hover:underline cursor-pointer">New Releases</h3>
-            <button className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</button>
+            <Link to="/nexoria-music/search" className="text-sm font-bold text-slate-400 hover:text-white uppercase tracking-wider transition-colors">Show All</Link>
           </div>
           {loadingAlbums ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -152,7 +153,7 @@ const NexoriaMusicHome = () => {
                     } else {
                       const audioEl = document.getElementById('nexoria-global-audio');
                       if (audioEl) {
-                        const baseUrl = 'http://localhost:5000';
+                        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                         const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
                         audioEl.src = newSrc;
                         audioEl.play().catch(err => console.log(err));
@@ -183,7 +184,7 @@ const NexoriaMusicHome = () => {
                     <h4 className={`font-medium truncate text-base ${currentTrack?._id === track._id ? 'text-purple-400' : 'text-white'}`}>
                       {track.title}
                     </h4>
-                    <p className="text-[#a7a7a7] text-sm truncate hover:underline">{track.artist?.name || 'Unknown Artist'}</p>
+                    <Link to={`/nexoria-music/search?q=${track.artist?.name || ''}`} className="text-[#a7a7a7] text-sm truncate hover:underline">{track.artist?.name || 'Unknown Artist'}</Link>
                   </div>
                   <div className="text-[#a7a7a7] text-sm font-medium mr-4 hidden sm:block w-12 text-right">
                     {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
@@ -223,7 +224,7 @@ const NexoriaMusicHome = () => {
                         className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
                         onClick={(e) => { 
                           e.stopPropagation(); 
-                          const baseUrl = 'http://localhost:5000';
+                          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                           const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
                           window.open(url, '_blank');
                         }}

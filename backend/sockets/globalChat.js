@@ -103,10 +103,7 @@ export const registerGlobalChatHandlers = (io, socket) => {
         return socket.emit('globalChatError', { message: 'You are suspended from the chat.' });
       }
 
-      // Role check: Only Premium, Admin, Superadmin, Owner can send voice
-      if (currentUser.role === 'user' && !currentUser.isPremium) {
-        return socket.emit('globalChatError', { message: 'Voice messaging is restricted to Premium users.' });
-      }
+      // Any user can send voice messages
 
       // Convert base64 to file and save
       const base64Data = audioBase64.replace(/^data:audio\/\w+;base64,/, "");

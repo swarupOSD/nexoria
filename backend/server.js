@@ -247,6 +247,9 @@ app.use('/', seoRoutes);
 
 const __dirname = path.resolve();
 
+// Serve uploads statically
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+
 import fs from 'fs';
 
 if (process.env.NODE_ENV === 'production') {
