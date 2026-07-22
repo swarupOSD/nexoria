@@ -48,8 +48,12 @@ const AdPlacement = ({ location, className = '' }) => {
   return (
     <div className={`w-full overflow-hidden flex flex-col justify-center items-center my-4 gap-4 ${className}`} ref={containerRef}>
       {ads.map((ad, idx) => {
+        // Auto-detect legacy scripts (like Adsterra) that use document.write
+        const isLegacyScript = ad.adCode?.includes('invoke.js') || ad.adCode?.includes('atOptions') || ad.adCode?.includes('document.write');
+        
         // If it's AdSense or popunders are explicitly enabled, render natively
-        const shouldRenderNatively = ad.network === 'AdSense' || ad.enablePopunder || !ad.network;
+        // BUT force iframe if we detect a legacy document.write script
+        const shouldRenderNatively = (ad.network === 'AdSense' || ad.enablePopunder || !ad.network) && !isLegacyScript;
         
         return (
           <div key={ad._id || idx} className="w-full flex justify-center overflow-hidden relative">

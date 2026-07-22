@@ -96,11 +96,38 @@ const DownloadTimer = () => {
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 py-12">
       <div className="w-full max-w-4xl mb-6">
         {shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && (
-          <div 
-            ref={bannerRef} 
-            dangerouslySetInnerHTML={{ __html: settingsRes.data.ads.downloadBannerScript }} 
-            className="w-full min-h-[90px] flex justify-center items-center overflow-hidden"
-          />
+          (() => {
+            const script = settingsRes.data.ads.downloadBannerScript;
+            const isLegacy = script.includes('invoke.js') || script.includes('atOptions') || script.includes('document.write');
+            return isLegacy ? (
+              <iframe
+                title="Download Timer Ad Top"
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <meta charset="utf-8">
+                    <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }</style>
+                  </head>
+                  <body>
+                    ${script}
+                  </body>
+                  </html>
+                `}
+                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                scrolling="no"
+                frameBorder="0"
+                className="w-full border-none overflow-hidden"
+                style={{ minHeight: '90px' }}
+              />
+            ) : (
+              <div 
+                ref={bannerRef} 
+                dangerouslySetInnerHTML={{ __html: script }} 
+                className="w-full min-h-[90px] flex justify-center items-center overflow-hidden"
+              />
+            )
+          })()
         )}
         <AdPlacement location="DownloadSection" />
       </div>
