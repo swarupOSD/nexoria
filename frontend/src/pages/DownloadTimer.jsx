@@ -124,7 +124,6 @@ const DownloadTimer = () => {
                     }
                   }
                 }}
-                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
                 scrolling="no"
                 frameBorder="0"
                 className="w-full border-none overflow-hidden"

@@ -32,7 +32,6 @@ const IframeAd = ({ adCode, idx }) => {
     <iframe
       ref={iframeRef}
       title={`Ad-${idx}`}
-      sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
       scrolling="no"
       frameBorder="0"
       className="w-full border-none overflow-hidden"
