@@ -1,6 +1,6 @@
 import React from 'react';
-import { Compass, Search as SearchIcon, Library, Play, Heart, Clock, MoreVertical, Pause, Download, ListPlus, Link2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Compass, Search as SearchIcon, Library, Play, Heart, Clock, MoreVertical, Pause, Download, ListPlus, Link2, ChevronLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useGetNexoriaTracksQuery } from '../../features/api/nexoriaMusicApiSlice';
 import { playTrack, setQueue, togglePlayPause, toggleLikeTrack, addToQueue } from '../../features/music/nexoriaMusicSlice';
@@ -10,6 +10,7 @@ import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const NexoriaMusicLibrary = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
   const { data: tracksRes, isLoading } = useGetNexoriaTracksQuery();
   
@@ -20,9 +21,17 @@ const NexoriaMusicLibrary = () => {
     <div className="min-h-screen bg-[#050505] text-white pb-32">
       {/* Header / Nav */}
       <header className="sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-2xl border-b border-white/5 px-4 lg:px-8 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-          NEXORIA MUSIC
-        </h1>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 transition-all"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+            NEXORIA MUSIC
+          </h1>
+        </div>
         <div className="flex items-center gap-6 text-slate-400 font-medium">
           <Link to="/nexoria-music" className="hover:text-white transition-colors flex items-center gap-2">
             <Compass className="w-5 h-5" /> <span className="hidden md:inline">Discover</span>
