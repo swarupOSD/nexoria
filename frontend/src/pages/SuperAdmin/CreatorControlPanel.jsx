@@ -11,11 +11,14 @@ import {
   useOverrideBrandingMutation, 
   useSystemBroadcastMutation 
 } from '../../features/creator/creatorApiSlice';
+import { useGetUsersQuery } from '../../features/user/userApiSlice';
 
 const CreatorControlPanel = () => {
   const [activeTab, setActiveTab] = useState('godmode');
   
   // Queries & Mutations
+  const { data: usersRes } = useGetUsersQuery();
+  const allUsers = usersRes?.data || [];
   const { data: auditData, isLoading: isLoadingAudit } = useGetAuditLogsQuery(undefined, { skip: activeTab !== 'audit' });
   const [updateGodMode] = useUpdateAuraGodModeMutation();
   const [triggerBackup] = useLazyDatabaseBackupQuery();
@@ -149,8 +152,18 @@ const CreatorControlPanel = () => {
               <h2 className="text-xl font-bold flex items-center gap-2"><Droplets className="text-blue-500"/> Aura God Mode</h2>
               <form onSubmit={handleGodMode} className="space-y-4 max-w-xl">
                 <div>
-                  <label className="block text-sm font-bold text-slate-400 mb-1">Target User ID</label>
-                  <input type="text" value={godModeTarget} onChange={e => setGodModeTarget(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 focus:border-amber-500 outline-none transition-colors" placeholder="e.g. 64b8f..." required />
+                  <label className="block text-sm font-bold text-slate-400 mb-1">Target User</label>
+                  <select 
+                    value={godModeTarget} 
+                    onChange={e => setGodModeTarget(e.target.value)} 
+                    className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 focus:border-amber-500 outline-none transition-colors"
+                    required
+                  >
+                    <option value="" disabled>Select a user...</option>
+                    {allUsers.map(u => (
+                      <option key={u._id} value={u._id}>{u.username} ({u.email})</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>

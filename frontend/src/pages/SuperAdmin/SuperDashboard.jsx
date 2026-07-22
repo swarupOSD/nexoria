@@ -45,19 +45,13 @@ const SuperDashboard = () => {
   ];
 
   const systemHealth = [
-    { title: 'API Latency', value: '42ms', icon: <Activity className="w-5 h-5 text-emerald-400" />, status: 'good' },
-    { title: 'Database', value: '99.9%', icon: <Database className="w-5 h-5 text-emerald-400" />, status: 'good' },
-    { title: 'Active Sessions', value: '1,248', icon: <Users className="w-5 h-5 text-indigo-400" />, status: 'good' },
-    { title: 'Error Rate', value: '0.01%', icon: <AlertTriangle className="w-5 h-5 text-amber-400" />, status: 'warning' },
+    { title: 'Active Users', value: data?.overview?.activeUsers || 0, icon: <Users className="w-5 h-5 text-emerald-400" />, status: 'good' },
+    { title: 'Broken Links', value: data?.overview?.brokenLinkReports || 0, icon: <AlertTriangle className="w-5 h-5 text-amber-400" />, status: data?.overview?.brokenLinkReports > 5 ? 'warning' : 'good' },
+    { title: 'Security Alerts', value: data?.overview?.securityAlerts || 0, icon: <Shield className="w-5 h-5 text-indigo-400" />, status: data?.overview?.securityAlerts > 10 ? 'warning' : 'good' },
+    { title: 'Pending Payments', value: data?.overview?.pendingPayments || 0, icon: <DollarSign className="w-5 h-5 text-amber-400" />, status: 'warning' },
   ];
 
-  const recentActivity = [
-    { id: 1, type: 'payment', message: 'New Premium Subscription ($9.99)', time: '2 mins ago', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { id: 2, type: 'user', message: 'New User Registered (John Doe)', time: '15 mins ago', color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-    { id: 3, type: 'system', message: 'Daily Backup Completed Successfully', time: '1 hour ago', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { id: 4, type: 'security', message: 'Failed Admin Login Attempt', time: '3 hours ago', color: 'text-red-500', bg: 'bg-red-500/10', alert: true },
-    { id: 5, type: 'payment', message: 'Subscription Renewed ($4.99)', time: '5 hours ago', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  ];
+  const recentActivity = data?.recentActivities || [];
 
   const downloadTrends = data?.downloadTrends || [];
   const deviceUsage = data?.deviceUsage || [];

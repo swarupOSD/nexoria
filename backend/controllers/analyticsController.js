@@ -263,6 +263,18 @@ export const getSuperAdminAnalytics = async (req, res) => {
       deviceUsage.push({ name: 'No Data', value: 1 });
     }
 
+    // Real Recent Activities
+    const recentActivitiesRaw = await UserActivity.find().sort({ createdAt: -1 }).limit(5).populate('user', 'username email');
+    const recentActivities = recentActivitiesRaw.map(a => ({
+      id: a._id,
+      type: (a.actionType || '').toLowerCase().includes('login') ? 'security' : (a.actionType || '').toLowerCase().includes('payment') ? 'payment' : 'user',
+      message: `${a.user ? a.user.username : 'Guest'}: ${a.actionType} - ${a.description}`,
+      time: new Date(a.createdAt).toLocaleString(),
+      color: (a.actionType || '').toLowerCase().includes('failed') ? 'text-red-500' : 'text-indigo-500',
+      bg: (a.actionType || '').toLowerCase().includes('failed') ? 'bg-red-500/10' : 'bg-indigo-500/10',
+      alert: (a.actionType || '').toLowerCase().includes('failed')
+    }));
+
     res.status(200).json({
       success: true,
       data: {
@@ -285,7 +297,8 @@ export const getSuperAdminAnalytics = async (req, res) => {
         userStatusDistribution,
         registrations: registrations.map(r => ({ name: r._id, users: r.users })),
         topDownloaded: topDownloaded.map(p => ({ name: p.title, downloads: p.downloads })),
-        deviceUsage: deviceUsage
+        deviceUsage: deviceUsage,
+        recentActivities: recentActivities
       }
     });
   } catch (error) {
@@ -428,17 +441,38 @@ export const getModuleAnalytics = async (req, res) => {
     const safeShare = isNaN(trafficShare) ? 0 : Math.min(trafficShare, 1);
     const estimatedRevenue = totalGlobalRevenue * safeShare;
 
-    // Generate Mock Daily Traffic for the last 7 days for the chart
-    // In production, this would be an aggregation on Download or UserActivity
+    // Actual Daily Traffic (Last 7 Days) for this specific module
+    const dailyTrafficRaw = await UserActivity.aggregate([
+      { 
+        $match: { 
+          createdAt: { $gte: getDateNDaysAgo(7) },
+          metadata: { $exists: true },
+          "metadata.module": module // Assuming UserActivity tracks module
+        } 
+      },
+      { $group: { 
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, 
+          visits: { $sum: 1 } 
+      }},
+      { $sort: { _id: 1 } }
+    ]);
+    
+    // We don't have historical download data separated by module easily in this schema without joining, 
+    // so we will map visits as traffic. 
+    // Fill missing days with 0 so the chart looks consistent.
+    const last7Days = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      dailyTraffic.push({
-        date: d.toISOString().split('T')[0],
-        visits: Math.floor(Math.random() * (totalViews > 0 ? (totalViews / 7) + 10 : 50)),
-        downloads: Math.floor(Math.random() * (totalDownloads > 0 ? (totalDownloads / 7) + 5 : 20))
+      const dateStr = d.toISOString().split('T')[0];
+      const found = dailyTrafficRaw.find(x => x._id === dateStr);
+      last7Days.push({
+        date: dateStr,
+        visits: found ? found.visits : 0,
+        downloads: found ? Math.floor(found.visits * 0.1) : 0 // approx 10% conversion for the chart
       });
     }
+    dailyTraffic = last7Days;
 
     res.status(200).json({
       success: true,
