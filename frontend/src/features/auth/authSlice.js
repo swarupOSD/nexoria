@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialUser = (localStorage.getItem('user') && localStorage.getItem('user') !== 'undefined') ? JSON.parse(localStorage.getItem('user')) : null;
-if (initialUser) initialUser.isPremium = true;
 
 const initialState = {
   user: initialUser,
@@ -20,7 +19,7 @@ const authSlice = createSlice({
       let modifiedUser = user;
       if (user) {
         // Clone the user object to avoid mutating a frozen RTK Query payload
-        modifiedUser = { ...user, isPremium: true };
+        modifiedUser = { ...user };
       }
       
       state.user = modifiedUser;
