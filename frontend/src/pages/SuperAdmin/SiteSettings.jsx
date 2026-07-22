@@ -49,6 +49,7 @@ const SiteSettings = () => {
       downloadClicks: 2,
       socialBarScript: '',
       smartlinkUrl: '',
+      downloadBannerScript: '',
       globalDownloadUrl: ''
     },
     offerwallSettings: {
@@ -128,6 +129,7 @@ const SiteSettings = () => {
           downloadClicks: settingsRes.data.ads?.downloadClicks || 2,
           socialBarScript: settingsRes.data.ads?.socialBarScript || '',
           smartlinkUrl: settingsRes.data.ads?.smartlinkUrl || '',
+          downloadBannerScript: settingsRes.data.ads?.downloadBannerScript || '',
           globalDownloadUrl: settingsRes.data.ads?.globalDownloadUrl || ''
         },
         offerwallSettings: {
