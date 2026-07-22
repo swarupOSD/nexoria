@@ -3,6 +3,44 @@ import { useSelector } from 'react-redux';
 import { useGetAdvertisementsQuery } from '../features/advertisement/advertisementApiSlice';
 import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 
+const IframeAd = ({ adCode, idx }) => {
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      const doc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+      if (doc) {
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; overflow: hidden; }</style>
+          </head>
+          <body>
+            ${adCode}
+          </body>
+          </html>
+        `);
+        doc.close();
+      }
+    }
+  }, [adCode]);
+
+  return (
+    <iframe
+      ref={iframeRef}
+      title={`Ad-${idx}`}
+      sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+      scrolling="no"
+      frameBorder="0"
+      className="w-full border-none overflow-hidden"
+      style={{ minHeight: '120px' }}
+    />
+  );
+};
+
 const AdPlacement = ({ location, className = '' }) => {
   const { user } = useSelector(state => state.auth);
   const containerRef = useRef(null);
@@ -60,26 +98,7 @@ const AdPlacement = ({ location, className = '' }) => {
             {shouldRenderNatively ? (
               <div dangerouslySetInnerHTML={{ __html: ad.adCode }} className="w-full flex justify-center" />
             ) : (
-              <iframe
-                title={`Ad-${idx}`}
-                srcDoc={`
-                  <!DOCTYPE html>
-                  <html>
-                  <head>
-                    <meta charset="utf-8">
-                    <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }</style>
-                  </head>
-                  <body>
-                    ${ad.adCode}
-                  </body>
-                  </html>
-                `}
-                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-                scrolling="no"
-                frameBorder="0"
-                className="w-full border-none overflow-hidden"
-                style={{ minHeight: '120px' }}
-              />
+              <IframeAd adCode={ad.adCode} idx={idx} />
             )}
           </div>
         );

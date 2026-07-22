@@ -102,23 +102,33 @@ const DownloadTimer = () => {
             return isLegacy ? (
               <iframe
                 title="Download Timer Ad Top"
-                srcDoc={`
-                  <!DOCTYPE html>
-                  <html>
-                  <head>
-                    <meta charset="utf-8">
-                    <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }</style>
-                  </head>
-                  <body>
-                    ${script}
-                  </body>
-                  </html>
-                `}
-                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                ref={el => {
+                  if (el) {
+                    const doc = el.contentDocument || el.contentWindow?.document;
+                    if (doc && !el.dataset.written) {
+                      doc.open();
+                      doc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                          <meta charset="utf-8">
+                          <style>body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }</style>
+                        </head>
+                        <body>
+                          ${script}
+                        </body>
+                        </html>
+                      `);
+                      doc.close();
+                      el.dataset.written = 'true';
+                    }
+                  }
+                }}
+                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
                 scrolling="no"
                 frameBorder="0"
                 className="w-full border-none overflow-hidden"
-                style={{ minHeight: '90px' }}
+                style={{ minHeight: '120px' }}
               />
             ) : (
               <div 
@@ -193,16 +203,28 @@ const DownloadTimer = () => {
           {shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && (
             <iframe
               title="Download Timer Ad"
-              srcDoc={`
-                <!DOCTYPE html>
-                <html>
-                  <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
-                  <body>${settingsRes.data.ads.downloadBannerScript}</body>
-                </html>
-              `}
-              className="w-full min-h-[250px] border-none overflow-hidden"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              ref={el => {
+                if (el) {
+                  const doc = el.contentDocument || el.contentWindow?.document;
+                  if (doc && !el.dataset.written) {
+                    doc.open();
+                    doc.write(`
+                      <!DOCTYPE html>
+                      <html>
+                        <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;overflow:hidden;}</style></head>
+                        <body>${settingsRes.data.ads.downloadBannerScript}</body>
+                      </html>
+                    `);
+                    doc.close();
+                    el.dataset.written = 'true';
+                  }
+                }
+              }}
+              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
               scrolling="no"
+              frameBorder="0"
+              className="w-full border-none overflow-hidden"
+              style={{ minHeight: '120px' }}
             />
           )}
           <AdPlacement location="DownloadSection" />
