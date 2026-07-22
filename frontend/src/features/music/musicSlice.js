@@ -58,14 +58,12 @@ const musicSlice = createSlice({
   initialState,
   reducers: {
     playSong: (state, action) => {
-      const song = action.payload;
-      
-      // Add previous currentSong to recently played if it exists
-      if (state.currentSong && state.currentSong._id !== song._id) {
+      if (state.currentSong) {
+        // Add to recently played
         state.recentlyPlayed = [state.currentSong, ...state.recentlyPlayed.filter(s => s._id !== state.currentSong._id)].slice(0, 20);
       }
-      
-      state.currentSong = song;
+      state.currentSong = action.payload;
+      state.queue = []; // Clear old queue when playing a single isolated song
       state.isPlaying = true;
       saveStateToLocal(state);
     },
