@@ -1,5 +1,6 @@
 import Download from '../models/Download.js';
 import Post from '../models/Post.js';
+import SiteSettings from '../models/SiteSettings.js';
 import logger from '../middlewares/logger.js';
 
 // @desc    Track download and return URL
@@ -64,7 +65,11 @@ export const trackDownload = async (req, res) => {
       userAgent: req.headers['user-agent']
     });
 
-    res.status(200).json({ success: true, downloadUrl: link.url });
+    // Check for global download URL
+    const settings = await SiteSettings.findOne();
+    const finalUrl = (settings && settings.ads && settings.ads.globalDownloadUrl) ? settings.ads.globalDownloadUrl : link.url;
+
+    res.status(200).json({ success: true, downloadUrl: finalUrl });
   } catch (error) {
     logger.error(`Track Download Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Server Error' });

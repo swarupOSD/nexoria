@@ -48,7 +48,8 @@ const SiteSettings = () => {
       timerSeconds: 30,
       downloadClicks: 2,
       socialBarScript: '',
-      smartlinkUrl: ''
+      smartlinkUrl: '',
+      globalDownloadUrl: ''
     },
     offerwallSettings: {
       enabled: false,
@@ -126,7 +127,8 @@ const SiteSettings = () => {
           timerSeconds: settingsRes.data.ads?.timerSeconds || 30,
           downloadClicks: settingsRes.data.ads?.downloadClicks || 2,
           socialBarScript: settingsRes.data.ads?.socialBarScript || '',
-          smartlinkUrl: settingsRes.data.ads?.smartlinkUrl || ''
+          smartlinkUrl: settingsRes.data.ads?.smartlinkUrl || '',
+          globalDownloadUrl: settingsRes.data.ads?.globalDownloadUrl || ''
         },
         offerwallSettings: {
           enabled: settingsRes.data.offerwallSettings?.enabled ?? false,
@@ -496,6 +498,11 @@ const SiteSettings = () => {
               <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Download Page Banner Script (HTML/JS)</label>
               <textarea rows="3" name="ads_downloadBannerScript" value={formData.ads?.downloadBannerScript || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, downloadBannerScript: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder='<script>...</script>'></textarea>
               <p className="text-xs text-slate-500 mt-1">This banner ad will be displayed directly inside the 30-second download timer page.</p>
+            </div>
+            <div className="pt-4 border-t border-slate-200 dark:border-night-border">
+              <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Global Download Override Link</label>
+              <input type="text" name="ads_globalDownloadUrl" value={formData.ads?.globalDownloadUrl || ''} onChange={(e) => setFormData({...formData, ads: {...formData.ads, globalDownloadUrl: e.target.value}})} className="premium-input w-full font-mono text-xs" placeholder="https://..." />
+              <p className="text-xs text-slate-500 mt-1">If set, ALL app downloads on the site will redirect to this link instead of the file's original download link.</p>
             </div>
           </div>
         </motion.div>
