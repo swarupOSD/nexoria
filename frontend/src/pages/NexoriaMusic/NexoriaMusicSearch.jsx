@@ -104,7 +104,12 @@ const NexoriaMusicSearch = () => {
               {results.artists.length > 0 && (
                 <div>
                   <h3 className="text-2xl font-bold mb-6">Top Result</h3>
-                  <div className="bg-white/5 hover:bg-white/10 transition-colors p-6 rounded-3xl cursor-pointer group">
+                  <div className="bg-white/5 hover:bg-white/10 transition-colors p-6 rounded-3xl cursor-pointer group"
+                    onClick={() => {
+                      setSearchTerm(results.artists[0].name);
+                      setDebouncedTerm(results.artists[0].name);
+                    }}
+                  >
                     <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-xl">
                       {results.artists[0].image ? (
                         <img src={results.artists[0].image} alt={results.artists[0].name} className="w-full h-full object-cover" />
@@ -117,7 +122,30 @@ const NexoriaMusicSearch = () => {
                     <h2 className="text-3xl font-black text-white mb-1 truncate">{results.artists[0].name}</h2>
                     <span className="text-sm font-bold bg-black/50 px-3 py-1 rounded-full uppercase tracking-widest text-slate-300">Artist</span>
                     
-                    <button className="absolute bottom-6 right-6 bg-purple-500 text-white p-4 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all shadow-xl shadow-purple-500/50 hover:scale-110">
+                    <button 
+                      className="absolute bottom-6 right-6 bg-purple-500 text-white p-4 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all shadow-xl shadow-purple-500/50 hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Filter tracks globally or locally? We only have search results tracks here.
+                        // Actually, if we want ALL tracks of the artist, we should just play the tracks in results.tracks that match.
+                        // Since this is the search page for this artist, results.tracks already contains their tracks!
+                        const artistTracks = results.tracks.filter(t => t.artist?._id === results.artists[0]._id || t.artist?.name === results.artists[0].name);
+                        if (artistTracks.length > 0) {
+                          const firstTrack = artistTracks[0];
+                          const audioEl = document.getElementById('nexoria-global-audio');
+                          if (audioEl) {
+                            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                            const newSrc = firstTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${firstTrack.telegramFileId}` : firstTrack.audioUrl || "";
+                            audioEl.src = newSrc;
+                            audioEl.play().catch(err => console.log(err));
+                          }
+                          dispatch(setQueue(artistTracks.slice(1)));
+                          dispatch(playTrack(firstTrack));
+                        } else {
+                          toast.error("No songs found for this artist!");
+                        }
+                      }}
+                    >
                       <Play className="w-6 h-6 fill-current" />
                     </button>
                   </div>
@@ -186,8 +214,7 @@ const NexoriaMusicSearch = () => {
                               <button 
                                 className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
                                 onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  const baseUrl = 'http://localhost:5000';
+                                  const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
                                   const url = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl;
                                   window.open(url, '_blank');
                                 }}
@@ -223,7 +250,14 @@ const NexoriaMusicSearch = () => {
                 <h3 className="text-2xl font-bold mb-6">Artists</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                   {results.artists.slice(1).map(artist => (
-                    <div key={artist._id} className="flex flex-col items-center gap-3 group cursor-pointer bg-white/5 hover:bg-white/10 p-4 rounded-2xl transition-colors">
+                    <div 
+                      key={artist._id} 
+                      className="flex flex-col items-center gap-3 group cursor-pointer bg-white/5 hover:bg-white/10 p-4 rounded-2xl transition-colors relative"
+                      onClick={() => {
+                        setSearchTerm(artist.name);
+                        setDebouncedTerm(artist.name);
+                      }}
+                    >
                       <div className="w-32 h-32 rounded-full overflow-hidden relative shadow-xl">
                         {artist.image ? (
                           <img src={artist.image} alt={artist.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -232,6 +266,32 @@ const NexoriaMusicSearch = () => {
                             {artist.name[0]}
                           </div>
                         )}
+                        
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                          <button 
+                            className="bg-purple-500 text-white p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl hover:scale-110"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const artistTracks = results.tracks.filter(t => t.artist?._id === artist._id || t.artist?.name === artist.name);
+                              if (artistTracks.length > 0) {
+                                const firstTrack = artistTracks[0];
+                                const audioEl = document.getElementById('nexoria-global-audio');
+                                if (audioEl) {
+                                  const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                                  const newSrc = firstTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${firstTrack.telegramFileId}` : firstTrack.audioUrl || "";
+                                  audioEl.src = newSrc;
+                                  audioEl.play().catch(err => console.log(err));
+                                }
+                                dispatch(setQueue(artistTracks.slice(1)));
+                                dispatch(playTrack(firstTrack));
+                              } else {
+                                toast.error("No songs found for this artist in search results!");
+                              }
+                            }}
+                          >
+                            <Play className="w-5 h-5 fill-current" />
+                          </button>
+                        </div>
                       </div>
                       <div className="text-center w-full">
                         <h4 className="font-bold text-white truncate">{artist.name}</h4>
@@ -259,7 +319,27 @@ const NexoriaMusicSearch = () => {
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                          <button className="bg-purple-500 text-white p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl hover:scale-110">
+                          <button 
+                            className="bg-purple-500 text-white p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl hover:scale-110"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const albumTracks = results.tracks.filter(t => t.album?._id === album._id || t.album?.title === album.title);
+                              if (albumTracks.length > 0) {
+                                const firstTrack = albumTracks[0];
+                                const audioEl = document.getElementById('nexoria-global-audio');
+                                if (audioEl) {
+                                  const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                                  const newSrc = firstTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${firstTrack.telegramFileId}` : firstTrack.audioUrl || "";
+                                  audioEl.src = newSrc;
+                                  audioEl.play().catch(err => console.log(err));
+                                }
+                                dispatch(setQueue(albumTracks.slice(1)));
+                                dispatch(playTrack(firstTrack));
+                              } else {
+                                toast.error("No songs found for this album in search results!");
+                              }
+                            }}
+                          >
                             <Play className="w-5 h-5 fill-current" />
                           </button>
                         </div>
