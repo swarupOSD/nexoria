@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 import { useGetMyContactMessagesQuery, useCreateContactMessageMutation, useReplyContactMessageMutation } from '../features/contact/contactApiSlice';
 import { toast } from 'react-hot-toast';
 import { io } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import SEO from '../components/SEO';
+import BackButton from '../components/BackButton';
 
 const Support = () => {
   const { user } = useSelector(state => state.auth);
@@ -115,6 +117,9 @@ const Support = () => {
       </div>
 
       <div className="bg-white/5 backdrop-blur-3xl border-b border-white/10 pt-20 pb-16 mb-10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative z-10">
+        <div className="absolute top-8 left-4 md:left-8">
+          <BackButton fallbackRoute="/" />
+        </div>
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">Support Center</h1>
           <p className="text-white/60 text-lg font-medium">We are here to help you. Open a ticket or reply to an existing one.</p>
