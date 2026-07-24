@@ -125,8 +125,8 @@ const NexoriaMusicLayout = () => {
         {/* Top Nav Block */}
         <div className="bg-[#0F0F23] rounded-lg p-4 flex flex-col gap-5">
           <div className="flex items-center gap-2 px-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 rounded-full bg-[#22C55E] flex items-center justify-center font-bold text-black text-xl">N</div>
-            <span className="font-bold text-lg tracking-tight">Nexoria</span>
+            <img src="/favicon.png" alt="Nexoria Music" className="w-8 h-8 rounded-lg shadow-sm" />
+            <span className="font-black text-xl tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent drop-shadow-sm">Nexoria Music</span>
           </div>
           
           <nav className="flex flex-col gap-4">
