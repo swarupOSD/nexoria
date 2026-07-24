@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Disc } from 'lucide-react';
-import { useGetAlbumDetailsQuery } from '../../features/api/nexoriaMusicApiSlice';
+import { useGetAlbumDetailsQuery, useGetFavoritesQuery, useToggleFavoriteMutation } from '../../features/api/nexoriaMusicApiSlice';
+import toast from 'react-hot-toast';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
@@ -21,6 +22,24 @@ const NexoriaMusicAlbum = () => {
   const albumData = albumRes?.data;
   const album = albumData?.album;
   const tracks = albumData?.tracks || [];
+
+  const { data: favoritesRes } = useGetFavoritesQuery('Album');
+  const [toggleFavorite] = useToggleFavoriteMutation();
+  
+  const isSaved = favoritesRes?.data?.some(fav => fav.itemId?._id === id);
+
+  const handleSaveToggle = async () => {
+    try {
+      const res = await toggleFavorite({ itemId: id, itemType: 'Album' }).unwrap();
+      if (res.isFavorite) {
+        toast.success('Album saved to Your Library');
+      } else {
+        toast.success('Album removed from Your Library');
+      }
+    } catch (err) {
+      toast.error('Failed to toggle save');
+    }
+  };
 
   const handlePlay = (track, trackList) => {
     if (currentTrack?._id === track._id) {
@@ -118,8 +137,11 @@ const NexoriaMusicAlbum = () => {
           >
             {isPlaying && tracks.some(t => t._id === currentTrack?._id) ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
           </button>
-          <button className="text-[#a7a7a7] hover:text-white transition-colors">
-            <Heart className="w-8 h-8" />
+          <button 
+            onClick={handleSaveToggle}
+            className={`${isSaved ? 'text-[#1ed760]' : 'text-[#a7a7a7] hover:text-white'} transition-colors`}
+          >
+            <Heart className="w-8 h-8" fill={isSaved ? "currentColor" : "none"} />
           </button>
         </div>
       </div>

@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Disc } from 'lucide-react';
-import { useGetArtistDetailsQuery } from '../../features/api/nexoriaMusicApiSlice';
+import { useGetArtistDetailsQuery, useGetFavoritesQuery, useToggleFavoriteMutation } from '../../features/api/nexoriaMusicApiSlice';
+import toast from 'react-hot-toast';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
@@ -22,6 +23,20 @@ const NexoriaMusicArtist = () => {
   const artist = artistData?.artist;
   const popularTracks = artistData?.popularTracks || [];
   const albums = artistData?.albums || [];
+
+  const { data: favoritesRes } = useGetFavoritesQuery('Artist');
+  const [toggleFavorite] = useToggleFavoriteMutation();
+  
+  const isFollowing = favoritesRes?.data?.some(fav => fav.itemId?._id === id);
+
+  const handleFollowToggle = async () => {
+    try {
+      const res = await toggleFavorite({ itemId: id, itemType: 'Artist' }).unwrap();
+      toast.success(res.message);
+    } catch (err) {
+      toast.error('Failed to toggle follow');
+    }
+  };
 
   const handlePlay = (track, trackList) => {
     if (currentTrack?._id === track._id) {
@@ -110,8 +125,11 @@ const NexoriaMusicArtist = () => {
             <Play className="w-7 h-7 fill-current ml-1" />
           )}
         </button>
-        <button className="px-4 py-1.5 border border-[#a7a7a7] rounded-full text-sm font-bold hover:border-white transition-colors uppercase tracking-widest">
-          Follow
+        <button 
+          onClick={handleFollowToggle}
+          className={`px-4 py-1.5 border rounded-full text-sm font-bold transition-colors uppercase tracking-widest ${isFollowing ? 'border-white text-white bg-white/10' : 'border-[#a7a7a7] text-[#a7a7a7] hover:border-white hover:text-white'}`}
+        >
+          {isFollowing ? 'Following' : 'Follow'}
         </button>
       </div>
 

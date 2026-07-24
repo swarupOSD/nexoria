@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetNexoriaArtistsQuery, useGetNexoriaAlbumsQuery } from '../features/api/nexoriaMusicApiSlice';
+import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetFavoritesQuery } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
 
@@ -15,15 +15,16 @@ const NexoriaMusicLayout = () => {
   const navigate = useNavigate();
 
   const { data: playlistsRes } = useGetPlaylistsQuery(undefined, { skip: !user });
-  const { data: artistsRes } = useGetNexoriaArtistsQuery();
-  const { data: albumsRes } = useGetNexoriaAlbumsQuery();
+  const { data: artistsRes } = useGetFavoritesQuery('Artist', { skip: !user });
+  const { data: albumsRes } = useGetFavoritesQuery('Album', { skip: !user });
   
   const [createPlaylist] = useCreatePlaylistMutation();
   const [addTrackToPlaylist] = useAddTrackToPlaylistMutation();
   
   const playlists = playlistsRes?.data || [];
-  const artists = artistsRes?.data || [];
-  const albums = albumsRes?.data || [];
+  // Extract the populated item from the favorite document, filter out nulls
+  const artists = (artistsRes?.data || []).map(fav => fav.itemId).filter(Boolean);
+  const albums = (albumsRes?.data || []).map(fav => fav.itemId).filter(Boolean);
   
   const [dragOverPlaylistId, setDragOverPlaylistId] = useState(null);
   const [libraryFilter, setLibraryFilter] = useState('All');
