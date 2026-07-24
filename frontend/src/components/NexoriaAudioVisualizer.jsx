@@ -11,6 +11,10 @@ const NexoriaAudioVisualizer = ({ audioRef, isPlaying }) => {
     // Only initialize once and when audio element is ready
     if (!audioRef.current || audioContextRef.current) return;
 
+    // Prevent WebAudio API from hijacking the audio element on mobile devices (causes silent playback bug)
+    const isMobile = typeof window !== 'undefined' && (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768);
+    if (isMobile) return;
+
     try {
       // Create audio context
       const AudioContext = window.AudioContext || window.webkitAudioContext;

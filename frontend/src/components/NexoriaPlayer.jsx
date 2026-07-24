@@ -458,6 +458,7 @@ const NexoriaPlayer = () => {
         id="nexoria-global-audio"
         ref={audioRef}
         src={activeAudioSrc}
+        crossOrigin="anonymous"
         autoPlay={isPlaying}
         playsInline
         preload="auto"
