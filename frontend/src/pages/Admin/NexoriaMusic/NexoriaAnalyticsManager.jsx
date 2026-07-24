@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetDeepAnalyticsQuery } from '../../features/api/nexoriaMusicApiSlice';
+import { useGetDeepAnalyticsQuery } from '../../../features/api/nexoriaMusicApiSlice';
 import { Users, PlayCircle, Activity, Headphones, Music, RefreshCw, BarChart2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
