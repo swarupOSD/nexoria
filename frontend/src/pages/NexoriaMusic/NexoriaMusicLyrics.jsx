@@ -13,7 +13,26 @@ const NexoriaMusicLyrics = () => {
   
   const { data, isLoading, isError } = useGetTrackLyricsQuery(trackId);
   const lyricsData = data?.data;
-  const syncedLyrics = lyricsData?.syncedLyrics || [];
+  let syncedLyrics = lyricsData?.syncedLyrics || [];
+
+  // Inject DEMO lyrics if the track doesn't have any in the database
+  if (syncedLyrics.length === 0 && currentTrack) {
+    syncedLyrics = [
+      { time: 0, text: "(Instrumental Intro) - DEMO LYRICS" },
+      { time: 5, text: "Pal bhar thahar jaao" },
+      { time: 10, text: "Dil ye sambhal jaaye" },
+      { time: 15, text: "Kaise tumhe roka karun" },
+      { time: 20, text: "Meri taraf aata har gham phisal jaaye" },
+      { time: 27, text: "Aankhon mein tum ko bharun" },
+      { time: 33, text: "Bin bole baatein tumse karun" },
+      { time: 39, text: "Agar tum saath ho..." },
+      { time: 44, text: "(Instrumental Break)" },
+      { time: 50, text: "Behti rehti nahar, nadiya si teri duniya mein" },
+      { time: 56, text: "Meri duniya hai teri chaahaton mein" },
+      { time: 62, text: "Main dhal jaati hoon teri aadaton mein" },
+      { time: 68, text: "Agar tum saath ho..." }
+    ];
+  }
 
   const [currentTime, setCurrentTime] = useState(0);
   const containerRef = useRef(null);

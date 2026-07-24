@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
   Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity, Sliders,
-  RotateCcw, RotateCw
+  RotateCcw, RotateCw, Share2, Moon
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
@@ -728,10 +728,15 @@ const NexoriaPlayer = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-[#0F0F23]/95 border-t border-white/10 items-center px-4 justify-between"
+              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-[#0F0F23]/95 border-t border-white/10 items-center px-4 justify-between relative overflow-hidden"
             >
+              {/* Audio Visualizer Background */}
+              <div className="absolute inset-0 pointer-events-none z-[0] flex items-end opacity-20">
+                 <NexoriaAudioVisualizer audioRef={audioRef} isPlaying={isPlaying} />
+              </div>
+
               {/* Left: Info */}
-              <div className="flex items-center gap-4 w-[30%] min-w-[180px]">
+              <div className="flex items-center gap-4 w-[30%] min-w-[180px] z-10">
                 <div className="w-14 h-14 bg-[#4338CA] rounded shadow-md overflow-hidden shrink-0">
                   {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) && (
                     <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
@@ -756,7 +761,7 @@ const NexoriaPlayer = () => {
               </div>
 
               {/* Center: Controls */}
-              <div className="flex flex-col items-center justify-center max-w-[40%] flex-1 gap-1.5">
+              <div className="flex flex-col items-center justify-center max-w-[40%] flex-1 gap-1.5 z-10">
                 <div className="flex items-center gap-5">
                   <button onClick={() => dispatch(toggleShuffle())} className={`transition-colors ${shuffleMode ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
                     <Shuffle className="w-[18px] h-[18px]" />
@@ -813,7 +818,14 @@ const NexoriaPlayer = () => {
               </div>
 
               {/* Right: Volume & Extras */}
-              <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px]">
+              <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px] z-10">
+                <button 
+                  onClick={() => setShareModalData({ isOpen: true, track: currentTrack })}
+                  className="p-1 transition-colors text-zinc-400 hover:text-white"
+                  title="Share"
+                >
+                  <Share2 className="w-[18px] h-[18px]" />
+                </button>
                 <button 
                   onClick={() => navigate(`/nexoria-music/lyrics/${currentTrack._id}`)} 
                   className={`p-1 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
