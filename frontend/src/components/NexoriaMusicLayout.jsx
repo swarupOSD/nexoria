@@ -118,7 +118,7 @@ const NexoriaMusicLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#0F0F23] text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
+    <div className="flex h-dvh bg-[#0F0F23] text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
       {/* Desktop Sidebar */}
       <div className="hidden sm:flex flex-col w-64 bg-[#0F0F23] p-2 gap-2 h-full z-10">
         

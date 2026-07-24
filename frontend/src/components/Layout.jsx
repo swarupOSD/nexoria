@@ -170,7 +170,7 @@ const Layout = () => {
   }
 
   const content = (
-    <div className="min-h-screen flex flex-col bg-transparent transition-colors duration-300">
+    <div className="min-h-dvh flex flex-col bg-transparent transition-colors duration-300">
       <Navbar />
       <NoticeCenter />
       <AnimatePresence mode="wait">

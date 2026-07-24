@@ -156,16 +156,17 @@ const NexoriaTracksManager = () => {
           <p className="text-[#b3b3b3] text-sm">Upload your first audio track</p>
         </div>
       ) : (
-        <div className="flex flex-col">
-          {/* Table Header */}
-          <div className="grid grid-cols-[auto_1fr_64px_80px] gap-4 px-4 py-2 border-b border-white/10 text-xs text-[#b3b3b3] font-medium mb-2 uppercase tracking-wider">
-            <div className="w-12 text-center">#</div>
-            <div>Title</div>
-            <div className="text-right">Duration</div>
-            <div className="text-right">Actions</div>
-          </div>
+        <div className="flex flex-col overflow-x-auto pb-4">
+          <div className="min-w-[600px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[auto_1fr_64px_80px] gap-4 px-4 py-2 border-b border-white/10 text-xs text-[#b3b3b3] font-medium mb-2 uppercase tracking-wider">
+              <div className="w-12 text-center">#</div>
+              <div>Title</div>
+              <div className="text-right">Duration</div>
+              <div className="text-right">Actions</div>
+            </div>
 
-          <div className="space-y-1">
+            <div className="space-y-1">
             {tracks.map((track, index) => (
               <div 
                 key={track._id} 
@@ -217,6 +218,7 @@ const NexoriaTracksManager = () => {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       )}
