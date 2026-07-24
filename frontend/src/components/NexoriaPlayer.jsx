@@ -574,15 +574,29 @@ const NexoriaPlayer = () => {
                     </div>
                   </div>
 
-                  {/* Big Album Art */}
-                  <div className="flex-1 flex items-center justify-center min-h-0 w-full my-6">
-                    <div className="w-full aspect-square max-w-sm rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                  {/* Big Album Art with Swipe-to-Skip Gestures */}
+                  <div className="flex-1 flex items-center justify-center min-h-0 w-full my-6 overflow-hidden">
+                    <motion.div 
+                      className="w-full aspect-square max-w-sm rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragEnd={(e, { offset, velocity }) => {
+                        const swipeThreshold = 50;
+                        if (offset.x < -swipeThreshold) {
+                          // Swipe left = Next Track
+                          handleSkipForward();
+                        } else if (offset.x > swipeThreshold) {
+                          // Swipe right = Prev Track
+                          dispatch(playPrevTrack());
+                        }
+                      }}
+                    >
                        {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) ? (
-                        <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
+                        <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover pointer-events-none" alt="" />
                       ) : (
-                        <div className="w-full h-full bg-[#4338CA]" />
+                        <div className="w-full h-full bg-[#4338CA] pointer-events-none" />
                       )}
-                    </div>
+                    </motion.div>
                   </div>
 
                   {/* Info and Like */}
