@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { useGetPlaylistsQuery, useCreatePlaylistMutation } from '../features/api/nexoriaMusicApiSlice';
+import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
 
@@ -16,7 +16,23 @@ const NexoriaMusicLayout = () => {
 
   const { data: playlistsRes } = useGetPlaylistsQuery(undefined, { skip: !user });
   const [createPlaylist] = useCreatePlaylistMutation();
+  const [addTrackToPlaylist] = useAddTrackToPlaylistMutation();
   const playlists = playlistsRes?.data || [];
+  const [dragOverPlaylistId, setDragOverPlaylistId] = useState(null);
+
+  const handleDrop = async (e, playlistId) => {
+    e.preventDefault();
+    setDragOverPlaylistId(null);
+    const trackId = e.dataTransfer.getData('trackId');
+    if (!trackId) return;
+
+    try {
+      await addTrackToPlaylist({ playlistId, trackId }).unwrap();
+      toast.success('Track added to playlist!');
+    } catch (err) {
+      toast.error(err.data?.message || 'Failed to add track');
+    }
+  };
 
   useEffect(() => {
     const mainContent = document.getElementById('music-main-content');
@@ -123,7 +139,10 @@ const NexoriaMusicLayout = () => {
               <button
                 key={pl._id}
                 onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
-                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
+                onDragOver={(e) => { e.preventDefault(); setDragOverPlaylistId(pl._id); }}
+                onDragLeave={() => setDragOverPlaylistId(null)}
+                onDrop={(e) => handleDrop(e, pl._id)}
+                className={`flex items-center gap-4 p-2 rounded transition-colors group text-left ${dragOverPlaylistId === pl._id ? 'bg-white/20 border-l-4 border-green-500' : 'hover:bg-white/5'}`}
               >
                 <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-zinc-800`}>
                   {pl.coverImage ? (

@@ -91,6 +91,11 @@ const NexoriaMusicAllSongs = () => {
           {tracks.map((track, idx) => (
             <div 
               key={track._id} 
+              draggable={true}
+              onDragStart={(e) => {
+                e.dataTransfer.setData('trackId', track._id);
+                e.dataTransfer.effectAllowed = 'copy';
+              }}
               className="grid grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
               onClick={() => handlePlay(track, tracks)}
             >
