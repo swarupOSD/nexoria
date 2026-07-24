@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Search, Library, PlusSquare, Heart, ArrowLeft, ArrowRight, User } from 'lucide-react';
+import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import NexoriaPlayer from './NexoriaPlayer';
 
 const NexoriaMusicLayout = () => {
@@ -30,14 +31,14 @@ const NexoriaMusicLayout = () => {
   ];
 
   const actionItems = [
-    { name: 'Create Playlist', icon: PlusSquare, bg: 'bg-zinc-300 text-black', onClick: () => {} },
-    { name: 'Liked Songs', path: '/nexoria-music/library', icon: Heart, bg: 'bg-gradient-to-br from-indigo-600 to-indigo-300 text-white', onClick: () => navigate('/nexoria-music/library') },
+    { name: 'Create Playlist', icon: Plus, bg: 'bg-[#a7a7a7] group-hover:bg-white text-black transition-colors', onClick: () => toast.success('Playlist feature coming soon!', { icon: '🎵' }) },
+    { name: 'Liked Songs', path: '/nexoria-music/library', icon: Heart, bg: 'bg-gradient-to-br from-[#450af5] to-[#c4efd9] text-white', onClick: () => navigate('/nexoria-music/library') },
   ];
 
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
       {/* Desktop Sidebar */}
-      <div className="hidden sm:flex flex-col w-64 bg-black p-2 gap-2 h-full z-10">
+      <div className="hidden sm:flex flex-col w-64 bg-[#000000] p-2 gap-2 h-full z-10">
         
         {/* Top Nav Block */}
         <div className="bg-[#121212] rounded-lg p-4 flex flex-col gap-5">
@@ -82,12 +83,12 @@ const NexoriaMusicLayout = () => {
                   onClick={item.onClick}
                   className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
                 >
-                  <div className={`w-12 h-12 rounded flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity ${item.bg}`}>
-                    <Icon className="w-6 h-6 fill-current" />
+                  <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity ${item.bg}`}>
+                    <Icon className="w-5 h-5 fill-current" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-semibold text-white truncate">{item.name}</span>
-                    <span className="text-xs text-zinc-400">Playlist</span>
+                    <span className="font-semibold text-[#a7a7a7] group-hover:text-white transition-colors truncate">{item.name}</span>
+                    <span className="text-xs text-[#a7a7a7]">Playlist</span>
                   </div>
                 </button>
               );
@@ -123,17 +124,28 @@ const NexoriaMusicLayout = () => {
           <div className="flex items-center gap-3">
             {!user ? (
               <>
-                <button onClick={() => navigate('/register')} className="text-zinc-300 hover:text-white font-bold text-sm sm:text-base px-2">Sign up</button>
-                <button onClick={() => navigate('/login')} className="bg-white text-black font-bold px-6 py-2 rounded-full hover:scale-105 active:scale-95 transition-transform text-sm sm:text-base">Log in</button>
+                <button onClick={() => navigate('/register')} className="text-[#a7a7a7] hover:text-white font-bold text-sm sm:text-base px-2 hover:scale-105 transition-all">Sign up</button>
+                <button onClick={() => navigate('/login')} className="bg-white text-black font-bold px-8 py-3 rounded-full hover:scale-105 active:scale-95 transition-transform text-sm sm:text-base">Log in</button>
               </>
             ) : (
-              <div className="flex items-center gap-3">
-                <button className="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:scale-105 transition-transform text-sm hidden sm:block">Explore Premium</button>
-                <button onClick={() => navigate('/dashboard')} className="w-8 h-8 rounded-full bg-black/60 border-2 border-zinc-700 flex items-center justify-center hover:scale-105 transition-transform overflow-hidden">
+              <div className="flex items-center gap-2">
+                <button onClick={() => toast.success('Premium is coming soon!', { icon: '✨' })} className="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:scale-105 transition-transform text-sm hidden sm:block">Explore Premium</button>
+                
+                <button onClick={() => toast.success('Desktop App coming soon!', { icon: '💻' })} className="hidden sm:flex items-center gap-1.5 text-white bg-black/60 hover:scale-105 transition-transform font-bold text-sm px-3 py-1.5 rounded-full">
+                  <ArrowDownToLine className="w-4 h-4" /> Install App
+                </button>
+                
+                <button onClick={() => toast.success('No new notifications', { icon: '🔔' })} className="hidden sm:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:scale-105 transition-transform text-[#a7a7a7] hover:text-white">
+                  <Bell className="w-5 h-5" />
+                </button>
+
+                <button onClick={() => navigate('/dashboard')} className="w-8 h-8 ml-2 rounded-full bg-black/60 border-4 border-[#121212] flex items-center justify-center hover:scale-105 transition-transform overflow-hidden shadow-md">
                   {user.profilePicture ? (
                     <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <User className="w-5 h-5 text-white/70" />
+                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-[#a7a7a7]">
+                      <User className="w-5 h-5" />
+                    </div>
                   )}
                 </button>
               </div>

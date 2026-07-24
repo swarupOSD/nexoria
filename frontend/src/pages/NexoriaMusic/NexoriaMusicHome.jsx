@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { playTrack, setQueue, togglePlayPause } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
+import toast from 'react-hot-toast';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ const NexoriaMusicHome = () => {
   return (
     <div className="min-h-full bg-[#121212] text-white relative pb-32">
         {/* Dynamic Background Gradient based on time of day (Spotify Mobile style) */}
-        <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#3a3a3a] via-[#121212]/80 to-[#121212] pointer-events-none z-0" />
+        <div className="absolute top-0 left-0 right-0 h-[332px] bg-gradient-to-b from-[#1E3264] to-[#121212] pointer-events-none z-0 opacity-80" />
       
       <div className="relative z-10 px-4 pt-12 max-w-[1920px] mx-auto sm:pt-6">
         
@@ -78,10 +79,16 @@ const NexoriaMusicHome = () => {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">{greeting}</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <Bell className="w-6 h-6 text-white" />
-            <Clock className="w-6 h-6 text-white" />
-            <Settings className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-5">
+            <button onClick={() => toast.success('Notifications coming soon', { icon: '🔔' })} className="hover:scale-110 transition-transform">
+              <Bell className="w-[22px] h-[22px] text-white" />
+            </button>
+            <button onClick={() => toast.success('Listening history coming soon', { icon: '🕒' })} className="hover:scale-110 transition-transform">
+              <Clock className="w-[22px] h-[22px] text-white" />
+            </button>
+            <button onClick={() => toast.success('Settings coming soon', { icon: '⚙️' })} className="hover:scale-110 transition-transform">
+              <Settings className="w-[22px] h-[22px] text-white" />
+            </button>
           </div>
         </div>
 
