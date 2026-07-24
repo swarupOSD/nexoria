@@ -1226,7 +1226,7 @@ export const getLyricsConsumer = async (req, res) => {
     }
     res.status(200).json({ success: true, data: lyrics });
   } catch (error) {
-    logger.error(getLyricsConsumer error: );
+    logger.error('getLyricsConsumer error: ', error);
     res.status(500).json({ success: false, message: 'Server error fetching lyrics' });
   }
 };
