@@ -39,10 +39,16 @@ const NexoriaMusicHome = () => {
 
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 18) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
+    let timeGreeting = '';
+    if (hour < 12) timeGreeting = 'Good morning';
+    else if (hour < 18) timeGreeting = 'Good afternoon';
+    else timeGreeting = 'Good evening';
+    
+    setGreeting(timeGreeting);
   }, []);
+
+  const firstName = user?.name ? user.name.split(' ')[0] : '';
+  const greetingText = firstName ? `${greeting}, ${firstName}` : greeting;
 
   const handlePlay = (track, trackList) => {
     if (currentTrack?._id === track._id) {
@@ -77,7 +83,7 @@ const NexoriaMusicHome = () => {
                 user?.name?.[0]?.toUpperCase() || 'U'
               )}
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">{greeting}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{greetingText}</h1>
           </div>
           <div className="flex items-center gap-5">
             <button onClick={() => toast.success('Notifications coming soon', { icon: '🔔' })} className="hover:scale-110 transition-transform">
@@ -94,7 +100,7 @@ const NexoriaMusicHome = () => {
 
         {/* Desktop Header Greeting */}
         <div className="hidden sm:block mb-6">
-          <h1 className="text-[32px] font-bold tracking-tight">{greeting}</h1>
+          <h1 className="text-[32px] font-bold tracking-tight">{greetingText}</h1>
         </div>
 
         {/* Category Chips (All, Music, Podcasts) */}
