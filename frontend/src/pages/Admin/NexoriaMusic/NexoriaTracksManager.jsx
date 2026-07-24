@@ -378,6 +378,7 @@ const NexoriaTracksManager = () => {
                     modalMode === 'edit' ? '✅ Update Track' : '🎵 Upload & Save Track'
                   )}
                 </button>
+                </div>
               </form>
             </div>
           </div>
