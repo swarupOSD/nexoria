@@ -72,6 +72,7 @@ const NexoriaMusicSearch = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicS
 const NexoriaMusicLibrary = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLibrary'));
 const NexoriaMusicAllSongs = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicAllSongs'));
 const NexoriaMusicLikedSongs = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLikedSongs'));
+const NexoriaMusicDownloaded = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicDownloaded'));
 const NexoriaMusicPlaylist = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicPlaylist'));
 const NexoriaMusicArtist = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicArtist'));
 const NexoriaMusicAlbum = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicAlbum'));
@@ -302,6 +303,7 @@ function App() {
               <Route path="search" element={<NexoriaMusicSearch />} />
               <Route path="library" element={<NexoriaMusicLibrary />} />
               <Route path="liked-songs" element={<NexoriaMusicLikedSongs />} />
+              <Route path="downloaded" element={<NexoriaMusicDownloaded />} />
               <Route path="tracks" element={<NexoriaMusicAllSongs />} />
               <Route path="playlist/:id" element={<NexoriaMusicPlaylist />} />
               <Route path="artist/:id" element={<NexoriaMusicArtist />} />
