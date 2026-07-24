@@ -79,12 +79,12 @@ const NexoriaArtistsManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Artists</h2>
-          <p className="text-slate-500 text-sm mt-0.5">{artists.length} artists in the platform</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Artists</h2>
+          <p className="text-[#b3b3b3] text-sm mt-1">{artists.length} artists in the platform</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Artist
         </button>
@@ -92,62 +92,77 @@ const NexoriaArtistsManager = () => {
 
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-28 bg-white/5 rounded-2xl animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="aspect-square bg-white/5 rounded-full animate-pulse mx-auto w-[160px]" />
           ))}
         </div>
       ) : artists.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <Mic2 className="w-10 h-10 text-slate-600" />
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+            <Mic2 className="w-8 h-8 text-[#b3b3b3]" />
           </div>
-          <p className="text-slate-400 font-semibold text-lg">No artists yet</p>
-          <p className="text-slate-600 text-sm">Add your first artist to get started</p>
+          <p className="text-white font-bold text-lg">No artists yet</p>
+          <p className="text-[#b3b3b3] text-sm">Add your first artist to get started</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {artists.map(artist => (
             <div
               key={artist._id}
-              className="group relative bg-[#0f0f0f] border border-white/5 rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/10"
+              className="group relative bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors duration-300 flex flex-col items-center cursor-default"
             >
-              {/* Cover Banner */}
-              <div className="relative h-28 bg-gradient-to-r from-purple-900/40 via-pink-900/20 to-indigo-900/40 overflow-hidden">
-                {artist.coverImage && (
-                  <img src={artist.coverImage} alt="" className="w-full h-full object-cover opacity-50 mix-blend-screen group-hover:scale-105 transition-transform duration-700" />
+              {/* Avatar (Circle) */}
+              <div className="w-full aspect-square rounded-full overflow-hidden bg-zinc-800 shadow-md mb-4 relative">
+                {artist.image ? (
+                  <img 
+                    src={artist.image} 
+                    alt={artist.name} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => { 
+                      e.target.onerror = null; 
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name || 'Artist')}&background=random&color=fff&size=256`; 
+                    }} 
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-3xl font-black text-white">
+                    {artist.name?.[0]?.toUpperCase()}
+                  </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/80 to-transparent" />
+              </div>
+              
+              {/* Name & badge */}
+              <div className="text-center w-full min-w-0">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <h3 className="text-white font-bold text-base truncate">{artist.name}</h3>
+                  {artist.isVerified && (
+                    <CheckCircle className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  )}
+                </div>
+                <p className="text-[#b3b3b3] text-sm truncate">Artist</p>
               </div>
 
-              {/* Artist Info */}
-              <div className="px-5 pb-5">
-                <div className="flex flex-col items-center -mt-14 relative z-10 mb-4">
-                  {/* Avatar (Circle) */}
-                  <div className="w-24 h-24 rounded-full border-4 border-[#0f0f0f] overflow-hidden bg-gradient-to-br from-purple-800 to-pink-800 shadow-2xl mb-3 group-hover:shadow-purple-500/20 transition-all duration-300 relative">
-                    {artist.image ? (
-                      <img 
-                        src={artist.image} 
-                        alt={artist.name} 
-                        className="w-full h-full object-cover" 
-                        onError={(e) => { 
-                          e.target.onerror = null; 
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name || 'Artist')}&background=random&color=fff&size=256`; 
-                        }} 
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-3xl font-black text-white">
-                        {artist.name?.[0]?.toUpperCase()}
-                      </div>
-                    )}
-                    <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-full" />
-                  </div>
-                  
-                  {/* Name & badge */}
-                  <div className="text-center w-full">
-                    <div className="flex items-center justify-center gap-1.5 mb-1">
-                      <h3 className="text-white font-black text-xl tracking-tight truncate max-w-[80%]">{artist.name}</h3>
-                      {artist.isVerified && (
+              {/* Hover Actions */}
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={() => openEdit(artist)} 
+                  className="p-2 bg-[#121212] hover:bg-[#2a2a2a] rounded-full text-[#b3b3b3] hover:text-white transition-colors"
+                  title="Edit"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button 
+                  onClick={() => handleDelete(artist)} 
+                  className="p-2 bg-[#121212] hover:bg-[#2a2a2a] rounded-full text-[#b3b3b3] hover:text-red-500 transition-colors"
+                  title="Delete"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
                         <CheckCircle className="w-5 h-5 text-blue-400 shrink-0 fill-blue-400/20" />
                       )}
                     </div>

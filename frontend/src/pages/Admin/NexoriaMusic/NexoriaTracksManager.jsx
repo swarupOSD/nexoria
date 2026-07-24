@@ -142,94 +142,94 @@ const NexoriaTracksManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Audio Tracks</h2>
-          <p className="text-slate-500 text-sm mt-0.5">{tracks.length} songs available</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Tracks</h2>
+          <p className="text-[#b3b3b3] text-sm mt-1">{tracks.length} songs</p>
         </div>
         <button 
           onClick={openCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Track
         </button>
       </div>
 
       {isLoading ? (
-        <div className="animate-pulse space-y-3">
+        <div className="animate-pulse space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-white/5 rounded-2xl" />
+            <div key={i} className="h-14 bg-white/5 rounded-md" />
           ))}
         </div>
       ) : tracks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <Music className="w-10 h-10 text-slate-600" />
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+            <Music className="w-8 h-8 text-[#b3b3b3]" />
           </div>
-          <p className="text-slate-400 font-semibold text-lg">No tracks yet</p>
-          <p className="text-slate-600 text-sm">Upload your first audio track</p>
+          <p className="text-white font-bold text-lg">No tracks found</p>
+          <p className="text-[#b3b3b3] text-sm">Upload your first audio track</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {tracks.map(track => (
-            <div 
-              key={track._id} 
-              className="bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/8 rounded-2xl p-3 flex items-center gap-4 group hover:border-purple-500/30 hover:bg-purple-500/5 transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center relative overflow-hidden flex-shrink-0 shadow-lg group-hover:shadow-purple-500/20 transition-all">
-                {track.coverImage || track.album?.coverImage || track.artist?.image ? (
-                  <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
-                ) : (
-                  <Music className="w-5 h-5 text-slate-400 group-hover:text-purple-400 transition-colors" />
-                )}
-                <div 
-                  onClick={() => {
-                            const audioEl = document.getElementById('nexoria-global-audio');
-                            if (audioEl) audioEl.play().catch(e => console.log(e));
-                            dispatch(playTrack(track));
-                          }}
-                  className="absolute inset-0 bg-purple-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all backdrop-blur-sm"
-                >
-                  <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
+        <div className="flex flex-col">
+          {/* Table Header */}
+          <div className="grid grid-cols-[auto_1fr_64px_80px] gap-4 px-4 py-2 border-b border-white/10 text-xs text-[#b3b3b3] font-medium mb-2 uppercase tracking-wider">
+            <div className="w-12 text-center">#</div>
+            <div>Title</div>
+            <div className="text-right">Duration</div>
+            <div className="text-right">Actions</div>
+          </div>
+
+          <div className="space-y-1">
+            {tracks.map((track, index) => (
+              <div 
+                key={track._id} 
+                className="grid grid-cols-[auto_1fr_64px_80px] items-center gap-4 p-2 rounded-md hover:bg-white/10 transition-colors group cursor-default"
+              >
+                <div className="w-12 flex items-center justify-center text-[#b3b3b3] relative">
+                  <span className="group-hover:hidden text-sm">{index + 1}</span>
+                  <button 
+                    onClick={() => {
+                      const audioEl = document.getElementById('nexoria-global-audio');
+                      if (audioEl) audioEl.play().catch(e => console.log(e));
+                      dispatch(playTrack(track));
+                    }}
+                    className="hidden group-hover:flex absolute text-white hover:scale-110 transition-transform"
+                  >
+                    <Play className="w-4 h-4 fill-white" />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded overflow-hidden bg-zinc-800 flex-shrink-0">
+                    {track.coverImage || track.album?.coverImage || track.artist?.image ? (
+                      <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+                        <Music className="w-4 h-4 text-zinc-500" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-white font-medium truncate group-hover:underline cursor-pointer">{track.title}</span>
+                    <span className="text-[#b3b3b3] text-sm truncate hover:underline cursor-pointer">
+                      {track.artist?.name || 'Unknown Artist'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-sm text-[#b3b3b3] text-right tabular-nums">
+                  {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
+                </div>
+
+                <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity pr-2">
+                  <button onClick={() => openEdit(track)} className="text-[#b3b3b3] hover:text-white transition-colors" title="Edit">
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => handleDelete(track._id)} className="text-[#b3b3b3] hover:text-red-500 transition-colors" title="Delete">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="text-white font-bold truncate text-[15px]">{track.title}</h3>
-                  {track.isPremium && (
-                    <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] uppercase font-black px-2 py-0.5 rounded-full shadow-lg shadow-amber-500/20">PRO</span>
-                  )}
-                </div>
-                {/* RAW AUDIO PLAYER FOR DEBUGGING */}
-                {track.telegramFileId && (
-                  <audio 
-                    controls 
-                    className="h-8 mt-2 w-full max-w-xs opacity-50 hover:opacity-100 transition-opacity" 
-                    src={`/api/nexoria-music/stream/${track.telegramFileId}`}
-                    preload="metadata"
-                  />
-                )}
-                <div className="flex items-center gap-2 text-xs text-slate-400 truncate mt-1">
-                  <span className="font-medium text-purple-400/80">{track.artist?.name || 'Unknown'}</span>
-                  {track.album && (
-                    <>
-                      <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                      <span className="text-slate-500">{track.album.title}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="text-sm font-bold text-slate-500 w-16 text-right font-mono bg-white/5 px-2 py-1 rounded-lg">
-                {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
-              </div>
-              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(track)} className="p-3 text-slate-500 hover:text-purple-400 hover:bg-purple-400/10 rounded-xl transition-all">
-                  <Edit2 className="w-5 h-5" />
-                </button>
-                <button onClick={() => handleDelete(track._id)} className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all">
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 

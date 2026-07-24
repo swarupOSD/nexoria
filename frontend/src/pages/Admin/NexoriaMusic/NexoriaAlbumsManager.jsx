@@ -84,12 +84,12 @@ const NexoriaAlbumsManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Albums & EPs</h2>
-          <p className="text-slate-500 text-sm mt-0.5">{albums.length} releases in the platform</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Albums & EPs</h2>
+          <p className="text-[#b3b3b3] text-sm mt-1">{albums.length} releases</p>
         </div>
         <button 
           onClick={openCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Album
         </button>
@@ -98,51 +98,51 @@ const NexoriaAlbumsManager = () => {
       {isLoading ? (
         <div className="animate-pulse grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="aspect-square bg-white/5 rounded-2xl" />
+            <div key={i} className="aspect-square bg-white/5 rounded-md" />
           ))}
         </div>
       ) : albums.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <Disc3 className="w-10 h-10 text-slate-600" />
+          <div className="w-16 h-16 rounded-md bg-white/5 flex items-center justify-center mb-4">
+            <Disc3 className="w-8 h-8 text-[#b3b3b3]" />
           </div>
-          <p className="text-slate-400 font-semibold text-lg">No albums yet</p>
-          <p className="text-slate-600 text-sm">Create your first album release</p>
+          <p className="text-white font-bold text-lg">No albums yet</p>
+          <p className="text-[#b3b3b3] text-sm">Create your first album release</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {albums.map(album => (
-            <div key={album._id} className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/8 rounded-2xl p-3 group hover:border-purple-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/5">
-              <div className="aspect-square rounded-xl bg-slate-800 mb-3 relative overflow-hidden flex items-center justify-center shadow-lg group-hover:shadow-purple-500/20 transition-all">
+            <div key={album._id} className="bg-[#181818] hover:bg-[#282828] rounded-md p-4 group transition-colors duration-300 flex flex-col cursor-default">
+              <div className="aspect-square rounded-md bg-zinc-800 mb-4 relative overflow-hidden flex items-center justify-center shadow-md">
                 {album.coverImage ? (
-                  <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-900/40 to-pink-900/40 flex items-center justify-center">
-                    <Disc3 className="w-10 h-10 text-white/30" />
+                  <div className="w-full h-full bg-[#282828] flex items-center justify-center">
+                    <Disc3 className="w-10 h-10 text-zinc-500" />
                   </div>
                 )}
                 {/* Quick Actions (Hover) */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
                   <button 
                     onClick={() => openEdit(album)}
-                    className="p-3 bg-purple-500 text-white rounded-full hover:bg-purple-400 hover:scale-110 transition-all shadow-xl"
+                    className="p-2 bg-[#121212] hover:bg-[#2a2a2a] text-[#b3b3b3] hover:text-white rounded-full transition-colors"
                     title="Edit Album"
                   >
-                    <Edit2 className="w-5 h-5" />
+                    <Edit2 className="w-4 h-4" />
                   </button>
                   <button 
                     onClick={() => handleDelete(album._id)}
-                    className="p-3 bg-red-500 text-white rounded-full hover:bg-red-400 hover:scale-110 transition-all shadow-xl"
+                    className="p-2 bg-[#121212] hover:bg-[#2a2a2a] text-[#b3b3b3] hover:text-red-500 rounded-full transition-colors"
                     title="Delete Album"
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-              <h3 className="text-white font-bold truncate text-sm mb-1">{album.title}</h3>
-              <p className="text-slate-400 text-xs truncate mb-2">{album.artist?.name || 'Unknown Artist'}</p>
-              <div className="flex items-center">
-                <span className="text-[10px] uppercase tracking-wider font-black text-purple-400 bg-purple-500/10 px-2 py-1 rounded-lg">
+              <h3 className="text-white font-bold truncate text-base mb-1">{album.title}</h3>
+              <p className="text-[#b3b3b3] text-sm truncate">{album.artist?.name || 'Unknown Artist'}</p>
+              <div className="flex items-center mt-2">
+                <span className="text-xs font-medium text-[#b3b3b3]">
                   {album.type}
                 </span>
               </div>

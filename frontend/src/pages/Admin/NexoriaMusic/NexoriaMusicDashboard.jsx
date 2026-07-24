@@ -21,16 +21,16 @@ const NexoriaMusicDashboard = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Music className="text-purple-500 w-8 h-8" />
-            Nexoria Music Platform
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
+            <div className="w-8 h-8 rounded-full bg-[#1ed760] flex items-center justify-center font-bold text-black text-xl">N</div>
+            Music Admin
           </h1>
-          <p className="text-slate-400 mt-1">Manage the proprietary music database.</p>
+          <p className="text-[#b3b3b3] mt-1 text-sm font-medium">Manage the proprietary music database.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2">
+      <div className="flex overflow-x-auto hide-scrollbar gap-3 pb-2">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -38,31 +38,27 @@ const NexoriaMusicDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap text-sm font-bold ${
                 isActive 
-                  ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25' 
-                  : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-white'
+                  ? 'bg-white text-black' 
+                  : 'bg-[#242424] text-white hover:bg-[#2a2a2a]'
               }`}
             >
-              <Icon className="w-4 h-4" />
-              <span className="font-medium">{tab.label}</span>
+              <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
       {/* Content Area */}
-      <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-        {/* Ambient Glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
-        
+      <div className="bg-[#121212] rounded-lg relative overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             className="relative z-10"
           >
             {activeTab === 'artists' && <NexoriaArtistsManager />}

@@ -71,63 +71,61 @@ const NexoriaGenresManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Music Genres</h2>
-          <p className="text-slate-500 text-sm mt-0.5">{genres.length} categories available</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Music Genres</h2>
+          <p className="text-[#b3b3b3] text-sm mt-1">{genres.length} categories</p>
         </div>
         <button 
           onClick={openCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Genre
         </button>
       </div>
 
       {isLoading ? (
-        <div className="animate-pulse grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 bg-white/5 rounded-2xl" />
+        <div className="animate-pulse grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="aspect-square bg-white/5 rounded-md" />
           ))}
         </div>
       ) : genres.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <Tag className="w-10 h-10 text-slate-600" />
+          <div className="w-16 h-16 rounded-md bg-white/5 flex items-center justify-center mb-4">
+            <Tag className="w-8 h-8 text-[#b3b3b3]" />
           </div>
-          <p className="text-slate-400 font-semibold text-lg">No genres yet</p>
-          <p className="text-slate-600 text-sm">Create categories to organize your music</p>
+          <p className="text-white font-bold text-lg">No genres yet</p>
+          <p className="text-[#b3b3b3] text-sm">Create categories to organize your music</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
           {genres.map(genre => (
             <div 
               key={genre._id} 
-              className="relative overflow-hidden rounded-2xl p-4 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300 shadow-lg border border-white/10"
-              style={{ backgroundColor: `${genre.hexColor}15`, borderColor: `${genre.hexColor}30`, boxShadow: `0 10px 30px -10px ${genre.hexColor}40` }}
+              className="relative overflow-hidden rounded-md aspect-square p-4 flex flex-col justify-between group transition-transform duration-300 cursor-pointer shadow-sm hover:shadow-md"
+              style={{ backgroundColor: genre.hexColor || '#1ed760' }}
             >
-              {/* Animated Background Glow */}
-              <div 
-                className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] opacity-20 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" 
-                style={{ backgroundColor: genre.hexColor }}
-              />
+              <h3 className="text-white font-bold text-xl tracking-tight leading-tight z-10 w-full break-words">{genre.name}</h3>
               
-              <div className="flex items-center gap-3 relative z-10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: genre.hexColor, boxShadow: `0 4px 15px ${genre.hexColor}40` }}>
-                  <Tag className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-white font-black text-lg tracking-tight truncate">{genre.name}</h3>
+              {/* Fake Tilted Icon/Image (Spotify Style) */}
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-black/20 rounded shadow-lg rotate-[25deg] flex items-center justify-center">
+                <Tag className="w-10 h-10 text-white/50 -rotate-[25deg]" />
               </div>
-              <div className="opacity-0 group-hover:opacity-100 flex gap-2 relative z-10 transition-all">
+
+              {/* Hover Actions Overlay */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 z-20 transition-opacity">
                 <button 
                   onClick={() => openEdit(genre)} 
-                  className="p-2 text-white/40 hover:text-purple-400 hover:bg-purple-400/10 rounded-xl transition-all"
+                  className="p-3 bg-[#121212] hover:bg-[#2a2a2a] text-white rounded-full transition-colors"
+                  title="Edit Genre"
                 >
-                  <Edit2 className="w-5 h-5" />
+                  <Edit2 className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={() => handleDelete(genre._id)} 
-                  className="p-2 text-white/40 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                  className="p-3 bg-[#121212] hover:bg-[#2a2a2a] text-white hover:text-red-500 rounded-full transition-colors"
+                  title="Delete Genre"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
