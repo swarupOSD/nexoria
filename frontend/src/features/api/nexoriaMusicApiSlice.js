@@ -194,10 +194,10 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    getRecentlyPlayed: builder.query({
+    getMusicRecentlyPlayed: builder.query({
       query: () => '/nexoria-music/recently-played',
     }),
-    getRecommendations: builder.query({
+    getMusicRecommendations: builder.query({
       query: () => '/nexoria-music/recommendations',
     }),
     getNexoriaMusicAnalytics: builder.query({
@@ -262,9 +262,9 @@ export const {
   useDeleteNexoriaTrackMutation,
   useSearchNexoriaMusicQuery,
   useLogPlayMutation,
-  useGetRecentlyPlayedQuery,
-  useGetRecommendationsQuery,
-  useLazyGetRecommendationsQuery,
+  useGetMusicRecentlyPlayedQuery,
+  useGetMusicRecommendationsQuery,
+  useLazyGetMusicRecommendationsQuery,
   useGetNexoriaMusicAnalyticsQuery,
   useGetDeepAnalyticsQuery,
   useGetFavoritesQuery,

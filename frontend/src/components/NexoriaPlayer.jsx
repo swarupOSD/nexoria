@@ -12,7 +12,7 @@ import {
   toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue, toggleAutoplay
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
-import { useLogPlayMutation, useLazyGetRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';
+import { useLogPlayMutation, useLazyGetMusicRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';
 import DropdownMenu from './DropdownMenu';
 import toast from 'react-hot-toast';
 
@@ -30,7 +30,7 @@ const NexoriaPlayer = () => {
   } = useSelector(state => state.nexoriaMusic);
 
   const [logPlay] = useLogPlayMutation();
-  const [getRecommendations] = useLazyGetRecommendationsQuery();
+  const [getRecommendations] = useLazyGetMusicRecommendationsQuery();
   const [hasLoggedPlay, setHasLoggedPlay] = useState(false);
 
   // Reset logged play state when track changes

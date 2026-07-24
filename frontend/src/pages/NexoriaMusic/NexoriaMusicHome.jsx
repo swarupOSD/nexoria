@@ -3,8 +3,8 @@ import { Play, Pause, Settings, Bell, Clock, MoreHorizontal } from 'lucide-react
 import { 
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
-  useGetRecentlyPlayedQuery, 
-  useGetRecommendationsQuery 
+  useGetMusicRecentlyPlayedQuery, 
+  useGetMusicRecommendationsQuery 
 } from '../../features/api/nexoriaMusicApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,8 +24,8 @@ const NexoriaMusicHome = () => {
   const { data: tracksRes, isLoading: loadingTracks } = useGetNexoriaTracksQuery();
   
   // Algorithm & History Hooks
-  const { data: recentRes, isLoading: loadingRecent } = useGetRecentlyPlayedQuery(undefined, { skip: !user });
-  const { data: recRes, isLoading: loadingRecs } = useGetRecommendationsQuery(undefined, { skip: !user });
+  const { data: recentRes, isLoading: loadingRecent } = useGetMusicRecentlyPlayedQuery(undefined, { skip: !user });
+  const { data: recRes, isLoading: loadingRecs } = useGetMusicRecommendationsQuery(undefined, { skip: !user });
 
   const artists = artistsRes?.data || [];
   const allTracks = tracksRes?.data || [];
@@ -209,7 +209,9 @@ const NexoriaMusicHome = () => {
                     </div>
                   </div>
                   <h3 className="font-bold text-sm sm:text-base truncate mb-1 text-white">{track.title}</h3>
-                  <p className="text-xs sm:text-sm text-[#94A3B8] line-clamp-2 leading-tight font-medium">{track.artist?.name || 'Unknown Artist'}</p>
+                  <p className="text-xs sm:text-sm text-[#94A3B8] line-clamp-2 leading-tight font-medium">
+                    {track.artist?.name || 'Unknown Artist'}
+                  </p>
                 </div>
               ))
             )}
@@ -227,6 +229,7 @@ const NexoriaMusicHome = () => {
               artists.map((artist) => (
                 <div 
                   key={artist._id}
+                  onClick={() => navigate('/nexoria-music/artist/' + artist._id)}
                   className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
                 >
                   <div className="w-[116px] h-[116px] sm:w-full sm:h-auto sm:aspect-square bg-[#4338CA] rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
@@ -234,12 +237,23 @@ const NexoriaMusicHome = () => {
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     )}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:block">
-                      <button className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/nexoria-music/artist/' + artist._id);
+                        }}
+                        className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg"
+                      >
                          <Play className="w-6 h-6 fill-current ml-1" />
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base w-full truncate mb-1 text-white">{artist.name}</h3>
+                  <h3 
+                    onClick={() => navigate('/nexoria-music/artist/' + artist._id)}
+                    className="font-bold text-sm sm:text-base w-full truncate mb-1 text-white hover:underline cursor-pointer"
+                  >
+                    {artist.name}
+                  </h3>
                   <p className="text-xs sm:text-sm text-[#94A3B8] w-full font-medium">Artist</p>
                 </div>
               ))
