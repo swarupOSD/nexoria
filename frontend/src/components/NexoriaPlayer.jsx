@@ -20,6 +20,7 @@ import NexoriaMusicContextMenu from './NexoriaMusicContextMenu';
 import NexoriaMusicAddToPlaylistModal from './NexoriaMusicAddToPlaylistModal';
 import EqualizerModal from './EqualizerModal';
 import SleepTimerModal from './SleepTimerModal';
+import { getBlobUrlForTrack } from '../utils/offlineManager';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const NexoriaPlayer = () => {
   const { 
     currentTrack, isPlaying, volume, isMuted, 
     repeatMode, shuffleMode, currentTime, duration,
-    likedTracks, queue, history, autoplayEnabled
+    likedTracks, queue, history, autoplayEnabled, downloadedTracks
   } = useSelector(state => state.nexoriaMusic);
 
   const [logPlay] = useLogPlayMutation();
@@ -56,6 +57,66 @@ const NexoriaPlayer = () => {
   useEffect(() => {
     setHasLoggedPlay(false);
   }, [currentTrack?._id]);
+
+  const blobUrlsRef = useRef({});
+  const [activeAudioSrc, setActiveAudioSrc] = useState("");
+
+  // Pre-resolve blob URLs for current track and next few tracks in queue
+  useEffect(() => {
+    const resolveBlobs = async () => {
+      const tracksToResolve = [];
+      if (currentTrack) tracksToResolve.push(currentTrack);
+      if (queue.length > 0) tracksToResolve.push(...queue.slice(0, 3));
+      
+      for (const track of tracksToResolve) {
+        if (!blobUrlsRef.current[track._id] && downloadedTracks.includes(track._id)) {
+          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+          const url = track.telegramFileId 
+            ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+            : track.audioUrl || "";
+          
+          if (url) {
+            const blobUrl = await getBlobUrlForTrack(url);
+            if (blobUrl) blobUrlsRef.current[track._id] = blobUrl;
+          }
+        }
+      }
+    };
+    resolveBlobs();
+  }, [currentTrack?._id, queue, downloadedTracks]);
+
+  // Determine active audio source on track change
+  useEffect(() => {
+    let isMounted = true;
+    const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+    const networkSrc = currentTrack?.telegramFileId 
+      ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}`
+      : currentTrack?.audioUrl || "";
+      
+    if (!networkSrc) {
+      if (isMounted) setActiveAudioSrc("");
+      return;
+    }
+    
+    // If we already have the blob url, use it immediately
+    if (blobUrlsRef.current[currentTrack?._id]) {
+      if (isMounted) setActiveAudioSrc(blobUrlsRef.current[currentTrack._id]);
+    } else if (downloadedTracks.includes(currentTrack?._id)) {
+      // It's downloaded but not resolved yet
+      getBlobUrlForTrack(networkSrc).then(blobUrl => {
+        if (blobUrl) {
+          blobUrlsRef.current[currentTrack._id] = blobUrl;
+          if (isMounted) setActiveAudioSrc(blobUrl);
+        } else {
+          if (isMounted) setActiveAudioSrc(networkSrc);
+        }
+      });
+    } else {
+      if (isMounted) setActiveAudioSrc(networkSrc);
+    }
+    
+    return () => { isMounted = false; };
+  }, [currentTrack?._id, downloadedTracks]);
 
   // Sync state to audio element for play/pause toggling
   useEffect(() => {
@@ -237,9 +298,14 @@ const NexoriaPlayer = () => {
       // Synchronously set src and play to bypass iOS/mobile restrictions
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-        const nextSrc = nextTrack.telegramFileId 
+        let nextSrc = nextTrack.telegramFileId 
           ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
           : nextTrack.audioUrl || "";
+          
+        if (blobUrlsRef.current[nextTrack._id]) {
+          nextSrc = blobUrlsRef.current[nextTrack._id];
+        }
+          
         audioRef.current.src = nextSrc;
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
@@ -255,9 +321,14 @@ const NexoriaPlayer = () => {
         
         if (audioRef.current) {
           const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-          const nextSrc = nextTrack.telegramFileId 
+          let nextSrc = nextTrack.telegramFileId 
             ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
             : nextTrack.audioUrl || "";
+            
+          if (blobUrlsRef.current[nextTrack._id]) {
+            nextSrc = blobUrlsRef.current[nextTrack._id];
+          }
+            
           audioRef.current.src = nextSrc;
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
@@ -349,18 +420,13 @@ const NexoriaPlayer = () => {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-  const audioSource = currentTrack?.telegramFileId 
-    ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}`
-    : currentTrack?.audioUrl || "";
-
   return (
     <>
       {/* Hidden Audio Element */}
       <audio
         id="nexoria-global-audio"
         ref={audioRef}
-        src={audioSource}
+        src={activeAudioSrc}
         autoPlay={isPlaying}
         playsInline
         preload="auto"

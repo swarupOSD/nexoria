@@ -13,6 +13,7 @@ const initialState = {
   currentTime: 0,
   duration: 0,
   likedTracks: JSON.parse(localStorage.getItem('nexoriaLikedTracks')) || [],
+  downloadedTracks: JSON.parse(localStorage.getItem('nexoriaDownloadedTracks')) || [],
   isRemoteControlled: false, // Flag to indicate if current update is from a remote device
 };
 
@@ -163,12 +164,19 @@ const nexoriaMusicSlice = createSlice({
       }
       localStorage.setItem('nexoriaLikedTracks', JSON.stringify(state.likedTracks));
     },
-    clearPlayer: (state) => {
-      state.currentTrack = null;
-      state.isPlaying = false;
-      state.queue = [];
-      state.history = [];
+    addDownloadedTrack: (state, action) => {
+      const trackId = action.payload;
+      if (!state.downloadedTracks.includes(trackId)) {
+        state.downloadedTracks.push(trackId);
+        localStorage.setItem('nexoriaDownloadedTracks', JSON.stringify(state.downloadedTracks));
+      }
     },
+    removeDownloadedTrackId: (state, action) => {
+      const trackId = action.payload;
+      state.downloadedTracks = state.downloadedTracks.filter(id => id !== trackId);
+      localStorage.setItem('nexoriaDownloadedTracks', JSON.stringify(state.downloadedTracks));
+    },
+    clearPlayer: () => initialState,
     setRemoteControlled: (state, action) => {
       state.isRemoteControlled = action.payload;
     },
@@ -203,6 +211,8 @@ export const {
   toggleShuffle,
   updateTime,
   toggleLikeTrack,
+  addDownloadedTrack,
+  removeDownloadedTrackId,
   clearPlayer,
   setRemoteControlled,
   syncMusicState,

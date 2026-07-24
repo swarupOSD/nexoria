@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2, Users } from 'lucide-react';
+import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2, Users, Download, CheckCircle2, Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
@@ -8,8 +8,9 @@ import {
   useRemoveTrackFromPlaylistMutation,
   useTogglePlaylistCollaborativeMutation
 } from '../../features/api/nexoriaMusicApiSlice';
-import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
+import { playTrack, togglePlayPause, setQueue, toggleLikeTrack, addDownloadedTrack, removeDownloadedTrackId } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
+import { downloadTrack, removeDownloadedTrack } from '../../utils/offlineManager';
 import toast from 'react-hot-toast';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
 import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
@@ -21,7 +22,9 @@ const NexoriaMusicPlaylist = () => {
   const dispatch = useDispatch();
   
   const { user } = useSelector(state => state.auth);
-  const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
+  const { currentTrack, isPlaying, likedTracks, downloadedTracks } = useSelector(state => state.nexoriaMusic);
+  
+  const [isDownloading, setIsDownloading] = useState(false);
   
   const algorithmicPlaylist = location.state?.algorithmicPlaylist;
 
@@ -60,6 +63,52 @@ const NexoriaMusicPlaylist = () => {
       dispatch(setQueue(trackList));
       dispatch(playTrack(track));
     }
+  };
+
+  const isPlaylistDownloaded = tracks.length > 0 && tracks.every(t => downloadedTracks.includes(t._id));
+
+  const handleDownloadPlaylist = async () => {
+    if (tracks.length === 0) return;
+    setIsDownloading(true);
+    
+    if (isPlaylistDownloaded) {
+      // Remove all
+      let successCount = 0;
+      for (const track of tracks) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        const audioUrl = track.telegramFileId 
+          ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+          : track.audioUrl || "";
+        if (audioUrl) {
+          await removeDownloadedTrack(audioUrl);
+          dispatch(removeDownloadedTrackId(track._id));
+          successCount++;
+        }
+      }
+      toast.success(`Removed ${successCount} tracks from downloads`);
+    } else {
+      // Download all missing
+      let successCount = 0;
+      for (const track of tracks) {
+        if (downloadedTracks.includes(track._id)) continue;
+        
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        const audioUrl = track.telegramFileId 
+          ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+          : track.audioUrl || "";
+          
+        if (audioUrl) {
+          const success = await downloadTrack(audioUrl);
+          if (success) {
+            dispatch(addDownloadedTrack(track._id));
+            successCount++;
+          }
+        }
+      }
+      toast.success(`Downloaded ${successCount} new tracks`);
+    }
+    
+    setIsDownloading(false);
   };
 
   const handleDeletePlaylist = async () => {
@@ -174,6 +223,21 @@ const NexoriaMusicPlaylist = () => {
             disabled={tracks.length === 0}
           >
             {isPlaying ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
+          </button>
+          
+          <button 
+            onClick={handleDownloadPlaylist}
+            disabled={isDownloading || tracks.length === 0}
+            className="w-10 h-10 border border-white/30 rounded-full flex items-center justify-center text-white hover:border-white transition-colors"
+            title={isPlaylistDownloaded ? "Remove Downloads" : "Download Playlist"}
+          >
+            {isDownloading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : isPlaylistDownloaded ? (
+              <CheckCircle2 className="w-6 h-6 text-[#22C55E]" />
+            ) : (
+              <Download className="w-5 h-5" />
+            )}
           </button>
         </div>
         
