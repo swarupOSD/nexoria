@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation } from '../features/api/nexoriaMusicApiSlice';
+import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetNexoriaArtistsQuery, useGetNexoriaAlbumsQuery } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
 
@@ -15,10 +15,18 @@ const NexoriaMusicLayout = () => {
   const navigate = useNavigate();
 
   const { data: playlistsRes } = useGetPlaylistsQuery(undefined, { skip: !user });
+  const { data: artistsRes } = useGetNexoriaArtistsQuery();
+  const { data: albumsRes } = useGetNexoriaAlbumsQuery();
+  
   const [createPlaylist] = useCreatePlaylistMutation();
   const [addTrackToPlaylist] = useAddTrackToPlaylistMutation();
+  
   const playlists = playlistsRes?.data || [];
+  const artists = artistsRes?.data || [];
+  const albums = albumsRes?.data || [];
+  
   const [dragOverPlaylistId, setDragOverPlaylistId] = useState(null);
+  const [libraryFilter, setLibraryFilter] = useState('All');
 
   const handleDrop = async (e, playlistId) => {
     e.preventDefault();
@@ -110,53 +118,127 @@ const NexoriaMusicLayout = () => {
             <Library className="w-6 h-6" />
             <span>Your Library</span>
           </div>
-          
-          <div className="mt-4 px-2 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1 pb-24">
-            {actionItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button 
-                  key={item.name} 
-                  onClick={item.onClick}
-                  className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
-                >
-                  <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity ${item.bg}`}>
-                    <Icon className="w-5 h-5 fill-current" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-[#a7a7a7] group-hover:text-white transition-colors truncate">{item.name}</span>
-                    <span className="text-xs text-[#a7a7a7]">Action</span>
-                  </div>
-                </button>
-              );
-            })}
-            
-            {/* User Playlists Divider */}
-            {playlists.length > 0 && <div className="border-t border-white/10 my-2 mx-2"></div>}
-            
-            {/* Playlists Render */}
-            {playlists.map((pl) => (
-              <button
-                key={pl._id}
-                onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
-                onDragOver={(e) => { e.preventDefault(); setDragOverPlaylistId(pl._id); }}
-                onDragLeave={() => setDragOverPlaylistId(null)}
-                onDrop={(e) => handleDrop(e, pl._id)}
-                className={`flex items-center gap-4 p-2 rounded transition-colors group text-left ${dragOverPlaylistId === pl._id ? 'bg-white/20 border-l-4 border-green-500' : 'hover:bg-white/5'}`}
+
+          {/* Chips Filter */}
+          <div className="px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+            {libraryFilter !== 'All' && (
+              <button 
+                onClick={() => setLibraryFilter('All')}
+                className="w-8 h-8 rounded-full bg-[#2a2a2a] hover:bg-[#333333] flex items-center justify-center shrink-0 transition-colors"
               >
-                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-zinc-800`}>
-                  {pl.coverImage ? (
-                    <img src={pl.coverImage} alt={pl.title} className="w-full h-full object-cover rounded-md" />
+                <Plus className="w-4 h-4 text-white rotate-45" />
+              </button>
+            )}
+            {['Playlists', 'Artists', 'Albums'].map(filter => (
+              (libraryFilter === 'All' || libraryFilter === filter) && (
+                <button
+                  key={filter}
+                  onClick={() => setLibraryFilter(filter)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                    libraryFilter === filter 
+                      ? 'bg-white text-black' 
+                      : 'bg-[#2a2a2a] text-white hover:bg-[#333333]'
+                  }`}
+                >
+                  {filter}
+                </button>
+              )
+            ))}
+          </div>
+          
+          <div className="mt-2 px-2 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1 pb-24">
+            
+            {/* Playlists View */}
+            {(libraryFilter === 'All' || libraryFilter === 'Playlists') && (
+              <>
+                {actionItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button 
+                      key={item.name} 
+                      onClick={item.onClick}
+                      className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
+                    >
+                      <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity ${item.bg}`}>
+                        <Icon className="w-5 h-5 fill-current" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-[#a7a7a7] group-hover:text-white transition-colors truncate">{item.name}</span>
+                        <span className="text-xs text-[#a7a7a7]">Action</span>
+                      </div>
+                    </button>
+                  );
+                })}
+                
+                {playlists.length > 0 && <div className="border-t border-white/10 my-2 mx-2"></div>}
+                
+                {playlists.map((pl) => (
+                  <button
+                    key={pl._id}
+                    onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
+                    onDragOver={(e) => { e.preventDefault(); setDragOverPlaylistId(pl._id); }}
+                    onDragLeave={() => setDragOverPlaylistId(null)}
+                    onDrop={(e) => handleDrop(e, pl._id)}
+                    className={`flex items-center gap-4 p-2 rounded transition-colors group text-left ${dragOverPlaylistId === pl._id ? 'bg-white/20 border-l-4 border-green-500' : 'hover:bg-white/5'}`}
+                  >
+                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-zinc-800`}>
+                      {pl.coverImage ? (
+                        <img src={pl.coverImage} alt={pl.title} className="w-full h-full object-cover rounded-md" />
+                      ) : (
+                        <ListMusic className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#1ed760]' : 'text-[#a7a7a7] group-hover:text-white'}`}>{pl.title}</span>
+                      <span className="text-xs text-[#a7a7a7] truncate">Playlist • {user?.name || 'You'}</span>
+                    </div>
+                  </button>
+                ))}
+              </>
+            )}
+
+            {/* Artists View */}
+            {(libraryFilter === 'All' || libraryFilter === 'Artists') && artists.map(artist => (
+              <button
+                key={artist._id}
+                onClick={() => navigate(`/nexoria-music/artist/${artist._id}`)}
+                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
+              >
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm bg-zinc-800 overflow-hidden`}>
+                  {artist.image ? (
+                    <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-5 h-5 text-white" />
+                  )}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/artist/${artist._id}` ? 'text-[#1ed760]' : 'text-white'}`}>{artist.name}</span>
+                  <span className="text-xs text-[#a7a7a7] truncate">Artist</span>
+                </div>
+              </button>
+            ))}
+
+            {/* Albums View */}
+            {(libraryFilter === 'All' || libraryFilter === 'Albums') && albums.map(album => (
+              <button
+                key={album._id}
+                onClick={() => navigate(`/nexoria-music/album/${album._id}`)}
+                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
+              >
+                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm bg-zinc-800 overflow-hidden`}>
+                  {album.coverImage ? (
+                    <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
                   ) : (
                     <ListMusic className="w-5 h-5 text-white" />
                   )}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#1ed760]' : 'text-[#a7a7a7] group-hover:text-white'}`}>{pl.title}</span>
-                  <span className="text-xs text-[#a7a7a7] truncate">Playlist • {user?.name || 'You'}</span>
+                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/album/${album._id}` ? 'text-[#1ed760]' : 'text-white'}`}>{album.title}</span>
+                  <span className="text-xs text-[#a7a7a7] truncate">Album • {album.artist?.name || 'Unknown'}</span>
                 </div>
               </button>
             ))}
+
           </div>
         </div>
       </div>
