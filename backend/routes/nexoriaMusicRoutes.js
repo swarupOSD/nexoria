@@ -29,7 +29,14 @@ import {
   getFavorites,
   getDiscoverWeekly,
   getReleaseRadar,
-  getDailyMix
+  getDailyMix,
+  createPlaylist,
+  getUserPlaylists,
+  getPlaylistDetails,
+  addTrackToPlaylist,
+  removeTrackFromPlaylist,
+  deletePlaylist,
+  getAllTracksConsumer
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -47,6 +54,19 @@ const upload = multer({
 // CONSUMER ROUTES
 router.route('/search').get(searchMusic);
 router.route('/stream/:fileId').get(streamTrack);
+router.route('/all-tracks').get(getAllTracksConsumer);
+
+// PLAYLISTS
+router.route('/playlists')
+  .post(protect, createPlaylist)
+  .get(protect, getUserPlaylists);
+router.route('/playlists/:id')
+  .get(protect, getPlaylistDetails)
+  .delete(protect, deletePlaylist);
+router.route('/playlists/:id/tracks')
+  .post(protect, addTrackToPlaylist);
+router.route('/playlists/:id/tracks/:trackId')
+  .delete(protect, removeTrackFromPlaylist);
 
 // Algorithm & History Routes (Protected/Optional)
 router.route('/log-play').post(protect, logPlay);

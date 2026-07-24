@@ -125,9 +125,53 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['NexoriaTrack'],
     }),
 
-    // CONSUMER: SEARCH
+    // CONSUMER: SEARCH & ALL TRACKS
     searchNexoriaMusic: builder.query({
       query: (searchTerm) => `/nexoria-music/search?q=${encodeURIComponent(searchTerm)}`,
+    }),
+    getAllTracksConsumer: builder.query({
+      query: () => '/nexoria-music/all-tracks',
+      providesTags: ['NexoriaTrack'],
+    }),
+
+    // PLAYLISTS
+    getPlaylists: builder.query({
+      query: () => '/nexoria-music/playlists',
+      providesTags: ['NexoriaPlaylist'],
+    }),
+    getPlaylistDetails: builder.query({
+      query: (id) => `/nexoria-music/playlists/${id}`,
+      providesTags: (result, error, id) => [{ type: 'NexoriaPlaylist', id }],
+    }),
+    createPlaylist: builder.mutation({
+      query: (data) => ({
+        url: '/nexoria-music/playlists',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['NexoriaPlaylist'],
+    }),
+    addTrackToPlaylist: builder.mutation({
+      query: ({ playlistId, trackId }) => ({
+        url: `/nexoria-music/playlists/${playlistId}/tracks`,
+        method: 'POST',
+        body: { trackId },
+      }),
+      invalidatesTags: (result, error, { playlistId }) => [{ type: 'NexoriaPlaylist', id: playlistId }],
+    }),
+    removeTrackFromPlaylist: builder.mutation({
+      query: ({ playlistId, trackId }) => ({
+        url: `/nexoria-music/playlists/${playlistId}/tracks/${trackId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, { playlistId }) => [{ type: 'NexoriaPlaylist', id: playlistId }],
+    }),
+    deletePlaylist: builder.mutation({
+      query: (id) => ({
+        url: `/nexoria-music/playlists/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['NexoriaPlaylist'],
     }),
 
     // ALGORITHM & HISTORY
@@ -206,4 +250,11 @@ export const {
   useGetDiscoverWeeklyQuery,
   useGetReleaseRadarQuery,
   useGetDailyMixQuery,
+  useGetAllTracksConsumerQuery,
+  useGetPlaylistsQuery,
+  useGetPlaylistDetailsQuery,
+  useCreatePlaylistMutation,
+  useAddTrackToPlaylistMutation,
+  useRemoveTrackFromPlaylistMutation,
+  useDeletePlaylistMutation,
 } = nexoriaMusicApiSlice;

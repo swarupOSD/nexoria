@@ -164,7 +164,13 @@ export const createTrack = async (req, res) => {
 
 export const getTracksAdmin = async (req, res) => {
   try {
-    const tracks = await NexoriaTrack.find()
+    const tracks = await NexoriaTrack.find({
+      $or: [
+        { artist: { $exists: true, $ne: null } },
+        { audioUrl: { $exists: true, $ne: null, $ne: "" } },
+        { telegramFileId: { $exists: true, $ne: null, $ne: "" } }
+      ]
+    })
       .populate('artist', 'name')
       .populate('album', 'title')
       .populate('genre', 'name')
@@ -917,5 +923,142 @@ export const getDeepAnalytics = async (req, res) => {
   } catch (error) {
     logger.error(`Get Deep Analytics Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Failed to fetch deep analytics' });
+  }
+};
+
+// ==========================================
+// CONSUMER: PLAYLISTS
+// ==========================================
+
+export const createPlaylist = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    const playlist = await NexoriaPlaylist.create({
+      title: title || `My Playlist #${Math.floor(Math.random() * 1000)}`,
+      description,
+      creator: req.user._id,
+      tracks: []
+    });
+    res.status(201).json({ success: true, data: playlist });
+  } catch (error) {
+    logger.error(`Create Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to create playlist' });
+  }
+};
+
+export const getUserPlaylists = async (req, res) => {
+  try {
+    const playlists = await NexoriaPlaylist.find({ creator: req.user._id })
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: playlists });
+  } catch (error) {
+    logger.error(`Get User Playlists Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch playlists' });
+  }
+};
+
+export const getPlaylistDetails = async (req, res) => {
+  try {
+    const playlist = await NexoriaPlaylist.findById(req.params.id)
+      .populate({
+        path: 'tracks',
+        populate: [
+          { path: 'artist', select: 'name image' },
+          { path: 'album', select: 'title coverImage' }
+        ]
+      })
+      .populate('creator', 'name profilePicture');
+      
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
+    
+    // Check if public or owned by user
+    if (!playlist.isPublic && playlist.creator._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Private playlist' });
+    }
+
+    res.status(200).json({ success: true, data: playlist });
+  } catch (error) {
+    logger.error(`Get Playlist Details Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch playlist details' });
+  }
+};
+
+export const addTrackToPlaylist = async (req, res) => {
+  try {
+    const { trackId } = req.body;
+    const playlist = await NexoriaPlaylist.findOne({ _id: req.params.id, creator: req.user._id });
+    
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    
+    if (!playlist.tracks.includes(trackId)) {
+      playlist.tracks.push(trackId);
+      
+      // Update cover image to first track's cover if not set
+      if (!playlist.coverImage && playlist.tracks.length === 1) {
+        const track = await NexoriaTrack.findById(trackId).populate('album');
+        if (track && (track.coverImage || (track.album && track.album.coverImage))) {
+          playlist.coverImage = track.coverImage || track.album.coverImage;
+        }
+      }
+      
+      await playlist.save();
+    }
+
+    res.status(200).json({ success: true, message: 'Track added to playlist', data: playlist });
+  } catch (error) {
+    logger.error(`Add Track Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to add track' });
+  }
+};
+
+export const removeTrackFromPlaylist = async (req, res) => {
+  try {
+    const { trackId } = req.params;
+    const playlist = await NexoriaPlaylist.findOne({ _id: req.params.id, creator: req.user._id });
+    
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    
+    playlist.tracks = playlist.tracks.filter(id => id.toString() !== trackId);
+    await playlist.save();
+
+    res.status(200).json({ success: true, message: 'Track removed from playlist', data: playlist });
+  } catch (error) {
+    logger.error(`Remove Track Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to remove track' });
+  }
+};
+
+export const deletePlaylist = async (req, res) => {
+  try {
+    const playlist = await NexoriaPlaylist.findOneAndDelete({ _id: req.params.id, creator: req.user._id });
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    
+    res.status(200).json({ success: true, message: 'Playlist deleted' });
+  } catch (error) {
+    logger.error(`Delete Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to delete playlist' });
+  }
+};
+
+// ==========================================
+// CONSUMER: ALL TRACKS BROWSE
+// ==========================================
+
+export const getAllTracksConsumer = async (req, res) => {
+  try {
+    const tracks = await NexoriaTrack.find({
+      $or: [
+        { artist: { $exists: true, $ne: null } },
+        { audioUrl: { $exists: true, $ne: null, $ne: "" } },
+        { telegramFileId: { $exists: true, $ne: null, $ne: "" } }
+      ]
+    })
+      .populate('artist', 'name image')
+      .populate('album', 'title coverImage')
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: tracks });
+  } catch (error) {
+    logger.error(`Get All Tracks Consumer Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch tracks' });
   }
 };

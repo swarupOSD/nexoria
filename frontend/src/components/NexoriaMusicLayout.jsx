@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine } from 'lucide-react';
+import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
+import { useGetPlaylistsQuery, useCreatePlaylistMutation } from '../../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 
 const NexoriaMusicLayout = () => {
@@ -10,6 +11,10 @@ const NexoriaMusicLayout = () => {
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { data: playlistsRes } = useGetPlaylistsQuery(undefined, { skip: !user });
+  const [createPlaylist] = useCreatePlaylistMutation();
+  const playlists = playlistsRes?.data || [];
 
   useEffect(() => {
     const mainContent = document.getElementById('music-main-content');
@@ -30,8 +35,22 @@ const NexoriaMusicLayout = () => {
     { name: 'Your Library', path: '/nexoria-music/library', icon: Library, exact: false },
   ];
 
+  const handleCreatePlaylist = async () => {
+    if (!user) {
+      toast.error('Please log in to create playlists.');
+      return;
+    }
+    try {
+      const res = await createPlaylist({ title: `My Playlist #${playlists.length + 1}` }).unwrap();
+      navigate(`/nexoria-music/playlist/${res.data._id}`);
+      toast.success('Playlist created!');
+    } catch (err) {
+      toast.error('Failed to create playlist');
+    }
+  };
+
   const actionItems = [
-    { name: 'Create Playlist', icon: Plus, bg: 'bg-[#a7a7a7] group-hover:bg-white text-black transition-colors', onClick: () => toast.success('Playlist feature coming soon!', { icon: '🎵' }) },
+    { name: 'Create Playlist', icon: Plus, bg: 'bg-[#a7a7a7] group-hover:bg-white text-black transition-colors', onClick: handleCreatePlaylist },
     { name: 'Liked Songs', path: '/nexoria-music/library', icon: Heart, bg: 'bg-gradient-to-br from-[#450af5] to-[#c4efd9] text-white', onClick: () => navigate('/nexoria-music/library') },
   ];
 
@@ -88,11 +107,35 @@ const NexoriaMusicLayout = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-[#a7a7a7] group-hover:text-white transition-colors truncate">{item.name}</span>
-                    <span className="text-xs text-[#a7a7a7]">Playlist</span>
+                    <span className="text-xs text-[#a7a7a7]">Action</span>
                   </div>
                 </button>
               );
             })}
+            
+            {/* User Playlists Divider */}
+            {playlists.length > 0 && <div className="border-t border-white/10 my-2 mx-2"></div>}
+            
+            {/* Playlists Render */}
+            {playlists.map((pl) => (
+              <button
+                key={pl._id}
+                onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
+                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
+              >
+                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-zinc-800`}>
+                  {pl.coverImage ? (
+                    <img src={pl.coverImage} alt={pl.title} className="w-full h-full object-cover rounded-md" />
+                  ) : (
+                    <ListMusic className="w-5 h-5 text-white" />
+                  )}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#1ed760]' : 'text-[#a7a7a7] group-hover:text-white'}`}>{pl.title}</span>
+                  <span className="text-xs text-[#a7a7a7] truncate">Playlist • {user?.name || 'You'}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
