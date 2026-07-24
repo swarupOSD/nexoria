@@ -41,6 +41,24 @@ const EqualizerModal = ({ isOpen, onClose, isYouTube, updateEq }) => {
             </div>
           ) : (
             <div className="space-y-6">
+              <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+                {[
+                  { name: 'Flat', vals: { bass: 0, mid: 0, treble: 0, reverb: 0 } },
+                  { name: 'Bass Boost', vals: { bass: 8, mid: -2, treble: 2, reverb: 0 } },
+                  { name: 'Pop', vals: { bass: 2, mid: 5, treble: 4, reverb: 0 } },
+                  { name: 'Vocal', vals: { bass: -2, mid: 8, treble: 2, reverb: 0.1 } },
+                  { name: 'Live', vals: { bass: 4, mid: 2, treble: 5, reverb: 0.4 } },
+                ].map(preset => (
+                  <button 
+                    key={preset.name}
+                    onClick={() => setEqVals(preset.vals)}
+                    className="whitespace-nowrap px-4 py-1.5 bg-white/5 hover:bg-purple-500/20 hover:text-purple-300 text-white/70 rounded-full text-xs font-bold border border-white/10 transition-colors"
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+
               <EqSlider 
                 label="Bass (250Hz)" 
                 value={eqVals.bass} 
@@ -72,15 +90,6 @@ const EqualizerModal = ({ isOpen, onClose, isYouTube, updateEq }) => {
                   color="bg-teal-500"
                   icon={<Activity className="w-4 h-4" />}
                 />
-              </div>
-
-              <div className="flex justify-center pt-2">
-                <button 
-                  onClick={() => setEqVals({ bass: 0, mid: 0, treble: 0, reverb: 0 })}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-sm font-medium transition-colors"
-                >
-                  Reset Defaults
-                </button>
               </div>
 
               {/* Crossfade Settings */}

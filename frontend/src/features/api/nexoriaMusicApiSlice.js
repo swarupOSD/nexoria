@@ -124,6 +124,14 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['NexoriaTrack'],
     }),
+    updateNexoriaTrackLyrics: builder.mutation({
+      query: ({ trackId, data }) => ({
+        url: `/nexoria-music/admin/tracks/${trackId}/lyrics`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['NexoriaTrack'],
+    }),
 
     // CONSUMER: SEARCH & ALL TRACKS
     searchNexoriaMusic: builder.query({
@@ -260,6 +268,7 @@ export const {
   useCreateNexoriaTrackMutation,
   useUpdateNexoriaTrackMutation,
   useDeleteNexoriaTrackMutation,
+  useUpdateNexoriaTrackLyricsMutation,
   useSearchNexoriaMusicQuery,
   useLogPlayMutation,
   useGetMusicRecentlyPlayedQuery,

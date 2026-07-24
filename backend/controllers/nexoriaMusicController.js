@@ -257,6 +257,36 @@ export const deleteTrack = async (req, res) => {
   }
 };
 
+export const updateTrackLyrics = async (req, res) => {
+  try {
+    const { trackId } = req.params;
+    const { plainText, syncedLyrics } = req.body;
+
+    const track = await NexoriaTrack.findById(trackId);
+    if (!track) return res.status(404).json({ success: false, message: 'Track not found' });
+
+    let lyrics = await NexoriaLyrics.findOne({ trackId });
+    if (lyrics) {
+      lyrics.plainText = plainText || lyrics.plainText;
+      lyrics.syncedLyrics = syncedLyrics || lyrics.syncedLyrics;
+      await lyrics.save();
+    } else {
+      lyrics = await NexoriaLyrics.create({
+        trackId,
+        plainText,
+        syncedLyrics,
+        addedBy: req.user._id
+      });
+      track.lyricsId = lyrics._id;
+      await track.save();
+    }
+
+    res.status(200).json({ success: true, data: lyrics });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ==========================================
 // CONSUMER: SEARCH
 // ==========================================

@@ -17,6 +17,7 @@ import {
   getTracksAdmin,
   updateTrack,
   deleteTrack,
+  updateTrackLyrics,
   searchMusic,
   uploadTrackAudio,
   streamTrack,
@@ -136,5 +137,8 @@ router.route('/admin/tracks')
 router.route('/admin/tracks/:id')
   .put(protect, authorize('admin', 'superadmin'), upload.single('audio'), updateTrack)
   .delete(protect, authorize('admin', 'superadmin'), deleteTrack);
+
+router.route('/admin/tracks/:trackId/lyrics')
+  .put(protect, authorize('admin', 'superadmin'), updateTrackLyrics);
 
 export default router;

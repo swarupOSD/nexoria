@@ -9,14 +9,17 @@ import {
   useGetNexoriaArtistsQuery,
   useGetNexoriaAlbumsQuery,
   useGetNexoriaGenresQuery,
-  useUploadNexoriaTrackAudioMutation
+  useUploadNexoriaTrackAudioMutation,
+  useUpdateNexoriaTrackLyricsMutation,
+  useGetTrackLyricsQuery
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Music, Play, Edit2 } from 'lucide-react';
+import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
-  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null
+  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null,
+  lyricsRaw: ''
 };
 
 const NexoriaTracksManager = () => {
@@ -29,10 +32,29 @@ const NexoriaTracksManager = () => {
   const [createTrack, { isLoading: isCreating }] = useCreateNexoriaTrackMutation();
   const [updateTrack, { isLoading: isUpdating }] = useUpdateNexoriaTrackMutation();
   const [deleteTrack] = useDeleteNexoriaTrackMutation();
+  const [updateTrackLyrics] = useUpdateNexoriaTrackLyricsMutation();
   
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
   const [editTarget, setEditTarget] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
+
+  const { data: lyricsData, isFetching: isFetchingLyrics } = useGetTrackLyricsQuery(editTarget?._id, {
+    skip: !editTarget || modalMode !== 'edit',
+  });
+
+  React.useEffect(() => {
+    if (lyricsData?.data && editTarget) {
+      let text = '';
+      if (lyricsData.data.syncedLyrics && lyricsData.data.syncedLyrics.length > 0) {
+        text = lyricsData.data.syncedLyrics.map(line => {
+          const m = Math.floor(line.time / 60).toString().padStart(2, '0');
+          const s = (line.time % 60).toFixed(2).padStart(5, '0');
+          return `[${m}:${s}] ${line.text}`;
+        }).join('\n');
+      }
+      setFormData(prev => ({ ...prev, lyricsRaw: text }));
+    }
+  }, [lyricsData, editTarget]);
 
   const tracks = response?.data || [];
   const artists = artistsRes?.data || [];
@@ -57,7 +79,8 @@ const NexoriaTracksManager = () => {
       trackType: track.trackType || 'song',
       isPremium: track.isPremium || false,
       telegramFileId: track.telegramFileId || null,
-      audioFile: null
+      audioFile: null,
+      lyricsRaw: ''
     });
     setEditTarget(track);
     setModalMode('edit');
@@ -94,18 +117,58 @@ const NexoriaTracksManager = () => {
         if (formData.audioUrl) payload.append('audioUrl', formData.audioUrl);
         if (formData.telegramFileId) payload.append('telegramFileId', formData.telegramFileId);
       } else {
-        payload = { ...formData };
-        if (!payload.album) delete payload.album;
-        if (!payload.genre) delete payload.genre;
-        delete payload.audioFile;
+        submitData = new FormData();
+        submitData.append('audio', formData.audioFile);
+        submitData.append('title', formData.title);
+        submitData.append('artist', formData.artist);
+        if (selectedArtist) submitData.append('artistName', selectedArtist.name);
+        if (formData.album) submitData.append('album', formData.album);
+        if (formData.genre) submitData.append('genre', formData.genre);
+        submitData.append('duration', formData.duration || 0);
+        submitData.append('trackType', formData.trackType);
+        submitData.append('isPremium', formData.isPremium);
+        if (formData.coverImage) submitData.append('coverImage', formData.coverImage);
+        if (formData.audioUrl) submitData.append('audioUrl', formData.audioUrl);
+        if (formData.telegramFileId) submitData.append('telegramFileId', formData.telegramFileId);
+      } else {
+        submitData = { ...formData };
+        if (!submitData.album) delete submitData.album;
+        if (!submitData.genre) delete submitData.genre;
+        delete submitData.audioFile;
       }
 
-      if (modalMode === 'edit' && editTarget) {
-        await updateTrack({ id: editTarget._id, data: payload }).unwrap();
-        toast.success('Track updated successfully');
-      } else {
-        await createTrack(payload).unwrap();
+      if (modalMode === 'create') {
+        await createTrack(submitData).unwrap();
         toast.success('Track created successfully');
+      } else {
+        await updateTrack({ id: editTarget._id, data: submitData }).unwrap();
+        
+        // Handle Lyrics update if in edit mode
+        const lines = formData.lyricsRaw.split('\n').filter(l => l.trim());
+        const syncedLyrics = [];
+        let parseError = false;
+        
+        for (const line of lines) {
+          const match = line.match(/\[(\d{2}):(\d{2}(?:\.\d{1,2})?)\]\s*(.*)/);
+          if (match) {
+            const time = parseInt(match[1]) * 60 + parseFloat(match[2]);
+            syncedLyrics.push({ time, text: match[3] || '' });
+          } else if (line.trim().startsWith('[')) {
+            parseError = true;
+          }
+        }
+        
+        if (parseError) {
+          toast.error('Some lyrics lines had invalid LRC format, but track was updated.');
+        }
+        
+        // Only call if we have lyrics or if we want to clear them
+        await updateTrackLyrics({ 
+          trackId: editTarget._id, 
+          data: { syncedLyrics, plainText: formData.lyricsRaw } 
+        }).unwrap().catch(e => console.log('Lyrics update error', e));
+
+        if (!parseError) toast.success('Track updated successfully');
       }
       closeModal();
     } catch (error) {
@@ -327,6 +390,22 @@ const NexoriaTracksManager = () => {
                     className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                   />
                 </div>
+
+                {modalMode === 'edit' && (
+                  <div>
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                      <FileText className="w-4 h-4" /> Synced Lyrics (LRC Format)
+                    </label>
+                    <textarea 
+                      value={formData.lyricsRaw}
+                      onChange={(e) => setFormData({...formData, lyricsRaw: e.target.value})}
+                      placeholder={`[00:15.22] First line of lyrics\n[00:20.10] Second line of lyrics...`}
+                      rows={6}
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm font-mono"
+                    />
+                    {isFetchingLyrics && <p className="text-xs text-slate-500 mt-1">Loading existing lyrics...</p>}
+                  </div>
+                )}
 
                 <div className="p-4 bg-[#181818] border border-white/10 rounded-2xl border-dashed">
                   <label className="block text-xs font-bold text-[#1ed760] uppercase tracking-wider mb-3">Upload Audio File (Max 50MB)</label>
