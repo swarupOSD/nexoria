@@ -158,7 +158,7 @@ const NexoriaMusicPlaylist = () => {
             <h3 className="text-xl font-bold mb-2">It's a bit empty here...</h3>
             <p className="text-[#a7a7a7] font-medium">Find some songs to add to your playlist.</p>
             <button 
-              onClick={() => navigate('/nexoria-music/search')}
+              onClick={() => navigate('/nexoria-music/tracks')}
               className="mt-6 px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
             >
               Find Songs

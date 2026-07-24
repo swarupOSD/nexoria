@@ -197,12 +197,12 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       query: () => '/nexoria-music/recommendations',
     }),
     getNexoriaMusicAnalytics: builder.query({
-      query: () => '/api/nexoria-music/analytics',
-      providesTags: ['NexoriaMusicHistory', 'NexoriaTracks', 'NexoriaArtists']
+      query: () => '/nexoria-music/analytics',
+      providesTags: ['NexoriaMusicAnalytics']
     }),
     getDeepAnalytics: builder.query({
-      query: () => '/api/nexoria-music/deep-analytics',
-      providesTags: ['NexoriaMusicHistory']
+      query: () => '/nexoria-music/deep-analytics',
+      providesTags: ['NexoriaMusicAnalytics']
     }),
     getFavorites: builder.query({
       query: (type) => `/nexoria-music/favorites${type ? `?type=${type}` : ''}`,

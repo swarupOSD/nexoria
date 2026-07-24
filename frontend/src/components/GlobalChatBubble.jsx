@@ -217,7 +217,12 @@ const GlobalChatBubble = () => {
   };
 
   // Hide global chat completely on voice lounge, secret lounge, and watch party pages to prevent overlapping
-  if (location.pathname.includes('/voice-lounge') || location.pathname.includes('/secret-lounge') || location.pathname.includes('/watch-party')) {
+  if (
+    location.pathname.includes('/voice-lounge') || 
+    location.pathname.includes('/secret-lounge') || 
+    location.pathname.includes('/watch-party') ||
+    location.pathname.startsWith('/nexoria-music')
+  ) {
     return null;
   }
 

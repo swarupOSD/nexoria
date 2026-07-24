@@ -6,9 +6,11 @@ import NexoriaGenresManager from './NexoriaGenresManager';
 import NexoriaAlbumsManager from './NexoriaAlbumsManager';
 import NexoriaTracksManager from './NexoriaTracksManager';
 import NexoriaAnalyticsManager from './NexoriaAnalyticsManager';
+import { useNavigate } from 'react-router-dom';
 
 const NexoriaMusicDashboard = () => {
   const [activeTab, setActiveTab] = useState('insights');
+  const navigate = useNavigate();
 
   const navItems = [
     { id: 'insights', label: 'Insights', icon: BarChart2 },
@@ -27,9 +29,13 @@ const NexoriaMusicDashboard = () => {
           <div className="w-8 h-8 rounded-full bg-[#1ed760] flex items-center justify-center font-bold text-black text-xl shadow-[0_0_15px_rgba(30,215,96,0.3)]">
             N
           </div>
-          <h1 className="text-xl font-bold tracking-tight">Admin for Artists</h1>
+          <h1 className="text-xl font-bold tracking-tight">Nexoria Music Admin</h1>
         </div>
-        <button className="p-2 text-[#b3b3b3] hover:text-white transition-colors">
+        <button 
+          onClick={() => navigate('/superadmin')}
+          className="p-2 text-[#b3b3b3] hover:text-white transition-colors"
+          title="Back to Superadmin"
+        >
           <Settings className="w-6 h-6" />
         </button>
       </header>

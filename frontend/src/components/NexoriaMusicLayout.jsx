@@ -32,7 +32,7 @@ const NexoriaMusicLayout = () => {
   const navItems = [
     { name: 'Home', path: '/nexoria-music', icon: Home, exact: true },
     { name: 'Search', path: '/nexoria-music/search', icon: Search, exact: false },
-    { name: 'Your Library', path: '/nexoria-music/library', icon: Library, exact: false },
+    { name: 'All Songs', path: '/nexoria-music/tracks', icon: ListMusic, exact: false },
   ];
 
   const handleCreatePlaylist = async () => {
