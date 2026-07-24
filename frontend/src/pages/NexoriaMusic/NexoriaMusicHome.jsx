@@ -33,11 +33,21 @@ const NexoriaMusicHome = () => {
   const recommendedTracks = recRes?.data || [];
 
   // Fallbacks if user is not logged in or no history yet
-  const topGridTracks = user && recentTracks.length > 0 ? recentTracks.slice(0, 6) : allTracks.slice(0, 6);
-  const madeForYouTracks = user && recommendedTracks.length > 0 ? recommendedTracks : allTracks.slice(6, 16);
+  const topGridTracksUnfiltered = user && recentTracks.length > 0 ? recentTracks : allTracks;
+  const madeForYouTracksUnfiltered = user && recommendedTracks.length > 0 ? recommendedTracks : allTracks;
 
   const [greeting, setGreeting] = useState('');
   const [activeChip, setActiveChip] = useState('All');
+
+  // Filter based on chip
+  const filterByChip = (tracks) => {
+    if (activeChip === 'Music') return tracks.filter(t => t.trackType === 'song' || !t.trackType);
+    if (activeChip === 'Podcasts') return tracks.filter(t => t.trackType === 'podcast');
+    return tracks;
+  };
+
+  const topGridTracks = filterByChip(topGridTracksUnfiltered).slice(0, 6);
+  const madeForYouTracks = filterByChip(madeForYouTracksUnfiltered).slice(0, 10);
   
   const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
   const [selectedTrackId, setSelectedTrackId] = useState(null);

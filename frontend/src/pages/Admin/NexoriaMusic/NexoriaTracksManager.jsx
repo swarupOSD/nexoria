@@ -15,7 +15,7 @@ import { Plus, Trash2, XCircle, Music, Play, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const emptyForm = { 
-  title: '', artist: '', album: '', genre: '', 
+  title: '', artist: '', album: '', genre: '', trackType: 'song',
   duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null
 };
 
@@ -56,6 +56,7 @@ const NexoriaTracksManager = () => {
       duration: track.duration || 0,
       audioUrl: track.audioUrl || '',
       coverImage: track.coverImage || '',
+      trackType: track.trackType || 'song',
       isPremium: track.isPremium || false,
       telegramFileId: track.telegramFileId || null,
       audioFile: null
@@ -259,6 +260,19 @@ const NexoriaTracksManager = () => {
                     placeholder="e.g. Blinding Lights"
                     className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Track Type *</label>
+                  <select
+                    value={formData.trackType}
+                    onChange={(e) => setFormData({...formData, trackType: e.target.value})}
+                    required
+                    className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1ed760] transition-all text-sm [&>option]:bg-slate-900"
+                  >
+                    <option value="song">Song (Music)</option>
+                    <option value="podcast">Podcast Episode</option>
+                  </select>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">

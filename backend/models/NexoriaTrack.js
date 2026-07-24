@@ -61,6 +61,11 @@ const nexoriaTrackSchema = new mongoose.Schema(
       type: [String],
       default: []
     },
+    trackType: {
+      type: String,
+      enum: ['song', 'podcast'],
+      default: 'song'
+    },
     addedBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
