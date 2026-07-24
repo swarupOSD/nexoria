@@ -236,6 +236,9 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['NexoriaPlaylist'],
     }),
+    getUserProfile: builder.query({
+      query: (id) => `/nexoria-music/users/${id}`,
+    }),
   }),
 });
 
@@ -280,4 +283,5 @@ export const {
   useGetArtistDetailsQuery,
   useGetAlbumDetailsQuery,
   useGetTrackLyricsQuery,
+  useGetUserProfileQuery
 } = nexoriaMusicApiSlice;

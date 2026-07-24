@@ -6,6 +6,7 @@ import NexoriaPlaylist from '../models/NexoriaPlaylist.js';
 import NexoriaUserHistory from '../models/NexoriaUserHistory.js';
 import NexoriaMusicFavorite from '../models/NexoriaMusicFavorite.js';
 import NexoriaLyrics from '../models/NexoriaLyrics.js';
+import User from '../models/User.js';
 import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -1089,9 +1090,69 @@ export const getAllTracksConsumer = async (req, res) => {
     res.status(200).json({ success: true, data: tracks });
   } catch (error) {
     logger.error(`Get All Consumer Tracks Error: ${error.message}`);
-    res.status(500).json({ success: false, message: 'Failed to fetch tracks' });
+    res.status(500).json({ success: false, message: 'Failed to search all' });
   }
 };
+
+// ==========================================
+// PUBLIC USER PROFILES
+// ==========================================
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 1. Get User Basic Info
+    const user = await User.findById(id).select('username name avatar role');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // 2. Get User's Public Playlists
+    const playlists = await NexoriaPlaylist.find({ creator: id, isPublic: true })
+      .populate('creator', 'username name avatar')
+      .populate({
+         path: 'tracks',
+         populate: [
+            { path: 'artist', select: 'name image' },
+            { path: 'album', select: 'title coverImage' }
+         ]
+      });
+
+    // 3. Get User's Recently Played (Top 10 unique)
+    const history = await NexoriaUserHistory.find({ user: id })
+      .sort({ playedAt: -1 })
+      .limit(50)
+      .populate({
+        path: 'track',
+        populate: [
+          { path: 'artist', select: 'name image' },
+          { path: 'album', select: 'title coverImage' }
+        ]
+      });
+
+    const uniqueTracksMap = new Map();
+    history.forEach(item => {
+      if (item.track && !uniqueTracksMap.has(item.track._id.toString())) {
+        uniqueTracksMap.set(item.track._id.toString(), item.track);
+      }
+    });
+    const recentlyPlayed = Array.from(uniqueTracksMap.values()).slice(0, 10);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        user,
+        playlists,
+        recentlyPlayed
+      }
+    });
+  } catch (error) {
+    logger.error(`Get User Profile Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch user profile' });
+  }
+};
+
 
 // @desc    Get artist details for consumer (includes popular tracks and albums)
 // @route   GET /api/nexoria-music/artists/:id

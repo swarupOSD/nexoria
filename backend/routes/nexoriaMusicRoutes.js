@@ -40,7 +40,8 @@ import {
   getAllTracksConsumer,
   getArtistDetailsConsumer,
   getAlbumDetailsConsumer,
-  getLyricsConsumer
+  getLyricsConsumer,
+  getUserProfile
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -62,6 +63,7 @@ router.route('/all-tracks').get(getAllTracksConsumer);
 router.route('/artists/:id').get(getArtistDetailsConsumer);
 router.route('/albums/:id').get(getAlbumDetailsConsumer);
 router.route('/tracks/:trackId/lyrics').get(getLyricsConsumer);
+router.route('/users/:id').get(protect, getUserProfile);
 
 // PLAYLISTS
 router.route('/playlists')

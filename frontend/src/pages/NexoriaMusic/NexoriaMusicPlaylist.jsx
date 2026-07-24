@@ -137,7 +137,14 @@ const NexoriaMusicPlaylist = () => {
               <p className="text-[#b3b3b3] text-sm md:text-base mb-2 font-medium">{playlist.description}</p>
             )}
             <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium">
-              <span className="font-bold text-white hover:underline cursor-pointer">{playlist.creator?.name || 'User'}</span>
+              <span 
+                className="font-bold text-white hover:underline cursor-pointer"
+                onClick={() => {
+                  if (playlist.creator?._id) navigate(`/nexoria-music/user/${playlist.creator._id}`);
+                }}
+              >
+                {playlist.creator?.name || 'User'}
+              </span>
               <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
               <span>{tracks.length} songs</span>
             </div>
