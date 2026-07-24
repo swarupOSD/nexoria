@@ -223,6 +223,8 @@ const NexoriaPlayer = () => {
         ref={audioRef}
         src={audioSource}
         autoPlay={isPlaying}
+        playsInline
+        preload="auto"
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         onLoadedMetadata={handleTimeUpdate}
@@ -255,13 +257,12 @@ const NexoriaPlayer = () => {
               {/* MINI PLAYER (Visible when NOT expanded) */}
               {!isExpanded && (
                 <motion.div 
-                  initial={{ y: '100%' }}
-                  animate={{ y: 0 }}
-                  exit={{ y: '100%' }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  className="fixed bottom-[60px] left-2 right-2 z-[90] bg-[#111111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col"
+                  initial={{ y: '100%', opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: '100%', opacity: 0 }}
+                  className="fixed bottom-[60px] left-2 right-2 z-[90] bg-[#1E1B4B]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col"
                   onClick={() => setIsExpanded(true)}
-                >
+                  drag="y">
                   <div className="flex items-center p-2 gap-3">
                     {/* Small Image */}
                     <div className="w-10 h-10 rounded-md overflow-hidden bg-[#4338CA] shrink-0 shadow-inner">

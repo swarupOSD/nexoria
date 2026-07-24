@@ -353,7 +353,7 @@ const NexoriaMusicLayout = () => {
       )}
 
       {/* Mobile Bottom Navigation (Visible only on mobile when mini player is active/inactive) */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-black via-black to-black/90 backdrop-blur-lg border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-[#0F0F23] via-[#0F0F23] to-[#0F0F23]/90 backdrop-blur-lg border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);

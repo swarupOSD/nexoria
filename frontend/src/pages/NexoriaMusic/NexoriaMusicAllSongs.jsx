@@ -64,7 +64,7 @@ const NexoriaMusicAllSongs = () => {
         </button>
       </div>
 
-      <div className="px-6 pb-20 relative z-10">
+      <div className="px-6 pb-32 relative z-10">
         {/* Table Header */}
         <div className="grid grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 text-sm text-[#94A3B8] border-b border-white/10 mb-4 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
           <div className="text-right">#</div>
