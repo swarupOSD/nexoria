@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2, Users } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   useGetPlaylistDetailsQuery, 
   useDeletePlaylistMutation,
@@ -17,20 +17,23 @@ import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
 const NexoriaMusicPlaylist = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   
   const { user } = useSelector(state => state.auth);
   const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
   
+  const algorithmicPlaylist = location.state?.algorithmicPlaylist;
+
   const { data: playlistRes, isLoading, isFetching } = useGetPlaylistDetailsQuery(id, {
-    skip: !id
+    skip: !id || !!algorithmicPlaylist
   });
   
   const [deletePlaylist, { isLoading: isDeleting }] = useDeletePlaylistMutation();
   const [removeTrack] = useRemoveTrackFromPlaylistMutation();
   const [toggleCollaborative, { isLoading: isToggling }] = useTogglePlaylistCollaborativeMutation();
   
-  const playlist = playlistRes?.data;
+  const playlist = algorithmicPlaylist || playlistRes?.data;
   const tracks = playlist?.tracks || [];
   
   const isOwner = user && playlist?.creator?._id === user._id;
@@ -277,7 +280,7 @@ const NexoriaMusicPlaylist = () => {
                   </div>
                   
                   <div className="flex items-center justify-end gap-4 text-[#94A3B8]">
-                    {isOwner && (
+                    {isOwner && !algorithmicPlaylist && (
                       <button 
                         className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-500 hover:scale-110"
                         onClick={(e) => handleRemoveTrack(e, track._id)}

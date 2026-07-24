@@ -4,7 +4,10 @@ import {
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
   useGetMusicRecentlyPlayedQuery, 
-  useGetMusicRecommendationsQuery 
+  useGetMusicRecommendationsQuery,
+  useGetDiscoverWeeklyQuery,
+  useGetReleaseRadarQuery,
+  useGetDailyMixQuery
 } from '../../features/api/nexoriaMusicApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +29,10 @@ const NexoriaMusicHome = () => {
   // Algorithm & History Hooks
   const { data: recentRes, isLoading: loadingRecent } = useGetMusicRecentlyPlayedQuery(undefined, { skip: !user });
   const { data: recRes, isLoading: loadingRecs } = useGetMusicRecommendationsQuery(undefined, { skip: !user });
+  
+  const { data: discoverData, isLoading: loadingDiscover } = useGetDiscoverWeeklyQuery(undefined, { skip: !user });
+  const { data: radarData, isLoading: loadingRadar } = useGetReleaseRadarQuery(undefined, { skip: !user });
+  const { data: mixData, isLoading: loadingMix } = useGetDailyMixQuery(undefined, { skip: !user });
 
   const artists = artistsRes?.data || [];
   const allTracks = tracksRes?.data || [];
@@ -48,6 +55,43 @@ const NexoriaMusicHome = () => {
 
   const topGridTracks = filterByChip(topGridTracksUnfiltered).slice(0, 6);
   const madeForYouTracks = filterByChip(madeForYouTracksUnfiltered).slice(0, 10);
+  
+  const algorithmicPlaylists = [];
+  
+  if (discoverData?.success && discoverData.data?.length > 0) {
+    algorithmicPlaylists.push({
+      _id: 'discover-weekly',
+      name: discoverData.name || 'Discover Weekly',
+      description: discoverData.description || 'New music based on your taste.',
+      tracks: discoverData.data,
+      coverImage: discoverData.data[0]?.album?.coverImage || discoverData.data[0]?.coverImage || '',
+      isAlgorithmic: true
+    });
+  }
+
+  if (radarData?.success && radarData.data?.length > 0) {
+    algorithmicPlaylists.push({
+      _id: 'release-radar',
+      name: radarData.name || 'Release Radar',
+      description: radarData.description || 'Catch up on the latest releases.',
+      tracks: radarData.data,
+      coverImage: radarData.data[0]?.album?.coverImage || radarData.data[0]?.coverImage || '',
+      isAlgorithmic: true
+    });
+  }
+
+  if (mixData?.success && mixData.data?.length > 0) {
+    mixData.data.forEach(mix => {
+      algorithmicPlaylists.push({
+        _id: mix.id,
+        name: mix.name,
+        description: mix.description,
+        tracks: mix.tracks,
+        coverImage: mix.tracks[0]?.album?.coverImage || mix.tracks[0]?.coverImage || '',
+        isAlgorithmic: true
+      });
+    });
+  }
   
   const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
   const [selectedTrackId, setSelectedTrackId] = useState(null);
@@ -191,8 +235,36 @@ const NexoriaMusicHome = () => {
           <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Made For You</h2>
           
           <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
-            {loadingTracks || loadingRecs ? (
+            {loadingDiscover || loadingRadar || loadingMix ? (
               [1,2,3,4,5].map(i => <div key={i} className="w-[140px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
+            ) : algorithmicPlaylists.length > 0 ? (
+              algorithmicPlaylists.map((playlist) => (
+                <div 
+                  key={playlist._id}
+                  onClick={() => navigate(`/nexoria-music/playlist/${playlist._id}`, { state: { algorithmicPlaylist: playlist } })}
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-white/5 hover:bg-white/10 rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                >
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                    {playlist.coverImage && (
+                      <img src={playlist.coverImage} alt={playlist.name} className="w-full h-full object-cover" />
+                    )}
+                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:flex items-center gap-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePlay(playlist.tracks[0], playlist.tracks);
+                        }}
+                        className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg"
+                        title="Play Mix"
+                      >
+                        <Play className="w-6 h-6 fill-current ml-1" />
+                      </button>
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{playlist.name}</h3>
+                  <p className="text-xs text-white/70 line-clamp-2">{playlist.description}</p>
+                </div>
+              ))
             ) : (
               madeForYouTracks.map((track) => (
                 <div 
@@ -218,10 +290,8 @@ const NexoriaMusicHome = () => {
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base truncate mb-1 text-white">{track.title}</h3>
-                  <p className="text-xs sm:text-sm text-[#94A3B8] line-clamp-2 leading-tight font-medium">
-                    {track.artist?.name || 'Unknown Artist'}
-                  </p>
+                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{track.title}</h3>
+                  <p className="text-xs sm:text-sm text-white/70 line-clamp-1">{track.artist?.name || 'Unknown Artist'}</p>
                 </div>
               ))
             )}
