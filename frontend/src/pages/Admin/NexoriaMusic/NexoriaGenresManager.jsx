@@ -171,7 +171,7 @@ const NexoriaGenresManager = () => {
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   required
                   placeholder="e.g. Synthwave"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                 />
               </div>
 
@@ -191,7 +191,7 @@ const NexoriaGenresManager = () => {
                     value={formData.hexColor}
                     onChange={(e) => setFormData({...formData, hexColor: e.target.value})}
                     placeholder="#8B5CF6"
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm font-mono"
+                    className="flex-1 bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm font-mono"
                   />
                 </div>
               </div>
@@ -199,7 +199,7 @@ const NexoriaGenresManager = () => {
               <button 
                 type="submit" 
                 disabled={isCreating || isUpdating}
-                className="w-full py-3.5 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
+                className="w-full py-3.5 mt-2 bg-[#1ed760] hover:bg-[#1fdf64] disabled:opacity-50 text-black font-black rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
               >
                 {isCreating || isUpdating ? (
                   <>
