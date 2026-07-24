@@ -12,6 +12,7 @@ const initialState = {
   currentTime: 0,
   duration: 0,
   likedTracks: JSON.parse(localStorage.getItem('nexoriaLikedTracks')) || [],
+  isRemoteControlled: false, // Flag to indicate if current update is from a remote device
 };
 
 const nexoriaMusicSlice = createSlice({
@@ -20,6 +21,7 @@ const nexoriaMusicSlice = createSlice({
   reducers: {
     playTrack: (state, action) => {
       const track = action.payload;
+      state.isRemoteControlled = false;
       
       // If we play a new track, we set it as current, and add to history if replacing an old one
       if (state.currentTrack && state.currentTrack._id !== track._id) {
@@ -52,11 +54,14 @@ const nexoriaMusicSlice = createSlice({
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
       state.queue = result;
+      state.isRemoteControlled = false;
     },
     clearQueue: (state) => {
       state.queue = [];
+      state.isRemoteControlled = false;
     },
     playNextTrack: (state) => {
+      state.isRemoteControlled = false;
       if (state.queue.length > 0) {
         if (state.currentTrack) {
           state.history.push(state.currentTrack);
@@ -97,6 +102,7 @@ const nexoriaMusicSlice = createSlice({
       }
     },
     playPrevTrack: (state) => {
+      state.isRemoteControlled = false;
       if (state.history.length > 0) {
         if (state.currentTrack) {
           state.queue.unshift(state.currentTrack);
@@ -108,11 +114,13 @@ const nexoriaMusicSlice = createSlice({
       }
     },
     togglePlayPause: (state) => {
+      state.isRemoteControlled = false;
       if (state.currentTrack) {
         state.isPlaying = !state.isPlaying;
       }
     },
     setPlaying: (state, action) => {
+      state.isRemoteControlled = false;
       state.isPlaying = action.payload;
     },
     setVolume: (state, action) => {
@@ -152,6 +160,19 @@ const nexoriaMusicSlice = createSlice({
       state.isPlaying = false;
       state.queue = [];
       state.history = [];
+    },
+    setRemoteControlled: (state, action) => {
+      state.isRemoteControlled = action.payload;
+    },
+    syncMusicState: (state, action) => {
+      const { currentTrack, queue, isPlaying, currentTime } = action.payload;
+      
+      if (currentTrack !== undefined) state.currentTrack = currentTrack;
+      if (queue !== undefined) state.queue = queue;
+      if (isPlaying !== undefined) state.isPlaying = isPlaying;
+      if (currentTime !== undefined) state.currentTime = currentTime;
+      
+      state.isRemoteControlled = true;
     }
   }
 });
@@ -174,7 +195,9 @@ export const {
   toggleShuffle,
   updateTime,
   toggleLikeTrack,
-  clearPlayer
+  clearPlayer,
+  setRemoteControlled,
+  syncMusicState
 } = nexoriaMusicSlice.actions;
 
 export default nexoriaMusicSlice.reducer;

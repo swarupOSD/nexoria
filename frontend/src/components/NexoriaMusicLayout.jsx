@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic, Users } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
+import { useSocket } from '../context/SocketContext';
+import { syncMusicState } from '../features/music/nexoriaMusicSlice';
 import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetFavoritesQuery } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
@@ -11,8 +13,11 @@ const NexoriaMusicLayout = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showFriendActivity, setShowFriendActivity] = useState(true);
   const { user } = useSelector((state) => state.auth);
+  const nexoriaMusicState = useSelector((state) => state.nexoriaMusic);
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const socket = useSocket();
 
   const { data: playlistsRes } = useGetPlaylistsQuery(undefined, { skip: !user });
   const { data: artistsRes } = useGetFavoritesQuery('Artist', { skip: !user });
@@ -55,6 +60,36 @@ const NexoriaMusicLayout = () => {
       if (mainContent) mainContent.removeEventListener('scroll', handleScroll);
     };
   }, [location.pathname]);
+
+  // Socket.io Sync for Spotify Connect Clone
+  useEffect(() => {
+    if (!socket || !user) return;
+
+    const handleRemoteSync = (payload) => {
+      // payload contains { currentTrack, queue, isPlaying, currentTime }
+      dispatch(syncMusicState(payload));
+    };
+
+    socket.on('nexoria_music_remote_sync', handleRemoteSync);
+    
+    return () => {
+      socket.off('nexoria_music_remote_sync', handleRemoteSync);
+    };
+  }, [socket, user, dispatch]);
+
+  // Emit state changes when local player state changes (only if it wasn't remotely controlled)
+  useEffect(() => {
+    if (!socket || !user) return;
+    
+    // Check if the change came from a remote sync event. If so, do not re-emit to avoid infinite loops.
+    if (nexoriaMusicState.isRemoteControlled) {
+      return;
+    }
+
+    const { currentTrack, queue, isPlaying, currentTime } = nexoriaMusicState;
+    socket.emit('nexoria_music_state_update', { currentTrack, queue, isPlaying, currentTime });
+    
+  }, [socket, user, nexoriaMusicState.currentTrack, nexoriaMusicState.isPlaying, nexoriaMusicState.queue, nexoriaMusicState.isRemoteControlled]);
 
   const navItems = [
     { name: 'Home', path: '/nexoria-music', icon: Home, exact: true },

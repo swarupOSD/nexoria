@@ -8,6 +8,7 @@ import { registerGlobalChatHandlers } from '../sockets/globalChat.js';
 import { registerPrivateChatHandlers } from '../sockets/privateChat.js';
 import { registerDirectMessageHandlers } from '../sockets/directMessage.js';
 import { registerVoiceRoomHandlers } from '../sockets/voiceRoom.js';
+import { registerNexoriaMusicSyncHandlers } from '../sockets/nexoriaMusicSync.js';
 
 let io;
 
@@ -114,6 +115,7 @@ export const initSocket = (server) => {
     registerPrivateChatHandlers(io, socket);
     registerDirectMessageHandlers(io, socket);
     registerVoiceRoomHandlers(io, socket);
+    registerNexoriaMusicSyncHandlers(io, socket);
 
     broadcastOnlineStats();
 
