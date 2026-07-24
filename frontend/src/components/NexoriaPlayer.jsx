@@ -299,6 +299,21 @@ const NexoriaPlayer = () => {
     }
   };
 
+  const handleEndedRef = useRef(handleEnded);
+  useEffect(() => {
+    handleEndedRef.current = handleEnded;
+  }, [handleEnded]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onNativeEnded = () => {
+      if (handleEndedRef.current) handleEndedRef.current();
+    };
+    audio.addEventListener('ended', onNativeEnded);
+    return () => audio.removeEventListener('ended', onNativeEnded);
+  }, []);
+
   const handleSetSleepTimer = (minutes) => {
     setSleepTimer(minutes ? { minutes, startTime: Date.now() } : null);
     if (sleepTimerRef.current) {
@@ -363,7 +378,6 @@ const NexoriaPlayer = () => {
         playsInline
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
-        onEnded={handleEnded}
         onLoadedMetadata={handleTimeUpdate}
         onCanPlay={() => {
           if (isPlaying && audioRef.current && audioRef.current.paused) {
