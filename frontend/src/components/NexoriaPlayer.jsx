@@ -62,7 +62,21 @@ const NexoriaPlayer = () => {
          playPromise.catch(error => console.log("Track change autoplay prevented:", error));
       }
     }
-  }, [currentTrack]);
+  }, [currentTrack, isPlaying]);
+
+  // Pre-fetch recommendations when queue is empty to ensure smooth background autoplay on mobile
+  useEffect(() => {
+    if (autoplayEnabled && queue.length === 0 && currentTrack) {
+      getRecommendations().unwrap().then(res => {
+        if (res.data && res.data.length > 0) {
+           const filtered = res.data.filter(t => t._id !== currentTrack._id);
+           if (filtered.length > 0) {
+             dispatch(setQueue(filtered));
+           }
+        }
+      }).catch(err => console.log("Prefetch failed", err));
+    }
+  }, [autoplayEnabled, queue.length, currentTrack?._id, dispatch, getRecommendations]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -145,6 +159,7 @@ const NexoriaPlayer = () => {
               const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
               const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
               audioRef.current.src = prevSrc;
+              audioRef.current.load();
               audioRef.current.play().catch(err => console.log(err));
             }
           }
@@ -189,6 +204,7 @@ const NexoriaPlayer = () => {
           ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
           : nextTrack.audioUrl || "";
         audioRef.current.src = nextSrc;
+        audioRef.current.load();
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
@@ -197,7 +213,20 @@ const NexoriaPlayer = () => {
       dispatch(playNextTrack());
     } else {
       if (repeatMode === 'all' && history.length > 0) {
-        dispatch(playNextTrack()); // Redux logic handles restarting history
+        let nextIdx = 0;
+        if (shuffleMode) nextIdx = Math.floor(Math.random() * history.length);
+        const nextTrack = history[nextIdx];
+        
+        if (audioRef.current) {
+          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+          const nextSrc = nextTrack.telegramFileId 
+            ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
+            : nextTrack.audioUrl || "";
+          audioRef.current.src = nextSrc;
+          audioRef.current.load();
+          audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
+        }
+        dispatch(playNextTrack());
       } else if (autoplayEnabled) {
         // Spotify Algorithm: Auto-Play recommendations when queue ends
         try {
@@ -212,6 +241,7 @@ const NexoriaPlayer = () => {
                 ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
                 : nextTrack.audioUrl || "";
               audioRef.current.src = nextSrc;
+              audioRef.current.load();
               audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
             }
             dispatch(playTrack(nextTrack));
