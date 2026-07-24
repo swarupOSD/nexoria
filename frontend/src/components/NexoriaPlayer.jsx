@@ -343,6 +343,15 @@ const NexoriaPlayer = () => {
                       >
                         <Mic2 className="w-5 h-5" />
                       </button>
+                      <button 
+                        onClick={() => {
+                          setIsExpanded(false);
+                          navigate(`/nexoria-music/queue`);
+                        }}
+                        className={`p-2 transition-colors ${location.pathname.includes('/queue') ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
+                      >
+                        <ListMusic className="w-5 h-5" />
+                      </button>
                       <button className="p-2 text-white/70 hover:text-white">
                         <MoreVertical className="w-5 h-5" />
                       </button>
@@ -511,6 +520,13 @@ const NexoriaPlayer = () => {
                   title="Lyrics"
                 >
                   <Mic2 className="w-[18px] h-[18px]" />
+                </button>
+                <button 
+                  onClick={() => navigate(`/nexoria-music/queue`)} 
+                  className={`p-1 transition-colors ${location.pathname.includes('/queue') ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
+                  title="Queue"
+                >
+                  <ListMusic className="w-[18px] h-[18px]" />
                 </button>
                 <button onClick={() => dispatch(clearPlayer())} className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Close Player">
                   <X className="w-[18px] h-[18px]" />

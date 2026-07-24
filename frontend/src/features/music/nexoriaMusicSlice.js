@@ -46,6 +46,13 @@ const nexoriaMusicSlice = createSlice({
     removeFromQueue: (state, action) => {
       state.queue = state.queue.filter((t, index) => index !== action.payload);
     },
+    reorderQueue: (state, action) => {
+      const { startIndex, endIndex } = action.payload;
+      const result = Array.from(state.queue);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      state.queue = result;
+    },
     clearQueue: (state) => {
       state.queue = [];
     },
@@ -155,6 +162,7 @@ export const {
   addToQueue,
   addToQueueNext,
   removeFromQueue,
+  reorderQueue,
   clearQueue,
   playNextTrack,
   playPrevTrack,
