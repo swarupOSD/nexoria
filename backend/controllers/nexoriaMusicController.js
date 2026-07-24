@@ -154,10 +154,59 @@ export const deleteAlbum = async (req, res) => {
 // ADMIN: TRACK MANAGEMENT
 // ==========================================
 
+// Background Telegram Upload Helper
+const uploadToTelegramInBackground = async (trackId, fileBuffer, fileObj, bodyObj) => {
+  try {
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const channelId = process.env.TELEGRAM_CHANNEL_ID;
+    if (!botToken || !channelId) return;
+
+    const formData = new FormData();
+    formData.append('chat_id', channelId);
+    
+    const isStandardAudio = fileObj.mimetype.includes('mpeg') || fileObj.mimetype.includes('mp3') || fileObj.mimetype.includes('m4a');
+    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
+    const fileField = isStandardAudio ? 'audio' : 'document';
+    
+    formData.append(fileField, fileBuffer, {
+      filename: fileObj.originalname,
+      contentType: fileObj.mimetype,
+    });
+
+    if (endpoint === 'sendAudio') {
+      if (bodyObj.title) formData.append('title', bodyObj.title);
+      if (bodyObj.artistName) formData.append('performer', bodyObj.artistName);
+    }
+
+    const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
+      headers: { ...formData.getHeaders(), 'Content-Length': formData.getLengthSync() },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    const resultObj = response.data.result.audio || response.data.result.document || response.data.result.voice;
+    if (resultObj && resultObj.file_id) {
+      await NexoriaTrack.findByIdAndUpdate(trackId, {
+        telegramFileId: resultObj.file_id,
+        duration: resultObj.duration || bodyObj.duration || 0
+      });
+      logger.info(`Background Telegram Upload Success for Track: ${trackId}`);
+    }
+  } catch (error) {
+    logger.error(`Background Telegram Upload Failed for Track ${trackId}: ${error.response?.data?.description || error.message}`);
+  }
+};
+
 export const createTrack = async (req, res) => {
   try {
-    // Audio file storage logic is deferred, so audioUrl is passed directly from body for now
-    const track = await NexoriaTrack.create({ ...req.body, addedBy: req.user._id });
+    const trackData = { ...req.body, addedBy: req.user._id };
+    const track = await NexoriaTrack.create(trackData);
+    
+    // If a file is attached, trigger background upload
+    if (req.file) {
+      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+    }
+
     res.status(201).json({ success: true, data: track });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -186,6 +235,12 @@ export const updateTrack = async (req, res) => {
   try {
     const track = await NexoriaTrack.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!track) return res.status(404).json({ success: false, message: 'Track not found' });
+    
+    // If a new file is attached during update, trigger background upload
+    if (req.file) {
+      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+    }
+    
     res.status(200).json({ success: true, data: track });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

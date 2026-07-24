@@ -39,8 +39,6 @@ const NexoriaTracksManager = () => {
   const albums = albumsRes?.data || [];
   const genres = genresRes?.data || [];
 
-  const [uploadAudio, { isLoading: isUploading }] = useUploadNexoriaTrackAudioMutation();
-
   const openCreate = () => {
     setFormData(emptyForm);
     setEditTarget(null);
@@ -77,41 +75,30 @@ const NexoriaTracksManager = () => {
     if (formData.audioFile && formData.audioFile.size > 50 * 1024 * 1024) {
       return toast.error('File size must be under 50MB for Telegram CDN');
     }
-    
-    // Default album handling if not provided
-    const payload = { ...formData };
-    if (!payload.album) delete payload.album;
-    if (!payload.genre) delete payload.genre;
-
     try {
-      let telegramFileId = formData.telegramFileId;
-      let finalDuration = formData.duration;
-      let finalAudioUrl = formData.audioUrl;
-
-      // If there's an actual file, upload it to Telegram CDN first
+      const selectedArtist = artists.find(a => a._id === formData.artist);
+      
+      let payload;
       if (formData.audioFile) {
-        const uploadData = new FormData();
-        uploadData.append('audio', formData.audioFile);
-        uploadData.append('title', formData.title);
-        
-        const selectedArtist = artists.find(a => a._id === formData.artist);
-        if (selectedArtist) {
-          uploadData.append('artistName', selectedArtist.name);
-        }
-
-        const uploadRes = await uploadAudio(uploadData).unwrap();
-        telegramFileId = uploadRes.data.telegramFileId;
-        
-        // Use Telegram's parsed duration if the user didn't provide one
-        if (!finalDuration || finalDuration === 0) {
-          finalDuration = uploadRes.data.duration;
-        }
+        payload = new FormData();
+        payload.append('audio', formData.audioFile);
+        payload.append('title', formData.title);
+        payload.append('artist', formData.artist);
+        if (selectedArtist) payload.append('artistName', selectedArtist.name);
+        if (formData.album) payload.append('album', formData.album);
+        if (formData.genre) payload.append('genre', formData.genre);
+        payload.append('duration', formData.duration || 0);
+        payload.append('trackType', formData.trackType);
+        payload.append('isPremium', formData.isPremium);
+        if (formData.coverImage) payload.append('coverImage', formData.coverImage);
+        if (formData.audioUrl) payload.append('audioUrl', formData.audioUrl);
+        if (formData.telegramFileId) payload.append('telegramFileId', formData.telegramFileId);
+      } else {
+        payload = { ...formData };
+        if (!payload.album) delete payload.album;
+        if (!payload.genre) delete payload.genre;
+        delete payload.audioFile;
       }
-
-      payload.telegramFileId = telegramFileId;
-      payload.duration = finalDuration;
-      payload.audioUrl = finalAudioUrl;
-      delete payload.audioFile;
 
       if (modalMode === 'edit' && editTarget) {
         await updateTrack({ id: editTarget._id, data: payload }).unwrap();
@@ -376,17 +363,13 @@ const NexoriaTracksManager = () => {
                   </div>
                 </div>
 
+                <div className="flex justify-end gap-4 mt-8">
                 <button 
                   type="submit" 
-                  disabled={isCreating || isUpdating || isUploading}
+                  disabled={isCreating || isUpdating}
                   className="w-full py-4 mt-2 bg-[#1ed760] hover:bg-[#1fdf64] disabled:opacity-50 text-black font-black rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
                 >
-                  {isUploading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Uploading to Telegram CDN...
-                    </>
-                  ) : (isCreating || isUpdating) ? (
+                  {(isCreating || isUpdating) ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Saving Track...

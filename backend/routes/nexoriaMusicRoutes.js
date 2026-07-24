@@ -130,11 +130,11 @@ router.route('/admin/tracks/upload')
   .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), uploadTrackAudio);
 
 router.route('/admin/tracks')
-  .post(protect, authorize('admin', 'superadmin'), createTrack)
+  .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), createTrack)
   .get(protect, authorize('admin', 'superadmin'), getTracksAdmin);
 
 router.route('/admin/tracks/:id')
-  .put(protect, authorize('admin', 'superadmin'), updateTrack)
+  .put(protect, authorize('admin', 'superadmin'), upload.single('audio'), updateTrack)
   .delete(protect, authorize('admin', 'superadmin'), deleteTrack);
 
 export default router;
