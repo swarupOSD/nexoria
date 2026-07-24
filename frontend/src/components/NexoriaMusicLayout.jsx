@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic } from 'lucide-react';
+import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic, Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { useGetPlaylistsQuery, useCreatePlaylistMutation } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
+import NexoriaFriendActivity from './NexoriaFriendActivity';
 
 const NexoriaMusicLayout = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showFriendActivity, setShowFriendActivity] = useState(true);
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
@@ -181,6 +183,12 @@ const NexoriaMusicLayout = () => {
                 <button onClick={() => toast.success('No new notifications', { icon: '🔔' })} className="hidden sm:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:scale-105 transition-transform text-[#a7a7a7] hover:text-white">
                   <Bell className="w-5 h-5" />
                 </button>
+                <button 
+                  onClick={() => setShowFriendActivity(!showFriendActivity)} 
+                  className={`hidden lg:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:scale-105 transition-transform ${showFriendActivity ? 'text-white' : 'text-[#a7a7a7] hover:text-white'}`}
+                >
+                  <Users className="w-5 h-5" />
+                </button>
 
                 <button onClick={() => navigate('/dashboard')} className="w-8 h-8 ml-2 rounded-full bg-black/60 border-4 border-[#121212] flex items-center justify-center hover:scale-105 transition-transform overflow-hidden shadow-md">
                   {user.profilePicture ? (
@@ -203,6 +211,13 @@ const NexoriaMusicLayout = () => {
           <div className="h-24 sm:h-[120px]"></div>
         </main>
       </div>
+
+      {/* Right Sidebar (Friend Activity) */}
+      {showFriendActivity && (
+        <div className="hidden lg:flex flex-col w-[280px] z-10 shrink-0 h-full">
+          <NexoriaFriendActivity />
+        </div>
+      )}
 
       {/* Mobile Bottom Navigation (Visible only on mobile when mini player is active/inactive) */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-black via-black to-black/90 backdrop-blur-lg border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
