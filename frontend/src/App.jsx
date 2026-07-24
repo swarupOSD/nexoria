@@ -74,6 +74,7 @@ const NexoriaMusicAllSongs = lazy(() => import('./pages/NexoriaMusic/NexoriaMusi
 const NexoriaMusicPlaylist = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicPlaylist'));
 const NexoriaMusicArtist = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicArtist'));
 const NexoriaMusicAlbum = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicAlbum'));
+const NexoriaMusicLyrics = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLyrics'));
 
 import { useEffect, Suspense, lazy } from 'react';
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
@@ -301,6 +302,7 @@ function App() {
               <Route path="playlist/:id" element={<NexoriaMusicPlaylist />} />
               <Route path="artist/:id" element={<NexoriaMusicArtist />} />
               <Route path="album/:id" element={<NexoriaMusicAlbum />} />
+              <Route path="lyrics/:trackId" element={<NexoriaMusicLyrics />} />
             </Route>
           </Route>
 

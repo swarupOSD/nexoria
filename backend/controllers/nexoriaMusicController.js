@@ -5,6 +5,7 @@ import NexoriaTrack from '../models/NexoriaTrack.js';
 import NexoriaPlaylist from '../models/NexoriaPlaylist.js';
 import NexoriaUserHistory from '../models/NexoriaUserHistory.js';
 import NexoriaMusicFavorite from '../models/NexoriaMusicFavorite.js';
+import NexoriaLyrics from '../models/NexoriaLyrics.js';
 import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -1125,5 +1126,19 @@ export const getAlbumDetailsConsumer = async (req, res) => {
   } catch (error) {
     logger.error(`Get Album Details Consumer Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Failed to fetch album details' });
+  }
+};
+
+export const getLyricsConsumer = async (req, res) => {
+  try {
+    const trackId = req.params.trackId;
+    const lyrics = await NexoriaLyrics.findOne({ trackId });
+    if (!lyrics) {
+      return res.status(404).json({ success: false, message: 'Lyrics not found for this track' });
+    }
+    res.status(200).json({ success: true, data: lyrics });
+  } catch (error) {
+    logger.error(getLyricsConsumer error: );
+    res.status(500).json({ success: false, message: 'Server error fetching lyrics' });
   }
 };

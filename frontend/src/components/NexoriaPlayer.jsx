@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
@@ -18,6 +18,8 @@ import toast from 'react-hot-toast';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const audioRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState(false);
   
@@ -331,9 +333,20 @@ const NexoriaPlayer = () => {
                     <span className="text-xs uppercase tracking-widest font-semibold text-white/70">
                       {currentTrack.album?.title || 'Playing from Library'}
                     </span>
-                    <button className="p-2 text-white/70 hover:text-white">
-                      <MoreVertical className="w-5 h-5" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => {
+                          setIsExpanded(false);
+                          navigate(`/nexoria-music/lyrics/${currentTrack._id}`);
+                        }}
+                        className={`p-2 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
+                      >
+                        <Mic2 className="w-5 h-5" />
+                      </button>
+                      <button className="p-2 text-white/70 hover:text-white">
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Big Album Art */}
@@ -492,6 +505,13 @@ const NexoriaPlayer = () => {
 
               {/* Right: Volume & Extras */}
               <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px]">
+                <button 
+                  onClick={() => navigate(`/nexoria-music/lyrics/${currentTrack._id}`)} 
+                  className={`p-1 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
+                  title="Lyrics"
+                >
+                  <Mic2 className="w-[18px] h-[18px]" />
+                </button>
                 <button onClick={() => dispatch(clearPlayer())} className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Close Player">
                   <X className="w-[18px] h-[18px]" />
                 </button>

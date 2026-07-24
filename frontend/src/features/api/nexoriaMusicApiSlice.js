@@ -139,7 +139,11 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     }),
     getAlbumDetails: builder.query({
       query: (id) => `/nexoria-music/albums/${id}`,
-      providesTags: (result, error, id) => [{ type: 'NexoriaMusicAlbums', id }],
+      providesTags: ['NexoriaAlbums', 'NexoriaTracks']
+    }),
+    getTrackLyrics: builder.query({
+      query: (trackId) => `/nexoria-music/tracks/${trackId}/lyrics`,
+      providesTags: ['NexoriaTracks']
     }),
 
     // PLAYLISTS
@@ -267,4 +271,5 @@ export const {
   useDeletePlaylistMutation,
   useGetArtistDetailsQuery,
   useGetAlbumDetailsQuery,
+  useGetTrackLyricsQuery,
 } = nexoriaMusicApiSlice;
