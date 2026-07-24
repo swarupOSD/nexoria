@@ -101,22 +101,8 @@ const NexoriaTracksManager = () => {
     try {
       const selectedArtist = artists.find(a => a._id === formData.artist);
       
-      let payload;
+      let submitData;
       if (formData.audioFile) {
-        payload = new FormData();
-        payload.append('audio', formData.audioFile);
-        payload.append('title', formData.title);
-        payload.append('artist', formData.artist);
-        if (selectedArtist) payload.append('artistName', selectedArtist.name);
-        if (formData.album) payload.append('album', formData.album);
-        if (formData.genre) payload.append('genre', formData.genre);
-        payload.append('duration', formData.duration || 0);
-        payload.append('trackType', formData.trackType);
-        payload.append('isPremium', formData.isPremium);
-        if (formData.coverImage) payload.append('coverImage', formData.coverImage);
-        if (formData.audioUrl) payload.append('audioUrl', formData.audioUrl);
-        if (formData.telegramFileId) payload.append('telegramFileId', formData.telegramFileId);
-      } else {
         submitData = new FormData();
         submitData.append('audio', formData.audioFile);
         submitData.append('title', formData.title);
