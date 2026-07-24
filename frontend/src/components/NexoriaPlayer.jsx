@@ -59,6 +59,17 @@ const NexoriaPlayer = () => {
 
   // Sync state to audio element for play/pause toggling
   useEffect(() => {
+    let isMounted = true;
+    if (autoplayEnabled && queue.length === 0 && currentTrack) {
+      getRecommendations().unwrap().then(res => {
+        if (isMounted && res.data && res.data.length > 0) {
+          dispatch(setQueue(res.data));
+        }
+      }).catch(e => console.error("Prefetch failed:", e));
+    }
+    return () => { isMounted = false; };
+  }, [queue.length, autoplayEnabled, currentTrack?._id, getRecommendations, dispatch]);
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
         const playPromise = audioRef.current.play();
@@ -217,7 +228,7 @@ const NexoriaPlayer = () => {
     }
   };
 
-  const handleSkipForward = async () => {
+  const handleSkipForward = () => {
     if (queue.length > 0) {
       let nextIndex = 0;
       if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
@@ -251,30 +262,6 @@ const NexoriaPlayer = () => {
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
         dispatch(playNextTrack(nextIdx));
-      } else if (autoplayEnabled) {
-        // Spotify Algorithm: Auto-Play recommendations when queue ends
-        try {
-          const res = await getRecommendations().unwrap();
-          if (res.data && res.data.length > 0) {
-            const nextTrack = res.data[0];
-            dispatch(setQueue(res.data.slice(1)));
-            
-            if (audioRef.current) {
-              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-              const nextSrc = nextTrack.telegramFileId 
-                ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
-                : nextTrack.audioUrl || "";
-              audioRef.current.src = nextSrc;
-              audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
-            }
-            dispatch(playTrack(nextTrack));
-          } else {
-            dispatch(playNextTrack());
-          }
-        } catch (e) {
-          console.error("Failed to fetch recommendations for auto-play", e);
-          dispatch(playNextTrack());
-        }
       } else {
         dispatch(playNextTrack());
       }
