@@ -168,30 +168,30 @@ const NexoriaArtistsManager = () => {
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          <div className="bg-[#0f0f0f] border border-white/10 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-[#121212] border border-white/10 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
             {/* Modal Header */}
-            <div className="p-5 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#0f0f0f]/95 backdrop-blur-sm z-10 rounded-t-3xl">
+            <div className="p-5 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#121212]/95 backdrop-blur-sm z-10 rounded-t-xl">
               <div>
-                <h3 className="text-lg font-black text-white">{modal === 'edit' ? 'Edit Artist' : 'Add New Artist'}</h3>
-                <p className="text-slate-500 text-xs mt-0.5">{modal === 'edit' ? 'Update artist info' : 'Add a new artist to the platform'}</p>
+                <h3 className="text-lg font-bold text-white tracking-tight">{modal === 'edit' ? 'Edit Artist' : 'Add New Artist'}</h3>
+                <p className="text-[#b3b3b3] text-sm mt-0.5">{modal === 'edit' ? 'Update artist info' : 'Add a new artist to the platform'}</p>
               </div>
-              <button onClick={closeModal} className="p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all">
-                <XCircle className="w-5 h-5" />
+              <button onClick={closeModal} className="p-2 rounded-full text-[#b3b3b3] hover:text-white hover:bg-white/10 transition-all">
+                <XCircle className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-5 space-y-6">
               {/* Live Preview (Banner + Avatar) */}
-              <div className="relative mb-6">
+              <div className="relative mb-8">
                 {/* Banner */}
-                <div className="h-24 w-full rounded-2xl bg-gradient-to-r from-purple-900/40 to-pink-900/40 overflow-hidden relative border border-white/5">
+                <div className="h-32 w-full rounded-lg bg-[#282828] overflow-hidden relative border border-white/5">
                   {formData.coverImage && (
-                    <img src={formData.coverImage} alt="cover preview" className="w-full h-full object-cover opacity-50" />
+                    <img src={formData.coverImage} alt="cover preview" className="w-full h-full object-cover opacity-70" />
                   )}
                 </div>
                 {/* Avatar (Circle) */}
-                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
-                  <div className="w-20 h-20 rounded-full border-4 border-[#0f0f0f] bg-gradient-to-br from-purple-800 to-pink-800 overflow-hidden shadow-2xl relative">
+                <div className="absolute -bottom-8 left-6">
+                  <div className="w-24 h-24 rounded-full border-4 border-[#121212] bg-[#282828] overflow-hidden shadow-2xl relative">
                     {formData.image && !imgPreviewError ? (
                       <img
                         src={formData.image}
@@ -201,101 +201,107 @@ const NexoriaArtistsManager = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Mic2 className="w-8 h-8 text-white/30" />
+                        <Mic2 className="w-8 h-8 text-[#b3b3b3]" />
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="h-2"></div> {/* Spacer for the avatar overlap */}
+              <div className="h-4"></div> {/* Spacer */}
 
               {/* Name */}
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Artist Name *</label>
+                <label className="block text-sm font-bold text-white mb-2">Artist Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   placeholder="e.g. Arijit Singh"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  className="w-full bg-[#181818] border border-transparent focus:border-white/20 rounded-md px-4 py-3 text-white placeholder-[#b3b3b3] focus:outline-none transition-all text-sm hover:bg-[#282828]"
                 />
               </div>
 
               {/* Image URL */}
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  <span className="flex items-center gap-1.5"><Link className="w-3 h-3" /> Profile Image URL</span>
+                <label className="block text-sm font-bold text-white mb-2">
+                  <span className="flex items-center gap-1.5"><Link className="w-3.5 h-3.5" /> Profile Image URL</span>
                 </label>
                 <input
                   type="url"
                   value={formData.image}
                   onChange={(e) => { setFormData({ ...formData, image: e.target.value }); setImgPreviewError(false); }}
-                  placeholder="Paste Google Images URL here..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  placeholder="Paste URL here..."
+                  className="w-full bg-[#181818] border border-transparent focus:border-white/20 rounded-md px-4 py-3 text-white placeholder-[#b3b3b3] focus:outline-none transition-all text-sm hover:bg-[#282828]"
                 />
-                <p className="text-slate-600 text-xs mt-1.5">
-                  💡 Google Images → Right click → "Copy image address"
-                </p>
               </div>
 
               {/* Cover Image URL */}
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  <span className="flex items-center gap-1.5"><Link className="w-3 h-3" /> Cover / Banner Image URL (Optional)</span>
+                <label className="block text-sm font-bold text-white mb-2">
+                  <span className="flex items-center gap-1.5"><Link className="w-3.5 h-3.5" /> Cover Image URL</span>
                 </label>
                 <input
                   type="url"
                   value={formData.coverImage}
                   onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                   placeholder="Wide banner image URL..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                  className="w-full bg-[#181818] border border-transparent focus:border-white/20 rounded-md px-4 py-3 text-white placeholder-[#b3b3b3] focus:outline-none transition-all text-sm hover:bg-[#282828]"
                 />
               </div>
 
               {/* Bio */}
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Bio</label>
+                <label className="block text-sm font-bold text-white mb-2">Bio</label>
                 <textarea
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Write a short artist bio... (shown on their profile page)"
+                  placeholder="Write a short artist bio..."
                   rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm resize-none"
+                  className="w-full bg-[#181818] border border-transparent focus:border-white/20 rounded-md px-4 py-3 text-white placeholder-[#b3b3b3] focus:outline-none transition-all text-sm resize-none hover:bg-[#282828]"
                 />
               </div>
 
               {/* Verified */}
-              <label className="flex items-center gap-3 p-3 bg-blue-500/5 border border-blue-500/20 rounded-xl cursor-pointer hover:bg-blue-500/10 transition-colors">
+              <label className="flex items-center gap-3 p-4 bg-[#181818] hover:bg-[#282828] rounded-md cursor-pointer transition-colors">
                 <input
                   type="checkbox"
                   checked={formData.isVerified}
                   onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                  className="w-4 h-4 rounded text-blue-500 bg-slate-800 border-slate-600 focus:ring-blue-500 focus:ring-2"
+                  className="w-4 h-4 rounded text-[#1ed760] bg-[#121212] border-[#282828] focus:ring-[#1ed760] focus:ring-offset-[#181818]"
                 />
                 <div>
-                  <p className="text-sm font-bold text-blue-400 flex items-center gap-1.5">
-                    <CheckCircle className="w-4 h-4" /> Verified Artist
+                  <p className="text-sm font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-[#1ed760]" /> Verified Artist
                   </p>
-                  <p className="text-xs text-slate-500">Shows blue verified badge on profile</p>
+                  <p className="text-sm text-[#b3b3b3]">Shows blue verified badge on profile</p>
                 </div>
               </label>
 
               {/* Submit */}
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    {modal === 'edit' ? 'Updating...' : 'Adding...'}
-                  </>
-                ) : (
-                  modal === 'edit' ? '✅ Update Artist' : '🎤 Add Artist'
-                )}
-              </button>
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-6 py-3 rounded-full font-bold text-white hover:scale-105 transition-transform"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-8 py-3 bg-[#1ed760] text-black font-bold rounded-full hover:scale-105 hover:bg-[#1fdf64] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save'
+                  )}
+                </button>
+              </div>
             </form>
           </div>
         </div>

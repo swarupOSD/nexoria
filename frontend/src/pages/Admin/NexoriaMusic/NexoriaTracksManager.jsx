@@ -257,7 +257,7 @@ const NexoriaTracksManager = () => {
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     required
                     placeholder="e.g. Blinding Lights"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                    className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                   />
                 </div>
                 
@@ -268,7 +268,7 @@ const NexoriaTracksManager = () => {
                       value={formData.artist}
                       onChange={(e) => setFormData({...formData, artist: e.target.value})}
                       required
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1ed760] transition-all text-sm [&>option]:bg-slate-900"
                     >
                       <option value="">Select Artist</option>
                       {artists.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
@@ -279,7 +279,7 @@ const NexoriaTracksManager = () => {
                     <select
                       value={formData.album}
                       onChange={(e) => setFormData({...formData, album: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1ed760] transition-all text-sm [&>option]:bg-slate-900"
                     >
                       <option value="">None / Single</option>
                       {albums.filter(a => a.artist?._id === formData.artist || !formData.artist).map(a => (
@@ -295,7 +295,7 @@ const NexoriaTracksManager = () => {
                     <select
                       value={formData.genre}
                       onChange={(e) => setFormData({...formData, genre: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm [&>option]:bg-slate-900"
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1ed760] transition-all text-sm [&>option]:bg-slate-900"
                     >
                       <option value="">Select Genre</option>
                       {genres.map(g => <option key={g._id} value={g._id}>{g.name}</option>)}
@@ -309,7 +309,7 @@ const NexoriaTracksManager = () => {
                       onChange={(e) => setFormData({...formData, duration: Number(e.target.value)})}
                       min="0"
                       placeholder="Auto-calculated"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                     />
                   </div>
                 </div>
@@ -321,17 +321,17 @@ const NexoriaTracksManager = () => {
                     value={formData.coverImage}
                     onChange={(e) => setFormData({...formData, coverImage: e.target.value})}
                     placeholder="https://..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                    className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                   />
                 </div>
 
-                <div className="p-4 bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 rounded-2xl">
-                  <label className="block text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">Upload Audio File (Max 50MB)</label>
+                <div className="p-4 bg-[#181818] border border-white/10 rounded-2xl border-dashed">
+                  <label className="block text-xs font-bold text-[#1ed760] uppercase tracking-wider mb-3">Upload Audio File (Max 50MB)</label>
                   <input 
                     type="file"
                     accept="audio/*, .mp3, .wav, .flac, .ogg, .m4a, .aac" 
                     onChange={(e) => setFormData({...formData, audioFile: e.target.files[0]})}
-                    className="w-full text-white text-sm file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-500 file:transition-colors file:cursor-pointer cursor-pointer"
+                    className="w-full text-white text-sm file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white file:text-black hover:file:bg-gray-200 file:transition-colors file:cursor-pointer cursor-pointer"
                   />
                 </div>
 
@@ -342,7 +342,7 @@ const NexoriaTracksManager = () => {
                     value={formData.audioUrl}
                     onChange={(e) => setFormData({...formData, audioUrl: e.target.value})}
                     placeholder="https://... (Leave empty if uploading)"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-all text-sm"
+                    className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#1ed760] transition-all text-sm"
                   />
                 </div>
 
@@ -365,7 +365,7 @@ const NexoriaTracksManager = () => {
                 <button 
                   type="submit" 
                   disabled={isCreating || isUpdating || isUploading}
-                  className="w-full py-4 mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 text-white font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 text-sm"
+                  className="w-full py-4 mt-2 bg-[#1ed760] hover:bg-[#1fdf64] disabled:opacity-50 text-black font-black rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
                 >
                   {isUploading ? (
                     <>

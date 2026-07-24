@@ -144,6 +144,35 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     getRecommendations: builder.query({
       query: () => '/nexoria-music/recommendations',
     }),
+    getNexoriaMusicAnalytics: builder.query({
+      query: () => '/api/nexoria-music/analytics',
+      providesTags: ['NexoriaMusicHistory', 'NexoriaTracks', 'NexoriaArtists']
+    }),
+    getDeepAnalytics: builder.query({
+      query: () => '/api/nexoria-music/deep-analytics',
+      providesTags: ['NexoriaMusicHistory']
+    }),
+    getFavorites: builder.query({
+      query: (type) => `/nexoria-music/favorites${type ? `?type=${type}` : ''}`,
+      providesTags: ['NexoriaFavorite'],
+    }),
+    toggleFavorite: builder.mutation({
+      query: (data) => ({
+        url: '/nexoria-music/favorites/toggle',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['NexoriaFavorite'],
+    }),
+    getDiscoverWeekly: builder.query({
+      query: () => '/nexoria-music/discover-weekly',
+    }),
+    getReleaseRadar: builder.query({
+      query: () => '/nexoria-music/release-radar',
+    }),
+    getDailyMix: builder.query({
+      query: () => '/nexoria-music/daily-mix',
+    }),
   }),
 });
 
@@ -170,4 +199,11 @@ export const {
   useGetRecentlyPlayedQuery,
   useGetRecommendationsQuery,
   useLazyGetRecommendationsQuery,
+  useGetNexoriaMusicAnalyticsQuery,
+  useGetDeepAnalyticsQuery,
+  useGetFavoritesQuery,
+  useToggleFavoriteMutation,
+  useGetDiscoverWeeklyQuery,
+  useGetReleaseRadarQuery,
+  useGetDailyMixQuery,
 } = nexoriaMusicApiSlice;

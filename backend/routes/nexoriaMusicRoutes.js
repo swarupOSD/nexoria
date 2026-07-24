@@ -22,7 +22,14 @@ import {
   streamTrack,
   logPlay,
   getRecentlyPlayed,
-  getRecommendations
+  getRecommendations,
+  getAnalytics,
+  getDeepAnalytics,
+  toggleFavorite,
+  getFavorites,
+  getDiscoverWeekly,
+  getReleaseRadar,
+  getDailyMix
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -45,6 +52,14 @@ router.route('/stream/:fileId').get(streamTrack);
 router.route('/log-play').post(protect, logPlay);
 router.route('/recently-played').get(protect, getRecentlyPlayed);
 router.route('/recommendations').get(protect, getRecommendations);
+router.route('/analytics').get(protect, authorize('admin', 'superadmin'), getAnalytics);
+router.route('/deep-analytics').get(protect, authorize('admin', 'superadmin'), getDeepAnalytics);
+
+router.route('/favorites').get(protect, getFavorites);
+router.route('/favorites/toggle').post(protect, toggleFavorite);
+router.route('/discover-weekly').get(protect, getDiscoverWeekly);
+router.route('/release-radar').get(protect, getReleaseRadar);
+router.route('/daily-mix').get(protect, getDailyMix);
 
 router.route('/artists').get(getArtistsAdmin);
 router.route('/genres').get(getGenresAdmin);

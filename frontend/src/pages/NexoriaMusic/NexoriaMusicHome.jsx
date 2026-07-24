@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Settings, Bell, Clock } from 'lucide-react';
 import { 
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
@@ -34,6 +34,7 @@ const NexoriaMusicHome = () => {
   const madeForYouTracks = user && recommendedTracks.length > 0 ? recommendedTracks : allTracks.slice(6, 16);
 
   const [greeting, setGreeting] = useState('');
+  const [activeChip, setActiveChip] = useState('All');
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -59,37 +60,76 @@ const NexoriaMusicHome = () => {
   };
 
   return (
-    <div className="min-h-full bg-[#121212] text-white relative">
-        {/* Spotify Default Subtle Gradient */}
-        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#222222] via-[#121212]/80 to-[#121212] pointer-events-none z-0" />
+    <div className="min-h-full bg-[#121212] text-white relative pb-32">
+        {/* Dynamic Background Gradient based on time of day (Spotify Mobile style) */}
+        <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-[#3a3a3a] via-[#121212]/80 to-[#121212] pointer-events-none z-0" />
       
-      <div className="relative z-10 px-4 sm:px-6 pt-24 pb-8 max-w-[1920px] mx-auto">
+      <div className="relative z-10 px-4 pt-12 max-w-[1920px] mx-auto sm:pt-6">
         
-        {/* Greeting & Top Grid */}
+        {/* Mobile Header: Profile, Title, Icons */}
+        <div className="flex items-center justify-between mb-6 sm:hidden">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden flex items-center justify-center font-bold text-white text-sm">
+              {user?.profilePicture ? (
+                <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.[0]?.toUpperCase() || 'U'
+              )}
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight">{greeting}</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <Bell className="w-6 h-6 text-white" />
+            <Clock className="w-6 h-6 text-white" />
+            <Settings className="w-6 h-6 text-white" />
+          </div>
+        </div>
+
+        {/* Desktop Header Greeting */}
+        <div className="hidden sm:block mb-6">
+          <h1 className="text-[32px] font-bold tracking-tight">{greeting}</h1>
+        </div>
+
+        {/* Category Chips (All, Music, Podcasts) */}
+        <div className="flex gap-2 mb-6 overflow-x-auto hide-scrollbar pb-1">
+          {['All', 'Music', 'Podcasts'].map(chip => (
+            <button
+              key={chip}
+              onClick={() => setActiveChip(chip)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                activeChip === chip 
+                  ? 'bg-[#1ed760] text-black' 
+                  : 'bg-white/10 text-white hover:bg-white/20'
+              }`}
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+        
+        {/* 6-Grid (Recently Played) */}
         <section className="mb-8">
-          <h2 className="text-2xl sm:text-[32px] font-bold tracking-tight mb-4 sm:mb-6">{greeting}</h2>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
             {loadingTracks || loadingRecent ? (
-              [1,2,3,4,5,6].map(i => <div key={i} className="h-16 sm:h-20 bg-white/5 rounded-md animate-pulse" />)
+              [1,2,3,4,5,6].map(i => <div key={i} className="h-14 bg-white/10 rounded-md animate-pulse" />)
             ) : (
               topGridTracks.map(track => (
                 <div 
                   key={track._id}
-                  className="bg-white/5 hover:bg-white/20 transition-colors duration-300 rounded-md flex items-center gap-4 group cursor-pointer overflow-hidden relative"
+                  className="bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer overflow-hidden relative shadow-sm"
                   onClick={() => handlePlay(track, topGridTracks)}
                 >
-                  <div className="h-16 w-16 sm:h-20 sm:w-20 bg-zinc-800 shrink-0 shadow-md">
+                  <div className="h-14 w-14 bg-zinc-800 shrink-0 shadow-md">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
                   </div>
-                  <span className="font-bold text-sm sm:text-base line-clamp-2 pr-12">{track.title}</span>
+                  <span className="font-bold text-xs sm:text-sm line-clamp-2 pr-2 text-white">{track.title}</span>
                   
-                  {/* Play Button Overlay */}
-                  <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-xl hidden sm:block">
-                    <button className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform">
-                      {currentTrack?._id === track._id && isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
+                  {/* Play Button Overlay (Spotify Desktop) */}
+                  <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-xl hidden sm:block">
+                    <button className="w-10 h-10 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-lg">
+                      {currentTrack?._id === track._id && isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-1" />}
                     </button>
                   </div>
                 </div>
@@ -100,33 +140,30 @@ const NexoriaMusicHome = () => {
 
         {/* Section: Made For You */}
         <section className="mb-10">
-          <div className="flex items-end justify-between mb-4">
-            <h2 className="text-2xl font-bold hover:underline cursor-pointer">Made For You</h2>
-            <span className="text-sm font-bold text-zinc-400 hover:underline cursor-pointer uppercase tracking-widest hidden sm:block">Show all</span>
-          </div>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Made For You</h2>
           
-          <div className="flex overflow-x-auto custom-scrollbar gap-6 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+          <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
             {loadingTracks || loadingRecs ? (
-              [1,2,3,4,5].map(i => <div key={i} className="w-[160px] sm:w-[200px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
+              [1,2,3,4,5].map(i => <div key={i} className="w-[140px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
             ) : (
-              madeForYouTracks.map((track, i) => (
+              madeForYouTracks.map((track) => (
                 <div 
                   key={track._id}
                   onClick={() => handlePlay(track, madeForYouTracks)}
-                  className="w-[140px] sm:w-[180px] shrink-0 bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors duration-300 cursor-pointer group"
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#181818] hover:bg-[#282828] rounded-md transition-colors duration-300 cursor-pointer group snap-start"
                 >
-                  <div className="w-full aspect-square bg-zinc-800 rounded-md mb-4 overflow-hidden shadow-lg relative">
+                  <div className="w-full aspect-square bg-zinc-800 rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:block">
-                      <button className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-green-400">
+                      <button className="w-12 h-12 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#1fdf64] shadow-lg">
                         {currentTrack?._id === track._id && isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-base truncate mb-1">{track.title}</h3>
-                  <p className="text-sm text-zinc-400 line-clamp-2 leading-tight">{track.artist?.name || 'Unknown Artist'}</p>
+                  <h3 className="font-bold text-sm sm:text-base truncate mb-1 text-white">{track.title}</h3>
+                  <p className="text-xs sm:text-sm text-[#a7a7a7] line-clamp-2 leading-tight font-medium">{track.artist?.name || 'Unknown Artist'}</p>
                 </div>
               ))
             )}
@@ -135,32 +172,29 @@ const NexoriaMusicHome = () => {
 
         {/* Section: Popular Artists */}
         <section className="mb-10">
-          <div className="flex items-end justify-between mb-4">
-            <h2 className="text-2xl font-bold hover:underline cursor-pointer">Popular Artists</h2>
-            <span className="text-sm font-bold text-zinc-400 hover:underline cursor-pointer uppercase tracking-widest hidden sm:block">Show all</span>
-          </div>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Popular Artists</h2>
           
-          <div className="flex overflow-x-auto custom-scrollbar gap-6 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+          <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
             {loadingArtists ? (
-              [1,2,3,4,5].map(i => <div key={i} className="w-[160px] sm:w-[200px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
+              [1,2,3,4,5].map(i => <div key={i} className="w-[140px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
             ) : (
               artists.map((artist) => (
                 <div 
                   key={artist._id}
-                  className="w-[140px] sm:w-[180px] shrink-0 bg-[#181818] hover:bg-[#282828] p-4 rounded-md transition-colors duration-300 cursor-pointer group"
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#181818] hover:bg-[#282828] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
                 >
-                  <div className="w-full aspect-square bg-zinc-800 rounded-full mb-4 overflow-hidden shadow-md relative">
+                  <div className="w-[116px] h-[116px] sm:w-full sm:h-auto sm:aspect-square bg-zinc-800 rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
                     {artist.image && (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     )}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:block">
-                      <button className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-green-400">
+                      <button className="w-12 h-12 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#1fdf64] shadow-lg">
                          <Play className="w-6 h-6 fill-current ml-1" />
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-base truncate mb-1">{artist.name}</h3>
-                  <p className="text-sm text-zinc-400">Artist</p>
+                  <h3 className="font-bold text-sm sm:text-base w-full truncate mb-1 text-white">{artist.name}</h3>
+                  <p className="text-xs sm:text-sm text-[#a7a7a7] w-full font-medium">Artist</p>
                 </div>
               ))
             )}
