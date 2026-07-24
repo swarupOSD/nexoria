@@ -99,6 +99,11 @@ const NexoriaMusicLayout = () => {
     { name: 'All Songs', path: '/nexoria-music/tracks', icon: ListMusic, exact: false },
   ];
 
+  const mobileNavItems = [
+    ...navItems,
+    { name: 'Library', path: '/nexoria-music/library', icon: Library, exact: false }
+  ];
+
   const handleCreatePlaylistClick = () => {
     if (!user) {
       toast.error('Please log in to create playlists.');
@@ -341,7 +346,7 @@ const NexoriaMusicLayout = () => {
         <main id="music-main-content" className="flex-1 overflow-y-auto custom-scrollbar relative">
           <Outlet />
           {/* Bottom spacer for player */}
-          <div className="h-24 sm:h-[120px]"></div>
+          <div className="h-[130px] sm:h-[120px]"></div>
         </main>
       </div>
 
@@ -354,7 +359,7 @@ const NexoriaMusicLayout = () => {
 
       {/* Mobile Bottom Navigation (Visible only on mobile when mini player is active/inactive) */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-[#0F0F23] via-[#0F0F23] to-[#0F0F23]/90 backdrop-blur-lg border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
-        {navItems.map((item) => {
+        {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
           return (
@@ -366,7 +371,7 @@ const NexoriaMusicLayout = () => {
               }`}
             >
               <Icon className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-medium tracking-wide">{item.name}</span>
+              <span className="text-[10px] font-medium tracking-wide whitespace-nowrap">{item.name}</span>
             </NavLink>
           );
         })}

@@ -61,7 +61,7 @@ const nexoriaMusicSlice = createSlice({
       state.queue = [];
       state.isRemoteControlled = false;
     },
-    playNextTrack: (state) => {
+    playNextTrack: (state, action) => {
       state.isRemoteControlled = false;
       if (state.queue.length > 0) {
         if (state.currentTrack) {
@@ -69,7 +69,9 @@ const nexoriaMusicSlice = createSlice({
         }
         
         let nextIndex = 0;
-        if (state.shuffleMode) {
+        if (action.payload !== undefined && action.payload !== null) {
+          nextIndex = action.payload;
+        } else if (state.shuffleMode) {
           nextIndex = Math.floor(Math.random() * state.queue.length);
         }
         
@@ -88,7 +90,9 @@ const nexoriaMusicSlice = createSlice({
            if (state.currentTrack) state.history.push(state.currentTrack);
            
            let nextIdx = 0;
-           if (state.shuffleMode) {
+           if (action.payload !== undefined && action.payload !== null) {
+             nextIdx = action.payload;
+           } else if (state.shuffleMode) {
              nextIdx = Math.floor(Math.random() * state.queue.length);
            }
            state.currentTrack = state.queue[nextIdx];

@@ -78,7 +78,7 @@ const NexoriaMusicAllSongs = () => {
 
       <div className="px-6 pb-32 relative z-10">
         {/* Table Header */}
-        <div className="grid grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 text-sm text-[#94A3B8] border-b border-white/10 mb-4 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
+        <div className="grid grid-cols-[16px_1fr_80px] md:grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 text-sm text-[#94A3B8] border-b border-white/10 mb-4 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
           <div className="text-right">#</div>
           <div>Title</div>
           <div className="hidden md:block">Album</div>
@@ -102,7 +102,7 @@ const NexoriaMusicAllSongs = () => {
                 e.dataTransfer.setData('trackId', track._id);
                 e.dataTransfer.effectAllowed = 'copy';
               }}
-              className="grid grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
+              className="grid grid-cols-[16px_1fr_80px] md:grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
               onClick={() => handlePlay(track, tracks)}
               onContextMenu={(e) => handleContextMenu(e, track)}
             >

@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity, Sliders,
+  RotateCcw, RotateCw
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
@@ -15,6 +16,10 @@ import { BACKEND_URL } from '../features/api/apiSlice';
 import { useLogPlayMutation, useLazyGetMusicRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';
 import DropdownMenu from './DropdownMenu';
 import toast from 'react-hot-toast';
+import NexoriaMusicContextMenu from './NexoriaMusicContextMenu';
+import NexoriaMusicAddToPlaylistModal from './NexoriaMusicAddToPlaylistModal';
+import EqualizerModal from './EqualizerModal';
+import SleepTimerModal from './SleepTimerModal';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
@@ -22,6 +27,20 @@ const NexoriaPlayer = () => {
   const location = useLocation();
   const audioRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  
+  const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0 });
+  const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
+  const [eqModalOpen, setEqModalOpen] = useState(false);
+  const [sleepTimerModalOpen, setSleepTimerModalOpen] = useState(false);
+  const [sleepTimer, setSleepTimer] = useState(null); // null, 'track', or number (minutes)
+  const sleepTimerRef = useRef(null);
+  const [audioContextSetup, setAudioContextSetup] = useState(false);
+  
+  const handleMoreClick = (e) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    setContextMenu({ isOpen: true, x: rect.left, y: rect.bottom });
+  };
   
   const { 
     currentTrack, isPlaying, volume, isMuted, 
@@ -105,19 +124,27 @@ const NexoriaPlayer = () => {
         if (audioRef.current) audioRef.current.pause();
       });
       navigator.mediaSession.setActionHandler('previoustrack', () => {
-        if (history.length > 0) {
-          const prevTrack = history[history.length - 1];
-          if (audioRef.current) {
-            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-            const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
-            audioRef.current.src = prevSrc;
-            audioRef.current.play().catch(e => console.log(e));
+        if (currentTrack?.trackType === 'podcast') {
+          handleSkip15('backward');
+        } else {
+          if (history.length > 0) {
+            const prevTrack = history[history.length - 1];
+            if (audioRef.current) {
+              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+              const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
+              audioRef.current.src = prevSrc;
+              audioRef.current.play().catch(e => console.log(e));
+            }
           }
+          dispatch(playPrevTrack());
         }
-        dispatch(playPrevTrack());
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
-        handleSkipForward();
+        if (currentTrack?.trackType === 'podcast') {
+          handleSkip15('forward');
+        } else {
+          handleSkipForward();
+        }
       });
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (audioRef.current && details.fastSeek && ('fastSeek' in audioRef.current)) {
@@ -159,7 +186,6 @@ const NexoriaPlayer = () => {
               const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
               const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
               audioRef.current.src = prevSrc;
-              audioRef.current.load();
               audioRef.current.play().catch(err => console.log(err));
             }
           }
@@ -204,13 +230,12 @@ const NexoriaPlayer = () => {
           ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
           : nextTrack.audioUrl || "";
         audioRef.current.src = nextSrc;
-        audioRef.current.load();
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
         }
       }
-      dispatch(playNextTrack());
+      dispatch(playNextTrack(nextIndex));
     } else {
       if (repeatMode === 'all' && history.length > 0) {
         let nextIdx = 0;
@@ -223,10 +248,9 @@ const NexoriaPlayer = () => {
             ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
             : nextTrack.audioUrl || "";
           audioRef.current.src = nextSrc;
-          audioRef.current.load();
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
-        dispatch(playNextTrack());
+        dispatch(playNextTrack(nextIdx));
       } else if (autoplayEnabled) {
         // Spotify Algorithm: Auto-Play recommendations when queue ends
         try {
@@ -241,7 +265,6 @@ const NexoriaPlayer = () => {
                 ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
                 : nextTrack.audioUrl || "";
               audioRef.current.src = nextSrc;
-              audioRef.current.load();
               audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
             }
             dispatch(playTrack(nextTrack));
@@ -258,7 +281,14 @@ const NexoriaPlayer = () => {
     }
   };
 
-  const handleEnded = async () => {
+  const handleEnded = () => {
+    if (sleepTimer === 'track') {
+      dispatch(setPlaying(false));
+      setSleepTimer(null);
+      toast.success('Sleep timer finished');
+      return;
+    }
+
     if (repeatMode === 'one') {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
@@ -269,11 +299,44 @@ const NexoriaPlayer = () => {
     }
   };
 
+  const handleSetSleepTimer = (minutes) => {
+    setSleepTimer(minutes ? { minutes, startTime: Date.now() } : null);
+    if (sleepTimerRef.current) {
+      clearTimeout(sleepTimerRef.current);
+    }
+    
+    if (typeof minutes === 'number') {
+      sleepTimerRef.current = setTimeout(() => {
+        dispatch(setPlaying(false));
+        setSleepTimer(null);
+        toast.success('Sleep timer finished');
+      }, minutes * 60 * 1000);
+    } else if (minutes === 'track') {
+      setSleepTimer('track');
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (sleepTimerRef.current) clearTimeout(sleepTimerRef.current);
+    };
+  }, []);
+
   const handleProgressClick = (e) => {
-    if (audioRef.current && duration) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const pos = (e.clientX - rect.left) / rect.width;
-      audioRef.current.currentTime = pos * duration;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    const newTime = pos * duration;
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
+
+  const handleSkip15 = (direction) => {
+    if (audioRef.current) {
+      let newTime = audioRef.current.currentTime + (direction === 'forward' ? 15 : -15);
+      if (newTime < 0) newTime = 0;
+      if (newTime > duration) newTime = duration;
+      audioRef.current.currentTime = newTime;
     }
   };
 
@@ -393,7 +456,7 @@ const NexoriaPlayer = () => {
                       setIsExpanded(false);
                     }
                   }}
-                  className="fixed inset-0 z-[100] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pt-4"
+                  className="fixed inset-0 z-[100] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pb-safe pt-4"
                 >
                   {/* Top Header */}
                   <div className="flex items-center justify-between py-4">
@@ -422,7 +485,23 @@ const NexoriaPlayer = () => {
                       >
                         <ListMusic className="w-5 h-5" />
                       </button>
-                      <button className="p-2 text-white/70 hover:text-white">
+                      <button 
+                        onClick={() => setSleepTimerModalOpen(true)}
+                        className={`p-2 transition-colors ${sleepTimer ? 'text-indigo-400' : 'text-white/70 hover:text-white'}`}
+                        title="Sleep Timer"
+                      >
+                        <Moon className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => setEqModalOpen(true)}
+                        className="p-2 text-white/70 hover:text-white transition-colors"
+                      >
+                        <Sliders className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={handleMoreClick}
+                        className="p-2 text-white/70 hover:text-white relative"
+                      >
                         <MoreVertical className="w-5 h-5" />
                       </button>
                     </div>
@@ -484,21 +563,35 @@ const NexoriaPlayer = () => {
                     <button onClick={() => dispatch(toggleShuffle())} className={`p-2 ${shuffleMode ? 'text-green-500' : 'text-white/70'}`}>
                       <Shuffle className="w-6 h-6" />
                     </button>
-                    <button onClick={() => dispatch(playPrevTrack())} className="p-2 text-white active:scale-95 transition-transform">
-                      <SkipBack className="w-10 h-10 fill-current" />
-                    </button>
+                    {currentTrack.trackType === 'podcast' ? (
+                      <button onClick={() => handleSkip15('backward')} className="p-2 text-white active:scale-95 transition-transform flex items-center justify-center relative">
+                        <RotateCcw className="w-9 h-9" />
+                        <span className="absolute text-[9px] font-bold mt-0.5">15</span>
+                      </button>
+                    ) : (
+                      <button onClick={() => dispatch(playPrevTrack())} className="p-2 text-white active:scale-95 transition-transform">
+                        <SkipBack className="w-10 h-10 fill-current" />
+                      </button>
+                    )}
                     <button 
                       onClick={() => {
                         if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
                         dispatch(togglePlayPause());
                       }}
-                      className="w-[72px] h-[72px] bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+                      className="w-[72px] h-[72px] bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shrink-0"
                     >
                       {isPlaying ? <Pause className="w-9 h-9 fill-current" /> : <Play className="w-9 h-9 fill-current ml-1" />}
                     </button>
-                    <button onClick={handleSkipForward} className="p-2 text-white active:scale-95 transition-transform">
-                      <SkipForward className="w-10 h-10 fill-current" />
-                    </button>
+                    {currentTrack.trackType === 'podcast' ? (
+                      <button onClick={() => handleSkip15('forward')} className="p-2 text-white active:scale-95 transition-transform flex items-center justify-center relative">
+                        <RotateCw className="w-9 h-9" />
+                        <span className="absolute text-[9px] font-bold mt-0.5">15</span>
+                      </button>
+                    ) : (
+                      <button onClick={handleSkipForward} className="p-2 text-white active:scale-95 transition-transform">
+                        <SkipForward className="w-10 h-10 fill-current" />
+                      </button>
+                    )}
                     <button onClick={() => dispatch(toggleRepeat())} className={`p-2 ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
                       {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
                     </button>
@@ -551,21 +644,35 @@ const NexoriaPlayer = () => {
                   <button onClick={() => dispatch(toggleShuffle())} className={`transition-colors ${shuffleMode ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
                     <Shuffle className="w-[18px] h-[18px]" />
                   </button>
-                  <button onClick={() => dispatch(playPrevTrack())} className="text-zinc-400 hover:text-white transition-colors">
-                    <SkipBack className="w-5 h-5 fill-current" />
-                  </button>
+                  {currentTrack.trackType === 'podcast' ? (
+                    <button onClick={() => handleSkip15('backward')} className="text-zinc-400 hover:text-white transition-colors relative flex items-center justify-center">
+                      <RotateCcw className="w-[20px] h-[20px]" />
+                      <span className="absolute text-[7px] font-bold mt-0.5">15</span>
+                    </button>
+                  ) : (
+                    <button onClick={() => dispatch(playPrevTrack())} className="text-zinc-400 hover:text-white transition-colors">
+                      <SkipBack className="w-5 h-5 fill-current" />
+                    </button>
+                  )}
                   <button 
                     onClick={() => {
                       if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
                       dispatch(togglePlayPause());
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 transition-transform"
+                    className="w-8 h-8 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 transition-transform shrink-0"
                   >
                     {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
                   </button>
-                  <button onClick={handleSkipForward} className="text-zinc-400 hover:text-white transition-colors">
-                    <SkipForward className="w-5 h-5 fill-current" />
-                  </button>
+                  {currentTrack.trackType === 'podcast' ? (
+                    <button onClick={() => handleSkip15('forward')} className="text-zinc-400 hover:text-white transition-colors relative flex items-center justify-center">
+                      <RotateCw className="w-[20px] h-[20px]" />
+                      <span className="absolute text-[7px] font-bold mt-0.5">15</span>
+                    </button>
+                  ) : (
+                    <button onClick={handleSkipForward} className="text-zinc-400 hover:text-white transition-colors">
+                      <SkipForward className="w-5 h-5 fill-current" />
+                    </button>
+                  )}
                   <button onClick={() => dispatch(toggleRepeat())} className={`transition-colors ${repeatMode !== 'none' ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
                     {repeatMode === 'one' ? <Repeat1 className="w-[18px] h-[18px]" /> : <Repeat className="w-[18px] h-[18px]" />}
                   </button>
@@ -635,6 +742,38 @@ const NexoriaPlayer = () => {
           </>
         )}
       </AnimatePresence>
+      {/* Modals and Context Menus */}
+      <NexoriaMusicContextMenu 
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        track={currentTrack}
+        onAddToPlaylist={() => {
+          setContextMenu({ ...contextMenu, isOpen: false });
+          setPlaylistModalOpen(true);
+        }}
+      />
+
+      <NexoriaMusicAddToPlaylistModal 
+        isOpen={playlistModalOpen}
+        onClose={() => setPlaylistModalOpen(false)}
+        trackId={currentTrack?._id}
+      />
+
+      <EqualizerModal 
+        isOpen={eqModalOpen}
+        onClose={() => setEqModalOpen(false)}
+        isYouTube={false}
+        updateEq={(vals) => console.log('EQ updated:', vals)}
+      />
+
+      <SleepTimerModal 
+        isOpen={sleepTimerModalOpen}
+        onClose={() => setSleepTimerModalOpen(false)}
+        onSetTimer={handleSetSleepTimer}
+        currentTimer={sleepTimer}
+      />
     </>
   );
 };

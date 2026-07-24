@@ -160,7 +160,7 @@ const NexoriaMusicAlbum = () => {
         ) : (
           <>
             {/* Table Header */}
-            <div className="grid grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 text-sm text-[#94A3B8] border-b border-white/10 mb-4 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
+            <div className="grid grid-cols-[32px_1fr_80px] md:grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 text-sm text-[#94A3B8] border-b border-white/10 mb-4 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
               <div className="text-right">#</div>
               <div>Title</div>
               <div className="flex justify-end pr-8"><Clock className="w-4 h-4" /></div>
@@ -176,7 +176,7 @@ const NexoriaMusicAlbum = () => {
                     e.dataTransfer.setData('trackId', track._id);
                     e.dataTransfer.effectAllowed = 'copy';
                   }}
-                  className="grid grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
+                  className="grid grid-cols-[32px_1fr_80px] md:grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
                   onClick={() => handlePlay(track, tracks)}
                   onContextMenu={(e) => handleContextMenu(e, track)}
                 >

@@ -135,7 +135,7 @@ const NexoriaMusicArtist = () => {
             {popularTracks.map((track, idx) => (
               <div 
                 key={track._id} 
-                className="grid grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
+                className="grid grid-cols-[32px_1fr_80px] md:grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
                 onClick={() => handlePlay(track, popularTracks)}
               >
                 <div className="text-[#94A3B8] text-right group-hover:hidden">{idx + 1}</div>
