@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   useGetPlaylistDetailsQuery, 
   useDeletePlaylistMutation,
@@ -195,12 +195,32 @@ const NexoriaMusicPlaylist = () => {
                     </div>
                     <div className="flex flex-col truncate">
                       <span className={`truncate text-base ${currentTrack?._id === track._id ? 'text-[#1ed760]' : 'text-white'}`}>{track.title}</span>
-                      <span className="text-[#a7a7a7] group-hover:text-white transition-colors truncate">{track.artist?.name || 'Unknown Artist'}</span>
+                      {track.artist ? (
+                        <Link 
+                          to={`/nexoria-music/artist/${track.artist._id}`} 
+                          className="text-[#a7a7a7] hover:underline hover:text-white transition-colors truncate"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {track.artist.name}
+                        </Link>
+                      ) : (
+                        <span className="text-[#a7a7a7] truncate">Unknown Artist</span>
+                      )}
                     </div>
                   </div>
                   
-                  <div className="hidden md:block text-[#a7a7a7] group-hover:text-white transition-colors truncate">
-                    {track.album?.title || track.title}
+                  <div className="hidden md:block truncate">
+                    {track.album ? (
+                      <Link 
+                        to={`/nexoria-music/album/${track.album._id}`} 
+                        className="text-[#a7a7a7] hover:underline hover:text-white transition-colors truncate"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {track.album.title}
+                      </Link>
+                    ) : (
+                      <span className="text-[#a7a7a7] truncate">{track.title}</span>
+                    )}
                   </div>
                   
                   <div className="flex items-center justify-end gap-4 text-[#a7a7a7]">

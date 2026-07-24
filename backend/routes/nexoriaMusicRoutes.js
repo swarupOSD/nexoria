@@ -36,7 +36,9 @@ import {
   addTrackToPlaylist,
   removeTrackFromPlaylist,
   deletePlaylist,
-  getAllTracksConsumer
+  getAllTracksConsumer,
+  getArtistDetailsConsumer,
+  getAlbumDetailsConsumer
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -55,6 +57,8 @@ const upload = multer({
 router.route('/search').get(searchMusic);
 router.route('/stream/:fileId').get(streamTrack);
 router.route('/all-tracks').get(getAllTracksConsumer);
+router.route('/artists/:id').get(getArtistDetailsConsumer);
+router.route('/albums/:id').get(getAlbumDetailsConsumer);
 
 // PLAYLISTS
 router.route('/playlists')

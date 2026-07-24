@@ -5,6 +5,7 @@ import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
   Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
@@ -350,7 +351,17 @@ const NexoriaPlayer = () => {
                   <div className="flex items-center justify-between mb-8 mt-4">
                     <div className="flex-1 min-w-0 pr-4">
                       <h2 className="text-[28px] leading-tight font-bold text-white truncate">{currentTrack.title}</h2>
-                      <p className="text-lg text-white/70 truncate mt-1">{currentTrack.artist?.name || 'Unknown Artist'}</p>
+                      {currentTrack.artist ? (
+                        <Link 
+                          to={`/nexoria-music/artist/${currentTrack.artist._id}`}
+                          onClick={() => setIsExpanded(false)}
+                          className="block text-lg text-white/70 hover:text-white hover:underline truncate mt-1"
+                        >
+                          {currentTrack.artist.name}
+                        </Link>
+                      ) : (
+                        <p className="text-lg text-white/70 truncate mt-1">Unknown Artist</p>
+                      )}
                     </div>
                     <button 
                         onClick={() => dispatch(toggleLikeTrack(currentTrack._id))}
@@ -422,8 +433,17 @@ const NexoriaPlayer = () => {
                   )}
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                  <span className="text-[14px] font-semibold text-white truncate hover:underline cursor-pointer">{currentTrack.title}</span>
-                  <span className="text-[12px] text-zinc-400 truncate hover:underline cursor-pointer">{currentTrack.artist?.name || 'Unknown Artist'}</span>
+                  <span className="text-[14px] font-semibold text-white truncate">{currentTrack.title}</span>
+                  {currentTrack.artist ? (
+                    <Link 
+                      to={`/nexoria-music/artist/${currentTrack.artist._id}`}
+                      className="text-[12px] text-zinc-400 truncate hover:underline hover:text-white cursor-pointer"
+                    >
+                      {currentTrack.artist.name}
+                    </Link>
+                  ) : (
+                    <span className="text-[12px] text-zinc-400 truncate">Unknown Artist</span>
+                  )}
                 </div>
                 <button onClick={() => dispatch(toggleLikeTrack(currentTrack._id))} className="ml-2 p-1">
                   <Heart className={`w-[18px] h-[18px] ${likedTracks?.includes(currentTrack._id) ? 'fill-green-500 text-green-500' : 'text-zinc-400 hover:text-white'}`} />

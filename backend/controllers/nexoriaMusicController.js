@@ -1058,7 +1058,72 @@ export const getAllTracksConsumer = async (req, res) => {
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: tracks });
   } catch (error) {
-    logger.error(`Get All Tracks Consumer Error: ${error.message}`);
+    logger.error(`Get All Consumer Tracks Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Failed to fetch tracks' });
+  }
+};
+
+// @desc    Get artist details for consumer (includes popular tracks and albums)
+// @route   GET /api/nexoria-music/artists/:id
+// @access  Public
+export const getArtistDetailsConsumer = async (req, res) => {
+  try {
+    const artist = await NexoriaArtist.findById(req.params.id);
+    if (!artist) {
+      return res.status(404).json({ success: false, message: 'Artist not found' });
+    }
+
+    // Get popular tracks (sort by playCount if available, or just newest)
+    const popularTracks = await NexoriaTrack.find({ artist: artist._id })
+      .populate('artist', 'name image')
+      .populate('album', 'title coverImage')
+      .sort({ playCount: -1, createdAt: -1 })
+      .limit(10);
+
+    // Get artist's albums
+    const albums = await NexoriaAlbum.find({ artist: artist._id })
+      .sort({ releaseYear: -1, createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        artist,
+        popularTracks,
+        albums
+      }
+    });
+  } catch (error) {
+    logger.error(`Get Artist Details Consumer Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch artist details' });
+  }
+};
+
+// @desc    Get album details for consumer (includes album info and its tracks)
+// @route   GET /api/nexoria-music/albums/:id
+// @access  Public
+export const getAlbumDetailsConsumer = async (req, res) => {
+  try {
+    const album = await NexoriaAlbum.findById(req.params.id)
+      .populate('artist', 'name image');
+      
+    if (!album) {
+      return res.status(404).json({ success: false, message: 'Album not found' });
+    }
+
+    const tracks = await NexoriaTrack.find({ album: album._id })
+      .populate('artist', 'name image')
+      .populate('album', 'title coverImage')
+      .sort({ createdAt: 1 }); // Usually tracks in an album are ordered, but createdAt works as fallback
+
+    res.status(200).json({
+      success: true,
+      data: {
+        album,
+        tracks
+      }
+    });
+  } catch (error) {
+    logger.error(`Get Album Details Consumer Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch album details' });
   }
 };
