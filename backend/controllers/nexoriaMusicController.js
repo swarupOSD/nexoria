@@ -168,7 +168,6 @@ export const getTracksAdmin = async (req, res) => {
   try {
     const tracks = await NexoriaTrack.find({
       $or: [
-        { artist: { $exists: true, $ne: null } },
         { audioUrl: { $exists: true, $ne: null, $ne: "" } },
         { telegramFileId: { $exists: true, $ne: null, $ne: "" } }
       ]
@@ -1079,7 +1078,6 @@ export const getAllTracksConsumer = async (req, res) => {
   try {
     const tracks = await NexoriaTrack.find({
       $or: [
-        { artist: { $exists: true, $ne: null } },
         { audioUrl: { $exists: true, $ne: null, $ne: "" } },
         { telegramFileId: { $exists: true, $ne: null, $ne: "" } }
       ]

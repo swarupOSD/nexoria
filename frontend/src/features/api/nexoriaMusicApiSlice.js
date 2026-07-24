@@ -98,7 +98,7 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getNexoriaTracks: builder.query({
-      query: () => '/nexoria-music/tracks',
+      query: () => '/nexoria-music/all-tracks',
       providesTags: ['NexoriaTrack'],
     }),
     createNexoriaTrack: builder.mutation({

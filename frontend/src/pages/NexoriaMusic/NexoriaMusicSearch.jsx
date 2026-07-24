@@ -54,20 +54,14 @@ const NexoriaMusicSearch = () => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      const audioEl = document.getElementById('nexoria-global-audio');
-      if (audioEl) {
-        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
-        audioEl.src = newSrc;
-        audioEl.play().catch(err => console.log(err));
-      }
+      // NexoriaPlayer will automatically detect currentTrack change and play it.
       dispatch(setQueue(trackList));
       dispatch(playTrack(track));
     }
   };
 
   return (
-    <div className="min-h-full bg-[#121212] text-white">
+    <div className="min-h-full bg-[#0F0F23] text-white">
       <div className="px-4 sm:px-6 pt-20 pb-8 max-w-[1920px] mx-auto">
         
         {/* Search Bar */}
@@ -80,7 +74,7 @@ const NexoriaMusicSearch = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="What do you want to listen to?" 
-            className="w-full bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] text-white placeholder-zinc-400 rounded-full py-3.5 pl-12 pr-12 outline-none border-2 border-transparent focus:border-white transition-all shadow-md font-medium"
+            className="w-full bg-[#242424] hover:bg-[#1E1B4B] focus:bg-[#1E1B4B] text-white placeholder-zinc-400 rounded-full py-3.5 pl-12 pr-12 outline-none border-2 border-transparent focus:border-white transition-all shadow-md font-medium"
             autoFocus
           />
           {searchTerm && (
@@ -155,19 +149,19 @@ const NexoriaMusicSearch = () => {
                 {activeTab === 'all' && results.artists.length > 0 && (
                   <div className="lg:col-span-2">
                     <h2 className="text-2xl font-bold mb-4">Top result</h2>
-                    <div className="bg-[#181818] hover:bg-[#282828] transition-colors p-5 rounded-xl cursor-pointer group relative">
+                    <div className="bg-[#1E1B4B] hover:bg-[#1E1B4B] transition-colors p-5 rounded-xl cursor-pointer group relative">
                       <div className="w-[100px] h-[100px] rounded-full overflow-hidden mb-5 shadow-lg">
                         {results.artists[0].image ? (
                           <img src={results.artists[0].image} alt={results.artists[0].name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-4xl font-bold text-zinc-500">
+                          <div className="w-full h-full bg-[#4338CA] flex items-center justify-center text-4xl font-bold text-zinc-500">
                             {results.artists[0].name[0]}
                           </div>
                         )}
                       </div>
                       <h3 className="text-[32px] font-bold text-white mb-2 truncate leading-none pb-1">{results.artists[0].name}</h3>
                       <div className="flex items-center gap-4">
-                        <span className="text-sm font-bold bg-[#121212] px-3 py-1 rounded-full uppercase tracking-widest text-zinc-300">Artist</span>
+                        <span className="text-sm font-bold bg-[#0F0F23] px-3 py-1 rounded-full uppercase tracking-widest text-zinc-300">Artist</span>
                       </div>
                       
                       {/* Big Play Button (would play artist top tracks, mocking here) */}
@@ -200,13 +194,13 @@ const NexoriaMusicSearch = () => {
                           className="flex items-center gap-4 p-2 rounded-md hover:bg-white/10 group transition-colors cursor-pointer"
                           onClick={() => handlePlay(track, results.tracks)}
                         >
-                          <div className="relative w-10 h-10 bg-zinc-800 shrink-0">
+                          <div className="relative w-10 h-10 bg-[#4338CA] shrink-0">
                             {track.coverImage || track.album?.coverImage || track.artist?.image ? (
                               <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full bg-zinc-800" />
+                              <div className="w-full h-full bg-[#4338CA]" />
                             )}
-                            <div className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center">
+                            <div className="absolute inset-0 bg-[#0F0F23]/50 hidden group-hover:flex items-center justify-center">
                               {currentTrack?._id === track._id && isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
                             </div>
                           </div>
@@ -241,8 +235,8 @@ const NexoriaMusicSearch = () => {
                 <h2 className="text-2xl font-bold mb-6">Albums</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                   {results.albums.map(album => (
-                    <div key={album._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-md cursor-pointer group transition-colors">
-                      <div className="w-full aspect-square bg-zinc-800 rounded-md mb-4 shadow-lg overflow-hidden relative">
+                    <div key={album._id} className="bg-[#1E1B4B] hover:bg-[#1E1B4B] p-4 rounded-md cursor-pointer group transition-colors">
+                      <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-4 shadow-lg overflow-hidden relative">
                         {album.coverImage && <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />}
                         <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10">
                           <button className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-green-400">
@@ -264,8 +258,8 @@ const NexoriaMusicSearch = () => {
                 <h2 className="text-2xl font-bold mb-6">Artists</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                   {results.artists.map(artist => (
-                    <div key={artist._id} className="bg-[#181818] hover:bg-[#282828] p-4 rounded-md cursor-pointer group transition-colors text-center">
-                      <div className="w-full aspect-square bg-zinc-800 rounded-full mb-4 shadow-lg overflow-hidden relative">
+                    <div key={artist._id} className="bg-[#1E1B4B] hover:bg-[#1E1B4B] p-4 rounded-md cursor-pointer group transition-colors text-center">
+                      <div className="w-full aspect-square bg-[#4338CA] rounded-full mb-4 shadow-lg overflow-hidden relative">
                         {artist.image ? (
                           <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                         ) : (

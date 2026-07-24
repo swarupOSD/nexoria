@@ -18,23 +18,17 @@ const NexoriaMusicLibrary = () => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      const audioEl = document.getElementById('nexoria-global-audio');
-      if (audioEl) {
-        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
-        audioEl.src = newSrc;
-        audioEl.play().catch(err => console.log(err));
-      }
+      // NexoriaPlayer will automatically detect currentTrack change and play it.
       dispatch(setQueue(trackList));
       dispatch(playTrack(track));
     }
   };
 
   return (
-    <div className="min-h-full bg-[#121212] text-white">
+    <div className="min-h-full bg-[#0F0F23] text-white">
       
       {/* Top Banner Area (Spotify Liked Songs gradient style) */}
-      <div className="bg-gradient-to-b from-indigo-700/60 to-[#121212] px-4 sm:px-8 pt-20 pb-6 flex flex-col md:flex-row items-center md:items-end gap-6">
+      <div className="bg-gradient-to-b from-indigo-700/60 to-[#0F0F23] px-4 sm:px-8 pt-20 pb-6 flex flex-col md:flex-row items-center md:items-end gap-6">
         <div className="w-40 h-40 sm:w-[232px] sm:h-[232px] bg-gradient-to-br from-indigo-600 to-indigo-300 shadow-2xl flex items-center justify-center shrink-0">
           <Heart className="w-16 h-16 sm:w-24 sm:h-24 text-white" fill="white" />
         </div>
@@ -51,7 +45,7 @@ const NexoriaMusicLibrary = () => {
         </div>
       </div>
 
-      <div className="px-4 sm:px-8 pb-8 max-w-[1920px] mx-auto bg-black/20">
+      <div className="px-4 sm:px-8 pb-8 max-w-[1920px] mx-auto bg-[#0F0F23]/20">
         
         {/* Actions Bar */}
         <div className="py-6 flex items-center gap-6">
@@ -66,7 +60,7 @@ const NexoriaMusicLibrary = () => {
 
         {/* List Header */}
         {myLikedSongs.length > 0 && (
-          <div className="grid grid-cols-[16px_1fr_40px] md:grid-cols-[16px_4fr_3fr_40px] lg:grid-cols-[16px_4fr_3fr_minmax(120px,1fr)_40px] gap-4 px-4 py-2 border-b border-white/10 text-sm text-zinc-400 font-medium mb-4 sticky top-16 bg-[#121212]/95 backdrop-blur-md z-10 hidden sm:grid">
+          <div className="grid grid-cols-[16px_1fr_40px] md:grid-cols-[16px_4fr_3fr_40px] lg:grid-cols-[16px_4fr_3fr_minmax(120px,1fr)_40px] gap-4 px-4 py-2 border-b border-white/10 text-sm text-zinc-400 font-medium mb-4 sticky top-16 bg-[#0F0F23]/95 backdrop-blur-md z-10 hidden sm:grid">
             <div className="text-right">#</div>
             <div>Title</div>
             <div className="hidden md:block">Album</div>
@@ -109,7 +103,7 @@ const NexoriaMusicLibrary = () => {
                   </div>
                   
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-zinc-800 rounded shrink-0 shadow-md">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4338CA] rounded shrink-0 shadow-md">
                       {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                         <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover rounded" />
                       )}

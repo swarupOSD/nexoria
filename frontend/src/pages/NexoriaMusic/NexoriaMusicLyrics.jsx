@@ -80,9 +80,9 @@ const NexoriaMusicLyrics = () => {
   if (isError || !lyricsData || syncedLyrics.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-full min-h-[600px] text-center px-4">
-        <Mic2 className="w-20 h-20 text-[#a7a7a7] mb-6 opacity-50" />
+        <Mic2 className="w-20 h-20 text-[#94A3B8] mb-6 opacity-50" />
         <h2 className="text-3xl font-bold mb-2">No Lyrics Found</h2>
-        <p className="text-[#a7a7a7] max-w-md">We don't have synchronized lyrics for this track yet. Enjoy the music!</p>
+        <p className="text-[#94A3B8] max-w-md">We don't have synchronized lyrics for this track yet. Enjoy the music!</p>
         <button 
           onClick={() => navigate(-1)}
           className="mt-8 px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
@@ -100,14 +100,14 @@ const NexoriaMusicLyrics = () => {
     <div 
       className="flex-1 flex flex-col h-full min-h-[calc(100vh-120px)] relative overflow-hidden transition-colors duration-1000"
       style={{
-        background: `linear-gradient(to bottom, ${bgColor}80, #121212 80%)`
+        background: `linear-gradient(to bottom, ${bgColor}80, #0F0F23 80%)`
       }}
     >
       {/* Header */}
       <div className="px-6 py-4 flex items-center sticky top-0 z-20">
         <button 
           onClick={() => navigate(-1)} 
-          className="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center hover:bg-black/60 transition-colors text-white backdrop-blur-md"
+          className="w-10 h-10 rounded-full bg-[#0F0F23]/40 flex items-center justify-center hover:bg-[#0F0F23]/60 transition-colors text-white backdrop-blur-md"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>

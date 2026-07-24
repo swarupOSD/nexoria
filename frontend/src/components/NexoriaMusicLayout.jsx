@@ -8,10 +8,13 @@ import { syncMusicState } from '../features/music/nexoriaMusicSlice';
 import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetFavoritesQuery } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
+import NexoriaMusicCreatePlaylistModal from './NexoriaMusicCreatePlaylistModal';
 
 const NexoriaMusicLayout = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showFriendActivity, setShowFriendActivity] = useState(true);
+  const [isCreatePlaylistModalOpen, setIsCreatePlaylistModalOpen] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState('All');
   const { user } = useSelector((state) => state.auth);
   const nexoriaMusicState = useSelector((state) => state.nexoriaMusic);
   const location = useLocation();
@@ -32,7 +35,6 @@ const NexoriaMusicLayout = () => {
   const albums = (albumsRes?.data || []).map(fav => fav.itemId).filter(Boolean);
   
   const [dragOverPlaylistId, setDragOverPlaylistId] = useState(null);
-  const [libraryFilter, setLibraryFilter] = useState('All');
 
   const handleDrop = async (e, playlistId) => {
     e.preventDefault();
@@ -97,34 +99,28 @@ const NexoriaMusicLayout = () => {
     { name: 'All Songs', path: '/nexoria-music/tracks', icon: ListMusic, exact: false },
   ];
 
-  const handleCreatePlaylist = async () => {
+  const handleCreatePlaylistClick = () => {
     if (!user) {
       toast.error('Please log in to create playlists.');
       return;
     }
-    try {
-      const res = await createPlaylist({ title: `My Playlist #${playlists.length + 1}` }).unwrap();
-      navigate(`/nexoria-music/playlist/${res.data._id}`);
-      toast.success('Playlist created!');
-    } catch (err) {
-      toast.error('Failed to create playlist');
-    }
+    setIsCreatePlaylistModalOpen(true);
   };
 
   const actionItems = [
-    { name: 'Create Playlist', icon: Plus, bg: 'bg-[#a7a7a7] group-hover:bg-white text-black transition-colors', onClick: handleCreatePlaylist },
+    { name: 'Create Playlist', icon: Plus, bg: 'bg-[#94A3B8] group-hover:bg-white text-black transition-colors', onClick: handleCreatePlaylistClick },
     { name: 'Liked Songs', path: '/nexoria-music/library', icon: Heart, bg: 'bg-gradient-to-br from-[#450af5] to-[#c4efd9] text-white', onClick: () => navigate('/nexoria-music/library') },
   ];
 
   return (
-    <div className="flex h-screen bg-black text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
+    <div className="flex h-screen bg-[#0F0F23] text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
       {/* Desktop Sidebar */}
-      <div className="hidden sm:flex flex-col w-64 bg-[#000000] p-2 gap-2 h-full z-10">
+      <div className="hidden sm:flex flex-col w-64 bg-[#0F0F23] p-2 gap-2 h-full z-10">
         
         {/* Top Nav Block */}
-        <div className="bg-[#121212] rounded-lg p-4 flex flex-col gap-5">
+        <div className="bg-[#0F0F23] rounded-lg p-4 flex flex-col gap-5">
           <div className="flex items-center gap-2 px-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 rounded-full bg-[#1ed760] flex items-center justify-center font-bold text-black text-xl">N</div>
+            <div className="w-8 h-8 rounded-full bg-[#22C55E] flex items-center justify-center font-bold text-black text-xl">N</div>
             <span className="font-bold text-lg tracking-tight">Nexoria</span>
           </div>
           
@@ -149,7 +145,7 @@ const NexoriaMusicLayout = () => {
         </div>
 
         {/* Library Block */}
-        <div className="bg-[#121212] rounded-lg p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="bg-[#0F0F23] rounded-lg p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
           <div className="px-4 py-3 flex items-center gap-2 text-zinc-400 font-semibold hover:text-white transition-colors cursor-pointer" onClick={() => navigate('/nexoria-music/library')}>
             <Library className="w-6 h-6" />
             <span>Your Library</span>
@@ -160,7 +156,7 @@ const NexoriaMusicLayout = () => {
             {libraryFilter !== 'All' && (
               <button 
                 onClick={() => setLibraryFilter('All')}
-                className="w-8 h-8 rounded-full bg-[#2a2a2a] hover:bg-[#333333] flex items-center justify-center shrink-0 transition-colors"
+                className="w-8 h-8 rounded-full bg-[#1E1B4B] hover:bg-[#333333] flex items-center justify-center shrink-0 transition-colors"
               >
                 <Plus className="w-4 h-4 text-white rotate-45" />
               </button>
@@ -173,7 +169,7 @@ const NexoriaMusicLayout = () => {
                   className={`px-3 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
                     libraryFilter === filter 
                       ? 'bg-white text-black' 
-                      : 'bg-[#2a2a2a] text-white hover:bg-[#333333]'
+                      : 'bg-[#1E1B4B] text-white hover:bg-[#333333]'
                   }`}
                 >
                   {filter}
@@ -199,8 +195,8 @@ const NexoriaMusicLayout = () => {
                         <Icon className="w-5 h-5 fill-current" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-semibold text-[#a7a7a7] group-hover:text-white transition-colors truncate">{item.name}</span>
-                        <span className="text-xs text-[#a7a7a7]">Action</span>
+                        <span className="font-semibold text-[#94A3B8] group-hover:text-white transition-colors truncate">{item.name}</span>
+                        <span className="text-xs text-[#94A3B8]">Action</span>
                       </div>
                     </button>
                   );
@@ -217,7 +213,7 @@ const NexoriaMusicLayout = () => {
                     onDrop={(e) => handleDrop(e, pl._id)}
                     className={`flex items-center gap-4 p-2 rounded transition-colors group text-left ${dragOverPlaylistId === pl._id ? 'bg-white/20 border-l-4 border-green-500' : 'hover:bg-white/5'}`}
                   >
-                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-zinc-800`}>
+                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-[#4338CA]`}>
                       {pl.coverImage ? (
                         <img src={pl.coverImage} alt={pl.title} className="w-full h-full object-cover rounded-md" />
                       ) : (
@@ -225,8 +221,8 @@ const NexoriaMusicLayout = () => {
                       )}
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#1ed760]' : 'text-[#a7a7a7] group-hover:text-white'}`}>{pl.title}</span>
-                      <span className="text-xs text-[#a7a7a7] truncate">Playlist • {user?.name || 'You'}</span>
+                      <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#22C55E]' : 'text-[#94A3B8] group-hover:text-white'}`}>{pl.title}</span>
+                      <span className="text-xs text-[#94A3B8] truncate">Playlist • {user?.name || 'You'}</span>
                     </div>
                   </button>
                 ))}
@@ -240,7 +236,7 @@ const NexoriaMusicLayout = () => {
                 onClick={() => navigate(`/nexoria-music/artist/${artist._id}`)}
                 className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
               >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm bg-zinc-800 overflow-hidden`}>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm bg-[#4338CA] overflow-hidden`}>
                   {artist.image ? (
                     <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                   ) : (
@@ -248,8 +244,8 @@ const NexoriaMusicLayout = () => {
                   )}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/artist/${artist._id}` ? 'text-[#1ed760]' : 'text-white'}`}>{artist.name}</span>
-                  <span className="text-xs text-[#a7a7a7] truncate">Artist</span>
+                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/artist/${artist._id}` ? 'text-[#22C55E]' : 'text-white'}`}>{artist.name}</span>
+                  <span className="text-xs text-[#94A3B8] truncate">Artist</span>
                 </div>
               </button>
             ))}
@@ -261,7 +257,7 @@ const NexoriaMusicLayout = () => {
                 onClick={() => navigate(`/nexoria-music/album/${album._id}`)}
                 className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
               >
-                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm bg-zinc-800 overflow-hidden`}>
+                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm bg-[#4338CA] overflow-hidden`}>
                   {album.coverImage ? (
                     <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
                   ) : (
@@ -269,8 +265,8 @@ const NexoriaMusicLayout = () => {
                   )}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/album/${album._id}` ? 'text-[#1ed760]' : 'text-white'}`}>{album.title}</span>
-                  <span className="text-xs text-[#a7a7a7] truncate">Album • {album.artist?.name || 'Unknown'}</span>
+                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/album/${album._id}` ? 'text-[#22C55E]' : 'text-white'}`}>{album.title}</span>
+                  <span className="text-xs text-[#94A3B8] truncate">Album • {album.artist?.name || 'Unknown'}</span>
                 </div>
               </button>
             ))}
@@ -280,24 +276,24 @@ const NexoriaMusicLayout = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#121212] sm:m-2 sm:rounded-lg overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#0F0F23] sm:m-2 sm:rounded-lg overflow-hidden relative">
         
         {/* Top Bar */}
         <header 
           className={`absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 sm:px-6 z-20 transition-colors duration-300 ${
-            isScrolled ? 'bg-[#121212] shadow-md' : 'bg-transparent'
+            isScrolled ? 'bg-[#0F0F23] shadow-md' : 'bg-transparent'
           }`}
         >
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate(-1)} 
-              className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center hover:bg-black/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
+              className="w-8 h-8 rounded-full bg-[#0F0F23]/60 flex items-center justify-center hover:bg-[#0F0F23]/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <button 
               onClick={() => navigate(1)} 
-              className="hidden sm:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:bg-black/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
+              className="hidden sm:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:bg-[#0F0F23]/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
             >
               <ArrowRight className="w-5 h-5" />
             </button>
@@ -306,32 +302,32 @@ const NexoriaMusicLayout = () => {
           <div className="flex items-center gap-3">
             {!user ? (
               <>
-                <button onClick={() => navigate('/register')} className="text-[#a7a7a7] hover:text-white font-bold text-sm sm:text-base px-2 hover:scale-105 transition-all">Sign up</button>
+                <button onClick={() => navigate('/register')} className="text-[#94A3B8] hover:text-white font-bold text-sm sm:text-base px-2 hover:scale-105 transition-all">Sign up</button>
                 <button onClick={() => navigate('/login')} className="bg-white text-black font-bold px-8 py-3 rounded-full hover:scale-105 active:scale-95 transition-transform text-sm sm:text-base">Log in</button>
               </>
             ) : (
               <div className="flex items-center gap-2">
                 <button onClick={() => toast.success('Premium is coming soon!', { icon: '✨' })} className="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:scale-105 transition-transform text-sm hidden sm:block">Explore Premium</button>
                 
-                <button onClick={() => toast.success('Desktop App coming soon!', { icon: '💻' })} className="hidden sm:flex items-center gap-1.5 text-white bg-black/60 hover:scale-105 transition-transform font-bold text-sm px-3 py-1.5 rounded-full">
+                <button onClick={() => toast.success('Desktop App coming soon!', { icon: '💻' })} className="hidden sm:flex items-center gap-1.5 text-white bg-[#0F0F23]/60 hover:scale-105 transition-transform font-bold text-sm px-3 py-1.5 rounded-full">
                   <ArrowDownToLine className="w-4 h-4" /> Install App
                 </button>
                 
-                <button onClick={() => toast.success('No new notifications', { icon: '🔔' })} className="hidden sm:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:scale-105 transition-transform text-[#a7a7a7] hover:text-white">
+                <button onClick={() => toast.success('No new notifications', { icon: '🔔' })} className="hidden sm:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:scale-105 transition-transform text-[#94A3B8] hover:text-white">
                   <Bell className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={() => setShowFriendActivity(!showFriendActivity)} 
-                  className={`hidden lg:flex w-8 h-8 rounded-full bg-black/60 items-center justify-center hover:scale-105 transition-transform ${showFriendActivity ? 'text-white' : 'text-[#a7a7a7] hover:text-white'}`}
+                  className={`hidden lg:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:scale-105 transition-transform ${showFriendActivity ? 'text-white' : 'text-[#94A3B8] hover:text-white'}`}
                 >
                   <Users className="w-5 h-5" />
                 </button>
 
-                <button onClick={() => navigate('/dashboard')} className="w-8 h-8 ml-2 rounded-full bg-black/60 border-4 border-[#121212] flex items-center justify-center hover:scale-105 transition-transform overflow-hidden shadow-md">
+                <button onClick={() => navigate('/dashboard')} className="w-8 h-8 ml-2 rounded-full bg-[#0F0F23]/60 border-4 border-[#0F0F23] flex items-center justify-center hover:scale-105 transition-transform overflow-hidden shadow-md">
                   {user.profilePicture ? (
                     <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-[#a7a7a7]">
+                    <div className="w-full h-full bg-[#4338CA] flex items-center justify-center text-[#94A3B8]">
                       <User className="w-5 h-5" />
                     </div>
                   )}
@@ -379,6 +375,11 @@ const NexoriaMusicLayout = () => {
       {/* The Global Music Player */}
       <NexoriaPlayer />
 
+      {/* Modals */}
+      <NexoriaMusicCreatePlaylistModal 
+        isOpen={isCreatePlaylistModalOpen} 
+        onClose={() => setIsCreatePlaylistModalOpen(false)} 
+      />
     </div>
   );
 };

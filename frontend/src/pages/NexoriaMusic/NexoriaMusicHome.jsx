@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Settings, Bell, Clock } from 'lucide-react';
+import { Play, Pause, Settings, Bell, Clock, MoreHorizontal } from 'lucide-react';
 import { 
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { playTrack, setQueue, togglePlayPause } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import toast from 'react-hot-toast';
+import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,15 @@ const NexoriaMusicHome = () => {
 
   const [greeting, setGreeting] = useState('');
   const [activeChip, setActiveChip] = useState('All');
+  
+  const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
+  const [selectedTrackId, setSelectedTrackId] = useState(null);
+
+  const handleOpenPlaylistModal = (e, trackId) => {
+    e.stopPropagation();
+    setSelectedTrackId(trackId);
+    setPlaylistModalOpen(true);
+  };
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -54,24 +64,18 @@ const NexoriaMusicHome = () => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      const audioEl = document.getElementById('nexoria-global-audio');
-      if (audioEl) {
-        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-        const newSrc = track.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}` : track.audioUrl || "";
-        audioEl.src = newSrc;
-        audioEl.play().catch(err => console.log(err));
-      }
+      // NexoriaPlayer will automatically detect currentTrack change and play it.
       dispatch(setQueue(trackList));
       dispatch(playTrack(track));
     }
   };
 
   return (
-    <div className="min-h-full bg-[#121212] text-white relative pb-32">
+    <div className="min-h-full bg-[#0F0F23] text-white relative pb-32">
         {/* Dynamic Background Gradient based on time of day (Spotify Mobile style) */}
-        <div className="absolute top-0 left-0 right-0 h-[332px] bg-gradient-to-b from-[#1E3264] to-[#121212] pointer-events-none z-0 opacity-80" />
+        <div className="absolute top-0 left-0 right-0 h-[332px] bg-gradient-to-b from-[#1E1B4B] to-[#0F0F23] pointer-events-none z-0 opacity-80" />
       
-      <div className="relative z-10 px-4 pt-12 max-w-[1920px] mx-auto sm:pt-6">
+      <div className="relative z-10 px-4 pt-20 max-w-[1920px] mx-auto sm:pt-20">
         
         {/* Mobile Header: Profile, Title, Icons */}
         <div className="flex items-center justify-between mb-6 sm:hidden">
@@ -111,7 +115,7 @@ const NexoriaMusicHome = () => {
               onClick={() => setActiveChip(chip)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 activeChip === chip 
-                  ? 'bg-[#1ed760] text-black' 
+                  ? 'bg-[#22C55E] text-black' 
                   : 'bg-white/10 text-white hover:bg-white/20'
               }`}
             >
@@ -132,7 +136,7 @@ const NexoriaMusicHome = () => {
                   className="bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer overflow-hidden relative shadow-sm"
                   onClick={() => handlePlay(track, topGridTracks)}
                 >
-                  <div className="h-14 w-14 bg-zinc-800 shrink-0 shadow-md">
+                  <div className="h-14 w-14 bg-[#4338CA] shrink-0 shadow-md">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
@@ -140,8 +144,15 @@ const NexoriaMusicHome = () => {
                   <span className="font-bold text-xs sm:text-sm line-clamp-2 pr-2 text-white">{track.title}</span>
                   
                   {/* Play Button Overlay (Spotify Desktop) */}
-                  <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-xl hidden sm:block">
-                    <button className="w-10 h-10 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-lg">
+                  <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-xl hidden sm:flex items-center gap-2">
+                    <button 
+                      onClick={(e) => handleOpenPlaylistModal(e, track._id)}
+                      className="w-10 h-10 bg-[#0F0F23]/50 hover:bg-[#0F0F23]/80 rounded-full flex items-center justify-center text-white transition-colors"
+                      title="Add to Playlist"
+                    >
+                      <MoreHorizontal className="w-5 h-5" />
+                    </button>
+                    <button className="w-10 h-10 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-lg">
                       {currentTrack?._id === track._id && isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-1" />}
                     </button>
                   </div>
@@ -163,20 +174,27 @@ const NexoriaMusicHome = () => {
                 <div 
                   key={track._id}
                   onClick={() => handlePlay(track, madeForYouTracks)}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#181818] hover:bg-[#282828] rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start"
                 >
-                  <div className="w-full aspect-square bg-zinc-800 rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
-                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:block">
-                      <button className="w-12 h-12 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#1fdf64] shadow-lg">
+                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:flex items-center gap-2">
+                      <button 
+                        onClick={(e) => handleOpenPlaylistModal(e, track._id)}
+                        className="w-10 h-10 bg-[#0F0F23]/50 hover:bg-[#0F0F23]/80 rounded-full flex items-center justify-center text-white transition-colors"
+                        title="Add to Playlist"
+                      >
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+                      <button className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg">
                         {currentTrack?._id === track._id && isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
                       </button>
                     </div>
                   </div>
                   <h3 className="font-bold text-sm sm:text-base truncate mb-1 text-white">{track.title}</h3>
-                  <p className="text-xs sm:text-sm text-[#a7a7a7] line-clamp-2 leading-tight font-medium">{track.artist?.name || 'Unknown Artist'}</p>
+                  <p className="text-xs sm:text-sm text-[#94A3B8] line-clamp-2 leading-tight font-medium">{track.artist?.name || 'Unknown Artist'}</p>
                 </div>
               ))
             )}
@@ -194,20 +212,20 @@ const NexoriaMusicHome = () => {
               artists.map((artist) => (
                 <div 
                   key={artist._id}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#181818] hover:bg-[#282828] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
                 >
-                  <div className="w-[116px] h-[116px] sm:w-full sm:h-auto sm:aspect-square bg-zinc-800 rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-[116px] h-[116px] sm:w-full sm:h-auto sm:aspect-square bg-[#4338CA] rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
                     {artist.image && (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     )}
                     <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:block">
-                      <button className="w-12 h-12 bg-[#1ed760] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#1fdf64] shadow-lg">
+                      <button className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg">
                          <Play className="w-6 h-6 fill-current ml-1" />
                       </button>
                     </div>
                   </div>
                   <h3 className="font-bold text-sm sm:text-base w-full truncate mb-1 text-white">{artist.name}</h3>
-                  <p className="text-xs sm:text-sm text-[#a7a7a7] w-full font-medium">Artist</p>
+                  <p className="text-xs sm:text-sm text-[#94A3B8] w-full font-medium">Artist</p>
                 </div>
               ))
             )}
@@ -215,6 +233,13 @@ const NexoriaMusicHome = () => {
         </section>
 
       </div>
+      
+      {/* Modals */}
+      <NexoriaMusicAddToPlaylistModal 
+        isOpen={playlistModalOpen} 
+        onClose={() => setPlaylistModalOpen(false)} 
+        trackId={selectedTrackId} 
+      />
     </div>
   );
 };

@@ -264,7 +264,7 @@ const NexoriaPlayer = () => {
                 >
                   <div className="flex items-center p-2 gap-3">
                     {/* Small Image */}
-                    <div className="w-10 h-10 rounded-md overflow-hidden bg-zinc-800 shrink-0 shadow-inner">
+                    <div className="w-10 h-10 rounded-md overflow-hidden bg-[#4338CA] shrink-0 shadow-inner">
                       {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) && (
                         <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
                       )}
@@ -359,7 +359,7 @@ const NexoriaPlayer = () => {
                        {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) ? (
                         <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
                       ) : (
-                        <div className="w-full h-full bg-zinc-800" />
+                        <div className="w-full h-full bg-[#4338CA]" />
                       )}
                     </div>
                   </div>
@@ -443,11 +443,11 @@ const NexoriaPlayer = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-black/95 border-t border-white/10 items-center px-4 justify-between"
+              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-[#0F0F23]/95 border-t border-white/10 items-center px-4 justify-between"
             >
               {/* Left: Info */}
               <div className="flex items-center gap-4 w-[30%] min-w-[180px]">
-                <div className="w-14 h-14 bg-zinc-800 rounded shadow-md overflow-hidden shrink-0">
+                <div className="w-14 h-14 bg-[#4338CA] rounded shadow-md overflow-hidden shrink-0">
                   {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) && (
                     <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
                   )}
