@@ -58,7 +58,8 @@ const NexoriaMusicHome = () => {
     }
   };
 
-  return <div className="min-h-full bg-[#121212] text-white relative">
+  return (
+    <div className="min-h-full bg-[#121212] text-white relative">
         {/* Spotify Default Subtle Gradient */}
         <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#222222] via-[#121212]/80 to-[#121212] pointer-events-none z-0" />
       

@@ -169,4 +169,5 @@ export const {
   useLogPlayMutation,
   useGetRecentlyPlayedQuery,
   useGetRecommendationsQuery,
+  useLazyGetRecommendationsQuery,
 } = nexoriaMusicApiSlice;

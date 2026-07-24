@@ -163,42 +163,7 @@ const NexoriaArtistsManager = () => {
           ))}
         </div>
       )}
-                        <CheckCircle className="w-5 h-5 text-blue-400 shrink-0 fill-blue-400/20" />
-                      )}
-                    </div>
-                    <p className="text-purple-400/80 text-[10px] font-black uppercase tracking-widest">
-                      {(artist.totalPlays || 0).toLocaleString()} plays
-                    </p>
-                  </div>
-                </div>
 
-                {/* Bio */}
-                {artist.bio ? (
-                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-5 text-center px-2 min-h-[32px]">{artist.bio}</p>
-                ) : (
-                  <div className="min-h-[32px] mb-5" />
-                )}
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEdit(artist)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-white bg-white/5 hover:bg-purple-500/20 hover:text-purple-300 rounded-xl transition-all border border-white/5 hover:border-purple-500/30"
-                  >
-                    <Edit2 className="w-4 h-4" /> Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(artist)}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-white/5 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-all border border-white/5 hover:border-red-500/30"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Modal */}
       {modal && (
