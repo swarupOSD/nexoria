@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Download, Music, Plus, Search } from 'lucide-react';
+import { Heart, Download, Music, Plus, Search, Play } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetPlaylistsQuery } from '../../features/api/nexoriaMusicApiSlice';
