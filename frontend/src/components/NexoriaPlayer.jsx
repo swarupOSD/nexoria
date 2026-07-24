@@ -115,6 +115,50 @@ const NexoriaPlayer = () => {
     }
   }, [currentTrack, dispatch]);
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't trigger if user is typing in an input or textarea
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          if (currentTrack) {
+             if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
+             dispatch(togglePlayPause());
+          }
+          break;
+        case 'MediaPlayPause':
+          e.preventDefault();
+          if (currentTrack) dispatch(togglePlayPause());
+          break;
+        case 'MediaTrackNext':
+          e.preventDefault();
+          handleSkipForward();
+          break;
+        case 'MediaTrackPrevious':
+          e.preventDefault();
+          if (history.length > 0) {
+            const prevTrack = history[history.length - 1];
+            if (audioRef.current) {
+              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+              const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
+              audioRef.current.src = prevSrc;
+              audioRef.current.play().catch(err => console.log(err));
+            }
+          }
+          dispatch(playPrevTrack());
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentTrack, isPlaying, history, dispatch]);
+
   // Audio element event handlers
   const handleTimeUpdate = () => {
     if (audioRef.current) {

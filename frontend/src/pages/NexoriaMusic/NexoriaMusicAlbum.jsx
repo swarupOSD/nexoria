@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
+import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
 
 const NexoriaMusicAlbum = () => {
   const { id } = useParams();
@@ -15,6 +16,17 @@ const NexoriaMusicAlbum = () => {
   
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedTrackId, setSelectedTrackId] = React.useState(null);
+  const [contextMenu, setContextMenu] = React.useState({ isOpen: false, x: 0, y: 0, track: null });
+
+  const handleContextMenu = (e, track) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      track
+    });
+  };
 
   const { data: albumRes, isLoading } = useGetAlbumDetailsQuery(id, { skip: !id });
   const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
@@ -166,6 +178,7 @@ const NexoriaMusicAlbum = () => {
                   }}
                   className="grid grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
                   onClick={() => handlePlay(track, tracks)}
+                  onContextMenu={(e) => handleContextMenu(e, track)}
                 >
                   <div className="text-[#94A3B8] text-right group-hover:hidden">{idx + 1}</div>
                   <div className="hidden group-hover:block text-right -ml-1">
@@ -208,6 +221,18 @@ const NexoriaMusicAlbum = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         trackId={selectedTrackId}
+      />
+
+      <NexoriaMusicContextMenu 
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        track={contextMenu.track}
+        onAddToPlaylist={(trackId) => {
+            setSelectedTrackId(trackId);
+            setModalOpen(true);
+        }}
       />
     </div>
   );

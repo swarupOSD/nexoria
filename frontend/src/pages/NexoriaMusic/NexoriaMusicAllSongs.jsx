@@ -7,10 +7,22 @@ import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../fea
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import toast from 'react-hot-toast';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
+import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
 
 const NexoriaMusicAllSongs = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedTrackId, setSelectedTrackId] = React.useState(null);
+  const [contextMenu, setContextMenu] = React.useState({ isOpen: false, x: 0, y: 0, track: null });
+
+  const handleContextMenu = (e, track) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      track
+    });
+  };
   
   const dispatch = useDispatch();
   const { currentTrack, isPlaying, likedTracks } = useSelector(state => state.nexoriaMusic);
@@ -92,6 +104,7 @@ const NexoriaMusicAllSongs = () => {
               }}
               className="grid grid-cols-[16px_minmax(120px,_4fr)_minmax(120px,_2fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
               onClick={() => handlePlay(track, tracks)}
+              onContextMenu={(e) => handleContextMenu(e, track)}
             >
               <div className="text-[#94A3B8] text-right group-hover:hidden">{idx + 1}</div>
               <div className="hidden group-hover:block text-right -ml-1">
@@ -164,6 +177,18 @@ const NexoriaMusicAllSongs = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         trackId={selectedTrackId}
+      />
+
+      <NexoriaMusicContextMenu 
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        track={contextMenu.track}
+        onAddToPlaylist={(trackId) => {
+            setSelectedTrackId(trackId);
+            setModalOpen(true);
+        }}
       />
     </div>
   );

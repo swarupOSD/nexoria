@@ -94,20 +94,26 @@ const NexoriaMusicLyrics = () => {
   }
 
   // Get background color from track genre or cover (we'll just use a vibrant gradient for now)
-  const bgColor = currentTrack?.genre?.hexColor || '#450af5';
+  const bgColor = currentTrack?.genre?.hexColor || '#8b5cf6'; // Violet as fallback
 
   return (
     <div 
       className="flex-1 flex flex-col h-full min-h-[calc(100vh-120px)] relative overflow-hidden transition-colors duration-1000"
       style={{
-        background: `linear-gradient(to bottom, ${bgColor}80, #0F0F23 80%)`
+        background: `radial-gradient(circle at 50% 0%, ${bgColor}90 0%, #0F0F23 70%)`
       }}
     >
+      {/* Animated glow orb behind lyrics */}
+      <div 
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full opacity-30 mix-blend-screen pointer-events-none blur-[120px]"
+        style={{ backgroundColor: bgColor }}
+      />
+
       {/* Header */}
       <div className="px-6 py-4 flex items-center sticky top-0 z-20">
         <button 
           onClick={() => navigate(-1)} 
-          className="w-10 h-10 rounded-full bg-[#0F0F23]/40 flex items-center justify-center hover:bg-[#0F0F23]/60 transition-colors text-white backdrop-blur-md"
+          className="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/40 transition-colors text-white backdrop-blur-xl border border-white/10"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
@@ -116,10 +122,10 @@ const NexoriaMusicLyrics = () => {
       {/* Lyrics Container */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-6 md:px-24 pb-48 pt-10 scrollbar-hide"
+        className="flex-1 overflow-y-auto px-6 md:px-24 pb-48 pt-20 scrollbar-hide relative z-10"
         style={{ scrollBehavior: 'smooth' }}
       >
-        <div className="max-w-4xl mx-auto flex flex-col gap-8 pb-[40vh]">
+        <div className="max-w-5xl mx-auto flex flex-col gap-10 pb-[40vh]">
           {syncedLyrics.map((line, index) => {
             const isActive = index === activeIndex;
             const isPast = index < activeIndex;
@@ -129,16 +135,16 @@ const NexoriaMusicLyrics = () => {
                 key={index}
                 ref={isActive ? activeLineRef : null}
                 onClick={() => handleLineClick(line.time)}
-                className={`group cursor-pointer transition-all duration-300 transform origin-left flex items-start gap-4 ${
+                className={`group cursor-pointer transition-all duration-500 transform origin-left flex items-start gap-4 ${
                   isActive 
-                    ? 'text-white text-4xl md:text-5xl font-black scale-100 opacity-100 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]' 
+                    ? 'text-white text-5xl md:text-7xl font-black scale-100 opacity-100 drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] tracking-tight' 
                     : isPast
-                      ? 'text-white/60 text-3xl md:text-4xl font-bold scale-95 opacity-50 hover:opacity-80'
-                      : 'text-black/40 text-3xl md:text-4xl font-bold scale-95 hover:text-white/60 transition-colors'
+                      ? 'text-white/40 text-4xl md:text-5xl font-bold scale-95 opacity-50 hover:text-white/80 hover:opacity-100'
+                      : 'text-white/20 text-4xl md:text-5xl font-bold scale-95 hover:text-white/60 transition-colors'
                 }`}
               >
-                <div className={`mt-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ${isActive ? 'text-green-500' : 'text-white'}`}>
-                  <Play className="w-6 h-6 fill-current" />
+                <div className={`mt-3 md:mt-5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ${isActive ? 'text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'text-white/60'}`}>
+                  <Play className="w-8 h-8 fill-current" />
                 </div>
                 <span>{line.text}</span>
               </div>

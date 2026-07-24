@@ -12,6 +12,7 @@ import { playTrack, setQueue, togglePlayPause } from '../../features/music/nexor
 import { BACKEND_URL } from '../../features/api/apiSlice';
 import toast from 'react-hot-toast';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
+import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
 
 const NexoriaMusicHome = () => {
   const dispatch = useDispatch();
@@ -40,11 +41,23 @@ const NexoriaMusicHome = () => {
   
   const [playlistModalOpen, setPlaylistModalOpen] = useState(false);
   const [selectedTrackId, setSelectedTrackId] = useState(null);
+  
+  const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0, track: null });
 
   const handleOpenPlaylistModal = (e, trackId) => {
     e.stopPropagation();
     setSelectedTrackId(trackId);
     setPlaylistModalOpen(true);
+  };
+
+  const handleContextMenu = (e, track) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      track
+    });
   };
 
   useEffect(() => {
@@ -135,6 +148,7 @@ const NexoriaMusicHome = () => {
                   key={track._id}
                   className="bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer overflow-hidden relative shadow-sm"
                   onClick={() => handlePlay(track, topGridTracks)}
+                  onContextMenu={(e) => handleContextMenu(e, track)}
                 >
                   <div className="h-14 w-14 bg-[#4338CA] shrink-0 shadow-md">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
@@ -174,6 +188,7 @@ const NexoriaMusicHome = () => {
                 <div 
                   key={track._id}
                   onClick={() => handlePlay(track, madeForYouTracks)}
+                  onContextMenu={(e) => handleContextMenu(e, track)}
                   className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start"
                 >
                   <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
@@ -239,6 +254,18 @@ const NexoriaMusicHome = () => {
         isOpen={playlistModalOpen} 
         onClose={() => setPlaylistModalOpen(false)} 
         trackId={selectedTrackId} 
+      />
+      
+      <NexoriaMusicContextMenu 
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        track={contextMenu.track}
+        onAddToPlaylist={(trackId) => {
+            setSelectedTrackId(trackId);
+            setPlaylistModalOpen(true);
+        }}
       />
     </div>
   );

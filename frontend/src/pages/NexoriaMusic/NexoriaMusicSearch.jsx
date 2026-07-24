@@ -8,18 +8,18 @@ import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../fea
 import toast from 'react-hot-toast';
 
 const BROWSE_CATEGORIES = [
-  { id: 1, name: "Podcasts", color: "bg-orange-500", img: "https://images.unsplash.com/photo-1593697972674-84594c798083?q=80&w=100&auto=format&fit=crop" },
-  { id: 2, name: "Made For You", color: "bg-indigo-600", img: "https://images.unsplash.com/photo-1493225457124-a1a2a5370217?q=80&w=100&auto=format&fit=crop" },
-  { id: 3, name: "New Releases", color: "bg-pink-600", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=100&auto=format&fit=crop" },
-  { id: 4, name: "Pop", color: "bg-emerald-500", img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=100&auto=format&fit=crop" },
-  { id: 5, name: "Hip-Hop", color: "bg-amber-500", img: "https://images.unsplash.com/photo-1602934445884-da0fa1c9d3b3?q=80&w=100&auto=format&fit=crop" },
-  { id: 6, name: "Rock", color: "bg-red-600", img: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=100&auto=format&fit=crop" },
-  { id: 7, name: "Chill", color: "bg-teal-500", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=100&auto=format&fit=crop" },
-  { id: 8, name: "Workout", color: "bg-blue-600", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=100&auto=format&fit=crop" },
-  { id: 9, name: "Focus", color: "bg-fuchsia-700", img: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=100&auto=format&fit=crop" },
-  { id: 10, name: "Sleep", color: "bg-sky-800", img: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=100&auto=format&fit=crop" },
-  { id: 11, name: "Party", color: "bg-rose-500", img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=100&auto=format&fit=crop" },
-  { id: 12, name: "Jazz", color: "bg-cyan-700", img: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80&w=100&auto=format&fit=crop" },
+  { id: 1, name: "Podcasts", color: "bg-gradient-to-br from-orange-400 to-orange-600", img: "https://images.unsplash.com/photo-1593697972674-84594c798083?q=80&w=100&auto=format&fit=crop" },
+  { id: 2, name: "Made For You", color: "bg-gradient-to-br from-indigo-500 to-purple-700", img: "https://images.unsplash.com/photo-1493225457124-a1a2a5370217?q=80&w=100&auto=format&fit=crop" },
+  { id: 3, name: "New Releases", color: "bg-gradient-to-br from-pink-500 to-rose-600", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=100&auto=format&fit=crop" },
+  { id: 4, name: "Pop", color: "bg-gradient-to-br from-emerald-400 to-emerald-600", img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=100&auto=format&fit=crop" },
+  { id: 5, name: "Hip-Hop", color: "bg-gradient-to-br from-amber-400 to-amber-600", img: "https://images.unsplash.com/photo-1602934445884-da0fa1c9d3b3?q=80&w=100&auto=format&fit=crop" },
+  { id: 6, name: "Rock", color: "bg-gradient-to-br from-red-500 to-red-700", img: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=100&auto=format&fit=crop" },
+  { id: 7, name: "Chill", color: "bg-gradient-to-br from-teal-400 to-teal-600", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=100&auto=format&fit=crop" },
+  { id: 8, name: "Workout", color: "bg-gradient-to-br from-blue-500 to-blue-700", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=100&auto=format&fit=crop" },
+  { id: 9, name: "Focus", color: "bg-gradient-to-br from-fuchsia-600 to-fuchsia-800", img: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=100&auto=format&fit=crop" },
+  { id: 10, name: "Sleep", color: "bg-gradient-to-br from-sky-700 to-sky-900", img: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=100&auto=format&fit=crop" },
+  { id: 11, name: "Party", color: "bg-gradient-to-br from-rose-400 to-rose-600", img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=100&auto=format&fit=crop" },
+  { id: 12, name: "Jazz", color: "bg-gradient-to-br from-cyan-600 to-cyan-800", img: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80&w=100&auto=format&fit=crop" },
 ];
 
 const NexoriaMusicSearch = () => {
