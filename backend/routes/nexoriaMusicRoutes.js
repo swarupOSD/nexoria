@@ -36,6 +36,7 @@ import {
   addTrackToPlaylist,
   removeTrackFromPlaylist,
   deletePlaylist,
+  togglePlaylistCollaborative,
   getAllTracksConsumer,
   getArtistDetailsConsumer,
   getAlbumDetailsConsumer,
@@ -74,6 +75,9 @@ router.route('/playlists/:id/tracks')
 router.route('/playlists/:id/tracks/:trackId')
   .delete(protect, removeTrackFromPlaylist);
 
+router.route('/playlists/:id/collaborative')
+  .post(protect, togglePlaylistCollaborative);
+  
 // Algorithm & History Routes (Protected/Optional)
 router.route('/log-play').post(protect, logPlay);
 router.route('/recently-played').get(protect, getRecentlyPlayed);

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2 } from 'lucide-react';
+import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Trash2, Users } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
+import {
   useGetPlaylistDetailsQuery, 
   useDeletePlaylistMutation,
-  useRemoveTrackFromPlaylistMutation
+  useRemoveTrackFromPlaylistMutation,
+  useTogglePlaylistCollaborativeMutation
 } from '../../features/api/nexoriaMusicApiSlice';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../../features/api/apiSlice';
@@ -25,6 +26,7 @@ const NexoriaMusicPlaylist = () => {
   
   const [deletePlaylist, { isLoading: isDeleting }] = useDeletePlaylistMutation();
   const [removeTrack] = useRemoveTrackFromPlaylistMutation();
+  const [toggleCollaborative, { isLoading: isToggling }] = useTogglePlaylistCollaborativeMutation();
   
   const playlist = playlistRes?.data;
   const tracks = playlist?.tracks || [];
@@ -56,6 +58,15 @@ const NexoriaMusicPlaylist = () => {
       } catch (err) {
         toast.error('Failed to delete playlist');
       }
+    }
+  };
+
+  const handleToggleCollaborative = async () => {
+    try {
+      const res = await toggleCollaborative(id).unwrap();
+      toast.success(res.message);
+    } catch (err) {
+      toast.error('Failed to toggle collaborative status');
     }
   };
 
@@ -111,7 +122,16 @@ const NexoriaMusicPlaylist = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-bold uppercase tracking-wider text-white">Public Playlist</span>
+            <span className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+              {playlist.isCollaborative ? (
+                <>
+                  <Users className="w-4 h-4 text-[#1ed760]" />
+                  <span className="text-[#1ed760]">Collaborative Playlist</span>
+                </>
+              ) : (
+                'Public Playlist'
+              )}
+            </span>
             <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white pb-2 drop-shadow-md truncate max-w-[800px]">{playlist.title}</h1>
             {playlist.description && (
               <p className="text-[#b3b3b3] text-sm md:text-base mb-2 font-medium">{playlist.description}</p>
@@ -138,14 +158,24 @@ const NexoriaMusicPlaylist = () => {
         </div>
         
         {isOwner && (
-          <button 
-            onClick={handleDeletePlaylist}
-            disabled={isDeleting}
-            className="flex items-center gap-2 text-[#a7a7a7] hover:text-red-500 font-medium transition-colors"
-          >
-            <Trash2 className="w-5 h-5" />
-            <span>Delete Playlist</span>
-          </button>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handleToggleCollaborative}
+              disabled={isToggling}
+              className={`flex items-center gap-2 font-medium transition-colors border px-4 py-1.5 rounded-full text-sm ${playlist.isCollaborative ? 'border-[#1ed760] text-[#1ed760] hover:bg-[#1ed760]/10' : 'border-[#a7a7a7] text-[#a7a7a7] hover:border-white hover:text-white'}`}
+            >
+              <Users className="w-4 h-4" />
+              <span>{playlist.isCollaborative ? 'Collaborative' : 'Make Collaborative'}</span>
+            </button>
+            <button 
+              onClick={handleDeletePlaylist}
+              disabled={isDeleting}
+              className="flex items-center gap-2 text-[#a7a7a7] hover:text-red-500 font-medium transition-colors"
+            >
+              <Trash2 className="w-5 h-5" />
+              <span>Delete</span>
+            </button>
+          </div>
         )}
       </div>
 

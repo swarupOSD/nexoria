@@ -40,7 +40,17 @@ const nexoriaPlaylistSchema = new mongoose.Schema(
       type: String,
       enum: ['Featured', 'Trending', 'User', 'Algorithm'],
       default: 'User'
-    }
+    },
+    isCollaborative: {
+      type: Boolean,
+      default: false
+    },
+    collaborators: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
   {
     timestamps: true

@@ -987,9 +987,16 @@ export const getPlaylistDetails = async (req, res) => {
 export const addTrackToPlaylist = async (req, res) => {
   try {
     const { trackId } = req.body;
-    const playlist = await NexoriaPlaylist.findOne({ _id: req.params.id, creator: req.user._id });
+    const playlist = await NexoriaPlaylist.findById(req.params.id);
     
-    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
+    
+    const isOwner = playlist.creator.toString() === req.user._id.toString();
+    const isCollaborator = playlist.collaborators?.includes(req.user._id) || playlist.isCollaborative;
+    
+    if (!isOwner && !isCollaborator) {
+      return res.status(403).json({ success: false, message: 'Not authorized to modify this playlist' });
+    }
     
     if (!playlist.tracks.includes(trackId)) {
       playlist.tracks.push(trackId);
@@ -1015,9 +1022,16 @@ export const addTrackToPlaylist = async (req, res) => {
 export const removeTrackFromPlaylist = async (req, res) => {
   try {
     const { trackId } = req.params;
-    const playlist = await NexoriaPlaylist.findOne({ _id: req.params.id, creator: req.user._id });
+    const playlist = await NexoriaPlaylist.findById(req.params.id);
     
-    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
+    
+    const isOwner = playlist.creator.toString() === req.user._id.toString();
+    const isCollaborator = playlist.collaborators?.includes(req.user._id) || playlist.isCollaborative;
+    
+    if (!isOwner && !isCollaborator) {
+      return res.status(403).json({ success: false, message: 'Not authorized to modify this playlist' });
+    }
     
     playlist.tracks = playlist.tracks.filter(id => id.toString() !== trackId);
     await playlist.save();
@@ -1038,6 +1052,21 @@ export const deletePlaylist = async (req, res) => {
   } catch (error) {
     logger.error(`Delete Playlist Error: ${error.message}`);
     res.status(500).json({ success: false, message: 'Failed to delete playlist' });
+  }
+};
+
+export const togglePlaylistCollaborative = async (req, res) => {
+  try {
+    const playlist = await NexoriaPlaylist.findOne({ _id: req.params.id, creator: req.user._id });
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found or unauthorized' });
+    
+    playlist.isCollaborative = !playlist.isCollaborative;
+    await playlist.save();
+    
+    res.status(200).json({ success: true, message: `Playlist is now ${playlist.isCollaborative ? 'collaborative' : 'private'}`, isCollaborative: playlist.isCollaborative });
+  } catch (error) {
+    logger.error(`Toggle Collaborative Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to toggle collaborative status' });
   }
 };
 
