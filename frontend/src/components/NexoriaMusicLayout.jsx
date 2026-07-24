@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, Library, Plus, Heart, ArrowLeft, ArrowRight, User, Bell, ArrowDownToLine, ListMusic } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { useGetPlaylistsQuery, useCreatePlaylistMutation } from '../../features/api/nexoriaMusicApiSlice';
+import { useGetPlaylistsQuery, useCreatePlaylistMutation } from '../features/api/nexoriaMusicApiSlice';
 import NexoriaPlayer from './NexoriaPlayer';
 
 const NexoriaMusicLayout = () => {
