@@ -19,7 +19,10 @@ import {
   deleteTrack,
   searchMusic,
   uploadTrackAudio,
-  streamTrack
+  streamTrack,
+  logPlay,
+  getRecentlyPlayed,
+  getRecommendations
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -37,6 +40,11 @@ const upload = multer({
 // CONSUMER ROUTES
 router.route('/search').get(searchMusic);
 router.route('/stream/:fileId').get(streamTrack);
+
+// Algorithm & History Routes (Protected/Optional)
+router.route('/log-play').post(protect, logPlay);
+router.route('/recently-played').get(protect, getRecentlyPlayed);
+router.route('/recommendations').get(protect, getRecommendations);
 
 router.route('/artists').get(getArtistsAdmin);
 router.route('/genres').get(getGenresAdmin);

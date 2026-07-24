@@ -129,6 +129,21 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     searchNexoriaMusic: builder.query({
       query: (searchTerm) => `/nexoria-music/search?q=${encodeURIComponent(searchTerm)}`,
     }),
+
+    // ALGORITHM & HISTORY
+    logPlay: builder.mutation({
+      query: (data) => ({
+        url: '/nexoria-music/log-play',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    getRecentlyPlayed: builder.query({
+      query: () => '/nexoria-music/recently-played',
+    }),
+    getRecommendations: builder.query({
+      query: () => '/nexoria-music/recommendations',
+    }),
   }),
 });
 
@@ -151,4 +166,7 @@ export const {
   useUpdateNexoriaTrackMutation,
   useDeleteNexoriaTrackMutation,
   useSearchNexoriaMusicQuery,
+  useLogPlayMutation,
+  useGetRecentlyPlayedQuery,
+  useGetRecommendationsQuery,
 } = nexoriaMusicApiSlice;

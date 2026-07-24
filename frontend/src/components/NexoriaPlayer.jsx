@@ -1,28 +1,39 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown
 } from 'lucide-react';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
-  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue
+  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
+import { useLogPlayMutation, useLazyGetRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';
 import DropdownMenu from './DropdownMenu';
 import toast from 'react-hot-toast';
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
   const audioRef = useRef(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   
   const { 
     currentTrack, isPlaying, volume, isMuted, 
     repeatMode, shuffleMode, currentTime, duration,
-    likedTracks
+    likedTracks, queue, history
   } = useSelector(state => state.nexoriaMusic);
+
+  const [logPlay] = useLogPlayMutation();
+  const [getRecommendations] = useLazyGetRecommendationsQuery();
+  const [hasLoggedPlay, setHasLoggedPlay] = useState(false);
+
+  // Reset logged play state when track changes
+  useEffect(() => {
+    setHasLoggedPlay(false);
+  }, [currentTrack?._id]);
 
   // Sync state to audio element for play/pause toggling
   useEffect(() => {
@@ -38,7 +49,7 @@ const NexoriaPlayer = () => {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying]); // Removed currentTrack so it doesn't interrupt loading
+  }, [isPlaying]);
 
   // Force play when currentTrack changes if it should be playing (fixes auto-play next song)
   useEffect(() => {
@@ -76,8 +87,32 @@ const NexoriaPlayer = () => {
         dispatch(togglePlayPause());
         if (audioRef.current) audioRef.current.pause();
       });
-      navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(playPrevTrack()));
-      navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(playNextTrack()));
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        if (history.length > 0) {
+          const prevTrack = history[history.length - 1];
+          if (audioRef.current) {
+            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+            const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
+            audioRef.current.src = prevSrc;
+            audioRef.current.play().catch(e => console.log(e));
+          }
+        }
+        dispatch(playPrevTrack());
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        if (queue.length > 0) {
+          let nextIndex = 0;
+          if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
+          const nextTrack = queue[nextIndex];
+          if (audioRef.current) {
+            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+            const nextSrc = nextTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}` : nextTrack.audioUrl || "";
+            audioRef.current.src = nextSrc;
+            audioRef.current.play().catch(e => console.log(e));
+          }
+        }
+        dispatch(playNextTrack());
+      });
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (audioRef.current && details.fastSeek && ('fastSeek' in audioRef.current)) {
           audioRef.current.fastSeek(details.seekTime);
@@ -91,21 +126,74 @@ const NexoriaPlayer = () => {
   // Audio element event handlers
   const handleTimeUpdate = () => {
     if (audioRef.current) {
+      const cTime = audioRef.current.currentTime;
       dispatch(updateTime({
-        currentTime: audioRef.current.currentTime,
+        currentTime: cTime,
         duration: audioRef.current.duration || 0
       }));
+
+      // Log play after 10 seconds of playback
+      if (cTime > 10 && !hasLoggedPlay && currentTrack?._id) {
+        setHasLoggedPlay(true);
+        logPlay({ trackId: currentTrack._id }).catch(e => console.error("Failed to log play:", e));
+      }
     }
   };
 
-  const handleEnded = () => {
+  const handleEnded = async () => {
     if (repeatMode === 'one') {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
-        audioRef.current.play();
+        audioRef.current.play().catch(e => console.error(e));
       }
     } else {
-      dispatch(playNextTrack());
+      if (queue.length > 0) {
+        let nextIndex = 0;
+        if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
+        const nextTrack = queue[nextIndex];
+        
+        // Synchronously set src and play to bypass iOS/mobile restrictions
+        if (audioRef.current) {
+          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+          const nextSrc = nextTrack.telegramFileId 
+            ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
+            : nextTrack.audioUrl || "";
+          audioRef.current.src = nextSrc;
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(e => console.error("Autoplay next failed:", e));
+          }
+        }
+        dispatch(playNextTrack());
+      } else {
+        if (repeatMode === 'all' && history.length > 0) {
+          dispatch(playNextTrack()); // Redux logic handles restarting history
+        } else {
+          // Spotify Algorithm: Auto-Play recommendations when queue ends
+          try {
+            const res = await getRecommendations().unwrap();
+            if (res.data && res.data.length > 0) {
+              const nextTrack = res.data[0];
+              dispatch(setQueue(res.data.slice(1)));
+              
+              if (audioRef.current) {
+                const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+                const nextSrc = nextTrack.telegramFileId 
+                  ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
+                  : nextTrack.audioUrl || "";
+                audioRef.current.src = nextSrc;
+                audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
+              }
+              dispatch(playTrack(nextTrack));
+            } else {
+              dispatch(playNextTrack());
+            }
+          } catch (e) {
+            console.error("Failed to fetch recommendations for auto-play", e);
+            dispatch(playNextTrack());
+          }
+        }
+      }
     }
   };
 
@@ -148,255 +236,271 @@ const NexoriaPlayer = () => {
         onError={(e) => {
           console.error("Audio Element Error:", e.target.error);
           if (e.target.error) {
-             const errorCodes = {
-               1: "MEDIA_ERR_ABORTED",
-               2: "MEDIA_ERR_NETWORK",
-               3: "MEDIA_ERR_DECODE",
-               4: "MEDIA_ERR_SRC_NOT_SUPPORTED"
-             };
-             console.error("Error Code:", errorCodes[e.target.error.code] || "UNKNOWN");
-             
-             // Auto-Recovery for Render's 100s idle timeout
+             const errorCodes = { 1: "ABORTED", 2: "NETWORK", 3: "DECODE", 4: "SRC_NOT_SUPPORTED" };
              if (e.target.error.code === 2 && audioRef.current) {
-               console.log("Network drop detected. Attempting auto-recovery...");
-               const currentTime = audioRef.current.currentTime;
+               const cTime = audioRef.current.currentTime;
                audioRef.current.load();
-               audioRef.current.currentTime = currentTime;
-               if (isPlaying) {
-                 audioRef.current.play().catch(err => console.log('Recovery play error:', err));
-               }
+               audioRef.current.currentTime = cTime;
+               if (isPlaying) audioRef.current.play().catch(err => console.log(err));
              }
           }
         }}
       />
 
-      {/* Fixed Bottom Player UI */}
       <AnimatePresence>
         {currentTrack && (
-          <motion.div 
-          initial={{ y: '100%' }}
-          animate={{ y: 0 }}
-          exit={{ y: '100%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-[72px] lg:bottom-0 left-0 right-0 z-[100] px-2 sm:px-4 pb-2 sm:pb-4 pointer-events-none"
-        >
-          <div className="mx-auto max-w-7xl bg-[#111111]/90 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[32px] p-2 sm:p-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)] pointer-events-auto">
-            
-            {/* Top Progress Bar for Mobile (Hidden on Desktop) */}
-            <div className="w-full flex items-center gap-2 sm:hidden px-2 pt-1">
-              <span className="text-[10px] text-slate-400 w-8">{formatTime(currentTime)}</span>
-              <div 
-                className="flex-1 h-1 bg-white/10 rounded-full cursor-pointer relative"
-                onClick={handleProgressClick}
-              >
-                <div 
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"
-                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-slate-400 w-8 text-right">{formatTime(duration)}</span>
-            </div>
-
-            {/* Left: Track Info */}
-            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-[30%] min-w-0 px-2 sm:px-0">
-              <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 shadow-lg">
-                {currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image ? (
-                  <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} alt={currentTrack.title} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-900 to-black" />
-                )}
-                {isPlaying && (
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center gap-0.5">
-                    <span className="w-1 h-3 bg-white animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-1 h-4 bg-white animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-1 h-2 bg-white animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-white truncate text-sm sm:text-base">{currentTrack.title}</h4>
-                <p className="text-xs sm:text-sm text-slate-400 truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
-              </div>
-              {/* Mobile Actions: Like, Queue, Close */}
-              <div className="flex items-center gap-1 sm:hidden">
-                <button 
-                  className="text-slate-400 hover:text-white transition-colors p-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(toggleLikeTrack(currentTrack._id));
-                  }}
+          <>
+            {/* =========================================
+                MOBILE UI (Hidden on Desktop)
+                ========================================= */}
+            <div className="sm:hidden block">
+              {/* MINI PLAYER (Visible when NOT expanded) */}
+              {!isExpanded && (
+                <motion.div 
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '100%' }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  className="fixed bottom-[60px] left-2 right-2 z-[90] bg-[#111111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col"
+                  onClick={() => setIsExpanded(true)}
                 >
-                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]' : ''}`} />
-                </button>
-                <DropdownMenu
-                  align="right"
-                  width="w-48"
-                  trigger={
-                    <button className="text-slate-400 hover:text-white transition-colors p-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center p-2 gap-3">
+                    {/* Small Image */}
+                    <div className="w-10 h-10 rounded-md overflow-hidden bg-zinc-800 shrink-0 shadow-inner">
+                      {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) && (
+                        <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
+                      )}
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-semibold truncate">{currentTrack.title}</p>
+                      <p className="text-zinc-400 text-xs truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
+                    </div>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 pr-1">
+                      <button 
+                        className="p-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dispatch(toggleLikeTrack(currentTrack._id));
+                        }}
+                      >
+                        <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-400'}`} />
+                      </button>
+                      <button 
+                        className="p-2 text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
+                          dispatch(togglePlayPause());
+                        }}
+                      >
+                        {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
+                      </button>
+                    </div>
+                  </div>
+                  {/* Thin Progress Bar at bottom */}
+                  <div className="h-[2px] bg-white/10 w-full">
+                    <div className="h-full bg-white rounded-r-full" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }} />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* FULL SCREEN PLAYER (Visible when expanded) */}
+              {isExpanded && (
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '100%' }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  drag="y"
+                  dragConstraints={{ top: 0, bottom: 0 }}
+                  onDragEnd={(e, { offset, velocity }) => {
+                    if (offset.y > 100 || velocity.y > 500) {
+                      setIsExpanded(false);
+                    }
+                  }}
+                  className="fixed inset-0 z-[100] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pt-4"
+                >
+                  {/* Top Header */}
+                  <div className="flex items-center justify-between py-4">
+                    <button onClick={() => setIsExpanded(false)} className="p-2 text-white/70 hover:text-white">
+                      <ChevronDown className="w-6 h-6" />
+                    </button>
+                    <span className="text-xs uppercase tracking-widest font-semibold text-white/70">
+                      {currentTrack.album?.title || 'Playing from Library'}
+                    </span>
+                    <button className="p-2 text-white/70 hover:text-white">
                       <MoreVertical className="w-5 h-5" />
                     </button>
-                  }
-                >
-                  <div className="py-2 text-sm font-medium text-slate-300 bg-slate-900 rounded-xl">
+                  </div>
+
+                  {/* Big Album Art */}
+                  <div className="flex-1 flex items-center justify-center min-h-0 w-full my-6">
+                    <div className="w-full aspect-square max-w-sm rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                       {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) ? (
+                        <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
+                      ) : (
+                        <div className="w-full h-full bg-zinc-800" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Info and Like */}
+                  <div className="flex items-center justify-between mb-8 mt-4">
+                    <div className="flex-1 min-w-0 pr-4">
+                      <h2 className="text-[28px] leading-tight font-bold text-white truncate">{currentTrack.title}</h2>
+                      <p className="text-lg text-white/70 truncate mt-1">{currentTrack.artist?.name || 'Unknown Artist'}</p>
+                    </div>
                     <button 
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        dispatch(toggleShuffle());
-                        toast.success(`Shuffle ${!shuffleMode ? 'On' : 'Off'}`); 
-                      }}
-                    >
-                      <Shuffle className={`w-4 h-4 ${shuffleMode ? 'text-purple-400' : ''}`} /> Shuffle
-                    </button>
-                    <button 
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        dispatch(toggleRepeat());
-                        toast.success(repeatMode === 'none' ? 'Repeat All' : repeatMode === 'all' ? 'Repeat One' : 'Repeat Off'); 
-                      }}
-                    >
-                      {repeatMode === 'one' ? <Repeat1 className="w-4 h-4 text-purple-400" /> : <Repeat className={`w-4 h-4 ${repeatMode === 'all' ? 'text-purple-400' : ''}`} />} Repeat
-                    </button>
-                    <button 
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const url = currentTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}` : currentTrack.audioUrl;
-                        window.open(url, '_blank');
-                      }}
-                    >
-                      <Download className="w-4 h-4" /> Download
-                    </button>
-                    <button 
-                      className="w-full text-left px-4 py-2.5 hover:bg-white/10 hover:text-white flex items-center gap-3 transition-colors"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        navigator.clipboard.writeText(window.location.href); 
-                        toast.success('Link copied'); 
-                      }}
-                    >
-                      <Link2 className="w-4 h-4" /> Share
+                        onClick={() => dispatch(toggleLikeTrack(currentTrack._id))}
+                        className="p-2"
+                      >
+                        <Heart className={`w-8 h-8 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-white/70'}`} />
                     </button>
                   </div>
-                </DropdownMenu>
-                <button 
-                  onClick={() => dispatch(clearPlayer())}
-                  className="text-slate-400 hover:text-red-500 transition-colors p-2"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+
+                  {/* Scrubber */}
+                  <div className="mb-6">
+                    <div 
+                      className="w-full h-1.5 bg-white/20 rounded-full mb-2 cursor-pointer relative group"
+                      onClick={handleProgressClick}
+                    >
+                      <div className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full transition-colors" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}>
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md" />
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs text-white/60 font-medium tracking-wide mt-1">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(duration)}</span>
+                    </div>
+                  </div>
+
+                  {/* Main Controls */}
+                  <div className="flex items-center justify-between mb-10 px-2">
+                    <button onClick={() => dispatch(toggleShuffle())} className={`p-2 ${shuffleMode ? 'text-green-500' : 'text-white/70'}`}>
+                      <Shuffle className="w-6 h-6" />
+                    </button>
+                    <button onClick={() => dispatch(playPrevTrack())} className="p-2 text-white active:scale-95 transition-transform">
+                      <SkipBack className="w-10 h-10 fill-current" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
+                        dispatch(togglePlayPause());
+                      }}
+                      className="w-[72px] h-[72px] bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+                    >
+                      {isPlaying ? <Pause className="w-9 h-9 fill-current" /> : <Play className="w-9 h-9 fill-current ml-1" />}
+                    </button>
+                    <button onClick={() => dispatch(playNextTrack())} className="p-2 text-white active:scale-95 transition-transform">
+                      <SkipForward className="w-10 h-10 fill-current" />
+                    </button>
+                    <button onClick={() => dispatch(toggleRepeat())} className={`p-2 ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
+                      {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
-            {/* Center: Controls & Desktop Progress */}
-            <div className="flex-1 flex flex-col items-center gap-1 sm:gap-2 w-full">
-              <div className="flex items-center justify-center gap-3 sm:gap-6">
-                <button 
-                  onClick={() => dispatch(toggleShuffle())}
-                  className={`hidden sm:block p-2 rounded-full transition-colors ${shuffleMode ? 'text-purple-400 bg-purple-500/10' : 'text-slate-400 hover:text-white'}`}
-                >
-                  <Shuffle className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button 
-                  onClick={() => dispatch(playPrevTrack())}
-                  className="p-2 text-slate-300 hover:text-white transition-colors"
-                >
-                  <SkipBack className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
-                </button>
-                <button
-                  className="w-12 h-12 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!isPlaying && audioRef.current) {
-                      audioRef.current.play().catch(err => console.log(err));
-                    }
-                    dispatch(togglePlayPause());
-                  }}
-                >
-                  {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
-                </button>
-                <button 
-                  onClick={() => dispatch(playNextTrack())}
-                  className="p-2 text-slate-300 hover:text-white transition-colors"
-                >
-                  <SkipForward className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
-                </button>
-                <button 
-                  onClick={() => dispatch(toggleRepeat())}
-                  className={`hidden sm:block p-2 rounded-full transition-colors ${repeatMode !== 'none' ? 'text-purple-400 bg-purple-500/10' : 'text-slate-400 hover:text-white'}`}
-                >
-                  {repeatMode === 'one' ? <Repeat1 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Repeat className="w-4 h-4 sm:w-5 sm:h-5" />}
-                </button>
-              </div>
-
-              {/* Desktop Progress Bar */}
-              <div className="hidden sm:flex w-full max-w-xl items-center gap-3">
-                <span className="text-xs font-medium text-slate-400 w-10 text-right">{formatTime(currentTime)}</span>
-                <div 
-                  className="flex-1 h-1.5 bg-white/10 hover:bg-white/20 rounded-full cursor-pointer relative group transition-colors"
-                  onClick={handleProgressClick}
-                >
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-white group-hover:bg-purple-400 rounded-full transition-colors"
-                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                  >
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2 transition-opacity" />
-                  </div>
+            {/* =========================================
+                DESKTOP UI (Hidden on Mobile)
+                ========================================= */}
+            <motion.div 
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-black/95 border-t border-white/10 items-center px-4 justify-between"
+            >
+              {/* Left: Info */}
+              <div className="flex items-center gap-4 w-[30%] min-w-[180px]">
+                <div className="w-14 h-14 bg-zinc-800 rounded shadow-md overflow-hidden shrink-0">
+                  {(currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) && (
+                    <img src={currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image} className="w-full h-full object-cover" alt="" />
+                  )}
                 </div>
-                <span className="text-xs font-medium text-slate-400 w-10">{formatTime(duration)}</span>
+                <div className="flex flex-col justify-center min-w-0">
+                  <span className="text-[14px] font-semibold text-white truncate hover:underline cursor-pointer">{currentTrack.title}</span>
+                  <span className="text-[12px] text-zinc-400 truncate hover:underline cursor-pointer">{currentTrack.artist?.name || 'Unknown Artist'}</span>
+                </div>
+                <button onClick={() => dispatch(toggleLikeTrack(currentTrack._id))} className="ml-2 p-1">
+                  <Heart className={`w-[18px] h-[18px] ${likedTracks?.includes(currentTrack._id) ? 'fill-green-500 text-green-500' : 'text-zinc-400 hover:text-white'}`} />
+                </button>
               </div>
-            </div>
 
-            {/* Right: Volume & Extras */}
-            <div className="hidden sm:flex items-center justify-end gap-4 w-[30%] min-w-0">
-              {/* Desktop controls: Volume, Like, Menu */}
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => dispatch(toggleLikeTrack(currentTrack._id))}
-                  className="p-2 transition-colors hidden sm:block"
-                >
-                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-slate-400 hover:text-white'}`} />
-                </button>
-                <button className="text-slate-400 hover:text-white transition-colors p-2 hidden sm:block">
-                  <ListMusic className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => dispatch(clearPlayer())}
-                  className="text-slate-400 hover:text-red-500 transition-colors p-2"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="flex items-center gap-2 group w-32">
-                <button onClick={() => dispatch(toggleMute())} className="text-slate-400 hover:text-white transition-colors">
-                  {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                </button>
-                <div 
-                  className="flex-1 h-1 bg-white/10 rounded-full cursor-pointer relative"
-                  onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-                    dispatch(setVolume(pos));
-                  }}
-                >
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-slate-300 group-hover:bg-purple-400 rounded-full transition-colors"
-                    style={{ width: `${isMuted ? 0 : volume * 100}%` }}
+              {/* Center: Controls */}
+              <div className="flex flex-col items-center justify-center max-w-[40%] flex-1 gap-1.5">
+                <div className="flex items-center gap-5">
+                  <button onClick={() => dispatch(toggleShuffle())} className={`transition-colors ${shuffleMode ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
+                    <Shuffle className="w-[18px] h-[18px]" />
+                  </button>
+                  <button onClick={() => dispatch(playPrevTrack())} className="text-zinc-400 hover:text-white transition-colors">
+                    <SkipBack className="w-5 h-5 fill-current" />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
+                      dispatch(togglePlayPause());
+                    }}
+                    className="w-8 h-8 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 transition-transform"
                   >
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2 transition-opacity" />
+                    {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+                  </button>
+                  <button onClick={() => dispatch(playNextTrack())} className="text-zinc-400 hover:text-white transition-colors">
+                    <SkipForward className="w-5 h-5 fill-current" />
+                  </button>
+                  <button onClick={() => dispatch(toggleRepeat())} className={`transition-colors ${repeatMode !== 'none' ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
+                    {repeatMode === 'one' ? <Repeat1 className="w-[18px] h-[18px]" /> : <Repeat className="w-[18px] h-[18px]" />}
+                  </button>
+                </div>
+                {/* Scrubber */}
+                <div className="w-full flex items-center gap-2 max-w-xl">
+                  <span className="text-[11px] text-zinc-400 w-10 text-right font-medium">{formatTime(currentTime)}</span>
+                  <div 
+                    className="flex-1 h-1 bg-zinc-700 rounded-full cursor-pointer relative group"
+                    onClick={handleProgressClick}
+                  >
+                    <div className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}>
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md" />
+                    </div>
                   </div>
+                  <span className="text-[11px] text-zinc-400 w-10 font-medium">{formatTime(duration)}</span>
                 </div>
               </div>
 
-              <button className="text-slate-400 hover:text-white transition-colors ml-2">
-                <Maximize2 className="w-5 h-5" />
-              </button>
-            </div>
-
-          </div>
-        </motion.div>
+              {/* Right: Volume & Extras */}
+              <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px]">
+                <button onClick={() => dispatch(clearPlayer())} className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Close Player">
+                  <X className="w-[18px] h-[18px]" />
+                </button>
+                <div className="flex items-center gap-2 group w-24">
+                  <button onClick={() => dispatch(toggleMute())} className="text-zinc-400 hover:text-white transition-colors">
+                    {isMuted || volume === 0 ? <VolumeX className="w-[18px] h-[18px]" /> : <Volume2 className="w-[18px] h-[18px]" />}
+                  </button>
+                  <div 
+                    className="flex-1 h-1 bg-zinc-700 rounded-full cursor-pointer relative"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                      dispatch(setVolume(pos));
+                    }}
+                  >
+                    <div 
+                      className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full transition-colors"
+                      style={{ width: `${isMuted ? 0 : volume * 100}%` }}
+                    >
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2" />
+                    </div>
+                  </div>
+                </div>
+                <button className="text-zinc-400 hover:text-white transition-colors">
+                  <Maximize2 className="w-[18px] h-[18px]" />
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

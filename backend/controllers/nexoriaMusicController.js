@@ -3,6 +3,7 @@ import NexoriaGenre from '../models/NexoriaGenre.js';
 import NexoriaAlbum from '../models/NexoriaAlbum.js';
 import NexoriaTrack from '../models/NexoriaTrack.js';
 import NexoriaPlaylist from '../models/NexoriaPlaylist.js';
+import NexoriaUserHistory from '../models/NexoriaUserHistory.js';
 import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -200,20 +201,30 @@ export const deleteTrack = async (req, res) => {
 export const searchMusic = async (req, res) => {
   try {
     const { q } = req.query;
-    const trackQuery = q ? { title: new RegExp(q, 'i') } : {};
     const albumQuery = q ? { title: new RegExp(q, 'i') } : {};
     const artistQuery = q ? { name: new RegExp(q, 'i') } : {};
-
-    const tracks = await NexoriaTrack.find(trackQuery)
-      .populate('artist', 'name image')
-      .populate('album', 'title coverImage')
-      .limit(50);
 
     const albums = await NexoriaAlbum.find(albumQuery)
       .populate('artist', 'name image')
       .limit(20);
 
     const artists = await NexoriaArtist.find(artistQuery).limit(50);
+
+    const albumIds = albums.map(a => a._id);
+    const artistIds = artists.map(a => a._id);
+
+    const trackQuery = q ? {
+      $or: [
+        { title: new RegExp(q, 'i') },
+        { album: { $in: albumIds } },
+        { artist: { $in: artistIds } }
+      ]
+    } : {};
+
+    const tracks = await NexoriaTrack.find(trackQuery)
+      .populate('artist', 'name image')
+      .populate('album', 'title coverImage')
+      .limit(100);
 
     res.status(200).json({
       success: true,
@@ -378,5 +389,130 @@ export const streamTrack = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to stream audio' });
       }
     }
+  }
+};
+
+// ==========================================
+// CONSUMER: ALGORITHM & HISTORY
+// ==========================================
+
+export const logPlay = async (req, res) => {
+  try {
+    const { trackId } = req.body;
+    if (!trackId) return res.status(400).json({ success: false, message: 'Track ID is required' });
+
+    // Increment global play count
+    await NexoriaTrack.findByIdAndUpdate(trackId, { $inc: { playCount: 1 } });
+
+    // If user is logged in, log history
+    if (req.user) {
+      await NexoriaUserHistory.create({
+        user: req.user._id,
+        track: trackId
+      });
+    }
+
+    res.status(200).json({ success: true, message: 'Play logged successfully' });
+  } catch (error) {
+    logger.error(`Log Play Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to log play' });
+  }
+};
+
+export const getRecentlyPlayed = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+
+    // Get unique recently played tracks
+    const history = await NexoriaUserHistory.find({ user: req.user._id })
+      .sort({ playedAt: -1 })
+      .limit(50)
+      .populate({
+        path: 'track',
+        populate: [
+          { path: 'artist', select: 'name image' },
+          { path: 'album', select: 'title coverImage' }
+        ]
+      });
+
+    // Deduplicate tracks, keeping the most recent play
+    const uniqueTracksMap = new Map();
+    history.forEach(item => {
+      if (item.track && !uniqueTracksMap.has(item.track._id.toString())) {
+        uniqueTracksMap.set(item.track._id.toString(), item.track);
+      }
+    });
+
+    const recentTracks = Array.from(uniqueTracksMap.values()).slice(0, 10); // Return top 10 unique recent tracks
+
+    res.status(200).json({ success: true, data: recentTracks });
+  } catch (error) {
+    logger.error(`Get Recently Played Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch recently played' });
+  }
+};
+
+export const getRecommendations = async (req, res) => {
+  try {
+    let targetGenres = [];
+    let targetArtists = [];
+    let excludeTrackIds = [];
+
+    if (req.user) {
+      // Get recent history to find preferences
+      const history = await NexoriaUserHistory.find({ user: req.user._id })
+        .sort({ playedAt: -1 })
+        .limit(20)
+        .populate('track');
+
+      history.forEach(item => {
+        if (item.track) {
+          excludeTrackIds.push(item.track._id);
+          if (item.track.genre) targetGenres.push(item.track.genre.toString());
+          if (item.track.artist) targetArtists.push(item.track.artist.toString());
+        }
+      });
+    }
+
+    // Default fallback if no history
+    let query = {};
+    if (targetGenres.length > 0 || targetArtists.length > 0) {
+      query = {
+        _id: { $nin: excludeTrackIds },
+        $or: []
+      };
+      if (targetGenres.length > 0) query.$or.push({ genre: { $in: targetGenres } });
+      if (targetArtists.length > 0) query.$or.push({ artist: { $in: targetArtists } });
+    }
+
+    // If query.$or is empty (no history), just return popular tracks
+    if (!query.$or || query.$or.length === 0) {
+      query = { _id: { $nin: excludeTrackIds } }; // Just exclude recently played if any
+    }
+
+    // Fetch recommendations based on query, sort by playCount (popularity)
+    const recommendations = await NexoriaTrack.find(query)
+      .sort({ playCount: -1 })
+      .limit(10)
+      .populate('artist', 'name image')
+      .populate('album', 'title coverImage');
+
+    // If we didn't get enough recommendations, backfill with random popular tracks
+    if (recommendations.length < 10) {
+      const existingIds = [...excludeTrackIds, ...recommendations.map(t => t._id)];
+      const backfill = await NexoriaTrack.find({ _id: { $nin: existingIds } })
+        .sort({ playCount: -1 })
+        .limit(10 - recommendations.length)
+        .populate('artist', 'name image')
+        .populate('album', 'title coverImage');
+      recommendations.push(...backfill);
+    }
+
+    res.status(200).json({ success: true, data: recommendations });
+  } catch (error) {
+    logger.error(`Get Recommendations Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to generate recommendations' });
   }
 };

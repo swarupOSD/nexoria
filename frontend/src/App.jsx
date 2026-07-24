@@ -53,6 +53,8 @@ import MovieSearch from './pages/MovieSearch';
 import WatchParty from './pages/WatchParty';
 import MovieBrowse from './pages/MovieBrowse';
 
+// Nexoria Music Layout
+import NexoriaMusicLayout from './components/NexoriaMusicLayout';
 
 // New Components
 import CyberpunkParticles from './components/CyberpunkParticles';
@@ -262,11 +264,6 @@ function App() {
                 <Route path="/sound" element={<NexoriaSound />} />
                 <Route path="/sound/search" element={<GlobalMusicSearch />} />
                 <Route path="/sound/queue" element={<SoundQueue />} />
-                
-                {/* Proprietary Nexoria Music Platform */}
-                <Route path="/nexoria-music" element={<NexoriaMusicHome />} />
-                <Route path="/nexoria-music/search" element={<NexoriaMusicSearch />} />
-                <Route path="/nexoria-music/library" element={<NexoriaMusicLibrary />} />
 
                 <Route path="/category/:slug" element={<CategoryPage />} />
                 <Route path="categories" element={<AllCategories />} />
@@ -289,6 +286,15 @@ function App() {
                 <Route path="messages" element={<Messages />} />
               </Route>
             </Route>
+
+          {/* Nexoria Music Platform Routes (Spotify Clone) */}
+          <Route element={<PrivateRoute />}>
+            <Route path="nexoria-music" element={<NexoriaMusicLayout />}>
+              <Route index element={<NexoriaMusicHome />} />
+              <Route path="search" element={<NexoriaMusicSearch />} />
+              <Route path="library" element={<NexoriaMusicLibrary />} />
+            </Route>
+          </Route>
 
           {/* MovieBox Public Routes */}
           <Route element={<PrivateRoute />}>
