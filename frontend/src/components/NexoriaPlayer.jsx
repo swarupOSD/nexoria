@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
-  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue
+  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue, toggleAutoplay
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
 import { useLogPlayMutation, useLazyGetRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';
@@ -26,7 +26,7 @@ const NexoriaPlayer = () => {
   const { 
     currentTrack, isPlaying, volume, isMuted, 
     repeatMode, shuffleMode, currentTime, duration,
-    likedTracks, queue, history
+    likedTracks, queue, history, autoplayEnabled
   } = useSelector(state => state.nexoriaMusic);
 
   const [logPlay] = useLogPlayMutation();
@@ -103,18 +103,7 @@ const NexoriaPlayer = () => {
         dispatch(playPrevTrack());
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
-        if (queue.length > 0) {
-          let nextIndex = 0;
-          if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
-          const nextTrack = queue[nextIndex];
-          if (audioRef.current) {
-            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-            const nextSrc = nextTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}` : nextTrack.audioUrl || "";
-            audioRef.current.src = nextSrc;
-            audioRef.current.play().catch(e => console.log(e));
-          }
-        }
-        dispatch(playNextTrack());
+        handleSkipForward();
       });
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (audioRef.current && details.fastSeek && ('fastSeek' in audioRef.current)) {
@@ -143,6 +132,58 @@ const NexoriaPlayer = () => {
     }
   };
 
+  const handleSkipForward = async () => {
+    if (queue.length > 0) {
+      let nextIndex = 0;
+      if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
+      const nextTrack = queue[nextIndex];
+      
+      // Synchronously set src and play to bypass iOS/mobile restrictions
+      if (audioRef.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        const nextSrc = nextTrack.telegramFileId 
+          ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
+          : nextTrack.audioUrl || "";
+        audioRef.current.src = nextSrc;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(e => console.error("Autoplay next failed:", e));
+        }
+      }
+      dispatch(playNextTrack());
+    } else {
+      if (repeatMode === 'all' && history.length > 0) {
+        dispatch(playNextTrack()); // Redux logic handles restarting history
+      } else if (autoplayEnabled) {
+        // Spotify Algorithm: Auto-Play recommendations when queue ends
+        try {
+          const res = await getRecommendations().unwrap();
+          if (res.data && res.data.length > 0) {
+            const nextTrack = res.data[0];
+            dispatch(setQueue(res.data.slice(1)));
+            
+            if (audioRef.current) {
+              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+              const nextSrc = nextTrack.telegramFileId 
+                ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
+                : nextTrack.audioUrl || "";
+              audioRef.current.src = nextSrc;
+              audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
+            }
+            dispatch(playTrack(nextTrack));
+          } else {
+            dispatch(playNextTrack());
+          }
+        } catch (e) {
+          console.error("Failed to fetch recommendations for auto-play", e);
+          dispatch(playNextTrack());
+        }
+      } else {
+        dispatch(playNextTrack());
+      }
+    }
+  };
+
   const handleEnded = async () => {
     if (repeatMode === 'one') {
       if (audioRef.current) {
@@ -150,53 +191,7 @@ const NexoriaPlayer = () => {
         audioRef.current.play().catch(e => console.error(e));
       }
     } else {
-      if (queue.length > 0) {
-        let nextIndex = 0;
-        if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
-        const nextTrack = queue[nextIndex];
-        
-        // Synchronously set src and play to bypass iOS/mobile restrictions
-        if (audioRef.current) {
-          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-          const nextSrc = nextTrack.telegramFileId 
-            ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
-            : nextTrack.audioUrl || "";
-          audioRef.current.src = nextSrc;
-          const playPromise = audioRef.current.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(e => console.error("Autoplay next failed:", e));
-          }
-        }
-        dispatch(playNextTrack());
-      } else {
-        if (repeatMode === 'all' && history.length > 0) {
-          dispatch(playNextTrack()); // Redux logic handles restarting history
-        } else {
-          // Spotify Algorithm: Auto-Play recommendations when queue ends
-          try {
-            const res = await getRecommendations().unwrap();
-            if (res.data && res.data.length > 0) {
-              const nextTrack = res.data[0];
-              dispatch(setQueue(res.data.slice(1)));
-              
-              if (audioRef.current) {
-                const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-                const nextSrc = nextTrack.telegramFileId 
-                  ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
-                  : nextTrack.audioUrl || "";
-                audioRef.current.src = nextSrc;
-                audioRef.current.play().catch(e => console.error("Auto-play algo failed:", e));
-              }
-              dispatch(playTrack(nextTrack));
-            } else {
-              dispatch(playNextTrack());
-            }
-          } catch (e) {
-            console.error("Failed to fetch recommendations for auto-play", e);
-            dispatch(playNextTrack());
-          }
-        }
-      }
+      handleSkipForward();
     }
   };
 
@@ -426,11 +421,14 @@ const NexoriaPlayer = () => {
                     >
                       {isPlaying ? <Pause className="w-9 h-9 fill-current" /> : <Play className="w-9 h-9 fill-current ml-1" />}
                     </button>
-                    <button onClick={() => dispatch(playNextTrack())} className="p-2 text-white active:scale-95 transition-transform">
+                    <button onClick={handleSkipForward} className="p-2 text-white active:scale-95 transition-transform">
                       <SkipForward className="w-10 h-10 fill-current" />
                     </button>
                     <button onClick={() => dispatch(toggleRepeat())} className={`p-2 ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
                       {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
+                    </button>
+                    <button onClick={() => dispatch(toggleAutoplay())} className={`p-2 hidden md:block ${autoplayEnabled ? 'text-green-500' : 'text-white/70'}`} title="Autoplay">
+                      <Infinity className="w-6 h-6" />
                     </button>
                   </div>
                 </motion.div>
@@ -490,11 +488,14 @@ const NexoriaPlayer = () => {
                   >
                     {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
                   </button>
-                  <button onClick={() => dispatch(playNextTrack())} className="text-zinc-400 hover:text-white transition-colors">
+                  <button onClick={handleSkipForward} className="text-zinc-400 hover:text-white transition-colors">
                     <SkipForward className="w-5 h-5 fill-current" />
                   </button>
                   <button onClick={() => dispatch(toggleRepeat())} className={`transition-colors ${repeatMode !== 'none' ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
                     {repeatMode === 'one' ? <Repeat1 className="w-[18px] h-[18px]" /> : <Repeat className="w-[18px] h-[18px]" />}
+                  </button>
+                  <button onClick={() => dispatch(toggleAutoplay())} className={`transition-colors ${autoplayEnabled ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`} title="Autoplay">
+                    <Infinity className="w-[18px] h-[18px]" />
                   </button>
                 </div>
                 {/* Scrubber */}

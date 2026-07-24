@@ -9,6 +9,7 @@ const initialState = {
   isMuted: false,
   repeatMode: 'none', // 'none', 'all', 'one'
   shuffleMode: false,
+  autoplayEnabled: true,
   currentTime: 0,
   duration: 0,
   likedTracks: JSON.parse(localStorage.getItem('nexoriaLikedTracks')) || [],
@@ -140,6 +141,9 @@ const nexoriaMusicSlice = createSlice({
     toggleShuffle: (state) => {
       state.shuffleMode = !state.shuffleMode;
     },
+    toggleAutoplay: (state) => {
+      state.autoplayEnabled = !state.autoplayEnabled;
+    },
     updateTime: (state, action) => {
       state.currentTime = action.payload.currentTime;
       if (action.payload.duration) {
@@ -197,7 +201,8 @@ export const {
   toggleLikeTrack,
   clearPlayer,
   setRemoteControlled,
-  syncMusicState
+  syncMusicState,
+  toggleAutoplay
 } = nexoriaMusicSlice.actions;
 
 export default nexoriaMusicSlice.reducer;
