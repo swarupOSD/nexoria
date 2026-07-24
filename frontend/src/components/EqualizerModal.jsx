@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { X, Sliders, Waves, Activity, Loader2 } from 'lucide-react';
+import { X, Sliders, Waves, Activity, Shuffle } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleCrossfade, setCrossfadeDuration } from '../features/music/nexoriaMusicSlice';
 
 const EqualizerModal = ({ isOpen, onClose, isYouTube, updateEq }) => {
+  const dispatch = useDispatch();
+  const { crossfadeEnabled, crossfadeDuration } = useSelector(state => state.nexoriaMusic);
   const [eqVals, setEqVals] = useState({ bass: 0, mid: 0, treble: 0, reverb: 0 });
 
   useEffect(() => {
@@ -77,6 +81,36 @@ const EqualizerModal = ({ isOpen, onClose, isYouTube, updateEq }) => {
                 >
                   Reset Defaults
                 </button>
+              </div>
+
+              {/* Crossfade Settings */}
+              <div className="bg-black/30 rounded-xl p-4 border border-white/5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-white font-medium">
+                    <Shuffle className="w-4 h-4 text-purple-400" />
+                    <span>Audio Crossfade</span>
+                  </div>
+                  <button 
+                    onClick={() => dispatch(toggleCrossfade())}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${crossfadeEnabled ? 'bg-green-500' : 'bg-white/20'}`}
+                  >
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${crossfadeEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                
+                {crossfadeEnabled && (
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-white/50 w-8">1s</span>
+                    <input 
+                      type="range" 
+                      min="1" max="10" step="1"
+                      value={crossfadeDuration}
+                      onChange={(e) => dispatch(setCrossfadeDuration(Number(e.target.value)))}
+                      className="flex-1 accent-green-500 h-1 bg-white/10 rounded-full appearance-none"
+                    />
+                    <span className="text-xs text-white w-8 text-right">{crossfadeDuration}s</span>
+                  </div>
+                )}
               </div>
             </div>
           )}

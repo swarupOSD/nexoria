@@ -49,9 +49,9 @@ const NexoriaMusicContextMenu = ({ isOpen, onClose, x, y, track, onAddToPlaylist
     onClose();
   };
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/nexoria-music/album/${track.album?._id || ''}`);
-    toast.success('Link copied to clipboard!');
+  const handleShareClick = () => {
+    window.dispatchEvent(new CustomEvent('open-share-modal', { detail: track }));
+    onClose();
   };
 
   const handleDownloadToggle = async () => {
@@ -180,7 +180,7 @@ const NexoriaMusicContextMenu = ({ isOpen, onClose, x, y, track, onAddToPlaylist
         <div className="h-px bg-white/10 my-1 mx-2" />
 
         <button 
-          onClick={() => handleAction(copyLink)}
+          onClick={handleShareClick}
           className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors w-full text-left"
         >
           <Share2 className="w-4 h-4 text-zinc-300" />

@@ -14,6 +14,8 @@ const initialState = {
   duration: 0,
   likedTracks: JSON.parse(localStorage.getItem('nexoriaLikedTracks')) || [],
   downloadedTracks: JSON.parse(localStorage.getItem('nexoriaDownloadedTracks')) || [],
+  crossfadeEnabled: JSON.parse(localStorage.getItem('nexoriaCrossfadeEnabled') || 'false'),
+  crossfadeDuration: JSON.parse(localStorage.getItem('nexoriaCrossfadeDuration') || '3'),
   isRemoteControlled: false, // Flag to indicate if current update is from a remote device
 };
 
@@ -176,6 +178,14 @@ const nexoriaMusicSlice = createSlice({
       state.downloadedTracks = state.downloadedTracks.filter(id => id !== trackId);
       localStorage.setItem('nexoriaDownloadedTracks', JSON.stringify(state.downloadedTracks));
     },
+    toggleCrossfade: (state) => {
+      state.crossfadeEnabled = !state.crossfadeEnabled;
+      localStorage.setItem('nexoriaCrossfadeEnabled', JSON.stringify(state.crossfadeEnabled));
+    },
+    setCrossfadeDuration: (state, action) => {
+      state.crossfadeDuration = action.payload;
+      localStorage.setItem('nexoriaCrossfadeDuration', JSON.stringify(state.crossfadeDuration));
+    },
     clearPlayer: () => initialState,
     setRemoteControlled: (state, action) => {
       state.isRemoteControlled = action.payload;
@@ -213,6 +223,8 @@ export const {
   toggleLikeTrack,
   addDownloadedTrack,
   removeDownloadedTrackId,
+  toggleCrossfade,
+  setCrossfadeDuration,
   clearPlayer,
   setRemoteControlled,
   syncMusicState,

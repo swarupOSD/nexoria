@@ -20,6 +20,8 @@ import NexoriaMusicContextMenu from './NexoriaMusicContextMenu';
 import NexoriaMusicAddToPlaylistModal from './NexoriaMusicAddToPlaylistModal';
 import EqualizerModal from './EqualizerModal';
 import SleepTimerModal from './SleepTimerModal';
+import NexoriaMusicShareModal from './NexoriaMusicShareModal';
+import NexoriaAudioVisualizer from './NexoriaAudioVisualizer';
 import { getBlobUrlForTrack } from '../utils/offlineManager';
 
 const NexoriaPlayer = () => {
@@ -36,6 +38,15 @@ const NexoriaPlayer = () => {
   const [sleepTimer, setSleepTimer] = useState(null); // null, 'track', or number (minutes)
   const sleepTimerRef = useRef(null);
   const [audioContextSetup, setAudioContextSetup] = useState(false);
+  const [shareModalData, setShareModalData] = useState({ isOpen: false, track: null });
+
+  useEffect(() => {
+    const handleOpenShare = (e) => {
+      setShareModalData({ isOpen: true, track: e.detail });
+    };
+    window.addEventListener('open-share-modal', handleOpenShare);
+    return () => window.removeEventListener('open-share-modal', handleOpenShare);
+  }, []);
   
   const handleMoreClick = (e) => {
     e.stopPropagation();
@@ -46,7 +57,8 @@ const NexoriaPlayer = () => {
   const { 
     currentTrack, isPlaying, volume, isMuted, 
     repeatMode, shuffleMode, currentTime, duration,
-    likedTracks, queue, history, autoplayEnabled, downloadedTracks
+    likedTracks, queue, history, autoplayEnabled, downloadedTracks,
+    crossfadeEnabled, crossfadeDuration
   } = useSelector(state => state.nexoriaMusic);
 
   const [logPlay] = useLogPlayMutation();
@@ -276,10 +288,29 @@ const NexoriaPlayer = () => {
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       const cTime = audioRef.current.currentTime;
+      const tDuration = audioRef.current.duration || 0;
       dispatch(updateTime({
         currentTime: cTime,
-        duration: audioRef.current.duration || 0
+        duration: tDuration
       }));
+
+      // Crossfade logic
+      if (crossfadeEnabled && tDuration > 0 && currentTrack?.trackType !== 'podcast') {
+        const remainingTime = tDuration - cTime;
+        const targetVol = isMuted ? 0 : volume;
+        if (remainingTime <= crossfadeDuration && remainingTime > 0) {
+          // Fade out
+          audioRef.current.volume = Math.max(0, targetVol * (remainingTime / crossfadeDuration));
+        } else if (cTime < crossfadeDuration) {
+          // Fade in
+          audioRef.current.volume = Math.min(targetVol, targetVol * (cTime / crossfadeDuration));
+        } else {
+          // Normal playback volume
+          audioRef.current.volume = targetVol;
+        }
+      } else {
+         audioRef.current.volume = isMuted ? 0 : volume;
+      }
 
       // Log play after 10 seconds of playback
       if (cTime > 10 && !hasLoggedPlay && currentTrack?._id) {
@@ -574,8 +605,13 @@ const NexoriaPlayer = () => {
                     </div>
                   </div>
 
+                  {/* Audio Visualizer Background */}
+                  <div className="absolute inset-0 pointer-events-none z-[-1] flex items-end opacity-40">
+                     <NexoriaAudioVisualizer audioRef={audioRef} isPlaying={isPlaying} />
+                  </div>
+
                   {/* Big Album Art with Swipe-to-Skip Gestures */}
-                  <div className="flex-1 flex items-center justify-center min-h-0 w-full my-6 overflow-hidden">
+                  <div className="flex-1 flex items-center justify-center min-h-0 w-full my-6 overflow-hidden relative">
                     <motion.div 
                       className="w-full aspect-square max-w-sm rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                       drag="x"
@@ -854,6 +890,12 @@ const NexoriaPlayer = () => {
         onClose={() => setSleepTimerModalOpen(false)}
         onSetTimer={handleSetSleepTimer}
         currentTimer={sleepTimer}
+      />
+
+      <NexoriaMusicShareModal
+        isOpen={shareModalData.isOpen}
+        onClose={() => setShareModalData({ ...shareModalData, isOpen: false })}
+        track={shareModalData.track}
       />
     </>
   );
