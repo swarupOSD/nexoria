@@ -191,7 +191,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar })
           style={{
             background: isMe ? tc.myBubble : tc.theirBubble,
             border: isMe ? 'none' : '1px solid rgba(255,255,255,0.1)',
-            color: 'white'
+            color: isMe && tc.textColor ? tc.textColor : 'white'
           }}
           onContextMenu={e => { e.preventDefault(); setShowRx(true); }}
           onDoubleClick={() => setShowRx(true)}

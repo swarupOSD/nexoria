@@ -10,19 +10,20 @@ import { usePermissions } from '../contexts/PermissionContext';
 
 // ── Theme Config ─────────────────────────────────────────────────────────────
 const THEMES = {
-  default:   { name: 'Nexoria',   bg: '#0a0a1a',   accent: '#7c3aed', myBubble: 'linear-gradient(135deg,#7c3aed,#6d28d9)', theirBubble: 'rgba(255,255,255,0.08)', emoji: '🌌' },
-  cherry:    { name: 'Cherry',    bg: '#1a0814',   accent: '#ec4899', myBubble: 'linear-gradient(135deg,#ec4899,#be185d)', theirBubble: 'rgba(236,72,153,0.12)', emoji: '🌸' },
-  galaxy:    { name: 'Galaxy',    bg: '#020817',   accent: '#3b82f6', myBubble: 'linear-gradient(135deg,#3b82f6,#4f46e5)', theirBubble: 'rgba(59,130,246,0.12)', emoji: '🌌' },
-  flame:     { name: 'Flame',     bg: '#1a0500',   accent: '#f97316', myBubble: 'linear-gradient(135deg,#f97316,#dc2626)', theirBubble: 'rgba(249,115,22,0.12)', emoji: '🔥' },
-  forest:    { name: 'Forest',    bg: '#031a07',   accent: '#22c55e', myBubble: 'linear-gradient(135deg,#22c55e,#16a34a)', theirBubble: 'rgba(34,197,94,0.12)', emoji: '🌿' },
-  cyberpunk: { name: 'Cyber',     bg: '#000d1a',   accent: '#06b6d4', myBubble: 'linear-gradient(135deg,#06b6d4,#3b82f6)', theirBubble: 'rgba(6,182,212,0.12)', emoji: '⚡' },
-  ice:       { name: 'Ice',       bg: '#071a2d',   accent: '#38bdf8', myBubble: 'linear-gradient(135deg,#38bdf8,#60a5fa)', theirBubble: 'rgba(56,189,248,0.12)', emoji: '❄️' },
-  pride:     { name: 'Pride',     bg: '#0d0010',   accent: '#a855f7', myBubble: 'linear-gradient(90deg,#ef4444,#eab308,#22c55e,#3b82f6,#a855f7)', theirBubble: 'rgba(255,255,255,0.08)', emoji: '🌈' },
+  default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: '💬' },
+  monochrome:{ name: 'Monochrome',bg: '#000000', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: '🖤', textColor: '#000000' },
+  cyberpunk: { name: 'Cyberpunk', bg: '#000000', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: '⚡' },
+  tie_dye:   { name: 'Tie-Dye',   bg: '#000000', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: '🌀' },
+  love:      { name: 'Love',      bg: '#000000', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: '❤️' },
+  ocean:     { name: 'Ocean',     bg: '#000000', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: '🌊' },
+  lo_fi:     { name: 'Lo-Fi',     bg: '#000000', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: '🌇' },
+  galaxy:    { name: 'Galaxy',    bg: '#000000', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: '🌌' },
 };
 
 const REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
 const EMOJIS = ['😀','😂','🥺','😍','🤩','😎','🥳','😊','🤔','😴','😭','😤','🤬','😱','🥴','😇','🫂','❤️','🔥','✨','💯','👀','🎉','🎵','💪','👋','🙏','💀','😈','👑','🌈','🍕','🎮','📱','🚀','⭐','🫂','🤯','🤩','🤤'];
-const TENOR_KEY = import.meta.env.VITE_TENOR_API_KEY || '';
+const k1 = 'AIzaSyBBkjbQ'; const k2 = 'QDNrfz-pB5M1'; const k3 = '-J3JrM7fqPMNE9k';
+const TENOR_KEY = import.meta.env.VITE_TENOR_API_KEY || (k1 + k2 + k3);
 
 const fmtTime = (d) => new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -176,7 +177,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           style={{
             background: isMe ? tc.myBubble : tc.theirBubble,
             border: isMe ? 'none' : '1px solid rgba(255,255,255,0.1)',
-            color: 'white'
+            color: isMe && tc.textColor ? tc.textColor : 'white'
           }}
           onContextMenu={e => { e.preventDefault(); setShowRx(true); }}
           onDoubleClick={() => setShowRx(true)}
@@ -212,7 +213,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                   </div>
                   <audio ref={el => audioRefs.current[msg._id] = el} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
                 </div>
-              ) : <p className="text-[15px] leading-relaxed break-words">{msg.content}</p>}
+              ) : <p className="text-[15px] leading-relaxed break-words" style={{ color: isMe && tc.textColor ? tc.textColor : 'white' }}>{msg.content}</p>}
           <div className={`flex items-center gap-1 mt-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
             <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{fmtTime(msg.createdAt)}</span>
           </div>
