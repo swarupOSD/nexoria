@@ -21,7 +21,7 @@ import NexoriaLyricsStudio from './NexoriaLyricsStudio';
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
   duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null,
-  lyricsRaw: ''
+  lyricsRaw: '', algorithmicBoost: 0
 };
 
 const NexoriaTracksManager = () => {
@@ -84,7 +84,8 @@ const NexoriaTracksManager = () => {
       isPremium: track.isPremium || false,
       telegramFileId: track.telegramFileId || null,
       audioFile: null,
-      lyricsRaw: ''
+      lyricsRaw: '',
+      algorithmicBoost: track.algorithmicBoost || 0
     });
     setEditTarget(track);
     setModalMode('edit');
@@ -117,6 +118,7 @@ const NexoriaTracksManager = () => {
         submitData.append('duration', formData.duration || 0);
         submitData.append('trackType', formData.trackType);
         submitData.append('isPremium', formData.isPremium);
+        submitData.append('algorithmicBoost', formData.algorithmicBoost || 0);
         if (formData.coverImage) submitData.append('coverImage', formData.coverImage);
         if (formData.audioUrl) submitData.append('audioUrl', formData.audioUrl);
         if (formData.telegramFileId) submitData.append('telegramFileId', formData.telegramFileId);
@@ -248,7 +250,12 @@ const NexoriaTracksManager = () => {
                 </div>
 
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded overflow-hidden bg-zinc-800 flex-shrink-0">
+                  <div className="w-10 h-10 rounded overflow-hidden bg-zinc-800 flex-shrink-0 relative">
+                    {track.algorithmicBoost > 0 && (
+                      <div className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1 rounded-bl-sm z-10" title={`Boost Score: ${track.algorithmicBoost}`}>
+                        🔥 {track.algorithmicBoost}
+                      </div>
+                    )}
                     {track.coverImage || track.album?.coverImage || track.artist?.image ? (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     ) : (
@@ -442,6 +449,25 @@ const NexoriaTracksManager = () => {
                       Require Premium Subscription
                     </label>
                     <p className="text-amber-500/60 text-xs">Only PRO users can play this track</p>
+                  </div>
+                </div>
+
+                <div className="bg-[#181818] p-5 rounded-lg border border-white/10 space-y-4">
+                  <h4 className="text-white font-bold text-sm flex items-center gap-2 mb-4">
+                    🔥 Algorithm Control (Trending)
+                  </h4>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Boost Score</label>
+                    <input 
+                      type="number"
+                      min="0"
+                      max="1000"
+                      value={formData.algorithmicBoost}
+                      onChange={(e) => setFormData({...formData, algorithmicBoost: parseInt(e.target.value) || 0})}
+                      className="w-full bg-[#2a2a2a] text-white p-3 rounded-lg border border-transparent focus:border-[#1ed760] focus:ring-1 focus:ring-[#1ed760] transition-all"
+                      placeholder="0 (No boost)"
+                    />
+                    <p className="text-xs text-[#b3b3b3] mt-2">Set a value greater than 0 to prioritize this track in recommendations. Higher values appear first.</p>
                   </div>
                 </div>
 

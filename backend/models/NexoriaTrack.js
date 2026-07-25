@@ -70,6 +70,10 @@ const nexoriaTrackSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: true
+    },
+    algorithmicBoost: {
+      type: Number,
+      default: 0
     }
   },
   {

@@ -596,7 +596,7 @@ export const getRecommendations = async (req, res) => {
     // Fetch recommendations based on query, sort by playCount (popularity)
     const playableCondition = { $or: [{ audioUrl: { $exists: true, $ne: '' } }, { telegramFileId: { $exists: true, $ne: '' } }] };
     const recommendations = await NexoriaTrack.find({ $and: [query, playableCondition] })
-      .sort({ playCount: -1 })
+      .sort({ algorithmicBoost: -1, playCount: -1 })
       .limit(10)
       .populate('artist', 'name image')
       .populate('album', 'title coverImage');
@@ -605,7 +605,7 @@ export const getRecommendations = async (req, res) => {
     if (recommendations.length < 10) {
       const existingIds = [...excludeTrackIds, ...recommendations.map(t => t._id)];
       const backfill = await NexoriaTrack.find({ $and: [{ _id: { $nin: existingIds } }, playableCondition] })
-        .sort({ playCount: -1 })
+        .sort({ algorithmicBoost: -1, playCount: -1 })
         .limit(10 - recommendations.length)
         .populate('artist', 'name image')
         .populate('album', 'title coverImage');
@@ -736,7 +736,7 @@ export const getDiscoverWeekly = async (req, res) => {
 
     const playableCondition = { $or: [{ audioUrl: { $exists: true, $ne: '' } }, { telegramFileId: { $exists: true, $ne: '' } }] };
     let discoverTracks = await NexoriaTrack.find({ $and: [discoverQuery, playableCondition] })
-      .sort({ playCount: -1 })
+      .sort({ algorithmicBoost: -1, playCount: -1 })
       .limit(20)
       .populate('artist', 'name image')
       .populate('album', 'title coverImage');
@@ -744,7 +744,7 @@ export const getDiscoverWeekly = async (req, res) => {
     // Fallback if not enough discovered tracks
     if (discoverTracks.length < 15) {
         const backfillQuery = { _id: { $nin: Array.from(knownTracks).concat(discoverTracks.map(t=>t._id.toString())) } };
-        const backfill = await NexoriaTrack.find({ $and: [backfillQuery, playableCondition] }).sort({ playCount: -1 }).limit(20 - discoverTracks.length).populate('artist', 'name image').populate('album', 'title coverImage');
+        const backfill = await NexoriaTrack.find({ $and: [backfillQuery, playableCondition] }).sort({ algorithmicBoost: -1, playCount: -1 }).limit(20 - discoverTracks.length).populate('artist', 'name image').populate('album', 'title coverImage');
         discoverTracks.push(...backfill);
     }
 
@@ -813,7 +813,7 @@ export const getDailyMix = async (req, res) => {
     for (const genreId of topGenres) {
         const playableCondition = { $or: [{ audioUrl: { $exists: true, $ne: '' } }, { telegramFileId: { $exists: true, $ne: '' } }] };
         const tracks = await NexoriaTrack.find({ $and: [{ genre: genreId }, playableCondition] })
-            .sort({ playCount: -1 }) // Or mix of random/playcount
+            .sort({ algorithmicBoost: -1, playCount: -1 }) // Or mix of random/playcount
             .limit(15)
             .populate('artist', 'name image')
             .populate('album', 'title coverImage');
@@ -1291,7 +1291,7 @@ export const getAllTracksConsumer = async (req, res) => {
     })
       .populate('artist', 'name image')
       .populate('album', 'title coverImage')
-      .sort({ createdAt: -1 });
+      .sort({ algorithmicBoost: -1, createdAt: -1 });
     res.status(200).json({ success: true, data: tracks });
   } catch (error) {
     logger.error(`Get All Consumer Tracks Error: ${error.message}`);
@@ -1373,7 +1373,7 @@ export const getArtistDetailsConsumer = async (req, res) => {
     const popularTracks = await NexoriaTrack.find({ artist: artist._id })
       .populate('artist', 'name image')
       .populate('album', 'title coverImage')
-      .sort({ playCount: -1, createdAt: -1 })
+      .sort({ algorithmicBoost: -1, playCount: -1, createdAt: -1 })
       .limit(10);
 
     // Get artist's albums
