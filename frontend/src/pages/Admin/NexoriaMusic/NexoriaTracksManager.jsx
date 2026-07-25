@@ -266,7 +266,7 @@ const NexoriaTracksManager = () => {
                 </div>
 
                 <div className="text-sm text-[#b3b3b3] text-right tabular-nums">
-                  {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
+                  {Math.floor(Math.round(track.duration) / 60)}:{(Math.round(track.duration) % 60).toString().padStart(2, '0')}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity pr-2">
@@ -372,7 +372,7 @@ const NexoriaTracksManager = () => {
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Duration (Secs)</label>
                     <input 
                       type="number" 
-                      value={formData.duration}
+                      value={Math.round(formData.duration)}
                       onChange={(e) => setFormData({...formData, duration: Number(e.target.value)})}
                       min="0"
                       placeholder="Auto-calculated"

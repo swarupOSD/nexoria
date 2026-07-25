@@ -188,7 +188,7 @@ const uploadToTelegramInBackground = async (trackId, fileBuffer, fileObj, bodyOb
     if (resultObj && resultObj.file_id) {
       await NexoriaTrack.findByIdAndUpdate(trackId, {
         telegramFileId: resultObj.file_id,
-        duration: resultObj.duration || bodyObj.duration || 0
+        duration: Math.round(resultObj.duration || bodyObj.duration || 0)
       });
       logger.info(`Background Telegram Upload Success for Track: ${trackId}`);
     }
@@ -202,9 +202,12 @@ export const createTrack = async (req, res) => {
     const trackData = { ...req.body, addedBy: req.user._id };
     const track = await NexoriaTrack.create(trackData);
     
-    // If a file is attached, trigger background upload
+    // If a file is attached, trigger upload and wait for it
     if (req.file) {
-      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      await uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      // Fetch updated track to get the telegramFileId
+      const updatedTrack = await NexoriaTrack.findById(track._id);
+      return res.status(201).json({ success: true, data: updatedTrack });
     }
 
     res.status(201).json({ success: true, data: track });
@@ -236,9 +239,11 @@ export const updateTrack = async (req, res) => {
     const track = await NexoriaTrack.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!track) return res.status(404).json({ success: false, message: 'Track not found' });
     
-    // If a new file is attached during update, trigger background upload
+    // If a new file is attached during update, trigger upload and wait
     if (req.file) {
-      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      await uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      const updatedTrack = await NexoriaTrack.findById(track._id);
+      return res.status(200).json({ success: true, data: updatedTrack });
     }
     
     res.status(200).json({ success: true, data: track });
