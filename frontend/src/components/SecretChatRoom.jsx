@@ -11,19 +11,18 @@ import { usePermissions } from '../contexts/PermissionContext';
 // ── Theme Config ─────────────────────────────────────────────────────────────
 const THEMES = {
   default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: '💬' },
-  monochrome:{ name: 'Monochrome',bg: '#000000', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: '🖤', textColor: '#000000' },
-  cyberpunk: { name: 'Cyberpunk', bg: '#000000', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: '⚡' },
-  tie_dye:   { name: 'Tie-Dye',   bg: '#000000', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: '🌀' },
-  love:      { name: 'Love',      bg: '#000000', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: '❤️' },
-  ocean:     { name: 'Ocean',     bg: '#000000', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: '🌊' },
-  lo_fi:     { name: 'Lo-Fi',     bg: '#000000', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: '🌇' },
-  galaxy:    { name: 'Galaxy',    bg: '#000000', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: '🌌' },
+  monochrome:{ name: 'Monochrome',bg: '#111111', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: '🖤', textColor: '#000000' },
+  cyberpunk: { name: 'Cyberpunk', bg: 'linear-gradient(to bottom, #000000, #1a0033)', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: '⚡' },
+  tie_dye:   { name: 'Tie-Dye',   bg: 'linear-gradient(45deg, #1a0022, #001a44)', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: '🌀' },
+  love:      { name: 'Love',      bg: 'linear-gradient(to bottom right, #330011, #000000)', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: '❤️' },
+  ocean:     { name: 'Ocean',     bg: 'linear-gradient(to bottom, #001122, #002233)', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: '🌊' },
+  lo_fi:     { name: 'Lo-Fi',     bg: 'linear-gradient(to bottom, #221100, #110500)', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: '🌇' },
+  galaxy:    { name: 'Galaxy',    bg: 'radial-gradient(circle at top right, #2a004d, #000000)', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: '🌌' },
 };
 
 const REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
 const EMOJIS = ['😀','😂','🥺','😍','🤩','😎','🥳','😊','🤔','😴','😭','😤','🤬','😱','🥴','😇','🫂','❤️','🔥','✨','💯','👀','🎉','🎵','💪','👋','🙏','💀','😈','👑','🌈','🍕','🎮','📱','🚀','⭐','🫂','🤯','🤩','🤤'];
-const k1 = 'AIzaSyBBkjbQ'; const k2 = 'QDNrfz-pB5M1'; const k3 = '-J3JrM7fqPMNE9k';
-const TENOR_KEY = import.meta.env.VITE_TENOR_API_KEY || (k1 + k2 + k3);
+const GIPHY_KEY = import.meta.env.VITE_GIPHY_API_KEY || 'Qco0W0lBeOeaFGKv7DudhCA70LYaFOVf';
 
 const fmtTime = (d) => new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -37,11 +36,11 @@ const GifPicker = ({ onSelect, onClose }) => {
     setLoading(true);
     try {
       const url = term
-        ? `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(term)}&key=${TENOR_KEY}&limit=24&media_filter=gif`
-        : `https://tenor.googleapis.com/v2/featured?key=${TENOR_KEY}&limit=24&media_filter=gif`;
+        ? `https://api.giphy.com/v1/gifs/search?q=${encodeURIComponent(term)}&api_key=${GIPHY_KEY}&limit=24`
+        : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=24`;
       const r = await fetch(url);
       const d = await r.json();
-      setGifs(d.results || []);
+      setGifs(d.data || []);
     } catch (e) { console.error('GIF:', e); }
     finally { setLoading(false); }
   };
@@ -69,12 +68,12 @@ const GifPicker = ({ onSelect, onClose }) => {
         {loading
           ? <div className="col-span-3 flex items-center justify-center h-full"><Loader2 className="w-6 h-6 animate-spin" style={{ color: '#7c3aed' }} /></div>
           : gifs.map(gif => {
-            const mu = gif.media_formats?.gif?.url || gif.url;
-            const pu = gif.media_formats?.tinygif?.url || mu;
+            const mu = gif.images?.fixed_height?.url;
+            const pu = gif.images?.fixed_height_small?.url || mu;
             return (
               <button type="button" key={gif.id} onClick={() => onSelect({ id: gif.id, url: mu, preview: pu, title: gif.title })}
-                className="rounded-lg overflow-hidden transition-all hover:opacity-80">
-                <img src={pu} alt={gif.title} className="w-full h-20 object-cover" loading="lazy" />
+                className="rounded-lg overflow-hidden transition-all hover:opacity-80 relative bg-white/5 min-h-[80px]">
+                {pu && <img src={pu} alt={gif.title} className="w-full h-full object-cover absolute inset-0" loading="lazy" />}
               </button>
             );
           })}
