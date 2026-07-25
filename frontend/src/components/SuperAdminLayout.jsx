@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Shield, Key, Settings, 
   MonitorPlay, Database, Activity, FileWarning, 
   LogOut, ShieldAlert, Moon, Sun, Menu, X, Bell, Gamepad2,
-  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, DownloadCloud
+  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, MessageSquare, DownloadCloud
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -187,6 +187,7 @@ const SuperAdminLayout = () => {
         { name: 'Site Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
         { name: 'Hero Displays', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/hero-displays' },
         { name: 'Footer Management', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/footer-management' },
+        { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/superadmin/chat-management' },
       ]
     }
   ];

@@ -125,6 +125,7 @@ const AdminLayout = () => {
         { name: 'Users', icon: <User className="w-4 h-4" />, path: '/admin/users' },
         { name: 'Moderation', icon: <ShieldAlert className="w-4 h-4" />, path: '/admin/moderation' },
         { name: 'Reports', icon: <AlertOctagon className="w-4 h-4" />, path: '/admin/reports' },
+        { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/chat-management' },
       ]
     },
     {
