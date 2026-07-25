@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import { useSocket } from '../context/SocketContext';
 import { syncMusicState } from '../features/music/nexoriaMusicSlice';
 import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetFavoritesQuery } from '../features/api/nexoriaMusicApiSlice';
-import NexoriaPlayer from './NexoriaPlayer';
 import NexoriaFriendActivity from './NexoriaFriendActivity';
 import NexoriaMusicCreatePlaylistModal from './NexoriaMusicCreatePlaylistModal';
 
@@ -376,9 +375,6 @@ const NexoriaMusicLayout = () => {
           );
         })}
       </div>
-
-      {/* The Global Music Player */}
-      <NexoriaPlayer />
 
       {/* Modals */}
       <NexoriaMusicCreatePlaylistModal 
