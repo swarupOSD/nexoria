@@ -42,7 +42,11 @@ import {
   getArtistDetailsConsumer,
   getAlbumDetailsConsumer,
   getLyricsConsumer,
-  getUserProfile
+  getUserProfile,
+  getAdminPlaylists,
+  createAdminPlaylist,
+  updateAdminPlaylist,
+  deleteAdminPlaylist
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -80,6 +84,15 @@ router.route('/playlists/:id/tracks/:trackId')
 
 router.route('/playlists/:id/collaborative')
   .post(protect, togglePlaylistCollaborative);
+
+// ADMIN PLAYLISTS
+router.route('/admin/playlists')
+  .get(protect, authorize('admin', 'superadmin'), getAdminPlaylists)
+  .post(protect, authorize('admin', 'superadmin'), createAdminPlaylist);
+
+router.route('/admin/playlists/:id')
+  .put(protect, authorize('admin', 'superadmin'), updateAdminPlaylist)
+  .delete(protect, authorize('admin', 'superadmin'), deleteAdminPlaylist);
   
 // Algorithm & History Routes (Protected/Optional)
 router.route('/log-play').post(protect, logPlay);

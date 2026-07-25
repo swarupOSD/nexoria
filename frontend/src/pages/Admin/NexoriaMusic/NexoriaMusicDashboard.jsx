@@ -6,6 +6,7 @@ import NexoriaGenresManager from './NexoriaGenresManager';
 import NexoriaAlbumsManager from './NexoriaAlbumsManager';
 import NexoriaTracksManager from './NexoriaTracksManager';
 import NexoriaAnalyticsManager from './NexoriaAnalyticsManager';
+import NexoriaPlaylistBuilder from './NexoriaPlaylistBuilder';
 import { useNavigate } from 'react-router-dom';
 
 const NexoriaMusicDashboard = () => {
@@ -17,6 +18,7 @@ const NexoriaMusicDashboard = () => {
     { id: 'artists', label: 'Artists', icon: Mic2 },
     { id: 'tracks', label: 'Tracks', icon: Music },
     { id: 'albums', label: 'Albums', icon: Disc3 },
+    { id: 'playlists', label: 'Playlists', icon: ListMusic },
     { id: 'genres', label: 'Genres', icon: ListMusic },
   ];
 
@@ -58,6 +60,9 @@ const NexoriaMusicDashboard = () => {
            <button onClick={() => setActiveTab('albums')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#282828] hover:bg-[#333] text-white font-bold rounded-full hover:scale-105 transition-transform border border-white/5">
              <Disc3 className="w-4 h-4" /> Edit Albums
            </button>
+           <button onClick={() => setActiveTab('playlists')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#282828] hover:bg-[#333] text-white font-bold rounded-full hover:scale-105 transition-transform border border-white/5">
+             <ListMusic className="w-4 h-4 text-indigo-400" /> Playlist Builder
+           </button>
         </div>
         <AnimatePresence mode="wait">
           <motion.div
@@ -73,6 +78,7 @@ const NexoriaMusicDashboard = () => {
             {activeTab === 'genres' && <NexoriaGenresManager />}
             {activeTab === 'albums' && <NexoriaAlbumsManager />}
             {activeTab === 'tracks' && <NexoriaTracksManager />}
+            {activeTab === 'playlists' && <NexoriaPlaylistBuilder />}
           </motion.div>
         </AnimatePresence>
       </main>

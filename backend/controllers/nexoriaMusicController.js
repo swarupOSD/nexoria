@@ -1055,6 +1055,102 @@ export const getUserPlaylists = async (req, res) => {
   }
 };
 
+// ==========================================
+// ADMIN: FEATURED PLAYLIST MANAGEMENT
+// ==========================================
+
+export const getAdminPlaylists = async (req, res) => {
+  try {
+    const playlists = await NexoriaPlaylist.find({ type: { $ne: 'User' } })
+      .populate('creator', 'name')
+      .populate({
+        path: 'tracks',
+        select: 'title artist coverImage duration',
+        populate: { path: 'artist', select: 'name' }
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: playlists });
+  } catch (error) {
+    logger.error(`Get Admin Playlists Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch admin playlists' });
+  }
+};
+
+export const createAdminPlaylist = async (req, res) => {
+  try {
+    const { title, description, coverImage, type, tracks, isPublic } = req.body;
+    
+    const playlist = await NexoriaPlaylist.create({
+      title: title || 'New Featured Playlist',
+      description,
+      coverImage,
+      type: type || 'Featured',
+      creator: req.user._id,
+      tracks: tracks || [],
+      isPublic: isPublic !== undefined ? isPublic : true
+    });
+
+    const populatedPlaylist = await NexoriaPlaylist.findById(playlist._id)
+      .populate('creator', 'name')
+      .populate({
+        path: 'tracks',
+        select: 'title artist coverImage duration',
+        populate: { path: 'artist', select: 'name' }
+      });
+
+    res.status(201).json({ success: true, data: populatedPlaylist });
+  } catch (error) {
+    logger.error(`Create Admin Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to create admin playlist' });
+  }
+};
+
+export const updateAdminPlaylist = async (req, res) => {
+  try {
+    const playlistId = req.params.id;
+    const { title, description, coverImage, type, tracks, isPublic } = req.body;
+    
+    const playlist = await NexoriaPlaylist.findById(playlistId);
+    if (!playlist) {
+      return res.status(404).json({ success: false, message: 'Playlist not found' });
+    }
+
+    if (title) playlist.title = title;
+    if (description !== undefined) playlist.description = description;
+    if (coverImage !== undefined) playlist.coverImage = coverImage;
+    if (type) playlist.type = type;
+    if (tracks !== undefined) playlist.tracks = tracks;
+    if (isPublic !== undefined) playlist.isPublic = isPublic;
+
+    await playlist.save();
+
+    const populatedPlaylist = await NexoriaPlaylist.findById(playlistId)
+      .populate('creator', 'name')
+      .populate({
+        path: 'tracks',
+        select: 'title artist coverImage duration',
+        populate: { path: 'artist', select: 'name' }
+      });
+
+    res.status(200).json({ success: true, data: populatedPlaylist });
+  } catch (error) {
+    logger.error(`Update Admin Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to update admin playlist' });
+  }
+};
+
+export const deleteAdminPlaylist = async (req, res) => {
+  try {
+    const playlist = await NexoriaPlaylist.findByIdAndDelete(req.params.id);
+    if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
+    
+    res.status(200).json({ success: true, message: 'Admin Playlist deleted' });
+  } catch (error) {
+    logger.error(`Delete Admin Playlist Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to delete admin playlist' });
+  }
+};
+
 export const getPlaylistDetails = async (req, res) => {
   try {
     const playlist = await NexoriaPlaylist.findById(req.params.id)

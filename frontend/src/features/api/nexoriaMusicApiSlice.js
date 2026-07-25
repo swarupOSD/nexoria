@@ -193,6 +193,46 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['NexoriaPlaylist'],
     }),
+    togglePlaylistCollaborative: builder.mutation({
+      query: (id) => ({
+        url: `/nexoria-music/playlists/${id}/collaborative`,
+        method: 'POST'
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'NexoriaPlaylist', id }]
+    }),
+
+    // ADMIN PLAYLISTS
+    getAdminPlaylists: builder.query({
+      query: () => '/nexoria-music/admin/playlists',
+      providesTags: ['NexoriaAdminPlaylist'],
+    }),
+    createAdminPlaylist: builder.mutation({
+      query: (data) => ({
+        url: '/nexoria-music/admin/playlists',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['NexoriaAdminPlaylist'],
+    }),
+    updateAdminPlaylist: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/nexoria-music/admin/playlists/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'NexoriaAdminPlaylist', id },
+        'NexoriaAdminPlaylist',
+        'NexoriaPlaylist' // Also invalidate public playlists if they change
+      ],
+    }),
+    deleteAdminPlaylist: builder.mutation({
+      query: (id) => ({
+        url: `/nexoria-music/admin/playlists/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['NexoriaAdminPlaylist', 'NexoriaPlaylist'],
+    }),
 
     // ALGORITHM & HISTORY
     logPlay: builder.mutation({
@@ -289,6 +329,10 @@ export const {
   useRemoveTrackFromPlaylistMutation,
   useDeletePlaylistMutation,
   useTogglePlaylistCollaborativeMutation,
+  useGetAdminPlaylistsQuery,
+  useCreateAdminPlaylistMutation,
+  useUpdateAdminPlaylistMutation,
+  useDeleteAdminPlaylistMutation,
   useGetArtistDetailsQuery,
   useGetAlbumDetailsQuery,
   useGetTrackLyricsQuery,
