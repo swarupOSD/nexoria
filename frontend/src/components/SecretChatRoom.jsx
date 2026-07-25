@@ -146,8 +146,9 @@ const ThemePicker = ({ currentTheme, onSelect, onClose }) => (
 );
 
 // ── Message Bubble ─────────────────────────────────────────────────────────────
-const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, audioRefs }) => {
+const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, audioRefs, isSamePrev, isSameNext, isLastRead, setLightboxImg }) => {
   const [showRx, setShowRx] = useState(false);
+  const [burst, setBurst] = useState(false);
   const tc = THEMES[theme] || THEMES.default;
 
   if (msg.isUnsent) return (
@@ -158,8 +159,20 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
     </div>
   );
 
+  const handleDoubleTap = () => {
+    onReact(msg._id, '❤️');
+    setBurst(true);
+    setTimeout(() => setBurst(false), 1200);
+  };
+
   return (
-    <div className={`flex ${isMe ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-1 group`}>
+    <motion.div 
+      drag="x" 
+      dragConstraints={{ left: 0, right: 0 }} 
+      dragElastic={0.2}
+      onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 60) onReply(msg); }}
+      className={`flex ${isMe ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-0.5 group`}
+    >
       {!isMe && showAvatar && (
         <img src={msg.sender?.profileImage?.startsWith('http') ? msg.sender.profileImage : `https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.sender?.name}`}
           alt="" className="w-7 h-7 rounded-full object-cover flex-shrink-0 mb-1" />
@@ -176,7 +189,11 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
         )}
 
         <div
-          className={`relative px-4 py-2.5 rounded-2xl cursor-pointer ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
+          className={`relative px-4 py-2.5 rounded-3xl cursor-pointer ${
+            isMe 
+              ? `${isSamePrev ? 'rounded-tr-sm' : ''} ${isSameNext ? 'rounded-br-sm' : ''}` 
+              : `${isSamePrev ? 'rounded-tl-sm' : ''} ${isSameNext ? 'rounded-bl-sm' : ''}`
+          }`}
           style={{
             background: isMe ? tc.myBubble : tc.theirBubble,
             border: isMe ? 'none' : '1px solid rgba(255,255,255,0.05)',
@@ -184,12 +201,19 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
             color: isMe && tc.textColor ? tc.textColor : 'white'
           }}
           onContextMenu={e => { e.preventDefault(); setShowRx(true); }}
-          onDoubleClick={() => setShowRx(true)}
+          onDoubleClick={handleDoubleTap}
         >
+          {burst && (
+            <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-50">
+              {[...Array(6)].map((_, i) => (
+                <motion.div key={i} initial={{ scale: 0.5, y: 0, opacity: 1, x: 0 }} animate={{ scale: 1.5, y: -60 - Math.random()*40, x: (Math.random()-0.5)*80, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="absolute text-2xl">❤️</motion.div>
+              ))}
+            </div>
+          )}
           {msg.type === 'gif' && msg.gifData
             ? <div className="rounded-xl overflow-hidden max-w-xs"><img src={msg.gifData.url} alt={msg.gifData.title || 'GIF'} className="w-full max-h-48 object-cover" loading="lazy" /></div>
             : msg.type === 'image' && msg.content
-              ? <div className="rounded-xl overflow-hidden max-w-xs"><img src={msg.content} alt="Image" className="w-full max-h-64 object-cover" /></div>
+              ? <div className="rounded-xl overflow-hidden max-w-xs" onClick={() => setLightboxImg(msg.content)}><img src={msg.content} alt="Image" className="w-full max-h-64 object-cover" /></div>
               : msg.type === 'music' ? (
                 <div className="flex items-center gap-3 min-w-[200px]">
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
@@ -212,8 +236,10 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                   <button onClick={() => handlePlayMusic(msg._id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors shrink-0">
                     {playingAudioId === msg._id ? <Square className="w-3.5 h-3.5 fill-current" /> : <div className="w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-current ml-1"></div>}
                   </button>
-                  <div className="flex-1 h-1.5 w-full rounded-full overflow-hidden bg-white/20 flex items-center">
-                    <div className="h-full w-full animate-pulse opacity-70 bg-white"></div>
+                  <div className="flex-1 h-3 w-full rounded-full overflow-hidden flex items-center gap-[2px]">
+                    {[...Array(12)].map((_, i) => (
+                      <motion.div key={i} animate={playingAudioId === msg._id ? { height: ['20%', '100%', '30%', '80%', '20%'] } : { height: '20%' }} transition={{ duration: 0.5 + Math.random()*0.5, repeat: Infinity, ease: 'easeInOut' }} className="flex-1 bg-white/50 rounded-full" />
+                    ))}
                   </div>
                   <audio ref={el => audioRefs.current[msg._id] = el} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
                 </div>
@@ -245,7 +271,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
         <button type="button" onClick={() => onReply(msg)} className="p-1 rounded-full transition-colors hover:bg-white/10" style={{ color: 'rgba(255,255,255,0.35)' }}><Reply className="w-3.5 h-3.5" /></button>
         {isMe && <button type="button" onClick={() => onUnsend(msg._id)} className="p-1 rounded-full transition-colors hover:bg-white/10" style={{ color: 'rgba(255,255,255,0.35)' }}><Trash2 className="w-3.5 h-3.5" /></button>}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -268,6 +294,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   
   const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  const [lightboxImg, setLightboxImg] = useState(null);
   
   // Call States
   const [activeCallType, setActiveCallType] = useState(null);
@@ -558,31 +585,52 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           }
           
           const isMe = msg.sender._id === user._id;
-          const showAvatar = idx === 0 || messages[idx-1]?.sender?._id !== msg.sender._id;
+          
+          const prevMsg = messages[idx - 1];
+          const nextMsg = messages[idx + 1];
+          const isSamePrev = prevMsg && prevMsg.sender._id === msg.sender._id && prevMsg.type !== 'system';
+          const isSameNext = nextMsg && nextMsg.sender._id === msg.sender._id && nextMsg.type !== 'system';
+          
+          const showAvatar = !isSameNext;
+          const isLastRead = isMe && idx === messages.length - 1 && participants.length > 1;
 
           return (
+          <React.Fragment key={msg._id}>
             <MsgBubble 
-              key={msg._id} 
               msg={msg} 
               isMe={isMe} 
               theme={activeTheme} 
               showAvatar={showAvatar}
+              isSamePrev={isSamePrev}
+              isSameNext={isSameNext}
+              isLastRead={isLastRead}
               onReact={handleReact} 
               onUnsend={handleUnsend} 
               onReply={setReplyTo} 
               playingAudioId={playingAudioId}
               handlePlayMusic={handlePlayMusic}
               audioRefs={audioRefs}
+              setLightboxImg={setLightboxImg}
             />
+            {isLastRead && (
+              <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end gap-1 mb-2 pr-1">
+                {participants.filter(p => p._id !== user._id).slice(0, 3).map(p => (
+                  <img key={p._id} src={p.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} alt="" className="w-3.5 h-3.5 rounded-full object-cover" title={`Seen by ${p.name}`} />
+                ))}
+              </motion.div>
+            )}
+          </React.Fragment>
           );
         })}
         {isPartnerTyping && (
-          <div className="flex justify-start mb-1">
-            <div className="w-7 flex-shrink-0 mr-2" />
-            <div className="px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1" style={{ background: tc.theirBubble }}>
-              <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-              <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-              <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+          <div className="flex justify-start mb-1 items-end gap-2">
+            <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center border border-white/5 overflow-hidden flex-shrink-0">
+              <span className="text-[10px]">💬</span>
+            </div>
+            <div className="px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1 items-center" style={{ background: tc.theirBubble }}>
+              <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+              <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+              <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
             </div>
           </div>
         )}
@@ -663,6 +711,22 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       {selectedUserAction && (
         <UserActionModal user={selectedUserAction} onClose={() => setSelectedUserAction(null)} />
       )}
+
+      <AnimatePresence>
+        {lightboxImg && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md cursor-pointer"
+            onClick={() => setLightboxImg(null)}
+          >
+            <button className="absolute top-4 right-4 text-white/50 hover:text-white bg-black/50 p-2 rounded-full"><X className="w-6 h-6" /></button>
+            <motion.img 
+              initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
+              src={lightboxImg} alt="Fullscreen" className="max-w-full max-h-full rounded-2xl object-contain shadow-2xl" 
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
