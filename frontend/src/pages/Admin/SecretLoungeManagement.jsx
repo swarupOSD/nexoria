@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ShieldAlert, Ghost, Users, Activity, Trash2, 
-  Search, RefreshCw, Palette, MessageSquare
+  Search, RefreshCw, Palette, MessageSquare, Loader2
 } from 'lucide-react';
 import { 
   useGetAdminSecretRoomsQuery, 
