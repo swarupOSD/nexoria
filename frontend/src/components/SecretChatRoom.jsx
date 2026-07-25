@@ -132,10 +132,13 @@ const ThemePicker = ({ currentTheme, onSelect, onClose }) => (
     <div className="grid grid-cols-4 gap-2">
       {Object.entries(THEMES).map(([key, t]) => (
         <button type="button" key={key} onClick={() => onSelect(key)}
-          className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all"
-          style={{ background: currentTheme === key ? 'rgba(255,255,255,0.15)' : 'transparent', outline: currentTheme === key ? '2px solid white' : 'none' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: t.accent }}>{t.emoji}</div>
-          <span className="text-[10px] leading-tight text-center" style={{ color: 'rgba(255,255,255,0.5)' }}>{t.name}</span>
+          className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all hover:bg-white/5"
+          style={{ background: currentTheme === key ? 'rgba(255,255,255,0.1)' : 'transparent' }}>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm shadow-inner relative" style={{ background: t.myBubble }}>
+            {currentTheme === key && <div className="absolute inset-0 rounded-full border-2 border-white pointer-events-none" />}
+            {t.emoji}
+          </div>
+          <span className="text-[10px] font-medium leading-tight text-center" style={{ color: currentTheme === key ? 'white' : 'rgba(255,255,255,0.5)' }}>{t.name}</span>
         </button>
       ))}
     </div>
@@ -176,7 +179,8 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           className={`relative px-4 py-2.5 rounded-2xl cursor-pointer ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
           style={{
             background: isMe ? tc.myBubble : tc.theirBubble,
-            border: isMe ? 'none' : '1px solid rgba(255,255,255,0.1)',
+            border: isMe ? 'none' : '1px solid rgba(255,255,255,0.05)',
+            boxShadow: isMe ? '0 4px 14px rgba(0,0,0,0.15)' : 'none',
             color: isMe && tc.textColor ? tc.textColor : 'white'
           }}
           onContextMenu={e => { e.preventDefault(); setShowRx(true); }}
@@ -586,7 +590,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       </div>
 
       {/* ── Input Area ── */}
-      <div className="p-3 z-20" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="p-3 z-20 pb-6" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <AnimatePresence>
           {replyTo && (
             <motion.div initial={{ opacity: 0, y: 10, height: 0 }} animate={{ opacity: 1, y: 0, height: 'auto' }} exit={{ opacity: 0, y: 10, height: 0 }}
@@ -612,13 +616,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
 
           <div className="relative flex-1">
-            <form onSubmit={handleSendText} className="flex items-center bg-white/10 rounded-full px-4 border border-white/5 focus-within:border-white/20 transition-all shadow-inner">
+            <form onSubmit={handleSendText} className="flex items-center bg-[#262626] rounded-full px-4 border border-transparent focus-within:border-white/20 transition-all">
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInput}
                 placeholder="Message..."
-                className="flex-1 bg-transparent text-white py-3 outline-none text-sm placeholder-white/40"
+                className="flex-1 bg-transparent text-white py-3 outline-none text-[15px] placeholder-white/40"
               />
               {inputValue.trim() ? (
                 <button type="submit" className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send</button>
@@ -636,7 +640,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
 
           {!inputValue.trim() && (
-            <button type="button" onClick={isRecording ? stopRecording : startRecording} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-white/10 text-white/80 hover:bg-white/20'}`}>
+            <button type="button" onClick={isRecording ? stopRecording : startRecording} className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-[#262626] text-white/80 hover:bg-[#363636]'}`}>
               <Mic className="w-5 h-5" />
             </button>
           )}
