@@ -26,6 +26,7 @@ import {
   getRecommendations,
   getAnalytics,
   getDeepAnalytics,
+  getPremiumAnalytics,
   toggleFavorite,
   getFavorites,
   getDiscoverWeekly,
@@ -100,6 +101,7 @@ router.route('/recently-played').get(protect, getRecentlyPlayed);
 router.route('/recommendations').get(protect, getRecommendations);
 router.route('/analytics').get(protect, authorize('admin', 'superadmin'), getAnalytics);
 router.route('/deep-analytics').get(protect, authorize('admin', 'superadmin'), getDeepAnalytics);
+router.route('/analytics/premium').get(protect, authorize('admin', 'superadmin', 'owner'), getPremiumAnalytics);
 
 router.route('/favorites').get(protect, getFavorites);
 router.route('/favorites/toggle').post(protect, toggleFavorite);

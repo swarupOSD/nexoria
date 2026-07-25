@@ -7,6 +7,7 @@ import NexoriaUserHistory from '../models/NexoriaUserHistory.js';
 import NexoriaMusicFavorite from '../models/NexoriaMusicFavorite.js';
 import NexoriaLyrics from '../models/NexoriaLyrics.js';
 import User from '../models/User.js';
+import PremiumRequest from '../models/PremiumRequest.js';
 import logger from '../middlewares/logger.js';
 import axios from 'axios';
 import FormData from 'form-data';
@@ -1039,7 +1040,73 @@ export const getDeepAnalytics = async (req, res) => {
 };
 
 // ==========================================
-// CONSUMER: PLAYLISTS
+// PREMIUM & REVENUE ANALYTICS
+// ==========================================
+export const getPremiumAnalytics = async (req, res) => {
+  try {
+    // 1. User Stats
+    const totalPremiumUsers = await User.countDocuments({ isPremium: true });
+    const totalFreeUsers = await User.countDocuments({ isPremium: false });
+
+    // 2. Revenue & Transactions
+    const approvedRequests = await PremiumRequest.find({ status: 'Approved' });
+    const totalRevenue = approvedRequests.reduce((sum, req) => sum + req.amount, 0);
+
+    // 3. Recent Transactions
+    const recentTransactions = await PremiumRequest.find({ status: 'Approved' })
+      .sort({ updatedAt: -1 })
+      .limit(10)
+      .populate('user', 'name email avatar');
+
+    // 4. Revenue over time (Last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+    sixMonthsAgo.setDate(1);
+    sixMonthsAgo.setHours(0, 0, 0, 0);
+
+    const revenueByMonthRaw = await PremiumRequest.aggregate([
+      { 
+        $match: { 
+          status: 'Approved',
+          updatedAt: { $gte: sixMonthsAgo }
+        } 
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$updatedAt" },
+            month: { $month: "$updatedAt" }
+          },
+          revenue: { $sum: "$amount" }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    // Format for Recharts
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const revenueOverTime = revenueByMonthRaw.map(item => ({
+      name: `${monthNames[item._id.month - 1]} ${item._id.year}`,
+      revenue: item.revenue
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        users: { premium: totalPremiumUsers, free: totalFreeUsers },
+        totalRevenue,
+        recentTransactions,
+        revenueOverTime
+      }
+    });
+  } catch (error) {
+    logger.error(`Get Premium Analytics Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch premium analytics' });
+  }
+};
+
+// ==========================================
+// ADMIN PLAYLIST MANAGEMENTS
 // ==========================================
 
 export const createPlaylist = async (req, res) => {

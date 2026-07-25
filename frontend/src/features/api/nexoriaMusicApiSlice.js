@@ -256,6 +256,10 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       query: () => '/nexoria-music/deep-analytics',
       providesTags: ['NexoriaMusicAnalytics']
     }),
+    getPremiumMusicAnalytics: builder.query({
+      query: () => '/nexoria-music/analytics/premium',
+      providesTags: ['NexoriaMusicAnalytics']
+    }),
     getFavorites: builder.query({
       query: (type) => `/nexoria-music/favorites${type ? `?type=${type}` : ''}`,
       providesTags: ['NexoriaFavorite'],
@@ -316,6 +320,7 @@ export const {
   useLazyGetMusicRecommendationsQuery,
   useGetNexoriaMusicAnalyticsQuery,
   useGetDeepAnalyticsQuery,
+  useGetPremiumMusicAnalyticsQuery,
   useGetFavoritesQuery,
   useToggleFavoriteMutation,
   useGetDiscoverWeeklyQuery,

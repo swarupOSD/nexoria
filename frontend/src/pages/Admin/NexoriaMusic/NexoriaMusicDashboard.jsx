@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Mic2, Disc3, ListMusic, Settings, BarChart2, Users } from 'lucide-react';
+import { Music, Mic2, Disc3, ListMusic, Settings, BarChart2, Users, Crown } from 'lucide-react';
 import NexoriaArtistsManager from './NexoriaArtistsManager';
 import NexoriaGenresManager from './NexoriaGenresManager';
 import NexoriaAlbumsManager from './NexoriaAlbumsManager';
 import NexoriaTracksManager from './NexoriaTracksManager';
 import NexoriaAnalyticsManager from './NexoriaAnalyticsManager';
 import NexoriaPlaylistBuilder from './NexoriaPlaylistBuilder';
+import NexoriaPremiumManager from './NexoriaPremiumManager';
 import { useNavigate } from 'react-router-dom';
 
 const NexoriaMusicDashboard = () => {
@@ -20,6 +21,7 @@ const NexoriaMusicDashboard = () => {
     { id: 'albums', label: 'Albums', icon: Disc3 },
     { id: 'playlists', label: 'Playlists', icon: ListMusic },
     { id: 'genres', label: 'Genres', icon: ListMusic },
+    { id: 'revenue', label: 'Revenue & Premium', icon: Crown },
   ];
 
   return (
@@ -79,6 +81,7 @@ const NexoriaMusicDashboard = () => {
             {activeTab === 'albums' && <NexoriaAlbumsManager />}
             {activeTab === 'tracks' && <NexoriaTracksManager />}
             {activeTab === 'playlists' && <NexoriaPlaylistBuilder />}
+            {activeTab === 'revenue' && <NexoriaPremiumManager />}
           </motion.div>
         </AnimatePresence>
       </main>
