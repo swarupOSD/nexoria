@@ -117,6 +117,7 @@ const NexoriaTracksManager = lazy(() => import('./pages/Admin/NexoriaMusic/Nexor
 const NexoriaGenresManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaGenresManager'));
 const NexoriaPlaylistBuilder = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaPlaylistBuilder'));
 const ChatManagement = lazy(() => import('./pages/Admin/ChatManagement'));
+const SecretLoungeManagement = lazy(() => import('./pages/Admin/SecretLoungeManagement'));
 
 // Super Admin UI (Lazy Loaded)
 const SuperAdminLayout = lazy(() => import('./components/SuperAdminLayout'));
@@ -380,8 +381,9 @@ function App() {
               <Route path="push-campaigns" element={<PushCampaigns />} />
               <Route path="coupons" element={<CouponManager />} />
               <Route path="app-requests" element={<AppRequestModeration />} />
-              <Route path="user-requests" element={<UserRequestsAdmin />} />
+              <Route path="nexoria-music-playlist" element={<NexoriaPlaylistBuilder />} />
               <Route path="chat-management" element={<ChatManagement />} />
+              <Route path="secret-lounge-management" element={<SecretLoungeManagement />} />
             </Route>
 
               {/* Super Admin Protected Routes */}

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, Users, MessageSquare,
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud, Ghost
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -387,6 +387,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/voice-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Mic className="w-4 h-4" /> Voice Lounge
+                </Link>
+                <Link to="/secret-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-teal-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Ghost className="w-4 h-4" /> Secret Lounge
                 </Link>
               </div>
             </DropdownMenu>
@@ -786,6 +789,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/voice-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-400/10 to-pink-500/10 hover:from-purple-400/20 hover:to-pink-500/20 border border-purple-400/20 rounded-2xl font-bold text-sm text-purple-600 dark:text-purple-400 transition-colors">
                       <Mic className="w-5 h-5" /> Voice Lounge 🎤
+                    </Link>
+                    <Link to="/secret-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-teal-400/10 to-emerald-500/10 hover:from-teal-400/20 hover:to-emerald-500/20 border border-teal-400/20 rounded-2xl font-bold text-sm text-teal-600 dark:text-teal-400 transition-colors">
+                      <Ghost className="w-5 h-5" /> Secret Lounge 👻
                     </Link>
                   </div>
 

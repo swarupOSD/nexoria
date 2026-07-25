@@ -28,7 +28,9 @@ export const registerPrivateChatHandlers = (io, socket) => {
       ownerId: socket.user._id.toString(),
       ownerSocketId: socket.id,
       createdAt: Date.now(),
-      participants: new Map() // socketId -> userInfo
+      theme: 'default',
+      participants: new Map(), // socketId -> userInfo
+      messages: [] // Array of message objects
     };
 
     const userInfo = {
@@ -50,7 +52,9 @@ export const registerPrivateChatHandlers = (io, socket) => {
     socket.emit('privateRoomCreated', {
       teamCode,
       password,
-      participants: Array.from(newRoom.participants.values())
+      theme: newRoom.theme,
+      participants: Array.from(newRoom.participants.values()),
+      messages: newRoom.messages
     });
   });
 
@@ -87,12 +91,14 @@ export const registerPrivateChatHandlers = (io, socket) => {
     // Send success to joiner
     socket.emit('privateRoomJoined', {
       teamCode,
-      participants: Array.from(room.participants.values())
+      theme: room.theme,
+      participants: Array.from(room.participants.values()),
+      messages: room.messages
     });
   });
 
-  // Send a message or image
-  socket.on('sendPrivateMessage', ({ teamCode, type, content }) => {
+  // Send a message or image or gif
+  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo }) => {
     if (!socket.user) return;
     const room = activeRooms.get(teamCode);
     if (!room || !room.participants.has(socket.id)) return;
@@ -100,13 +106,75 @@ export const registerPrivateChatHandlers = (io, socket) => {
     const messageObj = {
       _id: crypto.randomUUID(), // Ephemeral ID
       sender: room.participants.get(socket.id),
-      type, // 'text' or 'image'
+      type, // 'text', 'image', 'gif'
       content,
+      gifData,
+      replyTo,
+      reactions: [],
       createdAt: Date.now(),
       isEdited: false,
+      isUnsent: false
     };
 
+    room.messages.push(messageObj);
+    // Keep max 500 messages in memory to prevent leak
+    if (room.messages.length > 500) room.messages.shift();
+
     io.to(`private_${teamCode}`).emit('newPrivateMessage', messageObj);
+  });
+
+  // Theme Change
+  socket.on('setPrivateTheme', ({ teamCode, theme }) => {
+    const room = activeRooms.get(teamCode);
+    if (!room || !room.participants.has(socket.id)) return;
+    room.theme = theme;
+    io.to(`private_${teamCode}`).emit('privateThemeChanged', { theme });
+  });
+
+  // Add/Toggle Reaction
+  socket.on('reactToPrivateMessage', ({ teamCode, messageId, emoji }) => {
+    if (!socket.user) return;
+    const room = activeRooms.get(teamCode);
+    if (!room || !room.participants.has(socket.id)) return;
+    
+    const message = room.messages.find(m => m._id === messageId);
+    if (!message) return;
+
+    const existingIdx = message.reactions.findIndex(r => r.user._id === socket.user._id.toString());
+    if (existingIdx !== -1) {
+      if (message.reactions[existingIdx].emoji === emoji) message.reactions.splice(existingIdx, 1);
+      else message.reactions[existingIdx].emoji = emoji;
+    } else {
+      message.reactions.push({ user: room.participants.get(socket.id), emoji });
+    }
+
+    io.to(`private_${teamCode}`).emit('privateMessageReactionUpdated', { messageId, reactions: message.reactions });
+  });
+
+  // Unsend a message
+  socket.on('unsendPrivateMessage', ({ teamCode, messageId }) => {
+    if (!socket.user) return;
+    const room = activeRooms.get(teamCode);
+    if (!room || !room.participants.has(socket.id)) return;
+
+    const message = room.messages.find(m => m._id === messageId);
+    if (!message || message.sender._id.toString() !== socket.user._id.toString()) return;
+
+    message.isUnsent = true;
+    message.content = '';
+    message.gifData = null;
+
+    io.to(`private_${teamCode}`).emit('privateMessageUnsent', { messageId });
+  });
+
+  // Typing indicator
+  socket.on('privateTypingStart', ({ teamCode }) => {
+    if (!socket.user) return;
+    io.to(`private_${teamCode}`).emit('privateUserTyping', { userId: socket.user._id });
+  });
+  socket.on('privateTypingStop', ({ teamCode }) => {
+    if (!socket.user) return;
+    io.to(`private_${teamCode}`).emit('privateUserStoppedTyping', { userId: socket.user._id });
   });
 
   // WebRTC Signaling Events
@@ -181,3 +249,6 @@ export const registerPrivateChatHandlers = (io, socket) => {
   // Also handle disconnect to clean up
   socket.on('disconnect', handleLeave);
 };
+e x p o r t   c o n s t   g e t A c t i v e S e c r e t R o o m s   =   ( )   = >   A r r a y . f r o m ( a c t i v e R o o m s . v a l u e s ( ) ) ;  
+ e x p o r t   c o n s t   d e s t r o y S e c r e t R o o m   =   ( t e a m C o d e ,   i o )   = >   {   c o n s t   r o o m   =   a c t i v e R o o m s . g e t ( t e a m C o d e ) ;   i f   ( r o o m )   {   i o . t o ( ' p r i v a t e _ '   +   t e a m C o d e ) . e m i t ( ' r o o m D e s t r o y e d ' ,   {   m e s s a g e :   ' R o o m   t e r m i n a t e d   b y   A d m i n . '   } ) ;   i o . i n ( ' p r i v a t e _ '   +   t e a m C o d e ) . s o c k e t s L e a v e ( ' p r i v a t e _ '   +   t e a m C o d e ) ;   a c t i v e R o o m s . d e l e t e ( t e a m C o d e ) ;   r e t u r n   t r u e ;   }   r e t u r n   f a l s e ;   } ;  
+ 

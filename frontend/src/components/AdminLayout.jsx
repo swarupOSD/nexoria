@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FileText, Folder, MessageSquare, 
   Settings, LogOut, ShieldAlert, User, Moon, Sun, 
   Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail, 
-  ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart
+  ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart, Ghost
 } from 'lucide-react';
 import NotificationBell from './Layout/NotificationBell';
 import { useTheme } from '../context/ThemeContext';
@@ -126,6 +126,7 @@ const AdminLayout = () => {
         { name: 'Moderation', icon: <ShieldAlert className="w-4 h-4" />, path: '/admin/moderation' },
         { name: 'Reports', icon: <AlertOctagon className="w-4 h-4" />, path: '/admin/reports' },
         { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/chat-management' },
+        { name: 'Secret Lounge', icon: <Ghost className="w-4 h-4" />, path: '/admin/secret-lounge-management' },
       ]
     },
     {
