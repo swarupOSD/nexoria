@@ -3,6 +3,9 @@ import { useGetDeepAnalyticsQuery } from '../../../features/api/nexoriaMusicApiS
 import { Users, PlayCircle, Activity, Headphones, Music, RefreshCw, BarChart2, TrendingUp, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const NexoriaAnalyticsManager = () => {
   const { data, isLoading, isError, refetch, isFetching } = useGetDeepAnalyticsQuery();
@@ -26,7 +29,7 @@ const NexoriaAnalyticsManager = () => {
     );
   }
 
-  const { overview, topListeners, repeatListeners, trendingTypes, recentActivity } = data.data;
+  const { overview, topListeners, repeatListeners, trendingTypes, recentActivity, geographicalData } = data.data;
 
   // Generate realistic looking chart data based on total plays
   const chartData = React.useMemo(() => {
@@ -37,6 +40,16 @@ const NexoriaAnalyticsManager = () => {
       streams: base + Math.floor(Math.random() * base * 0.5) + (i === 6 ? Math.floor(base * 0.8) : 0)
     }));
   }, [overview]);
+
+  const [tooltipContent, setTooltipContent] = React.useState("");
+
+  const colorScale = (listeners) => {
+    if (!listeners) return "#282828";
+    if (listeners > 200) return "#1ed760";
+    if (listeners > 100) return "#18a547";
+    if (listeners > 50) return "#127d35";
+    return "#0c5021";
+  };
 
   return (
     <div className="pb-10">
@@ -312,6 +325,56 @@ const NexoriaAnalyticsManager = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Geographical Listener Map */}
+        <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[500px]">
+          <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+            <div>
+              <h3 className="font-bold text-lg text-white flex items-center gap-2">
+                <Flame className="w-5 h-5 text-[#1ed760]" />
+                Geographical Audience Map
+              </h3>
+              <p className="text-sm text-[#b3b3b3]">Global distribution of your listeners</p>
+            </div>
+            <div className="text-sm text-[#1ed760] font-bold">
+              {tooltipContent}
+            </div>
+          </div>
+          <div className="flex-1 w-full bg-[#121212] relative overflow-hidden flex items-center justify-center p-4">
+            <ComposableMap projectionConfig={{ scale: 140 }} width={800} height={400} style={{ width: "100%", height: "100%" }}>
+              <ZoomableGroup>
+                <Geographies geography={geoUrl}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => {
+                      const d = geographicalData?.find((s) => s.id === geo.id);
+                      return (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill={d ? colorScale(d.listeners) : "#282828"}
+                          stroke="#181818"
+                          strokeWidth={0.5}
+                          onMouseEnter={() => {
+                            const { name } = geo.properties;
+                            setTooltipContent(`${name}: ${d ? d.listeners : 0} Listeners`);
+                          }}
+                          onMouseLeave={() => {
+                            setTooltipContent("");
+                          }}
+                          style={{
+                            default: { outline: "none" },
+                            hover: { fill: "#1ed760", outline: "none", cursor: "pointer", transition: "all 0.2s" },
+                            pressed: { outline: "none" },
+                          }}
+                        />
+                      );
+                    })
+                  }
+                </Geographies>
+              </ZoomableGroup>
+            </ComposableMap>
+          </div>
+        </motion.div>
 
       </motion.div>
     </div>

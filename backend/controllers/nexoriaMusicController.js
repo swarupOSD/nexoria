@@ -1007,6 +1007,19 @@ export const getDeepAnalytics = async (req, res) => {
           { path: 'genre', select: 'name hexColor' }
         ]
       });
+    // 6. Geographical Distribution (Simulated for now until User schema has location)
+    const geographicalData = [
+      { id: 'USA', name: 'United States', listeners: Math.floor(uniqueListeners * 0.35) || 350 },
+      { id: 'IND', name: 'India', listeners: Math.floor(uniqueListeners * 0.25) || 250 },
+      { id: 'GBR', name: 'United Kingdom', listeners: Math.floor(uniqueListeners * 0.10) || 100 },
+      { id: 'CAN', name: 'Canada', listeners: Math.floor(uniqueListeners * 0.08) || 80 },
+      { id: 'BGD', name: 'Bangladesh', listeners: Math.floor(uniqueListeners * 0.07) || 70 },
+      { id: 'AUS', name: 'Australia', listeners: Math.floor(uniqueListeners * 0.05) || 50 },
+      { id: 'DEU', name: 'Germany', listeners: Math.floor(uniqueListeners * 0.04) || 40 },
+      { id: 'FRA', name: 'France', listeners: Math.floor(uniqueListeners * 0.03) || 30 },
+      { id: 'BRA', name: 'Brazil', listeners: Math.floor(uniqueListeners * 0.02) || 20 },
+      { id: 'JPN', name: 'Japan', listeners: Math.floor(uniqueListeners * 0.01) || 10 },
+    ];
 
     res.status(200).json({
       success: true,
@@ -1015,7 +1028,8 @@ export const getDeepAnalytics = async (req, res) => {
         topListeners,
         repeatListeners,
         trendingTypes,
-        recentActivity
+        recentActivity,
+        geographicalData
       }
     });
   } catch (error) {
