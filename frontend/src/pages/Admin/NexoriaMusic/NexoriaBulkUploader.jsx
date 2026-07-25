@@ -145,7 +145,7 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
       try {
         // 1. Resolve Artist
         let artistId = null;
-        if (item.artistName && item.artistName !== 'Unknown Artist') {
+        if (item.artistName) {
           const existingArtist = artists.find(a => a.name.toLowerCase() === item.artistName.toLowerCase());
           if (existingArtist) {
             artistId = existingArtist._id;
