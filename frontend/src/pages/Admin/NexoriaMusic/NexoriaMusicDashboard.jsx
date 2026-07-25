@@ -87,7 +87,7 @@ const NexoriaMusicDashboard = () => {
       </main>
 
       {/* Mobile Bottom Navigation (Spotify Mobile Style) */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[65px] bg-gradient-to-t from-black via-black/95 to-black/80 backdrop-blur-lg border-t border-white/5 flex items-center justify-around z-50 px-2 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[65px] bg-gradient-to-t from-black via-black/95 to-black/80 backdrop-blur-lg border-t border-white/5 flex items-center overflow-x-auto hide-scrollbar z-50 px-2 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -95,7 +95,7 @@ const NexoriaMusicDashboard = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center w-[20%] gap-1 transition-colors ${
+              className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[72px] h-full gap-1 transition-colors ${
                 isActive ? 'text-white' : 'text-[#b3b3b3] hover:text-white'
               }`}
             >
