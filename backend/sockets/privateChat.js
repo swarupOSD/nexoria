@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+﻿import crypto from 'crypto';
 
 // In-memory store for ephemeral rooms. Key: teamCode
 const activeRooms = new Map();
@@ -249,6 +249,5 @@ export const registerPrivateChatHandlers = (io, socket) => {
   // Also handle disconnect to clean up
   socket.on('disconnect', handleLeave);
 };
-e x p o r t   c o n s t   g e t A c t i v e S e c r e t R o o m s   =   ( )   = >   A r r a y . f r o m ( a c t i v e R o o m s . v a l u e s ( ) ) ;  
- e x p o r t   c o n s t   d e s t r o y S e c r e t R o o m   =   ( t e a m C o d e ,   i o )   = >   {   c o n s t   r o o m   =   a c t i v e R o o m s . g e t ( t e a m C o d e ) ;   i f   ( r o o m )   {   i o . t o ( ' p r i v a t e _ '   +   t e a m C o d e ) . e m i t ( ' r o o m D e s t r o y e d ' ,   {   m e s s a g e :   ' R o o m   t e r m i n a t e d   b y   A d m i n . '   } ) ;   i o . i n ( ' p r i v a t e _ '   +   t e a m C o d e ) . s o c k e t s L e a v e ( ' p r i v a t e _ '   +   t e a m C o d e ) ;   a c t i v e R o o m s . d e l e t e ( t e a m C o d e ) ;   r e t u r n   t r u e ;   }   r e t u r n   f a l s e ;   } ;  
- 
+export const getActiveSecretRooms = () => Array.from(activeRooms.values());
+export const destroySecretRoom = (teamCode, io) => { const room = activeRooms.get(teamCode); if (room) { io.to('private_' + teamCode).emit('roomDestroyed', { message: 'Room terminated by Admin.' }); io.in('private_' + teamCode).socketsLeave('private_' + teamCode); activeRooms.delete(teamCode); return true; } return false; };
