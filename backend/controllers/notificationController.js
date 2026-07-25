@@ -1,5 +1,6 @@
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
+import { getIO } from '../config/socket.js';
 
 export const broadcastNotification = async (req, res) => {
   try {
@@ -25,6 +26,14 @@ export const broadcastNotification = async (req, res) => {
 
     if (notifications.length > 0) {
       await Notification.insertMany(notifications);
+      
+      // Emit to all connected clients
+      try {
+        const io = getIO();
+        io.emit('newNotification', { title, message, type, actionUrl, icon });
+      } catch (err) {
+        console.error('Socket emission failed:', err);
+      }
     }
 
     res.status(200).json({ success: true, message: `Broadcast sent to ${notifications.length} users` });
@@ -50,6 +59,14 @@ export const sendDirectNotification = async (req, res) => {
       icon: icon || 'Mail',
       isRead: false
     });
+
+    try {
+      const io = getIO();
+      // Emitting to a specific user's room (assuming they join a room with their userId)
+      io.to(userId.toString()).emit('newNotification', notification);
+    } catch (err) {
+      console.error('Socket emission failed:', err);
+    }
 
     res.status(200).json({ success: true, message: 'Message sent successfully', data: notification });
   } catch (error) {

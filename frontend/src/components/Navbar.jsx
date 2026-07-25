@@ -286,7 +286,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'backdrop-blur-3xl bg-white/60 dark:bg-[#050505]/60 border-b border-black/5 dark:border-white/5 shadow-[0_10px_40px_rgba(0,0,0,0.1)] py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'cyber-glass neon-border py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
         <div className="container mx-auto px-4 flex items-center justify-between">
           
           {/* Logo */}

@@ -185,7 +185,19 @@ body[data-theme="cyberpunk"] button:hover {
   }
 
   .glass-panel {
-    @apply backdrop-blur-3xl bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300;
+    @apply backdrop-blur-3xl bg-white/90 dark:bg-[#0A0A0A]/90 border border-slate-200/50 dark:border-white/10 rounded-3xl shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-300;
+  }
+
+  .cyber-glass {
+    @apply backdrop-blur-3xl bg-black/40 border border-white/10 shadow-[0_0_15px_rgba(0,212,255,0.15)] transition-all duration-300;
+  }
+
+  .neon-border {
+    @apply relative before:absolute before:inset-0 before:p-[1px] before:-z-10 before:rounded-[inherit] before:bg-gradient-to-r before:from-[var(--color-primary)] before:to-[var(--color-accent)] before:opacity-50 hover:before:opacity-100 before:transition-opacity;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary-alpha);
   }
 
   /* Global Button Polish */
