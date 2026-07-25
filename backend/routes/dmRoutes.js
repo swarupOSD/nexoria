@@ -5,7 +5,7 @@ import {
   deleteAdminConversation, 
   restrictUserDMs 
 } from '../controllers/dmController.js';
-import { protect, authorize } from '../middlewares/authMiddleware.js';
+import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
 
