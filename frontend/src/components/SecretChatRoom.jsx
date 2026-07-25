@@ -130,13 +130,17 @@ const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg })
       <button type="button" onClick={onClose} style={{ color: 'rgba(255,255,255,0.3)' }}><X className="w-4 h-4" /></button>
     </div>
     <div className="mb-4">
-      <input 
-        type="text" 
-        value={customBg} 
-        onChange={(e) => setCustomBg(e.target.value)} 
-        placeholder="Custom background URL..."
-        className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white placeholder:text-white/20"
-      />
+      <div className="flex gap-2">
+        <input 
+          type="text" 
+          value={customBg} 
+          onChange={(e) => setCustomBg(e.target.value)} 
+          placeholder="Custom background URL..."
+          className="flex-1 bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white placeholder:text-white/20"
+        />
+        <button onClick={() => {}} className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 rounded-lg transition-colors">Apply</button>
+      </div>
+      <p className="text-[9px] text-white/40 mt-1 pl-1">Paste an image URL and click Apply (Changes instantly).</p>
     </div>
     <div className="grid grid-cols-4 gap-2">
       {Object.entries(THEMES).map(([key, t]) => (
