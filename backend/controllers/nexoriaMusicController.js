@@ -20,14 +20,48 @@ import https from 'https';
 
 export const createArtist = async (req, res) => {
   try {
-    const { name, bio, image, coverImage, socialLinks, isVerified } = req.body;
+    let { name, bio, image, coverImage, socialLinks, isVerified } = req.body;
+    
+    // Auto-enrich profile using Wikipedia API if bio or image is missing
+    if ((!bio || !image) && name && name !== 'Unknown Artist') {
+      try {
+        const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro&explaintext&titles=${encodeURIComponent(name)}&format=json&pithumbsize=800`;
+        const wikiRes = await axios.get(wikiUrl);
+        const pages = wikiRes.data?.query?.pages;
+        
+        if (pages) {
+          const pageId = Object.keys(pages)[0];
+          if (pageId && pageId !== '-1') {
+            const pageData = pages[pageId];
+            
+            // Extract Bio
+            if (!bio && pageData.extract) {
+              const bioText = pageData.extract.split('\n\n').slice(0, 2).join('\n\n').trim();
+              if (bioText.length > 50) {
+                bio = bioText;
+              }
+            }
+            
+            // Extract Image
+            if (!image && pageData.thumbnail && pageData.thumbnail.source) {
+              image = pageData.thumbnail.source;
+              // Auto-verify if they have a Wikipedia page!
+              isVerified = true;
+            }
+          }
+        }
+      } catch (scrapeErr) {
+        console.error('Auto-scrape Wikipedia Error:', scrapeErr.message);
+      }
+    }
+
     const artist = await NexoriaArtist.create({
       name,
-      bio,
-      image,
-      coverImage,
+      bio: bio || `Auto-generated profile for ${name}.`,
+      image: image || null,
+      coverImage: coverImage || null,
       socialLinks,
-      isVerified,
+      isVerified: isVerified || false,
       addedBy: req.user._id
     });
     res.status(201).json({ success: true, data: artist });
