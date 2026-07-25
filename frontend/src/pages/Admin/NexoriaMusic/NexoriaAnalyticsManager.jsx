@@ -9,6 +9,17 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const NexoriaAnalyticsManager = () => {
   const { data, isLoading, isError, refetch, isFetching } = useGetDeepAnalyticsQuery();
+  const [tooltipContent, setTooltipContent] = React.useState("");
+
+  const overview = data?.data?.overview;
+  const chartData = React.useMemo(() => {
+    if (!overview) return [];
+    const base = Math.max(10, Math.floor(overview.totalPlays / 30));
+    return Array.from({ length: 7 }).map((_, i) => ({
+      name: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
+      streams: base + Math.floor(Math.random() * base * 0.5) + (i === 6 ? Math.floor(base * 0.8) : 0)
+    }));
+  }, [overview]);
 
   if (isLoading) {
     return (
@@ -29,19 +40,7 @@ const NexoriaAnalyticsManager = () => {
     );
   }
 
-  const { overview, topListeners, repeatListeners, trendingTypes, recentActivity, geographicalData } = data.data;
-
-  // Generate realistic looking chart data based on total plays
-  const chartData = React.useMemo(() => {
-    if (!overview) return [];
-    const base = Math.max(10, Math.floor(overview.totalPlays / 30));
-    return Array.from({ length: 7 }).map((_, i) => ({
-      name: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      streams: base + Math.floor(Math.random() * base * 0.5) + (i === 6 ? Math.floor(base * 0.8) : 0)
-    }));
-  }, [overview]);
-
-  const [tooltipContent, setTooltipContent] = React.useState("");
+  const { topListeners, repeatListeners, trendingTypes, recentActivity, geographicalData } = data.data;
 
   const colorScale = (listeners) => {
     if (!listeners) return "#282828";
