@@ -26,7 +26,11 @@ export const createArtist = async (req, res) => {
     if ((!bio || !image) && name && name !== 'Unknown Artist') {
       try {
         const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&exintro&explaintext&titles=${encodeURIComponent(name)}&format=json&pithumbsize=800`;
-        const wikiRes = await axios.get(wikiUrl);
+        const wikiRes = await axios.get(wikiUrl, {
+          headers: {
+            'User-Agent': 'NexoriaMusicApp/1.0 (contact@nexoria.com)'
+          }
+        });
         const pages = wikiRes.data?.query?.pages;
         
         if (pages) {
