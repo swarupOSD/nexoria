@@ -481,9 +481,10 @@ function App() {
               <Route path="arena-games" element={<ManageArenaGames />} />
             </Route>
           </Routes>
+        </Suspense>
         </ErrorBoundary>
-      </Suspense>
       <SecretLoungeButton />
+
       <AdBlockDetector />
     </KidsModeGuard>
       </Router>
