@@ -503,6 +503,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       setMessages(prev => prev.map(m => m._id === messageId ? { ...m, content: newContent, isEdited: true } : m));
     });
 
+    socket.on('privateGameUpdated', ({ messageId, gameData }) => {
+      setMessages(prev => prev.map(m => m._id === messageId ? { ...m, gameData } : m));
+    });
+
     socket.on('privateMessageReactionUpdated', ({ messageId, reactions }) => {
       setMessages(prev => prev.map(m => m._id === messageId ? { ...m, reactions } : m));
     });
@@ -546,6 +550,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     return () => {
       socket.off('newPrivateMessage');
       socket.off('privateMessageEdited');
+      socket.off('privateGameUpdated');
       socket.off('privateMessageReactionUpdated');
       socket.off('privateMessageUnsent');
       socket.off('privateThemeChanged');
@@ -864,6 +869,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               <Smile className="w-5 h-5" />
             </button>
             <AnimatePresence>{showEmoji && <EmojiPickerComponent onSelect={em => { setInputValue(prev => prev + em); setShowEmoji(false); }} onClose={() => setShowEmoji(false)} />}</AnimatePresence>
+            <AnimatePresence>{showGif && <GifPicker onSelect={handleSendGif} onClose={() => setShowGif(false)} />}</AnimatePresence>
           </div>
 
           <div className="relative flex-1">
