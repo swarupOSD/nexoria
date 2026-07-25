@@ -20,7 +20,8 @@ export const useWebAudio = (audioRef, isYouTube) => {
     // Detect mobile to prevent Web Audio API from breaking background playback
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    if (isYouTube || !audioRef.current || graphRef.current.ctx || isMobile) return;
+    // Temporarily disabled WebAudio API completely to fix CORS muting bugs.
+    return;
 
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
