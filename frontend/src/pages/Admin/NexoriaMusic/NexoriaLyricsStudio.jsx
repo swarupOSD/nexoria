@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, FastForward, Rewind, CheckCircle, Save, X, Mic2, FileText, Settings, SkipBack } from 'lucide-react';
+import { Play, Pause, FastForward, Rewind, CheckCircle, Save, X, Mic2, FileText, Settings, SkipBack, Music } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUpdateNexoriaTrackLyricsMutation, useGetTrackLyricsQuery } from '../../../features/api/nexoriaMusicApiSlice';
 import toast from 'react-hot-toast';
@@ -12,6 +12,8 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   const audioRef = useRef(null);
   
   const [updateLyrics, { isLoading: isSaving }] = useUpdateNexoriaTrackLyricsMutation();
@@ -252,19 +254,20 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
                          ref={audioRef} 
                          src={audioSrc}
                          onTimeUpdate={handleTimeUpdate}
+                         onLoadedMetadata={(e) => setDuration(e.target.duration)}
                          onEnded={() => setIsPlaying(false)}
                        />
                        
                        <div className="flex items-center justify-between mb-2">
                          <span className="text-xs text-[#b3b3b3] font-medium">{formatTime(currentTime)}</span>
-                         <span className="text-xs text-[#b3b3b3] font-medium">{formatTime(audioRef.current?.duration || 0)}</span>
+                         <span className="text-xs text-[#b3b3b3] font-medium">{formatTime(duration || 0)}</span>
                        </div>
                        
                        {/* Progress Bar (Visual Only) */}
                        <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden">
                          <div 
                            className="h-full bg-[#1ed760]" 
-                           style={{ width: `${(currentTime / (audioRef.current?.duration || 1)) * 100}%` }}
+                           style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
                          />
                        </div>
                      </div>

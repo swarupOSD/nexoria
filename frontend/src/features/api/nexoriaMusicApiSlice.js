@@ -281,13 +281,6 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     getDailyMix: builder.query({
       query: () => '/nexoria-music/daily-mix',
     }),
-    togglePlaylistCollaborative: builder.mutation({
-      query: (playlistId) => ({
-        url: `/nexoria-music/playlists/${playlistId}/collaborative`,
-        method: 'POST',
-      }),
-      invalidatesTags: ['NexoriaPlaylist'],
-    }),
     getUserProfile: builder.query({
       query: (id) => `/nexoria-music/users/${id}`,
     }),

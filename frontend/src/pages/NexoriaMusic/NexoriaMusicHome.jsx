@@ -116,7 +116,7 @@ const NexoriaMusicHome = () => {
 
   useEffect(() => {
     const hour = new Date().getHours();
-    let timeGreeting = '';
+    let timeGreeting;
     if (hour < 12) timeGreeting = 'Good morning';
     else if (hour < 18) timeGreeting = 'Good afternoon';
     else timeGreeting = 'Good evening';

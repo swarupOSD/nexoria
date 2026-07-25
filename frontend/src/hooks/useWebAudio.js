@@ -23,6 +23,7 @@ export const useWebAudio = (audioRef, isYouTube) => {
     // Temporarily disabled WebAudio API completely to fix CORS muting bugs.
     return;
 
+    // eslint-disable-next-line no-unreachable
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioContext();
