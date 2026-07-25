@@ -12,10 +12,10 @@ import {
   useUploadNexoriaTrackAudioMutation,
   useUpdateNexoriaTrackLyricsMutation,
   useGetTrackLyricsQuery
-} from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud } from 'lucide-react';
+import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud, Mic2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import NexoriaBulkUploader from './NexoriaBulkUploader';
+import NexoriaLyricsStudio from './NexoriaLyricsStudio';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
@@ -37,6 +37,7 @@ const NexoriaTracksManager = () => {
   
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [lyricsStudioTrack, setLyricsStudioTrack] = useState(null);
   const [editTarget, setEditTarget] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
@@ -268,6 +269,9 @@ const NexoriaTracksManager = () => {
                 </div>
 
                 <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity pr-2">
+                  <button onClick={() => setLyricsStudioTrack(track)} className="text-[#1ed760] hover:scale-110 transition-transform" title="Lyrics Studio">
+                    <Mic2 className="w-4 h-4" />
+                  </button>
                   <button onClick={() => openEdit(track)} className="text-[#b3b3b3] hover:text-white transition-colors" title="Edit">
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -466,6 +470,13 @@ const NexoriaTracksManager = () => {
       <NexoriaBulkUploader 
         isOpen={isBulkModalOpen} 
         onClose={() => setIsBulkModalOpen(false)} 
+      />
+
+      {/* Lyrics Studio */}
+      <NexoriaLyricsStudio 
+        isOpen={!!lyricsStudioTrack} 
+        onClose={() => setLyricsStudioTrack(null)}
+        track={lyricsStudioTrack}
       />
     </div>
   );
