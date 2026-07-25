@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
@@ -119,7 +119,7 @@ const ReactionPicker = ({ onSelect, onClose }) => (
 );
 
 // ── Theme Picker ─────────────────────────────────────────────────────────────
-const ThemePicker = ({ currentTheme, onSelect, onClose }) => (
+const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg }) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
     className="absolute right-0 top-full mt-1 w-64 rounded-2xl p-4 shadow-2xl z-50"
@@ -128,6 +128,15 @@ const ThemePicker = ({ currentTheme, onSelect, onClose }) => (
     <div className="flex items-center justify-between mb-3">
       <h3 className="text-white font-bold text-sm flex items-center gap-2"><Palette className="w-4 h-4" /> Room Theme</h3>
       <button type="button" onClick={onClose} style={{ color: 'rgba(255,255,255,0.3)' }}><X className="w-4 h-4" /></button>
+    </div>
+    <div className="mb-4">
+      <input 
+        type="text" 
+        value={customBg} 
+        onChange={(e) => setCustomBg(e.target.value)} 
+        placeholder="Custom background URL..."
+        className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white placeholder:text-white/20"
+      />
     </div>
     <div className="grid grid-cols-4 gap-2">
       {Object.entries(THEMES).map(([key, t]) => (
@@ -241,9 +250,44 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                       <motion.div key={i} animate={playingAudioId === msg._id ? { height: ['20%', '100%', '30%', '80%', '20%'] } : { height: '20%' }} transition={{ duration: 0.5 + Math.random()*0.5, repeat: Infinity, ease: 'easeInOut' }} className="flex-1 bg-white/50 rounded-full" />
                     ))}
                   </div>
+                  <button onClick={() => {
+                    const audio = audioRefs.current[msg._id];
+                    if (audio) {
+                      const speeds = [1, 1.5, 2];
+                      const currentIdx = speeds.indexOf(audio.playbackRate) || 0;
+                      audio.playbackRate = speeds[(currentIdx + 1) % speeds.length];
+                      // Force re-render just to show speed is complex without state, but we can just use native playbackRate.
+                      toast(`Speed set to ${audio.playbackRate}x`, { icon: '⚡' });
+                    }
+                  }} className="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-full text-white/80 hover:bg-white/20">1x</button>
                   <audio ref={el => audioRefs.current[msg._id] = el} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
                 </div>
-              ) : <p className="text-[15px] leading-relaxed break-words" style={{ color: isMe && tc.textColor ? tc.textColor : 'white' }}>{msg.content}</p>}
+              ) : msg.type === 'poll' ? (
+                <div className="min-w-[200px]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BarChart2 className="w-4 h-4 text-white/70" />
+                    <span className="font-bold text-sm text-white">{msg.pollData?.question || 'Poll'}</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {msg.pollData?.options?.map((opt, i) => (
+                      <button key={i} onClick={() => onReply({ ...msg, content: `Voted for: ${opt}` })} className="w-full text-left px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-sm text-white flex justify-between items-center border border-white/5">
+                        <span>{opt}</span>
+                        <div className="w-3 h-3 rounded-full border border-white/30"></div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : <p className="text-[15px] leading-relaxed break-words relative z-10" style={{ color: isMe && tc.textColor ? tc.textColor : 'white' }}>{msg.content}</p>}
+          
+          {msg.effect === 'confetti' && !isMe && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+              {[...Array(10)].map((_, i) => <motion.div key={i} animate={{ y: [0, 100], x: [0, (Math.random()-0.5)*50], opacity: [1, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute top-0 w-1.5 h-1.5 bg-yellow-400 rounded-sm" style={{ left: `${Math.random()*100}%`, backgroundColor: ['#ff0', '#f0f', '#0ff'][i%3] }} />)}
+            </div>
+          )}
+          {msg.effect === 'laser' && (
+            <motion.div animate={{ opacity: [0.2, 0.8, 0.2] }} transition={{ duration: 2, repeat: Infinity }} className="absolute inset-0 rounded-3xl pointer-events-none border border-[#0ff] shadow-[0_0_15px_#0ff]" />
+          )}
+
           <div className={`flex items-center gap-1 mt-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
             <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{fmtTime(msg.createdAt)}</span>
           </div>
@@ -296,11 +340,18 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [playingAudioId, setPlayingAudioId] = useState(null);
   const [lightboxImg, setLightboxImg] = useState(null);
   
-  // Call States
   const [activeCallType, setActiveCallType] = useState(null);
   const [isReceivingCall, setIsReceivingCall] = useState(false);
   const [callerSignal, setCallerSignal] = useState(null);
   const [callerInfo, setCallerInfo] = useState(null);
+
+  // Next-Gen Features
+  const [vanishMode, setVanishMode] = useState(false);
+  const [selectedEffect, setSelectedEffect] = useState('');
+  const [customBg, setCustomBg] = useState('');
+  const [showDraw, setShowDraw] = useState(false);
+  const [showPoll, setShowPoll] = useState(false);
+  const [smartReplies, setSmartReplies] = useState([]);
 
   // Voice Recording States
   const [isRecording, setIsRecording] = useState(false);
@@ -325,6 +376,32 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   useEffect(() => { scrollToBottom(); }, [messages, isPartnerTyping]);
+
+  useEffect(() => {
+    if (!messages.length) return;
+    const lastMsg = messages[messages.length - 1];
+    
+    // Smart Replies
+    if (lastMsg.sender._id !== user._id && lastMsg.type === 'text') {
+      const text = lastMsg.content.toLowerCase();
+      if (text.includes('?')) setSmartReplies(['Yes', 'No', 'Maybe', 'I don\'t know']);
+      else if (text.includes('hi') || text.includes('hello')) setSmartReplies(['Hey!', 'Hi there!', 'What\'s up?']);
+      else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['😂', 'Lmao', 'So funny']);
+      else if (text.includes('bye')) setSmartReplies(['Goodbye!', 'See ya!', 'Take care']);
+      else setSmartReplies(['Okay', 'Cool', 'Got it', '👍']);
+    } else {
+      setSmartReplies([]);
+    }
+
+    // Vanish Mode Timers
+    messages.forEach(msg => {
+      if (msg.isVanish && !msg.isUnsent) {
+        setTimeout(() => {
+          handleUnsend(msg._id);
+        }, 10000);
+      }
+    });
+  }, [messages]);
 
   useEffect(() => {
     if (!socket) return;
@@ -405,13 +482,19 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   const handleSendText = (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     if (!inputValue.trim()) return;
-    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: inputValue.trim(), replyTo });
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: inputValue, replyTo, isVanish: vanishMode, effect: selectedEffect });
     setInputValue('');
     setReplyTo(null);
-    setShowEmoji(false);
-    socket.emit('privateTypingStop', { teamCode: roomData.teamCode });
+    setSelectedEffect('');
+    scrollToBottom();
+  };
+
+  const handleSendSmartReply = (reply) => {
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: reply, replyTo: null, isVanish: vanishMode, effect: '' });
+    setSmartReplies([]);
+    scrollToBottom();
   };
 
   const handleSendImage = (e) => {
@@ -488,7 +571,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
         reader.onloadend = () => {
-          socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'voice', content: reader.result, replyTo });
+          socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'voice', content: reader.result, isVanish: vanishMode, replyTo });
           setReplyTo(null);
         };
         stream.getTracks().forEach(track => track.stop());
@@ -559,6 +642,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         </div>
 
         <div className="flex items-center gap-2 relative">
+          <button onClick={() => setVanishMode(!vanishMode)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${vanishMode ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'hover:bg-white/10 text-white'}`} title="Vanish Mode">
+            <EyeOff className="w-5 h-5" />
+          </button>
           <button onClick={() => handleCall('audio')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Phone className="w-5 h-5" /></button>
           <button onClick={() => handleCall('video')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Video className="w-5 h-5" /></button>
           <button onClick={() => setShowTheme(!showTheme)} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors relative">
@@ -567,7 +653,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </button>
           <button onClick={onLeave} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-500/20 text-red-500 transition-colors"><LogOut className="w-5 h-5" /></button>
           
-          <AnimatePresence>{showTheme && <ThemePicker currentTheme={activeTheme} onSelect={handleChangeTheme} onClose={() => setShowTheme(false)} />}</AnimatePresence>
+          <AnimatePresence>{showTheme && <ThemePicker currentTheme={activeTheme} onSelect={handleChangeTheme} onClose={() => setShowTheme(false)} customBg={customBg} setCustomBg={setCustomBg} />}</AnimatePresence>
         </div>
       </div>
 
@@ -638,7 +724,22 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       </div>
 
       {/* ── Input Area ── */}
-      <div className="p-3 z-20 pb-6" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="p-3 z-20 pb-6" style={{ background: vanishMode ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        
+        {/* Smart Replies */}
+        <AnimatePresence>
+          {smartReplies.length > 0 && !inputValue && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="max-w-4xl mx-auto flex gap-2 mb-3 overflow-x-auto scrollbar-hide px-2">
+              <Sparkles className="w-4 h-4 text-purple-400 flex-shrink-0 mt-1" />
+              {smartReplies.map((reply, i) => (
+                <button key={i} onClick={() => handleSendSmartReply(reply)} className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs rounded-full whitespace-nowrap transition-colors border border-white/5">
+                  {reply}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <AnimatePresence>
           {replyTo && (
             <motion.div initial={{ opacity: 0, y: 10, height: 0 }} animate={{ opacity: 1, y: 0, height: 'auto' }} exit={{ opacity: 0, y: 10, height: 0 }}
@@ -672,8 +773,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                 placeholder="Message..."
                 className="flex-1 bg-transparent text-white py-3 outline-none text-[15px] placeholder-white/40"
               />
-              {inputValue.trim() ? (
-                <button type="submit" className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send</button>
+              {inputValue.trim() || selectedEffect ? (
+                <div className="flex items-center gap-2">
+                  {!inputValue.trim() && selectedEffect ? (
+                    <button type="submit" className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send Effect</button>
+                  ) : null}
+                  <button type="button" onContextMenu={(e) => { e.preventDefault(); setSelectedEffect(prev => prev === 'confetti' ? 'laser' : 'confetti'); }} onClick={handleSendText} className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send</button>
+                </div>
               ) : (
                 <div className="flex items-center gap-1 ml-2">
                   <div className="relative">
@@ -682,6 +788,8 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   </div>
                   <button type="button" onClick={() => setIsMusicModalOpen(true)} className="p-2 text-white/50 hover:text-white transition-colors"><Music className="w-5 h-5" /></button>
                   <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 text-white/50 hover:text-white transition-colors"><ImageIcon className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setShowDraw(true)} className="p-2 text-white/50 hover:text-white transition-colors"><PenTool className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setShowPoll(true)} className="p-2 text-white/50 hover:text-white transition-colors"><BarChart2 className="w-5 h-5" /></button>
                 </div>
               )}
             </form>
@@ -727,6 +835,54 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <AnimatePresence>
+        {showDraw && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <div className="bg-[#1a1a3a] p-4 rounded-3xl w-full max-w-sm border border-white/10 flex flex-col gap-4">
+              <div className="flex justify-between items-center"><h3 className="text-white font-bold">Doodle</h3><button onClick={() => setShowDraw(false)} className="text-white/50 hover:text-white"><X className="w-5 h-5"/></button></div>
+              <div className="bg-white rounded-xl h-64 relative overflow-hidden" 
+                onPointerMove={e => {
+                  if (e.buttons !== 1) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const dot = document.createElement('div');
+                  dot.className = 'absolute w-3 h-3 bg-black rounded-full pointer-events-none';
+                  dot.style.left = `${e.clientX - rect.left - 6}px`;
+                  dot.style.top = `${e.clientY - rect.top - 6}px`;
+                  e.currentTarget.appendChild(dot);
+                }}
+              ></div>
+              <button onClick={(e) => {
+                // Mock sending canvas
+                socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: '🖍️ Sent a doodle!', isVanish: vanishMode, effect: selectedEffect });
+                setShowDraw(false);
+              }} className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-colors">Send Doodle</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPoll && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <div className="bg-[#1a1a3a] p-4 rounded-3xl w-full max-w-sm border border-white/10 flex flex-col gap-3">
+              <div className="flex justify-between items-center"><h3 className="text-white font-bold flex items-center gap-2"><BarChart2 className="w-5 h-5"/> Create Poll</h3><button onClick={() => setShowPoll(false)} className="text-white/50 hover:text-white"><X className="w-5 h-5"/></button></div>
+              <input type="text" id="pollQ" placeholder="Ask a question..." className="w-full bg-black/50 text-white px-4 py-3 rounded-xl outline-none border border-white/10" />
+              <input type="text" id="pollO1" placeholder="Option 1" className="w-full bg-black/30 text-white px-4 py-2 rounded-xl outline-none border border-white/5" />
+              <input type="text" id="pollO2" placeholder="Option 2" className="w-full bg-black/30 text-white px-4 py-2 rounded-xl outline-none border border-white/5" />
+              <button onClick={() => {
+                const q = document.getElementById('pollQ').value;
+                const o1 = document.getElementById('pollO1').value;
+                const o2 = document.getElementById('pollO2').value;
+                if (!q || !o1 || !o2) return toast.error('Fill in question and options');
+                socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'poll', pollData: { question: q, options: [o1, o2] }, isVanish: vanishMode });
+                setShowPoll(false);
+              }} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2 transition-colors">Send Poll</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

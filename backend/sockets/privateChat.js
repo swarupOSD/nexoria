@@ -1,4 +1,4 @@
-﻿import crypto from 'crypto';
+import crypto from 'crypto';
 
 // In-memory store for ephemeral rooms. Key: teamCode
 const activeRooms = new Map();
@@ -98,7 +98,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
   });
 
   // Send a message or image or gif
-  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo }) => {
+  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo, isVanish, effect, pollData }) => {
     if (!socket.user) return;
     const room = activeRooms.get(teamCode);
     if (!room || !room.participants.has(socket.id)) return;
@@ -110,6 +110,9 @@ export const registerPrivateChatHandlers = (io, socket) => {
       content,
       gifData,
       replyTo,
+      isVanish,
+      effect,
+      pollData,
       reactions: [],
       createdAt: Date.now(),
       isEdited: false,
