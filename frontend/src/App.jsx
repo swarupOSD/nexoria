@@ -14,7 +14,6 @@ import Notifications from './pages/Notifications';
 import UserActivity from './pages/UserActivity';
 import VideoDownloader from './pages/VideoDownloader';
 import AdBlockDetector from './components/AdBlockDetector';
-import SecretLoungeButton from './components/SecretLoungeButton';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
 import Support from './pages/Support';
@@ -486,8 +485,6 @@ function App() {
           </Routes>
         </Suspense>
         </ErrorBoundary>
-      <SecretLoungeButton />
-
       <AdBlockDetector />
     </KidsModeGuard>
       </Router>
