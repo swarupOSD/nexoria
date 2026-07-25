@@ -147,6 +147,12 @@ const NexoriaMusicHome = () => {
         {/* Mobile Header: Profile, Title, Icons */}
         <div className="flex items-center justify-between mb-6 sm:hidden">
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => navigate('/user/dashboard')}
+              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
             <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden flex items-center justify-center font-bold text-white text-sm">
               {user?.profilePicture ? (
                 <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
@@ -170,7 +176,14 @@ const NexoriaMusicHome = () => {
         </div>
 
         {/* Desktop Header Greeting */}
-        <div className="hidden sm:block mb-6">
+        <div className="hidden sm:flex items-center gap-4 mb-6">
+          <button 
+            onClick={() => navigate('/user/dashboard')}
+            className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-md"
+            title="Back to Hub"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
           <h1 className="text-[32px] font-bold tracking-tight">{greetingText}</h1>
         </div>
 
