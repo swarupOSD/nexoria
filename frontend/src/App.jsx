@@ -168,6 +168,8 @@ const AdminAddGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/AddGame'));
 const AdminEditGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/EditGame'));
 const ManageArenaGames = lazy(() => import('./pages/SuperAdmin/ManageArenaGames'));
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 // Loader component for suspense fallback
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#0F172A]">
@@ -241,243 +243,245 @@ function App() {
         <NexoriaPlayer />
         <GlobalChatBubble />
         <CyberpunkParticles />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route element={<PrivateRoute />}>
-              <Route path="/moviebox/watch-party/:slug" element={<WatchParty />} />
-            </Route>
-
-            <Route path="/" element={<Layout />}>
-              {/* Public Routes */}
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="forgot-password" element={<ForgotPassword />} />
-              <Route path="forgotpassword" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
-              <Route path="support" element={<Support />} />
-              <Route path="contact" element={<Support />} />
-              <Route path="privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="terms-of-service" element={<TermsOfService />} />
-              <Route path="dmca" element={<DmcaDisclaimer />} />
-              <Route path="about-us" element={<AboutUs />} />
-              <Route path="sitemap" element={<Sitemap />} />
-              <Route path="legal/:pageSlug" element={<Legal />} />
-
-              {/* Protected Routes inside Layout */}
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
               <Route element={<PrivateRoute />}>
-                <Route index element={<Home />} />
-                <Route path="/post/:slug" element={<SinglePost />} />
-                <Route path="/download-timer" element={<DownloadTimer />} />
-                <Route path="/apps" element={<CategoryPage type="App" />} />
-                <Route path="requests" element={<FeatureRequests />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/sound" element={<NexoriaSound />} />
-                <Route path="/sound/search" element={<GlobalMusicSearch />} />
-                <Route path="/sound/queue" element={<SoundQueue />} />
+                <Route path="/moviebox/watch-party/:slug" element={<WatchParty />} />
+              </Route>
 
-                <Route path="/category/:slug" element={<CategoryPage />} />
-                <Route path="categories" element={<AllCategories />} />
-                <Route path="category/:slug" element={<CategoryPage />} />
-                <Route path="search" element={<SearchPage />} />
-                <Route path="post/:slug" element={<SinglePost />} />
-                <Route path="download/:slug" element={<DownloadFlow />} />
-                <Route path="premium" element={<Premium />} />
-                <Route path="video-downloader" element={<VideoDownloader />} />
-        {/* VIP Lounge */}
-        <Route path="/vip-lounge" element={<VIPLounge />} />
-        <Route path="/voice-lounge" element={<VoiceLounge />} />
-                
-                {/* User Dashboard Routes */}
-                <Route path="dashboard" element={<UserDashboard />} />
-                <Route path="change-password" element={<ChangePassword />} />
-                <Route path="notifications" element={<Notifications />} />
-                <Route path="activity" element={<UserActivity />} />
-                <Route path="secret-lounge" element={<SecretLounge />} />
-                <Route path="messages" element={<Messages />} />
+              <Route path="/" element={<Layout />}>
+                {/* Public Routes */}
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route path="forgotpassword" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="support" element={<Support />} />
+                <Route path="contact" element={<Support />} />
+                <Route path="privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="terms-of-service" element={<TermsOfService />} />
+                <Route path="dmca" element={<DmcaDisclaimer />} />
+                <Route path="about-us" element={<AboutUs />} />
+                <Route path="sitemap" element={<Sitemap />} />
+                <Route path="legal/:pageSlug" element={<Legal />} />
+
+                {/* Protected Routes inside Layout */}
+                <Route element={<PrivateRoute />}>
+                  <Route index element={<Home />} />
+                  <Route path="/post/:slug" element={<SinglePost />} />
+                  <Route path="/download-timer" element={<DownloadTimer />} />
+                  <Route path="/apps" element={<CategoryPage type="App" />} />
+                  <Route path="requests" element={<FeatureRequests />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/sound" element={<NexoriaSound />} />
+                  <Route path="/sound/search" element={<GlobalMusicSearch />} />
+                  <Route path="/sound/queue" element={<SoundQueue />} />
+
+                  <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="categories" element={<AllCategories />} />
+                  <Route path="category/:slug" element={<CategoryPage />} />
+                  <Route path="search" element={<SearchPage />} />
+                  <Route path="post/:slug" element={<SinglePost />} />
+                  <Route path="download/:slug" element={<DownloadFlow />} />
+                  <Route path="premium" element={<Premium />} />
+                  <Route path="video-downloader" element={<VideoDownloader />} />
+          {/* VIP Lounge */}
+          <Route path="/vip-lounge" element={<VIPLounge />} />
+          <Route path="/voice-lounge" element={<VoiceLounge />} />
+                  
+                  {/* User Dashboard Routes */}
+                  <Route path="dashboard" element={<UserDashboard />} />
+                  <Route path="change-password" element={<ChangePassword />} />
+                  <Route path="notifications" element={<Notifications />} />
+                  <Route path="activity" element={<UserActivity />} />
+                  <Route path="secret-lounge" element={<SecretLounge />} />
+                  <Route path="messages" element={<Messages />} />
+                </Route>
+              </Route>
+
+            {/* Nexoria Music Platform Routes (Spotify Clone) */}
+            <Route element={<PrivateRoute />}>
+              <Route path="nexoria-music" element={<NexoriaMusicLayout />}>
+                <Route index element={<NexoriaMusicHome />} />
+                <Route path="search" element={<NexoriaMusicSearch />} />
+                <Route path="library" element={<NexoriaMusicLibrary />} />
+                <Route path="liked-songs" element={<NexoriaMusicLikedSongs />} />
+                <Route path="downloaded" element={<NexoriaMusicDownloaded />} />
+                <Route path="tracks" element={<NexoriaMusicAllSongs />} />
+                <Route path="playlist/:id" element={<NexoriaMusicPlaylist />} />
+                <Route path="artist/:id" element={<NexoriaMusicArtist />} />
+                <Route path="album/:id" element={<NexoriaMusicAlbum />} />
+                <Route path="lyrics/:trackId" element={<NexoriaMusicLyrics />} />
+                <Route path="queue" element={<NexoriaMusicQueue />} />
+                <Route path="user/:id" element={<NexoriaMusicUserProfile />} />
               </Route>
             </Route>
 
-          {/* Nexoria Music Platform Routes (Spotify Clone) */}
-          <Route element={<PrivateRoute />}>
-            <Route path="nexoria-music" element={<NexoriaMusicLayout />}>
-              <Route index element={<NexoriaMusicHome />} />
-              <Route path="search" element={<NexoriaMusicSearch />} />
-              <Route path="library" element={<NexoriaMusicLibrary />} />
-              <Route path="liked-songs" element={<NexoriaMusicLikedSongs />} />
-              <Route path="downloaded" element={<NexoriaMusicDownloaded />} />
-              <Route path="tracks" element={<NexoriaMusicAllSongs />} />
-              <Route path="playlist/:id" element={<NexoriaMusicPlaylist />} />
-              <Route path="artist/:id" element={<NexoriaMusicArtist />} />
-              <Route path="album/:id" element={<NexoriaMusicAlbum />} />
-              <Route path="lyrics/:trackId" element={<NexoriaMusicLyrics />} />
-              <Route path="queue" element={<NexoriaMusicQueue />} />
-              <Route path="user/:id" element={<NexoriaMusicUserProfile />} />
+            {/* MovieBox Public Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="moviebox" element={<MovieBoxLayout />}>
+                <Route index element={<Navigate to="games" replace />} />
+                <Route path="movie/:slug" element={<MovieDetail />} />
+                <Route path="category/:slug" element={<MovieCategory />} />
+                <Route path="search" element={<MovieSearch />} />
+                
+                {/* Dynamic type browsing */}
+                <Route path="tv-shows" element={<MovieBrowse type="tv-shows" />} />
+                <Route path="movies" element={<MovieBrowse type="movies" />} />
+                <Route path="animation" element={<MovieBrowse type="animation" />} />
+                <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
+                <Route path="games" element={<Games />} />
+                <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
+                <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
+                <Route path="fm-download" element={<Navigate to="/sound" replace />} />
+              </Route>
             </Route>
-          </Route>
+            
+            <Route path="nexoria-arena" element={<NexoriaArena />} />
+            <Route path="/aura" element={<AuraLeaderboard />} />
+            <Route path="/aura/battle" element={<AuraBattle />} />
 
-          {/* MovieBox Public Routes */}
-          <Route element={<PrivateRoute />}>
-            <Route path="moviebox" element={<MovieBoxLayout />}>
-              <Route index element={<Navigate to="games" replace />} />
-              <Route path="movie/:slug" element={<MovieDetail />} />
-              <Route path="category/:slug" element={<MovieCategory />} />
-              <Route path="search" element={<MovieSearch />} />
+
+
+
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="posts" element={<AdminPosts />} />
+              <Route path="posts/create" element={<CreatePost />} />
+              <Route path="posts/edit/:id" element={<CreatePost />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="comments" element={<AdminComments />} />
+              <Route path="ratings" element={<AdminRatings />} />
+              <Route path="moderation" element={<AdminModeration />} />
+              <Route path="downloads" element={<AdminDownloads />} />
+              <Route path="reports" element={<AdminReports />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="yt-downloader" element={<AdminYTDownloader />} />
+              <Route path="contact" element={<SupportCenter />} />
+              <Route path="settings" element={<AdminSettings />} />
+              <Route path="adblock-analytics" element={<AdminAdblockAnalytics />} />
+              <Route path="activity-logs" element={<AdminActivityLogs />} />
+              <Route path="login-activity" element={<AdminLoginActivityLogs />} />
+              <Route path="premium-requests" element={<AdminPremiumRequests />} />
+              <Route path="live-monitor" element={<AdminLiveMonitor />} />
+              <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
+              <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
+              <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
+              <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
+              <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
+              <Route path="nexoria-music/playlist-builder" element={<NexoriaPlaylistBuilder />} />
               
-              {/* Dynamic type browsing */}
-              <Route path="tv-shows" element={<MovieBrowse type="tv-shows" />} />
-              <Route path="movies" element={<MovieBrowse type="movies" />} />
-              <Route path="animation" element={<MovieBrowse type="animation" />} />
-              <Route path="most-watched" element={<MovieBrowse type="most-watched" />} />
-              <Route path="games" element={<Games />} />
-              <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
-              <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
-              <Route path="fm-download" element={<Navigate to="/sound" replace />} />
+              <Route path="games" element={<AdminGamesList />} />
+              <Route path="games/add" element={<AdminAddGame />} />
+              <Route path="games/edit/:id" element={<AdminEditGame />} />
+              <Route path="arena-games" element={<ManageArenaGames />} />
+
+              <Route path="push-campaigns" element={<PushCampaigns />} />
+              <Route path="coupons" element={<CouponManager />} />
+              <Route path="app-requests" element={<AppRequestModeration />} />
+              <Route path="user-requests" element={<UserRequestsAdmin />} />
             </Route>
-          </Route>
-          
-          <Route path="nexoria-arena" element={<NexoriaArena />} />
-          <Route path="/aura" element={<AuraLeaderboard />} />
-          <Route path="/aura/battle" element={<AuraBattle />} />
 
+              {/* Super Admin Protected Routes */}
+            <Route path="/superadmin" element={<SuperAdminLayout />}>
+              <Route index element={<SuperDashboard />} />
+              <Route path="users" element={<ManageUsers />} />
+              <Route path="admins" element={<ManageAdmins />} />
+              <Route path="roles" element={<RolesPermissions />} />
+              <Route path="settings" element={<SiteSettings />} />
+              {/* Sponsored Content — safe alias, legacy /ads also kept */}
+              <Route path="ads" element={<SponsoredContent />} />
+              <Route path="sponsored-content" element={<SponsoredContent />} />
+              <Route path="database" element={<DatabaseManagement />} />
+              <Route path="analytics" element={<SuperAnalytics />} />
+              <Route path="module-analytics" element={<ModuleAnalytics />} />
+              <Route path="security-logs" element={<SecurityLogs />} />
+              <Route path="manage-plans" element={<ManagePlans />} />
+              <Route path="premium-users" element={<ManagePremiumUsers />} />
+              <Route path="apps" element={<AdminPosts />} />
+              <Route path="apps/create" element={<CreatePost />} />
+              <Route path="apps/edit/:id" element={<CreatePost />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="premium-requests" element={<SuperPremiumRequests />} />
+              <Route path="purchase-requests" element={<SuperPurchaseRequests />} />
+              <Route path="movie-settings" element={<MovieSettings />} />
+              <Route path="footer-management" element={<FooterManagement />} />
+              <Route path="support-center" element={<SupportCenter />} />
+              {/* Hero Displays — safe alias, legacy /banners also kept */}
+              <Route path="banners" element={<HeroDisplayManager />} />
+              <Route path="hero-displays" element={<HeroDisplayManager />} />
+              {/* System Notices — safe alias, legacy /announcements also kept */}
+              <Route path="announcements" element={<SystemNoticesManager />} />
+              <Route path="system-notices" element={<SystemNoticesManager />} />
+              <Route path="seo" element={<SEOManager />} />
+              <Route path="coupons" element={<CouponManager />} />
+              <Route path="reviews" element={<ReviewModeration />} />
+              <Route path="app-requests" element={<AppRequestModeration />} />
+              <Route path="user-requests" element={<UserRequestsAdmin />} />
+              <Route path="push-campaigns" element={<PushCampaigns />} />
+              <Route path="trash-bin" element={<TrashBin />} />
+              <Route path="aura-recalc" element={<AuraRecalculate />} />
+              <Route path="creator-panel" element={<CreatorControlPanel />} />
+              <Route path="yt-downloader" element={<AdminYTDownloader />} />
+              
+              {/* Nexoria Sound Admin */}
+              <Route path="sound/dashboard" element={<SoundDashboard />} />
+              <Route path="sound/songs" element={<SoundSongs />} />
+              <Route path="sound/add-song" element={<SoundAddSong />} />
+              <Route path="sound/playlists" element={<SoundPlaylists />} />
+              <Route path="sound/categories" element={<SoundCategories />} />
+              {/* Nexoria Music Platform Admin */}
+              <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
+              <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
+              <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
+              <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
+              <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
+              <Route path="nexoria-music/playlist-builder" element={<NexoriaPlaylistBuilder />} />
 
+              {/* MovieBox SuperAdmin Routes */}
+              <Route path="movies/analytics" element={<AdminMovieAnalytics />} />
+              <Route path="movie-categories" element={<AdminMovieCategoryManager />} />
+              
+              {/* Movies Admin Routes */}
+              <Route path="movies" element={<AdminMovieManagement type="Movie" />} />
+              <Route path="movies/add" element={<AdminAddMovie type="Movie" />} />
+              <Route path="movies/reviews" element={<AdminMovieReviews type="Movie" />} />
+              <Route path="movies/ratings" element={<AdminMovieRatings type="Movie" />} />
+              <Route path="movies/reports" element={<AdminMovieReports type="Movie" />} />
+              <Route path="movies/watch-history" element={<AdminMovieWatchHistory />} />
+              <Route path="movies/approval-queue" element={<AdminMovieApprovalQueue type="Movie" />} />
+              
+              {/* TV Shows Admin Routes */}
+              <Route path="tv-shows" element={<AdminMovieManagement type="Web Series" />} />
+              <Route path="tv-shows/add" element={<AdminAddMovie type="Web Series" />} />
+              <Route path="tv-shows/seasons" element={<AdminMovieSeriesManager type="Web Series" />} />
+              <Route path="tv-shows/episodes" element={<AdminMovieSeriesManager type="Web Series" />} />
+              <Route path="tv-shows/reviews" element={<AdminMovieReviews type="Web Series" />} />
+              <Route path="tv-shows/ratings" element={<AdminMovieRatings type="Web Series" />} />
+              <Route path="tv-shows/reports" element={<AdminMovieReports type="Web Series" />} />
+              <Route path="tv-shows/approval-queue" element={<AdminMovieApprovalQueue type="Web Series" />} />
+              
+              {/* Animation Admin Routes */}
+              <Route path="animation" element={<AdminMovieManagement type="Animation" />} />
+              <Route path="animation/add" element={<AdminAddMovie type="Animation" />} />
+              <Route path="animation/seasons" element={<AdminMovieSeriesManager type="Animation" />} />
+              <Route path="animation/episodes" element={<AdminMovieSeriesManager type="Animation" />} />
+              <Route path="animation/reviews" element={<AdminMovieReviews type="Animation" />} />
+              <Route path="animation/ratings" element={<AdminMovieRatings type="Animation" />} />
+              <Route path="animation/reports" element={<AdminMovieReports type="Animation" />} />
+              <Route path="animation/approval-queue" element={<AdminMovieApprovalQueue type="Animation" />} />
 
+              <Route path="movies/premium-requests" element={<AdminMoviePremiumRequests />} />
 
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="posts" element={<AdminPosts />} />
-            <Route path="posts/create" element={<CreatePost />} />
-            <Route path="posts/edit/:id" element={<CreatePost />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="comments" element={<AdminComments />} />
-            <Route path="ratings" element={<AdminRatings />} />
-            <Route path="moderation" element={<AdminModeration />} />
-            <Route path="downloads" element={<AdminDownloads />} />
-            <Route path="reports" element={<AdminReports />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="yt-downloader" element={<AdminYTDownloader />} />
-            <Route path="contact" element={<SupportCenter />} />
-            <Route path="settings" element={<AdminSettings />} />
-            <Route path="adblock-analytics" element={<AdminAdblockAnalytics />} />
-            <Route path="activity-logs" element={<AdminActivityLogs />} />
-            <Route path="login-activity" element={<AdminLoginActivityLogs />} />
-            <Route path="premium-requests" element={<AdminPremiumRequests />} />
-            <Route path="live-monitor" element={<AdminLiveMonitor />} />
-            <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
-            <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
-            <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
-            <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
-            <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
-            <Route path="nexoria-music/playlist-builder" element={<NexoriaPlaylistBuilder />} />
-            
-            <Route path="games" element={<AdminGamesList />} />
-            <Route path="games/add" element={<AdminAddGame />} />
-            <Route path="games/edit/:id" element={<AdminEditGame />} />
-            <Route path="arena-games" element={<ManageArenaGames />} />
-
-            <Route path="push-campaigns" element={<PushCampaigns />} />
-            <Route path="coupons" element={<CouponManager />} />
-            <Route path="app-requests" element={<AppRequestModeration />} />
-            <Route path="user-requests" element={<UserRequestsAdmin />} />
-          </Route>
-
-            {/* Super Admin Protected Routes */}
-          <Route path="/superadmin" element={<SuperAdminLayout />}>
-            <Route index element={<SuperDashboard />} />
-            <Route path="users" element={<ManageUsers />} />
-            <Route path="admins" element={<ManageAdmins />} />
-            <Route path="roles" element={<RolesPermissions />} />
-            <Route path="settings" element={<SiteSettings />} />
-            {/* Sponsored Content — safe alias, legacy /ads also kept */}
-            <Route path="ads" element={<SponsoredContent />} />
-            <Route path="sponsored-content" element={<SponsoredContent />} />
-            <Route path="database" element={<DatabaseManagement />} />
-            <Route path="analytics" element={<SuperAnalytics />} />
-            <Route path="module-analytics" element={<ModuleAnalytics />} />
-            <Route path="security-logs" element={<SecurityLogs />} />
-            <Route path="manage-plans" element={<ManagePlans />} />
-            <Route path="premium-users" element={<ManagePremiumUsers />} />
-            <Route path="apps" element={<AdminPosts />} />
-            <Route path="apps/create" element={<CreatePost />} />
-            <Route path="apps/edit/:id" element={<CreatePost />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="premium-requests" element={<SuperPremiumRequests />} />
-            <Route path="purchase-requests" element={<SuperPurchaseRequests />} />
-            <Route path="movie-settings" element={<MovieSettings />} />
-            <Route path="footer-management" element={<FooterManagement />} />
-            <Route path="support-center" element={<SupportCenter />} />
-            {/* Hero Displays — safe alias, legacy /banners also kept */}
-            <Route path="banners" element={<HeroDisplayManager />} />
-            <Route path="hero-displays" element={<HeroDisplayManager />} />
-            {/* System Notices — safe alias, legacy /announcements also kept */}
-            <Route path="announcements" element={<SystemNoticesManager />} />
-            <Route path="system-notices" element={<SystemNoticesManager />} />
-            <Route path="seo" element={<SEOManager />} />
-            <Route path="coupons" element={<CouponManager />} />
-            <Route path="reviews" element={<ReviewModeration />} />
-            <Route path="app-requests" element={<AppRequestModeration />} />
-            <Route path="user-requests" element={<UserRequestsAdmin />} />
-            <Route path="push-campaigns" element={<PushCampaigns />} />
-            <Route path="trash-bin" element={<TrashBin />} />
-            <Route path="aura-recalc" element={<AuraRecalculate />} />
-            <Route path="creator-panel" element={<CreatorControlPanel />} />
-            <Route path="yt-downloader" element={<AdminYTDownloader />} />
-            
-            {/* Nexoria Sound Admin */}
-            <Route path="sound/dashboard" element={<SoundDashboard />} />
-            <Route path="sound/songs" element={<SoundSongs />} />
-            <Route path="sound/add-song" element={<SoundAddSong />} />
-            <Route path="sound/playlists" element={<SoundPlaylists />} />
-            <Route path="sound/categories" element={<SoundCategories />} />
-            {/* Nexoria Music Platform Admin */}
-            <Route path="nexoria-music" element={<NexoriaMusicDashboard />} />
-            <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
-            <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
-            <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
-            <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
-            <Route path="nexoria-music/playlist-builder" element={<NexoriaPlaylistBuilder />} />
-
-            {/* MovieBox SuperAdmin Routes */}
-            <Route path="movies/analytics" element={<AdminMovieAnalytics />} />
-            <Route path="movie-categories" element={<AdminMovieCategoryManager />} />
-            
-            {/* Movies Admin Routes */}
-            <Route path="movies" element={<AdminMovieManagement type="Movie" />} />
-            <Route path="movies/add" element={<AdminAddMovie type="Movie" />} />
-            <Route path="movies/reviews" element={<AdminMovieReviews type="Movie" />} />
-            <Route path="movies/ratings" element={<AdminMovieRatings type="Movie" />} />
-            <Route path="movies/reports" element={<AdminMovieReports type="Movie" />} />
-            <Route path="movies/watch-history" element={<AdminMovieWatchHistory />} />
-            <Route path="movies/approval-queue" element={<AdminMovieApprovalQueue type="Movie" />} />
-            
-            {/* TV Shows Admin Routes */}
-            <Route path="tv-shows" element={<AdminMovieManagement type="Web Series" />} />
-            <Route path="tv-shows/add" element={<AdminAddMovie type="Web Series" />} />
-            <Route path="tv-shows/seasons" element={<AdminMovieSeriesManager type="Web Series" />} />
-            <Route path="tv-shows/episodes" element={<AdminMovieSeriesManager type="Web Series" />} />
-            <Route path="tv-shows/reviews" element={<AdminMovieReviews type="Web Series" />} />
-            <Route path="tv-shows/ratings" element={<AdminMovieRatings type="Web Series" />} />
-            <Route path="tv-shows/reports" element={<AdminMovieReports type="Web Series" />} />
-            <Route path="tv-shows/approval-queue" element={<AdminMovieApprovalQueue type="Web Series" />} />
-            
-            {/* Animation Admin Routes */}
-            <Route path="animation" element={<AdminMovieManagement type="Animation" />} />
-            <Route path="animation/add" element={<AdminAddMovie type="Animation" />} />
-            <Route path="animation/seasons" element={<AdminMovieSeriesManager type="Animation" />} />
-            <Route path="animation/episodes" element={<AdminMovieSeriesManager type="Animation" />} />
-            <Route path="animation/reviews" element={<AdminMovieReviews type="Animation" />} />
-            <Route path="animation/ratings" element={<AdminMovieRatings type="Animation" />} />
-            <Route path="animation/reports" element={<AdminMovieReports type="Animation" />} />
-            <Route path="animation/approval-queue" element={<AdminMovieApprovalQueue type="Animation" />} />
-
-            <Route path="movies/premium-requests" element={<AdminMoviePremiumRequests />} />
-
-            {/* Games Admin Routes */}
-            <Route path="games" element={<AdminGamesList />} />
-            <Route path="games/add" element={<AdminAddGame />} />
-            <Route path="games/edit/:id" element={<AdminEditGame />} />
-            <Route path="arena-games" element={<ManageArenaGames />} />
-          </Route>
-        </Routes>
+              {/* Games Admin Routes */}
+              <Route path="games" element={<AdminGamesList />} />
+              <Route path="games/add" element={<AdminAddGame />} />
+              <Route path="games/edit/:id" element={<AdminEditGame />} />
+              <Route path="arena-games" element={<ManageArenaGames />} />
+            </Route>
+          </Routes>
+        </ErrorBoundary>
       </Suspense>
       <SecretLoungeButton />
       <AdBlockDetector />

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt', // This allows us to handle the update prompt manually
+      registerType: 'autoUpdate', // Automatically updates without prompt
       includeAssets: ['favicon.svg', 'favicon.png', 'icon-192x192.png', 'icon-512x512.png'],
       manifest: {
         name: 'Nexoria - App Store',
