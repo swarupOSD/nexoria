@@ -438,12 +438,15 @@ export const streamTrack = async (req, res) => {
       res.status(proxyRes.statusCode);
 
       // Forward necessary headers
-      const headersToForward = ['content-length', 'content-range', 'accept-ranges'];
+      const headersToForward = ['content-length', 'content-range'];
       headersToForward.forEach(header => {
         if (proxyRes.headers[header]) {
           res.setHeader(header, proxyRes.headers[header]);
         }
       });
+      
+      // Explicitly tell the browser we accept range requests
+      res.setHeader('Accept-Ranges', 'bytes');
 
       // Determine correct Content-Type
       let contentType = proxyRes.headers['content-type'];

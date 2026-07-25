@@ -285,12 +285,35 @@ const NexoriaPlayer = () => {
   }, [currentTrack, isPlaying, history, dispatch]);
 
   // Audio element event handlers
+  const maxTimeRef = useRef(0);
+  const lastTrackIdRef = useRef(null);
+
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       const cTime = audioRef.current.currentTime;
       const tDuration = audioRef.current.duration || 0;
+
+      // Reset max time tracking if track changes
+      if (lastTrackIdRef.current !== currentTrack?._id) {
+        maxTimeRef.current = 0;
+        lastTrackIdRef.current = currentTrack?._id;
+      }
+
+      // Safeguard: Prevent timer from visually jumping backwards due to buffering/network glitches
+      // If cTime goes backwards by less than 2 seconds, we ignore it (it's a stutter).
+      // If it goes backwards by MORE than 2 seconds, we assume the user actually seeked backwards.
+      if (cTime < maxTimeRef.current && (maxTimeRef.current - cTime) < 2) {
+        // It's a glitch! Don't dispatch the backwards time, just wait for audio to catch up
+        return;
+      }
+      
+      // Update max time reached
+      if (cTime > maxTimeRef.current || (maxTimeRef.current - cTime) >= 2) {
+         maxTimeRef.current = cTime;
+      }
+
       dispatch(updateTime({
-        currentTime: cTime,
+        currentTime: maxTimeRef.current,
         duration: tDuration
       }));
 
