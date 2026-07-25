@@ -138,6 +138,10 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
     await refetchArtists();
     await refetchAlbums();
 
+    // Create mutable copies for optimistic updates during the loop
+    const localArtists = [...artists];
+    const localAlbums = [...albums];
+
     for (let i = 0; i < pendingFiles.length; i++) {
       const item = pendingFiles[i];
       updateFileStatus(item.id, 'uploading');
@@ -146,28 +150,28 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
         // 1. Resolve Artist
         let artistId = null;
         if (item.artistName) {
-          const existingArtist = artists.find(a => a.name.toLowerCase() === item.artistName.toLowerCase());
+          const existingArtist = localArtists.find(a => a.name.toLowerCase() === item.artistName.toLowerCase());
           if (existingArtist) {
             artistId = existingArtist._id;
           } else {
             const newArtist = await createArtist({ name: item.artistName }).unwrap();
             artistId = newArtist.data._id;
             // Optimistic update for next files in loop
-            artists.push(newArtist.data);
+            localArtists.push(newArtist.data);
           }
         }
 
         // 2. Resolve Album
         let albumId = null;
         if (item.albumName && item.albumName !== 'Unknown Album' && artistId) {
-          const existingAlbum = albums.find(a => a.title.toLowerCase() === item.albumName.toLowerCase());
+          const existingAlbum = localAlbums.find(a => a.title.toLowerCase() === item.albumName.toLowerCase());
           if (existingAlbum) {
             albumId = existingAlbum._id;
           } else {
             const newAlbum = await createAlbum({ title: item.albumName, artist: artistId }).unwrap();
             albumId = newAlbum.data._id;
             // Optimistic update for next files
-            albums.push(newAlbum.data);
+            localAlbums.push(newAlbum.data);
           }
         }
 
