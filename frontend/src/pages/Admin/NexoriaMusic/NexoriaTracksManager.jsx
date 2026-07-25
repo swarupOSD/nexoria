@@ -13,8 +13,9 @@ import {
   useUpdateNexoriaTrackLyricsMutation,
   useGetTrackLyricsQuery
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText } from 'lucide-react';
+import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud } from 'lucide-react';
 import toast from 'react-hot-toast';
+import NexoriaBulkUploader from './NexoriaBulkUploader';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
@@ -35,6 +36,7 @@ const NexoriaTracksManager = () => {
   const [updateTrackLyrics] = useUpdateNexoriaTrackLyricsMutation();
   
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
@@ -182,12 +184,20 @@ const NexoriaTracksManager = () => {
           <h2 className="text-2xl font-bold text-white tracking-tight">Tracks</h2>
           <p className="text-[#b3b3b3] text-sm mt-1">{tracks.length} songs</p>
         </div>
-        <button 
-          onClick={openCreate}
-          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
-        >
-          <Plus className="w-4 h-4" /> Add Track
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsBulkModalOpen(true)}
+            className="flex items-center gap-2 bg-[#282828] hover:bg-[#333] border border-white/10 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-105"
+          >
+            <UploadCloud className="w-4 h-4" /> Bulk Upload
+          </button>
+          <button 
+            onClick={openCreate}
+            className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+          >
+            <Plus className="w-4 h-4" /> Add Track
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -451,6 +461,12 @@ const NexoriaTracksManager = () => {
           </div>
         </div>
       )}
+
+      {/* Bulk Uploader */}
+      <NexoriaBulkUploader 
+        isOpen={isBulkModalOpen} 
+        onClose={() => setIsBulkModalOpen(false)} 
+      />
     </div>
   );
 };

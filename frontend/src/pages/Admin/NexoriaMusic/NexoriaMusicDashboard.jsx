@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Mic2, Disc3, ListMusic, Settings, BarChart2 } from 'lucide-react';
+import { Music, Mic2, Disc3, ListMusic, Settings, BarChart2, Users } from 'lucide-react';
 import NexoriaArtistsManager from './NexoriaArtistsManager';
 import NexoriaGenresManager from './NexoriaGenresManager';
 import NexoriaAlbumsManager from './NexoriaAlbumsManager';
@@ -23,25 +23,42 @@ const NexoriaMusicDashboard = () => {
   return (
     <div className="flex flex-col h-screen bg-[#121212] text-white font-poppins selection:bg-[#1ed760] selection:text-black">
       
-      {/* Mobile Top Header */}
-      <header className="flex items-center justify-between px-4 py-4 bg-[#121212] sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#1ed760] flex items-center justify-center font-bold text-black text-xl shadow-[0_0_15px_rgba(30,215,96,0.3)]">
+      {/* Top Header */}
+      <header className="flex items-center justify-between px-6 py-5 bg-gradient-to-b from-[#121212] to-[#121212]/90 sticky top-0 z-50 border-b border-white/5 backdrop-blur-md">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-[#1ed760] flex items-center justify-center font-black text-black text-2xl shadow-[0_0_20px_rgba(30,215,96,0.4)]">
             N
           </div>
-          <h1 className="text-xl font-bold tracking-tight">Nexoria Music Admin</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white">Nexoria Admin</h1>
         </div>
         <button 
           onClick={() => navigate('/superadmin')}
-          className="p-2 text-[#b3b3b3] hover:text-white transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[#282828] hover:bg-[#333] text-white rounded-full font-bold transition-all hover:scale-105"
           title="Back to Superadmin"
         >
-          <Settings className="w-6 h-6" />
+          <Settings className="w-5 h-5" />
+          <span className="hidden sm:inline text-sm">Settings</span>
         </button>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-4 pb-24 sm:pb-6">
+      <main className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-6 pb-24 sm:pb-6">
+        
+        {/* Quick Actions Panel */}
+        <div className="w-full max-w-[1920px] mx-auto mt-6 mb-8 flex items-center gap-3 overflow-x-auto custom-scrollbar pb-2">
+           <button onClick={() => setActiveTab('tracks')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">
+             <Music className="w-4 h-4" /> Add New Track
+           </button>
+           <button onClick={() => setActiveTab('tracks')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#282828] hover:bg-[#333] text-white font-bold rounded-full hover:scale-105 transition-transform border border-white/5">
+             <Mic2 className="w-4 h-4" /> Upload Lyrics
+           </button>
+           <button onClick={() => setActiveTab('artists')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#282828] hover:bg-[#333] text-white font-bold rounded-full hover:scale-105 transition-transform border border-white/5">
+             <Users className="w-4 h-4" /> Manage Artists
+           </button>
+           <button onClick={() => setActiveTab('albums')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#282828] hover:bg-[#333] text-white font-bold rounded-full hover:scale-105 transition-transform border border-white/5">
+             <Disc3 className="w-4 h-4" /> Edit Albums
+           </button>
+        </div>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

@@ -472,11 +472,8 @@ const NexoriaPlayer = () => {
           console.error("Audio Element Error:", e.target.error);
           if (e.target.error) {
              const errorCodes = { 1: "ABORTED", 2: "NETWORK", 3: "DECODE", 4: "SRC_NOT_SUPPORTED" };
-             if (e.target.error.code === 2 && audioRef.current) {
-               const cTime = audioRef.current.currentTime;
-               audioRef.current.load();
-               audioRef.current.currentTime = cTime;
-               if (isPlaying) audioRef.current.play().catch(err => console.log(err));
+             if (e.target.error.code === 2) {
+               console.warn("Network error during playback. Letting browser natively buffer.");
              }
           }
         }}

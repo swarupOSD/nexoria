@@ -236,11 +236,11 @@ function App() {
         <AuraSurgeBanner />
       <Toaster position="top-right" />
       <KidsModeGuard>
+        <GlobalMusicPlayer />
+        <NexoriaPlayer />
+        <GlobalChatBubble />
+        <CyberpunkParticles />
         <Suspense fallback={<PageLoader />}>
-          <GlobalMusicPlayer />
-          <NexoriaPlayer />
-          <GlobalChatBubble />
-          <CyberpunkParticles />
           <Routes>
             <Route element={<PrivateRoute />}>
               <Route path="/moviebox/watch-party/:slug" element={<WatchParty />} />
