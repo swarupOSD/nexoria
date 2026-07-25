@@ -22,7 +22,7 @@ const THEMES = {
 
 const REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
 const EMOJIS = ['😀','😂','🥺','😍','🤩','😎','🥳','😊','🤔','😴','😭','😤','🤬','😱','🥴','😇','🫂','❤️','🔥','✨','💯','👀','🎉','🎵','💪','👋','🙏','💀','😈','👑','🌈','🍕','🎮','📱','🚀','⭐','🫂','🤯','🤩','🤤'];
-const TENOR_KEY = 'AIzaSyBBkjbQQDNrfz-pB5M1-J3JrM7fqPMNE9k';
+const TENOR_KEY = import.meta.env.VITE_TENOR_API_KEY || '';
 
 const fmtTime = (d) => new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 

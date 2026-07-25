@@ -26,7 +26,7 @@ const THEMES = {
 
 const REACTIONS = ['â¤ï¸', 'ðŸ˜‚', 'ðŸ˜®', 'ðŸ˜¢', 'ðŸ˜¡', 'ðŸ‘'];
 const EMOJIS = ['ðŸ˜€','ðŸ˜‚','ðŸ¥¹','ðŸ˜','ðŸ¤©','ðŸ˜Ž','ðŸ¥³','ðŸ˜Š','ðŸ¤”','ðŸ˜','ðŸ˜­','ðŸ˜¤','ðŸ¤¬','ðŸ˜±','ðŸ¥º','ðŸ˜‡','ðŸ«¶','â¤ï¸','ðŸ”¥','âœ¨','ðŸ’¯','ðŸ‘€','ðŸŽ‰','ðŸŽ¶','ðŸ’ª','ðŸ‘‹','ðŸ™','ðŸ’€','ðŸ˜ˆ','ðŸ‘‘','ðŸŒˆ','ðŸ•','ðŸŽ®','ðŸ“±','ðŸš€','â­','ðŸ«‚','ðŸ¤¯','ðŸ¤©','ðŸ¤­'];
-const TENOR_KEY = 'AIzaSyBBkjbQQDNrfz-pB5M1-J3JrM7fqPMNE9k';
+const TENOR_KEY = import.meta.env.VITE_TENOR_API_KEY || '';
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 let socket;
