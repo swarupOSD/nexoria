@@ -519,8 +519,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   const handleSendMusic = (trackData) => {
-    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'music', content: trackData, replyTo });
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'music', content: trackData, replyTo, isVanish: vanishMode, effect: selectedEffect });
     setReplyTo(null);
+    setSelectedEffect('');
+    setIsMusicModalOpen(false);
   };
 
   const handleReact = (msgId, emoji) => {
@@ -806,7 +808,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         </div>
       </div>
 
-      <MusicShareModal isOpen={isMusicModalOpen} onClose={() => setIsMusicModalOpen(false)} onShare={handleSendMusic} />
+      <MusicShareModal isOpen={isMusicModalOpen} onClose={() => setIsMusicModalOpen(false)} onSelect={handleSendMusic} />
       
       {activeCallType && (
         <CallOverlay 
