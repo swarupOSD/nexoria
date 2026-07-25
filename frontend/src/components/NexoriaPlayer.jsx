@@ -10,7 +10,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   playNextTrack, playPrevTrack, togglePlayPause, 
   updateTime, setVolume, toggleMute, 
-  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue, toggleAutoplay
+  toggleRepeat, toggleShuffle, toggleLikeTrack, clearPlayer, addToQueue, playTrack, setQueue, toggleAutoplay, setPlaying
 } from '../features/music/nexoriaMusicSlice';
 import { BACKEND_URL } from '../features/api/apiSlice';
 import { useLogPlayMutation, useLazyGetMusicRecommendationsQuery } from '../features/api/nexoriaMusicApiSlice';

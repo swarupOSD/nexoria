@@ -166,13 +166,22 @@ const calculateWinner = (squares) => {
 };
 
 // ── Message Bubble ─────────────────────────────────────────────────────────────
-const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, audioRefs, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate }) => {
+const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate }) => {
   const [showRx, setShowRx] = useState(false);
   const [burst, setBurst] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedText, setTranslatedText] = useState('');
   const [isRevealed, setIsRevealed] = useState(!msg.isSecret);
+  const audioRef = useRef(null);
   const tc = THEMES[theme] || THEMES.default;
+
+  useEffect(() => {
+    if (playingAudioId === msg._id) {
+      audioRef.current?.play().catch(e => console.log('Audio play error:', e));
+    } else {
+      audioRef.current?.pause();
+    }
+  }, [playingAudioId, msg._id]);
 
   if (msg.isUnsent) return (
     <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-1`}>
@@ -254,7 +263,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                     <img src={msg.content.coverImage || '/default-music-cover.jpg'} alt="cover" className="w-full h-full object-cover" />
                     <div 
                       className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer hover:bg-black/60 transition-colors"
-                      onClick={() => handlePlayMusic(msg._id)}
+                      onClick={() => handlePlayMusic(playingAudioId === msg._id ? null : msg._id)}
                     >
                       {playingAudioId === msg._id ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white ml-1" />}
                     </div>
@@ -263,11 +272,11 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                     <h4 className="text-sm font-semibold text-white truncate">{msg.content.title}</h4>
                     <p className="text-[11px] text-gray-300 truncate">{msg.content.artist}</p>
                   </div>
-                  <audio ref={el => audioRefs.current[msg._id] = el} src={msg.content.audioUrl} onEnded={() => handlePlayMusic(null)} preload="none" />
+                  <audio ref={audioRef} src={msg.content.audioUrl} onEnded={() => handlePlayMusic(null)} preload="none" />
                 </div>
               ) : msg.type === 'voice' ? (
                 <div className="flex items-center gap-3 min-w-[180px]">
-                  <button onClick={() => handlePlayMusic(msg._id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors shrink-0">
+                  <button onClick={() => handlePlayMusic(playingAudioId === msg._id ? null : msg._id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors shrink-0">
                     {playingAudioId === msg._id ? <Square className="w-3.5 h-3.5 fill-current" /> : <div className="w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-current ml-1"></div>}
                   </button>
                   <div className="flex-1 h-3 w-full rounded-full overflow-hidden flex items-center gap-[2px]">
@@ -276,16 +285,15 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                     ))}
                   </div>
                   <button onClick={() => {
-                    const audio = audioRefs.current[msg._id];
+                    const audio = audioRef.current;
                     if (audio) {
                       const speeds = [1, 1.5, 2];
                       const currentIdx = speeds.indexOf(audio.playbackRate) || 0;
                       audio.playbackRate = speeds[(currentIdx + 1) % speeds.length];
-                      // Force re-render just to show speed is complex without state, but we can just use native playbackRate.
                       toast(`Speed set to ${audio.playbackRate}x`, { icon: '⚡' });
                     }
                   }} className="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-full text-white/80 hover:bg-white/20">1x</button>
-                  <audio ref={el => audioRefs.current[msg._id] = el} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
+                  <audio ref={audioRef} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
                 </div>
               ) : msg.type === 'poll' ? (
                 <div className="min-w-[200px]">
@@ -423,8 +431,6 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const recordingTimerRef = useRef(null);
   
   const [selectedUserAction, setSelectedUserAction] = useState(null);
-
-  const audioRefs = useRef({});
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const typingRef = useRef(null);
@@ -477,14 +483,14 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
     // Vanish Mode Timers
     messages.forEach(msg => {
-      if (msg.isVanish && !msg.isUnsent && !vanishTimersRef.current.has(msg._id)) {
+      if (vanishMode && !msg.isSystem && !vanishTimersRef.current.has(msg._id)) {
         vanishTimersRef.current.add(msg._id);
         setTimeout(() => {
           handleUnsend(msg._id);
         }, 10000);
       }
     });
-  }, [messages]);
+  }, [messages, vanishMode]);
 
   useEffect(() => {
     if (!socket) return;
@@ -643,19 +649,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   const handlePlayMusic = (msgId) => {
-    if (playingAudioId && playingAudioId !== msgId && audioRefs.current[playingAudioId]) {
-      audioRefs.current[playingAudioId].pause();
-    }
-    const audioEl = audioRefs.current[msgId];
-    if (audioEl) {
-      if (playingAudioId === msgId) {
-        audioEl.pause();
-        setPlayingAudioId(null);
-      } else {
-        audioEl.play();
-        setPlayingAudioId(msgId);
-      }
-    }
+    setPlayingAudioId(msgId);
   };
 
   const copyToClipboard = (text, label) => {
@@ -803,7 +797,6 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               onReply={setReplyTo} 
               playingAudioId={playingAudioId}
               handlePlayMusic={handlePlayMusic}
-              audioRefs={audioRefs}
               setLightboxImg={setLightboxImg}
               onGameUpdate={(msgId, data) => socket.emit('updatePrivateMessageGame', { teamCode: roomData.teamCode, messageId: msgId, gameData: data })}
             />
