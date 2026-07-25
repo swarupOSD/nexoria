@@ -62,8 +62,8 @@ export const createArtist = async (req, res) => {
     const artist = await NexoriaArtist.create({
       name,
       bio: bio || `Auto-generated profile for ${name}.`,
-      image: image || null,
-      coverImage: coverImage || null,
+      image: image || '',
+      coverImage: coverImage || '',
       socialLinks,
       isVerified: isVerified || false,
       addedBy: req.user._id
