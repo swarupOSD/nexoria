@@ -343,7 +343,7 @@ const NexoriaPlayer = () => {
     }
   };
 
-  const handleSkipForward = () => {
+  function handleSkipForward() {
     if (queue.length > 0) {
       let nextIndex = 0;
       if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length);
@@ -458,7 +458,7 @@ const NexoriaPlayer = () => {
     }
   };
 
-  const handleSkip15 = (direction) => {
+  function handleSkip15(direction) {
     if (audioRef.current) {
       let newTime = audioRef.current.currentTime + (direction === 'forward' ? 15 : -15);
       if (newTime < 0) newTime = 0;

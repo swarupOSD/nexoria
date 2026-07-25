@@ -486,7 +486,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       if (vanishMode && !msg.isSystem && !vanishTimersRef.current.has(msg._id)) {
         vanishTimersRef.current.add(msg._id);
         setTimeout(() => {
-          handleUnsend(msg._id);
+          socket.emit('unsendPrivateMessage', { teamCode: roomData.teamCode, messageId: msg._id });
         }, 10000);
       }
     });
