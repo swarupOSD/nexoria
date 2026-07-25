@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Upload, X, Music, CheckCircle, AlertCircle, Loader2, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as jsmediatags from 'jsmediatags';
+import * as jsmediatags from 'jsmediatags/dist/jsmediatags.min.js';
 import { 
   useCreateNexoriaTrackMutation,
   useGetNexoriaArtistsQuery,
