@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, Users,
+  Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, Users, MessageSquare,
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
   Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud
 } from 'lucide-react';
@@ -552,10 +552,17 @@ const Navbar = () => {
             
             {user && (
               <>
+                <Link 
+                  to="/messages"
+                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
+                  title="Direct Messages"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                </Link>
                 <button 
                   onClick={() => setIsFriendsDrawerOpen(true)}
                   className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
-                  title="Friends & Messages"
+                  title="Friends & Requests"
                 >
                   <Users className="w-5 h-5" />
                 </button>
@@ -601,6 +608,9 @@ const Navbar = () => {
                 <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
                   <UserIcon className="w-4 h-4 text-primary" /> Profile Dashboard
                 </Link>
+                <Link to="/messages" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
+                  <MessageSquare className="w-4 h-4 text-purple-500" /> Messages
+                </Link>
                 {['admin', 'superadmin', 'owner'].includes(user.role) && (
                   <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
                     <ShieldAlert className="w-4 h-4 text-accent" /> Admin Panel
@@ -628,6 +638,12 @@ const Navbar = () => {
             </button>
             {user && (
               <>
+                <Link 
+                  to="/messages"
+                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
+                >
+                  <MessageSquare className="w-5 h-5" />
+                </Link>
                 <button 
                   onClick={() => setIsFriendsDrawerOpen(true)}
                   className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
@@ -798,6 +814,9 @@ const Navbar = () => {
                       <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                         <UserIcon className="w-5 h-5 text-slate-400" /> My Dashboard
                       </Link>
+                      <Link to="/messages" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
+                        <MessageSquare className="w-5 h-5 text-slate-400" /> Messages
+                      </Link>
                       {['admin', 'superadmin', 'owner'].includes(user.role) && (
                         <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                           <ShieldAlert className="w-5 h-5 text-slate-400" /> Admin Panel
@@ -847,11 +866,7 @@ const Navbar = () => {
           <FriendsDrawer 
             isOpen={isFriendsDrawerOpen} 
             onClose={() => setIsFriendsDrawerOpen(false)} 
-            onOpenChat={(friendUser) => setActiveChatUser(friendUser)} 
-          />
-          <PrivateChatWidget 
-            activeChat={activeChatUser} 
-            onClose={() => setActiveChatUser(null)} 
+            onOpenChat={(friendUser) => navigate('/messages?user=' + friendUser._id)} 
           />
         </>
       )}
