@@ -355,6 +355,8 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [showDraw, setShowDraw] = useState(false);
   const [showPoll, setShowPoll] = useState(false);
   const [smartReplies, setSmartReplies] = useState([]);
+  
+  const vanishTimersRef = useRef(new Set());
 
   // Voice Recording States
   const [isRecording, setIsRecording] = useState(false);
@@ -385,10 +387,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     const lastMsg = messages[messages.length - 1];
     
     // Smart Replies
-    if (lastMsg.sender._id !== user._id && lastMsg.type === 'text') {
+    if (lastMsg.type === 'text' && lastMsg.sender && lastMsg.sender._id !== user._id) {
       const text = lastMsg.content.toLowerCase();
-      if (text.includes('?')) setSmartReplies(['Yes', 'No', 'Maybe', 'I don\'t know']);
-      else if (text.includes('hi') || text.includes('hello')) setSmartReplies(['Hey!', 'Hi there!', 'What\'s up?']);
+      if (text.includes('?')) setSmartReplies(['Yes', 'No', 'Maybe', "I don't know"]);
+      else if (text.includes('hi') || text.includes('hello')) setSmartReplies(['Hey!', 'Hi there!', "What's up?"]);
       else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['😂', 'Lmao', 'So funny']);
       else if (text.includes('bye')) setSmartReplies(['Goodbye!', 'See ya!', 'Take care']);
       else setSmartReplies(['Okay', 'Cool', 'Got it', '👍']);
@@ -398,7 +400,8 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
     // Vanish Mode Timers
     messages.forEach(msg => {
-      if (msg.isVanish && !msg.isUnsent) {
+      if (msg.isVanish && !msg.isUnsent && !vanishTimersRef.current.has(msg._id)) {
+        vanishTimersRef.current.add(msg._id);
         setTimeout(() => {
           handleUnsend(msg._id);
         }, 10000);
