@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useGetPremiumMusicAnalyticsQuery } from '../../../features/api/nexoriaMusicApiSlice';
 import { Crown, IndianRupee, TrendingUp, Users, DollarSign } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import moment from 'moment';
 
 const container = {
   hidden: { opacity: 0 },
@@ -210,7 +209,9 @@ const NexoriaPremiumManager = () => {
                     </div>
                   </td>
                   <td className="p-4 font-bold text-[#ffd700]">₹{tx.amount}</td>
-                  <td className="p-4 text-[#b3b3b3]">{moment(tx.updatedAt).format('MMM DD, YYYY')}</td>
+                  <td className="p-4 text-[#b3b3b3]">
+                    {new Date(tx.updatedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                  </td>
                   <td className="p-4 pr-6 text-right">
                     <span className="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-bold inline-flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" /> Approved
