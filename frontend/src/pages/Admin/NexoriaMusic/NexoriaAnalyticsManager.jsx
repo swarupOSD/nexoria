@@ -7,6 +7,19 @@ import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simp
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
 const NexoriaAnalyticsManager = () => {
   const { data, isLoading, isError, refetch, isFetching } = useGetDeepAnalyticsQuery();
   const [tooltipContent, setTooltipContent] = React.useState("");
