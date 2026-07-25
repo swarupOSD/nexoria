@@ -98,7 +98,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
   });
 
   // Send a message or image or gif
-  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo, isVanish, effect, pollData }) => {
+  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo, isVanish, effect, pollData, isSecret, gameData }) => {
     if (!socket.user) return;
     const room = activeRooms.get(teamCode);
     if (!room || !room.participants.has(socket.id)) return;
@@ -113,6 +113,8 @@ export const registerPrivateChatHandlers = (io, socket) => {
       isVanish,
       effect,
       pollData,
+      isSecret,
+      gameData,
       reactions: [],
       createdAt: Date.now(),
       isEdited: false,
@@ -168,6 +170,19 @@ export const registerPrivateChatHandlers = (io, socket) => {
     message.gifData = null;
 
     io.to(`private_${teamCode}`).emit('privateMessageUnsent', { messageId });
+  });
+
+  // Update Game State
+  socket.on('updatePrivateMessageGame', ({ teamCode, messageId, gameData }) => {
+    if (!socket.user) return;
+    const room = activeRooms.get(teamCode);
+    if (!room || !room.participants.has(socket.id)) return;
+
+    const message = room.messages.find(m => m._id === messageId);
+    if (!message || message.type !== 'game') return;
+
+    message.gameData = gameData;
+    io.to(`private_${teamCode}`).emit('privateGameUpdated', { messageId, gameData });
   });
 
   // Typing indicator
@@ -229,19 +244,13 @@ export const registerPrivateChatHandlers = (io, socket) => {
   const handleLeave = () => {
     for (const [code, room] of activeRooms.entries()) {
       if (room.participants.has(socket.id)) {
-        // If the owner leaves or disconnects, destroy the room
-        if (room.ownerSocketId === socket.id) {
-          io.to(`private_${code}`).emit('roomDestroyed', { message: 'The Owner has left the room. Room destroyed.' });
-          
-          // Force all sockets to leave the room
-          io.in(`private_${code}`).socketsLeave(`private_${code}`);
+        const userInfo = room.participants.get(socket.id);
+        room.participants.delete(socket.id);
+        socket.leave(`private_${code}`);
+        io.to(`private_${code}`).emit('userLeftPrivateRoom', userInfo);
+        
+        if (room.participants.size === 0) {
           activeRooms.delete(code);
-        } else {
-          // Normal participant leaves
-          const userInfo = room.participants.get(socket.id);
-          room.participants.delete(socket.id);
-          socket.leave(`private_${code}`);
-          io.to(`private_${code}`).emit('userLeftPrivateRoom', userInfo);
         }
       }
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
@@ -156,11 +156,22 @@ const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg })
     </div>
   </motion.div>
 );
+const calculateWinner = (squares) => {
+  const lines = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) return squares[a];
+  }
+  return null;
+};
 
 // ── Message Bubble ─────────────────────────────────────────────────────────────
-const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, audioRefs, isSamePrev, isSameNext, isLastRead, setLightboxImg }) => {
+const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, audioRefs, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate }) => {
   const [showRx, setShowRx] = useState(false);
   const [burst, setBurst] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedText, setTranslatedText] = useState('');
+  const [isRevealed, setIsRevealed] = useState(!msg.isSecret);
   const tc = THEMES[theme] || THEMES.default;
 
   if (msg.isUnsent) return (
@@ -175,6 +186,17 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
     onReact(msg._id, '❤️');
     setBurst(true);
     setTimeout(() => setBurst(false), 1200);
+  };
+
+  const handleTranslate = async () => {
+    if (translatedText) return setTranslatedText('');
+    setIsTranslating(true);
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(msg.content)}&langpair=Autodetect|bn`);
+      const data = await res.json();
+      setTranslatedText(data.responseData.translatedText);
+    } catch (e) { toast.error('Translation failed'); }
+    setIsTranslating(false);
   };
 
   return (
@@ -280,7 +302,35 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                     ))}
                   </div>
                 </div>
-              ) : <p className="text-[15px] leading-relaxed break-words relative z-10" style={{ color: isMe && tc.textColor ? tc.textColor : 'white' }}>{msg.content}</p>}
+              ) : msg.type === 'game' ? (
+                <div className="w-48 bg-white/5 rounded-xl p-3 shadow-inner">
+                  <h4 className="text-center font-bold mb-3 text-white">Tic-Tac-Toe</h4>
+                  <div className="grid grid-cols-3 gap-1 mb-2">
+                    {msg.gameData?.board.map((cell, i) => (
+                      <button key={i} disabled={msg.gameData.winner || cell} onClick={() => {
+                        const newBoard = [...msg.gameData.board];
+                        newBoard[i] = msg.gameData.xIsNext ? 'X' : 'O';
+                        const winner = calculateWinner(newBoard);
+                        onGameUpdate(msg._id, { board: newBoard, xIsNext: !msg.gameData.xIsNext, winner });
+                      }} className="w-12 h-12 bg-white/10 rounded flex items-center justify-center text-xl font-bold hover:bg-white/20 transition-colors text-white">{cell}</button>
+                    ))}
+                  </div>
+                  {msg.gameData?.winner && <p className="text-center text-green-400 font-bold text-sm">{msg.gameData.winner} Wins!</p>}
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className={`transition-all duration-700 ${!isRevealed ? 'blur-md opacity-70 select-none' : ''}`} onMouseEnter={() => !isRevealed && setIsRevealed(true)} onClick={() => !isRevealed && setIsRevealed(true)}>
+                    <p className="text-[15px] leading-relaxed break-words relative z-10" style={{ color: isMe && tc.textColor ? tc.textColor : 'white' }}>{msg.content}</p>
+                    {translatedText && <p className="text-[13px] mt-2 pt-2 border-t border-white/10 text-white/80">{translatedText}</p>}
+                  </div>
+                  {!isRevealed && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><Ghost className="w-6 h-6 text-white/50 animate-pulse" /></div>}
+                  {isRevealed && !isMe && msg.type === 'text' && (
+                    <button onClick={handleTranslate} className="absolute -right-8 bottom-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full bg-white/10 hover:bg-white/20">
+                      {isTranslating ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white/70" /> : <Languages className="w-3.5 h-3.5 text-white/70" />}
+                    </button>
+                  )}
+                </div>
+              )}
           
           {msg.effect === 'confetti' && !isMe && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
@@ -356,6 +406,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [showPoll, setShowPoll] = useState(false);
   const [smartReplies, setSmartReplies] = useState([]);
   
+  // New Next-Gen Features State
+  const [isSecretMsg, setIsSecretMsg] = useState(false);
+  const [vibeColor, setVibeColor] = useState('');
+  const [easterEgg, setEasterEgg] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [aiSummary, setAiSummary] = useState('');
+
   const vanishTimersRef = useRef(new Set());
 
   // Voice Recording States
@@ -397,6 +454,26 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     } else {
       setSmartReplies([]);
     }
+
+    // Keyword Easter Eggs
+    if (lastMsg.type === 'text') {
+      const txt = lastMsg.content.toLowerCase();
+      if (txt.includes('snow') || txt.includes('winter')) { setEasterEgg('snow'); setTimeout(() => setEasterEgg(null), 10000); }
+      else if (txt.includes('matrix') || txt.includes('hacker')) { setEasterEgg('matrix'); setTimeout(() => setEasterEgg(null), 10000); }
+    }
+
+    // Vibe Check
+    const recentMsgs = messages.slice(-10);
+    let happy = 0, angry = 0;
+    recentMsgs.forEach(m => {
+      if (m.type === 'text') {
+        if (m.content.match(/😂|❤️|🔥|😍|🥰|wow/i)) happy++;
+        if (m.content.match(/😡|🤬|💀|hate|angry/i)) angry++;
+      }
+    });
+    if (happy > angry && happy > 1) setVibeColor('rgba(255, 105, 180, 0.15)');
+    else if (angry > happy && angry > 1) setVibeColor('rgba(255, 0, 0, 0.15)');
+    else setVibeColor('');
 
     // Vanish Mode Timers
     messages.forEach(msg => {
@@ -490,11 +567,35 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const handleSendText = (e) => {
     e?.preventDefault();
     if (!inputValue.trim()) return;
-    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: inputValue, replyTo, isVanish: vanishMode, effect: selectedEffect });
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: inputValue, replyTo, isVanish: vanishMode, effect: selectedEffect, isSecret: isSecretMsg });
     setInputValue('');
     setReplyTo(null);
     setSelectedEffect('');
+    setIsSecretMsg(false);
     scrollToBottom();
+  };
+
+  const handleCreateTicTacToe = () => {
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'game', content: 'Tic-Tac-Toe', isVanish: vanishMode, gameData: { board: Array(9).fill(null), xIsNext: true, winner: null } });
+  };
+
+  const handleGenerateSummary = () => {
+    if (messages.length < 5) return toast.error('Not enough messages to summarize.');
+    let msgCount = messages.length;
+    let users = new Set(messages.filter(m => m.sender).map(m => m.sender.name));
+    
+    let h = 0, a = 0;
+    messages.forEach(m => {
+      if (m.type === 'text') {
+        if (m.content.match(/😂|❤️|🔥|😍|🥰|wow/i)) h++;
+        if (m.content.match(/😡|🤬|💀|hate|angry/i)) a++;
+      }
+    });
+    
+    let vibe = h > a ? "Happy & Fun 😄" : (a > h ? "Heated / Serious 😡" : "Neutral 😐");
+    
+    setAiSummary(`Chat Summary:\n- ${msgCount} messages sent.\n- Participants active: ${Array.from(users).join(', ')}.\n- Overall Vibe: ${vibe}.\n- Key topics: Random chat & Secrets.`);
+    setShowSummary(true);
   };
 
   const handleSendSmartReply = (reply) => {
@@ -614,6 +715,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-500 overflow-hidden" style={{ background: tc.bg }}>
+      {/* ── Background Overlays ── */}
+      <div className="absolute inset-0 pointer-events-none transition-colors duration-1000 mix-blend-screen" style={{ backgroundColor: vibeColor }}></div>
+
       {/* ── IG Style Header ── */}
       <div className="flex items-center justify-between px-4 py-3 border-b z-20 shadow-sm" style={{ background: 'rgba(0,0,0,0.2)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
         <div className="flex items-center gap-3">
@@ -624,32 +728,21 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   <img key={p._id} src={p.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} alt="" className="w-10 h-10 rounded-full border-2 border-black object-cover" />
                 ))}
               </div>
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border-2 border-black">
-                <Users className="w-5 h-5 text-white/50" />
-              </div>
-            )}
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              {participants.length > 1 ? 'Secret Lounge Chat' : 'Waiting for partners...'}
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/10">{participants.length} Active</span>
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              Secret Lounge <ShieldAlert className="w-5 h-5 text-red-500" />
             </h2>
             <div className="flex items-center gap-2 mt-0.5">
-              <button onClick={() => copyToClipboard(roomData.teamCode, 'Room Code')} className="text-[10px] font-mono bg-black/40 hover:bg-black/60 px-2 rounded flex items-center gap-1 text-white/70 transition-colors">
-                Code: {roomData.teamCode} <Copy className="w-2.5 h-2.5" />
-              </button>
-              {isOwner && (
-                <button onClick={() => copyToClipboard(roomData.password, 'Password')} className="text-[10px] font-mono bg-black/40 hover:bg-black/60 px-2 rounded flex items-center gap-1 text-white/70 transition-colors">
-                  Pass: {roomData.password} <Copy className="w-2.5 h-2.5" />
-                </button>
-              )}
+              <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-bold text-white/70 tracking-widest uppercase">Code: {roomData.teamCode}</span>
+              <span className="text-xs text-white/50">{participants.length} Active</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2 relative">
+          <button onClick={handleGenerateSummary} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors" title="AI Chat Summary">
+            <MessageSquareCode className="w-5 h-5" />
+          </button>
           <button onClick={() => setVanishMode(!vanishMode)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${vanishMode ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'hover:bg-white/10 text-white'}`} title="Vanish Mode">
             <EyeOff className="w-5 h-5" />
           </button>
@@ -705,6 +798,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               handlePlayMusic={handlePlayMusic}
               audioRefs={audioRefs}
               setLightboxImg={setLightboxImg}
+              onGameUpdate={(msgId, data) => socket.emit('updatePrivateMessageGame', { teamCode: roomData.teamCode, messageId: msgId, gameData: data })}
             />
             {isLastRead && (
               <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end gap-1 mb-2 pr-1">
@@ -789,15 +883,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   <button type="button" onContextMenu={(e) => { e.preventDefault(); setSelectedEffect(prev => prev === 'confetti' ? 'laser' : 'confetti'); }} onClick={handleSendText} className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send</button>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 ml-2">
-                  <div className="relative">
-                    <button type="button" onClick={() => setShowGif(!showGif)} className="p-2 text-white/50 hover:text-white transition-colors"><div className="text-[10px] font-black border-2 border-current rounded px-1 tracking-tighter">GIF</div></button>
-                    <AnimatePresence>{showGif && <GifPicker onSelect={handleSendGif} onClose={() => setShowGif(false)} />}</AnimatePresence>
-                  </div>
-                  <button type="button" onClick={() => setIsMusicModalOpen(true)} className="p-2 text-white/50 hover:text-white transition-colors"><Music className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 text-white/50 hover:text-white transition-colors"><ImageIcon className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setShowDraw(true)} className="p-2 text-white/50 hover:text-white transition-colors"><PenTool className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setShowPoll(true)} className="p-2 text-white/50 hover:text-white transition-colors"><BarChart2 className="w-5 h-5" /></button>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => setShowDraw(!showDraw)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Draw Doodle"><PenTool className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setShowPoll(!showPoll)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Create Poll"><BarChart2 className="w-5 h-5" /></button>
+                  <button type="button" onClick={handleCreateTicTacToe} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Tic-Tac-Toe"><Gamepad2 className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setIsSecretMsg(!isSecretMsg)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isSecretMsg ? 'bg-white text-black' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Secret Message"><Ghost className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setIsMusicModalOpen(true)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Share Music"><Music className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => setShowGif(!showGif)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors font-bold text-sm">GIF</button>
                 </div>
               )}
             </form>
@@ -840,6 +932,45 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               src={lightboxImg} alt="Fullscreen" className="max-w-full max-h-full rounded-2xl object-contain shadow-2xl" 
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      <AnimatePresence>
+        {showSummary && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="absolute bottom-20 left-4 right-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl z-50">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-white font-bold flex items-center gap-2"><MessageSquareCode className="w-5 h-5 text-purple-400" /> AI Chat Summary</h3>
+              <button onClick={() => setShowSummary(false)} className="text-white/50 hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <p className="text-white/80 whitespace-pre-wrap text-sm leading-relaxed">{aiSummary}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {easterEgg === 'snow' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+            {[...Array(50)].map((_, i) => (
+              <motion.div key={i} className="absolute w-2 h-2 bg-white rounded-full"
+                initial={{ top: -10, left: `${Math.random() * 100}%` }}
+                animate={{ top: '100%', left: `${Math.random() * 100}%` }}
+                transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, ease: "linear" }}
+              />
+            ))}
+          </motion.div>
+        )}
+        {easterEgg === 'matrix' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 pointer-events-none z-50 overflow-hidden bg-black/50">
+            {[...Array(30)].map((_, i) => (
+              <motion.div key={i} className="absolute text-green-500 font-mono text-xl"
+                initial={{ top: -20, left: `${Math.random() * 100}%` }}
+                animate={{ top: '100%' }}
+                transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, ease: "linear" }}
+              >
+                {Math.random().toString(36).substring(2, 3).toUpperCase()}
+              </motion.div>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
