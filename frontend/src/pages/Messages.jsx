@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
@@ -273,7 +273,8 @@ const Messages = () => {
   const { user, token } = useSelector(s => s.auth);
   const [searchParams, setSearchParams] = useSearchParams();
   const targetUserId = searchParams.get('user');
-  const { data: friendsList, isLoading: loadingFriends } = useGetFriendsListQuery(undefined, { skip: !user });
+  const { data: friendsRes, isLoading: loadingFriends } = useGetFriendsListQuery(undefined, { skip: !user });
+  const friendsList = friendsRes?.data || [];
 
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
