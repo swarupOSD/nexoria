@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import MovieForYouCarousel from '../components/MovieForYouCarousel';
 import { useGetMovieHomeSectionsQuery } from '../features/movie/movieApiSlice';
 import { useGetWatchHistoryQuery } from '../features/api/watchHistoryApiSlice';
 import { useGetMovieSettingsQuery } from '../features/settings/movieSettingsApiSlice';
@@ -264,6 +265,8 @@ const MovieBox = () => {
             </div>
           </div>
         )}
+
+        <MovieForYouCarousel />
 
         {renderMovieRow({ title: "Featured Movies", movies: featuredMovies, loading: isLoading })}
         {renderMovieRow({ title: "Trending Now", movies: trendingMovies, loading: isLoading })}

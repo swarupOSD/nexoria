@@ -73,7 +73,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white dark:bg-[#111111] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden group hover:shadow-md transition-all duration-300"
+            className="cyber-glass neon-border p-6 rounded-xl flex items-center gap-4 relative overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
           >
             <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-glow`}>
               {stat.icon}
@@ -98,7 +98,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm"
+          className="lg:col-span-2 cyber-glass neon-border rounded-xl p-6 shadow-lg shadow-primary/10"
         >
           <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Downloads Analytics</h3>
           <div className="h-80 w-full">
@@ -130,7 +130,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm"
+          className="cyber-glass neon-border rounded-xl p-6 shadow-lg shadow-primary/10"
         >
           <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Top Downloaded</h3>
           <div className="h-80 w-full">
