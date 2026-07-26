@@ -820,6 +820,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             </h2>
             <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0">
               <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest uppercase truncate shrink-0 max-w-[80px] sm:max-w-none">Code: {roomData.teamCode}</span>
+              {roomData.ownerId === user._id && (
+                <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest truncate shrink-0 max-w-[80px] sm:max-w-none">Pass: {roomData.password}</span>
+              )}
               <span className="text-[10px] sm:text-xs text-white/50 shrink-0">{participants.length} Active</span>
             </div>
           </div>
