@@ -137,7 +137,7 @@ const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg })
           placeholder="Custom background URL..."
           className="flex-1 bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white placeholder:text-white/20"
         />
-        <button onClick={() => {}} className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 rounded-lg transition-colors">Apply</button>
+        <button onClick={() => { if(customBg) onSelect(customBg); }} className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 rounded-lg transition-colors">Apply</button>
       </div>
       <p className="text-[9px] text-white/40 mt-1 pl-1">Paste an image URL and click Apply (Changes instantly).</p>
     </div>
@@ -173,7 +173,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
   const [translatedText, setTranslatedText] = useState('');
   const [isRevealed, setIsRevealed] = useState(!msg.isSecret);
   const audioRef = useRef(null);
-  const tc = THEMES[theme] || THEMES.default;
+  const tc = THEMES[theme] || { ...THEMES.default, bg: (theme && (theme.startsWith('http') || theme.startsWith('data:'))) ? `url(${theme}) center/cover no-repeat` : THEMES.default.bg };
 
   useEffect(() => {
     if (playingAudioId === msg._id) {
@@ -437,7 +437,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const isTypingRef = useRef(false);
 
   const isOwner = roomData.ownerId === user._id.toString();
-  const tc = THEMES[activeTheme] || THEMES.default;
+  const tc = THEMES[activeTheme] || { ...THEMES.default, bg: (activeTheme && (activeTheme.startsWith('http') || activeTheme.startsWith('data:'))) ? `url(${activeTheme}) center/cover no-repeat` : THEMES.default.bg };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
