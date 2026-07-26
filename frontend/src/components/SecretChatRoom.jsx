@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldCheck, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
 import { useSelector } from 'react-redux';
@@ -8,25 +8,25 @@ import CallOverlay from './CallOverlay';
 import UserActionModal from './UserActionModal';
 import { usePermissions } from '../contexts/PermissionContext';
 
-// ── Theme Config ─────────────────────────────────────────────────────────────
+// â”€â”€ Theme Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const THEMES = {
-  default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: '💬' },
-  monochrome:{ name: 'Monochrome',bg: '#111111', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: '🖤', textColor: '#000000' },
-  cyberpunk: { name: 'Cyberpunk', bg: 'linear-gradient(to bottom, #000000, #1a0033)', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: '⚡' },
-  tie_dye:   { name: 'Tie-Dye',   bg: 'linear-gradient(45deg, #1a0022, #001a44)', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: '🌀' },
-  love:      { name: 'Love',      bg: 'linear-gradient(to bottom right, #330011, #000000)', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: '❤️' },
-  ocean:     { name: 'Ocean',     bg: 'linear-gradient(to bottom, #001122, #002233)', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: '🌊' },
-  lo_fi:     { name: 'Lo-Fi',     bg: 'linear-gradient(to bottom, #221100, #110500)', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: '🌇' },
-  galaxy:    { name: 'Galaxy',    bg: 'radial-gradient(circle at top right, #2a004d, #000000)', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: '🌌' },
+  default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: 'ðŸ’¬' },
+  monochrome:{ name: 'Monochrome',bg: '#111111', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: 'ðŸ–¤', textColor: '#000000' },
+  cyberpunk: { name: 'Cyberpunk', bg: 'linear-gradient(to bottom, #000000, #1a0033)', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: 'âš¡' },
+  tie_dye:   { name: 'Tie-Dye',   bg: 'linear-gradient(45deg, #1a0022, #001a44)', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: 'ðŸŒ€' },
+  love:      { name: 'Love',      bg: 'linear-gradient(to bottom right, #330011, #000000)', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: 'â¤ï¸' },
+  ocean:     { name: 'Ocean',     bg: 'linear-gradient(to bottom, #001122, #002233)', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: 'ðŸŒŠ' },
+  lo_fi:     { name: 'Lo-Fi',     bg: 'linear-gradient(to bottom, #221100, #110500)', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: 'ðŸŒ‡' },
+  galaxy:    { name: 'Galaxy',    bg: 'radial-gradient(circle at top right, #2a004d, #000000)', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: 'ðŸŒŒ' },
 };
 
-const REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
-const EMOJIS = ['😀','😂','🥺','😍','🤩','😎','🥳','😊','🤔','😴','😭','😤','🤬','😱','🥴','😇','🫂','❤️','🔥','✨','💯','👀','🎉','🎵','💪','👋','🙏','💀','😈','👑','🌈','🍕','🎮','📱','🚀','⭐','🫂','🤯','🤩','🤤'];
+const REACTIONS = ['â¤ï¸', 'ðŸ˜‚', 'ðŸ˜®', 'ðŸ˜¢', 'ðŸ˜¡', 'ðŸ‘'];
+const EMOJIS = ['ðŸ˜€','ðŸ˜‚','ðŸ¥º','ðŸ˜','ðŸ¤©','ðŸ˜Ž','ðŸ¥³','ðŸ˜Š','ðŸ¤”','ðŸ˜´','ðŸ˜­','ðŸ˜¤','ðŸ¤¬','ðŸ˜±','ðŸ¥´','ðŸ˜‡','ðŸ«‚','â¤ï¸','ðŸ”¥','âœ¨','ðŸ’¯','ðŸ‘€','ðŸŽ‰','ðŸŽµ','ðŸ’ª','ðŸ‘‹','ðŸ™','ðŸ’€','ðŸ˜ˆ','ðŸ‘‘','ðŸŒˆ','ðŸ•','ðŸŽ®','ðŸ“±','ðŸš€','â­','ðŸ«‚','ðŸ¤¯','ðŸ¤©','ðŸ¤¤'];
 const GIPHY_KEY = import.meta.env.VITE_GIPHY_API_KEY || 'Qco0W0lBeOeaFGKv7DudhCA70LYaFOVf';
 
 const fmtTime = (d) => new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-// ── GIF Picker ─────────────────────────────────────────────────────────────
+// â”€â”€ GIF Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const GifPicker = ({ onSelect, onClose }) => {
   const [q, setQ] = useState('');
   const [gifs, setGifs] = useState([]);
@@ -82,7 +82,7 @@ const GifPicker = ({ onSelect, onClose }) => {
   );
 };
 
-// ── Emoji Picker ─────────────────────────────────────────────────────────────
+// â”€â”€ Emoji Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const EmojiPickerComponent = ({ onSelect, onClose }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
@@ -102,7 +102,7 @@ const EmojiPickerComponent = ({ onSelect, onClose }) => (
   </motion.div>
 );
 
-// ── Reaction Picker ─────────────────────────────────────────────────────────────
+// â”€â”€ Reaction Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ReactionPicker = ({ onSelect, onClose }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
@@ -117,7 +117,7 @@ const ReactionPicker = ({ onSelect, onClose }) => (
   </motion.div>
 );
 
-// ── Theme Picker ─────────────────────────────────────────────────────────────
+// â”€â”€ Theme Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg }) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
@@ -165,7 +165,7 @@ const calculateWinner = (squares) => {
   return null;
 };
 
-// ── View Once Image ────────────────────────────────────────────────────────────
+// â”€â”€ View Once Image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ViewOnceImage = ({ msg, isMe, onExpire }) => {
   const [status, setStatus] = useState('hidden');
   const [timeLeft, setTimeLeft] = useState(5);
@@ -200,7 +200,7 @@ const ViewOnceImage = ({ msg, isMe, onExpire }) => {
   );
 };
 
-// ── Message Bubble ─────────────────────────────────────────────────────────────
+// â”€â”€ Message Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate, onExpireViewOnce }) => {
   const [showRx, setShowRx] = useState(false);
   const [burst, setBurst] = useState(false);
@@ -227,7 +227,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
   );
 
   const handleDoubleTap = () => {
-    onReact(msg._id, '❤️');
+    onReact(msg._id, 'â¤ï¸');
     setBurst(true);
     setTimeout(() => setBurst(false), 1200);
   };
@@ -262,7 +262,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           <div className="mb-1 px-3 py-1.5 rounded-xl text-xs"
             style={{ background: 'rgba(255,255,255,0.05)', borderLeft: `2px solid ${tc.accent}`, color: 'rgba(255,255,255,0.5)', textAlign: isMe ? 'right' : 'left' }}>
             <div className="text-[10px] mb-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>Replying to</div>
-            <div className="truncate">{msg.replyTo.content || '📷 Media'}</div>
+            <div className="truncate">{msg.replyTo.content || 'ðŸ“· Media'}</div>
           </div>
         )}
 
@@ -284,7 +284,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           {burst && (
             <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-50">
               {[...Array(6)].map((_, i) => (
-                <motion.div key={i} initial={{ scale: 0.5, y: 0, opacity: 1, x: 0 }} animate={{ scale: 1.5, y: -60 - Math.random()*40, x: (Math.random()-0.5)*80, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="absolute text-2xl">❤️</motion.div>
+                <motion.div key={i} initial={{ scale: 0.5, y: 0, opacity: 1, x: 0 }} animate={{ scale: 1.5, y: -60 - Math.random()*40, x: (Math.random()-0.5)*80, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="absolute text-2xl">â¤ï¸</motion.div>
               ))}
             </div>
           )}
@@ -328,7 +328,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                       const speeds = [1, 1.5, 2];
                       const currentIdx = speeds.indexOf(audio.playbackRate) || 0;
                       audio.playbackRate = speeds[(currentIdx + 1) % speeds.length];
-                      toast(`Speed set to ${audio.playbackRate}x`, { icon: '⚡' });
+                      toast(`Speed set to ${audio.playbackRate}x`, { icon: 'âš¡' });
                     }
                   }} className="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-full text-white/80 hover:bg-white/20">1x</button>
                   <audio ref={audioRef} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
@@ -370,15 +370,15 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                             }
                             onGameUpdate(msg._id, newData);
                           }} className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-full flex items-center justify-center text-lg sm:text-xl hover:bg-white/20 transition-colors shadow-sm">
-                            {c === 'rock' ? '✊' : c === 'paper' ? '✋' : '✌️'}
+                            {c === 'rock' ? 'âœŠ' : c === 'paper' ? 'âœ‹' : 'âœŒï¸'}
                           </button>
                         ))}
                       </div>
                     ) : (
                       <div className="flex justify-between items-center text-2xl mb-2 px-3">
-                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player1?.choice ? (msg.gameData.player1.choice === 'rock' ? '✊' : msg.gameData.player1.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player1?.choice ? (msg.gameData.player1.choice === 'rock' ? 'âœŠ' : msg.gameData.player1.choice === 'paper' ? 'âœ‹' : 'âœŒï¸') : 'â“'}</motion.span>
                         <span className="text-sm font-bold text-white/50">VS</span>
-                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player2?.choice ? (msg.gameData.player2.choice === 'rock' ? '✊' : msg.gameData.player2.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player2?.choice ? (msg.gameData.player2.choice === 'rock' ? 'âœŠ' : msg.gameData.player2.choice === 'paper' ? 'âœ‹' : 'âœŒï¸') : 'â“'}</motion.span>
                       </div>
                     )}
                     {msg.gameData?.winner && <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-center text-yellow-400 font-bold text-sm mt-2">{msg.gameData.winner === 'Tie' ? 'Tie!' : `${msg.gameData.winner} Wins!`}</motion.p>}
@@ -454,7 +454,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
   );
 };
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
   const { requestPermission } = usePermissions();
@@ -529,9 +529,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       const text = lastMsg.content.toLowerCase();
       if (text.includes('?')) setSmartReplies(['Yes', 'No', 'Maybe', "I don't know"]);
       else if (text.includes('hi') || text.includes('hello')) setSmartReplies(['Hey!', 'Hi there!', "What's up?"]);
-      else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['😂', 'Lmao', 'So funny']);
+      else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['ðŸ˜‚', 'Lmao', 'So funny']);
       else if (text.includes('bye')) setSmartReplies(['Goodbye!', 'See ya!', 'Take care']);
-      else setSmartReplies(['Okay', 'Cool', 'Got it', '👍']);
+      else setSmartReplies(['Okay', 'Cool', 'Got it', 'ðŸ‘']);
     } else {
       setSmartReplies([]);
     }
@@ -548,8 +548,8 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     let happy = 0, angry = 0;
     recentMsgs.forEach(m => {
       if (m.type === 'text') {
-        if (m.content.match(/😂|❤️|🔥|😍|🥰|wow/i)) happy++;
-        if (m.content.match(/😡|🤬|💀|hate|angry/i)) angry++;
+        if (m.content.match(/ðŸ˜‚|â¤ï¸|ðŸ”¥|ðŸ˜|ðŸ¥°|wow/i)) happy++;
+        if (m.content.match(/ðŸ˜¡|ðŸ¤¬|ðŸ’€|hate|angry/i)) angry++;
       }
     });
     if (happy > angry && happy > 1) setVibeColor('rgba(255, 105, 180, 0.15)');
@@ -677,12 +677,12 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     let h = 0, a = 0;
     messages.forEach(m => {
       if (m.type === 'text') {
-        if (m.content.match(/😂|❤️|🔥|😍|🥰|wow/i)) h++;
-        if (m.content.match(/😡|🤬|💀|hate|angry/i)) a++;
+        if (m.content.match(/ðŸ˜‚|â¤ï¸|ðŸ”¥|ðŸ˜|ðŸ¥°|wow/i)) h++;
+        if (m.content.match(/ðŸ˜¡|ðŸ¤¬|ðŸ’€|hate|angry/i)) a++;
       }
     });
     
-    let vibe = h > a ? "Happy & Fun 😄" : (a > h ? "Heated / Serious 😡" : "Neutral 😐");
+    let vibe = h > a ? "Happy & Fun ðŸ˜„" : (a > h ? "Heated / Serious ðŸ˜¡" : "Neutral ðŸ˜");
     
     setAiSummary(`Chat Summary:\n- ${msgCount} messages sent.\n- Participants active: ${Array.from(users).join(', ')}.\n- Overall Vibe: ${vibe}.\n- Key topics: Random chat & Secrets.`);
     setShowSummary(true);
@@ -794,10 +794,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-500 overflow-hidden" style={{ background: tc.bg }}>
-      {/* ── Background Overlays ── */}
+      {/* â”€â”€ Background Overlays â”€â”€ */}
       <div className="absolute inset-0 pointer-events-none transition-colors duration-1000 mix-blend-screen" style={{ backgroundColor: vibeColor }}></div>
 
-      {/* ── IG Style Header ── */}
+      {/* â”€â”€ IG Style Header â”€â”€ */}
       <div className="flex items-center justify-between px-2 sm:px-4 py-3 border-b z-20 shadow-sm gap-2" style={{ background: 'rgba(0,0,0,0.2)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
           <div className="relative shrink-0">
@@ -818,10 +818,22 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-1 sm:gap-2 truncate">
               <span className="truncate">Secret Lounge</span> <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0" />
             </h2>
-            <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0">
-              <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest uppercase truncate shrink-0 max-w-[80px] sm:max-w-none">Code: {roomData.teamCode}</span>
+            <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0 flex-wrap">
+              <button
+                onClick={() => copyToClipboard(roomData.teamCode, 'Team Code')}
+                className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 hover:bg-green-500/20 hover:text-green-400 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest uppercase transition-all shrink-0"
+                title="Tap to copy Team Code"
+              >
+                {roomData.teamCode}
+              </button>
               {roomData.password && (
-                <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest truncate shrink-0 max-w-[80px] sm:max-w-none">Pass: {roomData.password}</span>
+                <button
+                  onClick={() => copyToClipboard(roomData.password, 'Password')}
+                  className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 hover:bg-purple-500/20 hover:text-purple-400 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest transition-all shrink-0"
+                  title="Tap to copy Password"
+                >
+                  {roomData.password}
+                </button>
               )}
               <span className="text-[10px] sm:text-xs text-white/50 truncate min-w-0 max-w-[120px] sm:max-w-none">
                 {participants.map(p => p.name?.split(' ')[0]).join(', ')}
@@ -845,11 +857,18 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </button>
           <button onClick={onLeave} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-red-500/20 text-red-500 transition-colors"><LogOut className="w-4 h-4 sm:w-5 sm:h-5" /></button>
           
+          <button
+            onClick={() => copyToClipboard(`Code: ${roomData.teamCode} | Pass: ${roomData.password}`, 'Invite Details')}
+            className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 text-yellow-400 transition-colors"
+            title="Copy Invite (Code + Password)"
+          >
+            <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
           <AnimatePresence>{showTheme && <ThemePicker currentTheme={activeTheme} onSelect={handleChangeTheme} onClose={() => setShowTheme(false)} customBg={customBg} setCustomBg={setCustomBg} />}</AnimatePresence>
         </div>
       </div>
 
-      {/* ── Messages Area ── */}
+      {/* â”€â”€ Messages Area â”€â”€ */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 z-10 scrollbar-hide flex flex-col">
         {messages.map((msg, idx) => {
           if (msg.type === 'system') {
@@ -904,7 +923,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         {isPartnerTyping && (
           <div className="flex justify-start mb-1 items-end gap-2">
             <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center border border-white/5 overflow-hidden flex-shrink-0">
-              <span className="text-[10px]">💬</span>
+              <span className="text-[10px]">ðŸ’¬</span>
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1 items-center" style={{ background: tc.theirBubble }}>
               <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} className="w-1.5 h-1.5 bg-white/50 rounded-full" />
@@ -916,7 +935,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── Input Area ── */}
+      {/* â”€â”€ Input Area â”€â”€ */}
       <div className="p-3 z-20 pb-6" style={{ background: vanishMode ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         
         {/* Smart Replies */}
@@ -940,7 +959,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               style={{ background: 'rgba(255,255,255,0.05)', borderLeft: `3px solid ${tc.accent}` }}>
               <div>
                 <span className="text-[10px] font-bold" style={{ color: tc.accent }}>Replying to {replyTo.sender?.name || 'Someone'}</span>
-                <p className="text-xs text-white/70 truncate max-w-sm">{replyTo.content || '📷 Media'}</p>
+                <p className="text-xs text-white/70 truncate max-w-sm">{replyTo.content || 'ðŸ“· Media'}</p>
               </div>
               <button type="button" onClick={() => setReplyTo(null)} className="text-white/40 hover:text-white"><X className="w-4 h-4" /></button>
             </motion.div>
@@ -983,7 +1002,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   <button type="button" onClick={() => setShowDraw(!showDraw)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Draw Doodle"><PenTool className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setShowPoll(!showPoll)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Create Poll"><BarChart2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={handleCreateTicTacToe} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Tic-Tac-Toe"><Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
-                  <button type="button" onClick={handleCreateRPS} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Rock-Paper-Scissors"><span className="text-sm sm:text-base">✌️</span></button>
+                  <button type="button" onClick={handleCreateRPS} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Rock-Paper-Scissors"><span className="text-sm sm:text-base">âœŒï¸</span></button>
                   <button type="button" onClick={() => setIsSecretMsg(!isSecretMsg)} className={`w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isSecretMsg ? 'bg-white text-black' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Secret Message"><Ghost className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setIsMusicModalOpen(true)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Share Music"><Music className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setShowGif(!showGif)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors font-bold text-xs sm:text-sm">GIF</button>
@@ -1090,7 +1109,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               ></div>
               <button onClick={(e) => {
                 // Mock sending canvas
-                socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: '🖍️ Sent a doodle!', isVanish: vanishMode, effect: selectedEffect });
+                socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'text', content: 'ðŸ–ï¸ Sent a doodle!', isVanish: vanishMode, effect: selectedEffect });
                 setShowDraw(false);
               }} className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-colors">Send Doodle</button>
             </div>
