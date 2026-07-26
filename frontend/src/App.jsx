@@ -320,6 +320,11 @@ function App() {
               </Route>
             </Route>
 
+            {/* Secret Lounge - Standalone (accessible from Nexoria Music) */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/secret-lounge" element={<SecretLounge />} />
+            </Route>
+
             {/* MovieBox Public Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="moviebox" element={<MovieBoxLayout />}>

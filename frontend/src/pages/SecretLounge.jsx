@@ -88,6 +88,15 @@ const SecretLounge = () => {
       {/* Clean Dark Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#121212] via-black to-black pointer-events-none"></div>
 
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute top-4 left-4 z-20 flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        Back
+      </button>
+
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
