@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  UploadCloud, Play, CheckCircle, XCircle, Loader2, Link as LinkIcon, AlertCircle, ArrowRight
+  UploadCloud, Play, CheckCircle, XCircle, Loader2, Link as LinkIcon, 
+  Trash2, AlertCircle, Copy, Check, ArrowRight
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useCreatePostMutation, useScrapePlayStoreMutation } from "../../features/post/postApiSlice";
@@ -15,48 +16,65 @@ const BulkImport = () => {
   const [scrapePlayStore] = useScrapePlayStoreMutation();
   const [createPost] = useCreatePostMutation();
 
-  const handleStartImport = () => {
-    if (!linksText.trim()) return toast.error("Please enter at least one link");
+  const handleAddLinks = () => {
+    if (!linksText.trim()) return toast.error("Please paste at least one link");
     
     // Split by new line, remove empty lines
     const urls = linksText.split('\n').map(l => l.trim()).filter(l => l);
     
     if (urls.length === 0) return toast.error("No valid links found");
-    if (urls.length > 20) return toast.error("Please import maximum 20 links at a time to prevent server overload.");
+    
+    // Filter duplicates against existing queue
+    const existingUrls = importTasks.map(t => t.url);
+    const uniqueUrls = urls.filter(url => !existingUrls.includes(url));
+    
+    if (uniqueUrls.length === 0) return toast.error("These links are already in the queue!");
 
-    const newTasks = urls.map((url, index) => ({
+    const newTasks = uniqueUrls.map((url, index) => ({
       id: Date.now() + index,
       url,
       status: 'pending', // pending, scraping, creating, success, failed
       appName: '',
-      message: 'Waiting...'
+      icon: '',
+      message: 'Ready to import'
     }));
 
-    setImportTasks(newTasks);
+    setImportTasks(prev => [...prev, ...newTasks]);
     setLinksText('');
-    processTasks(newTasks);
+    toast.success(`Added ${newTasks.length} links to queue`);
   };
 
-  const processTasks = async (tasks) => {
+  const handleRemoveTask = (id) => {
+    setImportTasks(prev => prev.filter(t => t.id !== id));
+  };
+
+  const handleClearCompleted = () => {
+    setImportTasks(prev => prev.filter(t => t.status !== 'success'));
+  };
+
+  const processTasks = async () => {
+    const pendingTasks = importTasks.filter(t => t.status === 'pending' || t.status === 'failed');
+    if (pendingTasks.length === 0) return toast.error("Queue is empty!");
+    if (pendingTasks.length > 20) return toast.error("Please import maximum 20 links at a time to prevent server overload.");
+
     setIsProcessing(true);
-    let updatedTasks = [...tasks];
+    let updatedTasks = [...importTasks];
     
-    const updateTaskStatus = (index, status, appName = '', message = '') => {
-      updatedTasks = [...updatedTasks];
-      updatedTasks[index] = { ...updatedTasks[index], status, appName: appName || updatedTasks[index].appName, message };
-      setImportTasks(updatedTasks);
+    const updateTask = (id, updates) => {
+      setImportTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
     };
 
-    for (let i = 0; i < tasks.length; i++) {
-      const task = tasks[i];
+    for (let i = 0; i < pendingTasks.length; i++) {
+      const task = pendingTasks[i];
       
       try {
         // Step 1: Scrape
-        updateTaskStatus(i, 'scraping', '', 'Scraping details...');
+        updateTask(task.id, { status: 'scraping', message: 'Scraping app details...' });
         const scrapeRes = await scrapePlayStore({ url: task.url }).unwrap();
         
         const appName = scrapeRes.title || 'Unknown App';
-        updateTaskStatus(i, 'creating', appName, 'Creating Draft Post...');
+        const icon = scrapeRes.icon || '';
+        updateTask(task.id, { status: 'creating', appName, icon, message: 'Creating Draft Post...' });
 
         // Step 2: Create Post
         const formData = {
@@ -76,14 +94,14 @@ const BulkImport = () => {
         };
 
         await createPost(formData).unwrap();
-        updateTaskStatus(i, 'success', appName, 'Draft created successfully!');
+        updateTask(task.id, { status: 'success', message: 'Imported successfully!' });
         
       } catch (error) {
         console.error("Task failed:", error);
-        updateTaskStatus(i, 'failed', '', error?.data?.message || 'Failed to process link');
+        updateTask(task.id, { status: 'failed', message: error?.data?.message || 'Failed to process link' });
       }
       
-      // Delay between requests to avoid rate limits
+      // Delay to avoid rate limits
       await new Promise(resolve => setTimeout(resolve, 1500));
     }
     
@@ -91,100 +109,204 @@ const BulkImport = () => {
     toast.success("Bulk Import Process Completed!");
   };
 
+  const pendingCount = importTasks.filter(t => t.status === 'pending' || t.status === 'failed').length;
+  const successCount = importTasks.filter(t => t.status === 'success').length;
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      <div className="flex items-center gap-4 mb-8">
         <BackButton />
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-          <UploadCloud className="w-6 h-6 text-indigo-500" />
-          Smart Bulk Import
-        </h1>
-      </div>
-
-      <div className="bg-white dark:bg-[#111] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">Paste Links</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-          Paste multiple DevUploads, Mediafire, Terabox, or Google Play links (one per line). 
-          The Smart Scraper will fetch all details and create Draft posts automatically.
-        </p>
-
-        <textarea
-          value={linksText}
-          onChange={(e) => setLinksText(e.target.value)}
-          disabled={isProcessing}
-          placeholder={`https://devuploads.com/...&#10;https://play.google.com/store/apps/details?id=...&#10;https://mediafire.com/...`}
-          className="w-full h-48 bg-slate-50 dark:bg-[#1a1a1a] border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-        />
-
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={handleStartImport}
-            disabled={isProcessing || !linksText.trim()}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-600/50 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
-          >
-            {isProcessing ? (
-              <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</>
-            ) : (
-              <><Play className="w-5 h-5" /> Start Bulk Import</>
-            )}
-          </button>
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 tracking-tight">
+            Bulk App Importer 
+            <span className="bg-[#1ed760] text-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Beta</span>
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Smart URL parsing for DevUploads, Mediafire, Terabox, and Play Store.
+          </p>
         </div>
       </div>
 
-      <AnimatePresence>
-        {importTasks.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#111] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
-          >
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#151515] flex justify-between items-center">
-              <h3 className="font-semibold text-slate-800 dark:text-white">Import Progress</h3>
-              <span className="text-xs font-medium px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full">
-                {importTasks.filter(t => t.status === 'success' || t.status === 'failed').length} / {importTasks.length} Completed
-              </span>
+      <div className="grid lg:grid-cols-3 gap-6">
+        
+        {/* Left Col: Input Zone */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-[#121212] border border-white/10 p-6 rounded-2xl shadow-[0_0_30px_rgba(30,215,96,0.03)] relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#1ed760] to-teal-400"></div>
+            <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+              <LinkIcon className="w-5 h-5 text-[#1ed760]" />
+              Paste Links
+            </h2>
+            <p className="text-[#b3b3b3] text-sm mb-4">
+              Paste URLs here (one per line). The smart scraper will extract IDs automatically.
+            </p>
+            
+            <textarea
+              value={linksText}
+              onChange={(e) => setLinksText(e.target.value)}
+              disabled={isProcessing}
+              placeholder="https://devuploads.com/...&#10;https://play.google.com/..."
+              className="w-full h-48 bg-[#181818] border border-white/5 hover:border-white/20 transition-colors rounded-xl p-4 text-sm font-mono text-white focus:outline-none focus:border-[#1ed760] focus:ring-1 focus:ring-[#1ed760] disabled:opacity-50 resize-none custom-scrollbar"
+            />
+            
+            <button
+              onClick={handleAddLinks}
+              disabled={isProcessing || !linksText.trim()}
+              className="w-full mt-4 flex justify-center items-center gap-2 bg-white hover:bg-gray-200 text-black disabled:bg-white/10 disabled:text-white/30 px-6 py-3 rounded-full font-bold transition-colors"
+            >
+              <UploadCloud className="w-5 h-5" /> Add to Queue
+            </button>
+          </div>
+        </div>
+
+        {/* Right Col: Queue */}
+        <div className="lg:col-span-2 flex flex-col bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] min-h-[500px]">
+          
+          {/* Queue Header */}
+          <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#181818]">
+            <div>
+              <h2 className="text-lg font-bold text-white">Import Queue</h2>
+              <p className="text-sm text-[#b3b3b3]">
+                {importTasks.length} items ({successCount} completed)
+              </p>
             </div>
+            {successCount > 0 && (
+              <button 
+                onClick={handleClearCompleted}
+                className="text-xs font-medium text-[#b3b3b3] hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full transition-colors"
+              >
+                Clear Completed
+              </button>
+            )}
+          </div>
 
-            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[500px] overflow-y-auto">
-              {importTasks.map((task, index) => (
-                <div key={task.id} className="p-4 flex items-start gap-4 hover:bg-slate-50 dark:hover:bg-[#151515] transition-colors">
-                  <div className="mt-1">
-                    {task.status === 'pending' && <div className="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600" />}
-                    {(task.status === 'scraping' || task.status === 'creating') && <Loader2 className="w-5 h-5 text-indigo-500 animate-spin" />}
-                    {task.status === 'success' && <CheckCircle className="w-5 h-5 text-green-500" />}
-                    {task.status === 'failed' && <XCircle className="w-5 h-5 text-red-500" />}
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-slate-800 dark:text-white truncate">
-                        {task.appName || `Link ${index + 1}`}
-                      </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-                        {task.status.toUpperCase()}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 truncate mb-1.5">
-                      <LinkIcon className="w-3 h-3 shrink-0" />
-                      <span className="truncate">{task.url}</span>
-                    </div>
-
-                    <div className={`text-xs flex items-center gap-1.5 ${
-                      task.status === 'failed' ? 'text-red-500' : 
-                      task.status === 'success' ? 'text-green-500' : 
-                      'text-indigo-500'
-                    }`}>
-                      {task.status === 'failed' ? <AlertCircle className="w-3.5 h-3.5" /> : 
-                       (task.status === 'scraping' || task.status === 'creating') ? <ArrowRight className="w-3.5 h-3.5" /> : null}
-                      {task.message}
-                    </div>
-                  </div>
+          {/* Queue List */}
+          <div className="flex-1 overflow-y-auto p-2 custom-scrollbar">
+            {importTasks.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                  <LinkIcon className="w-8 h-8 text-white/50" />
                 </div>
-              ))}
+                <h3 className="text-white font-medium mb-1">Queue is empty</h3>
+                <p className="text-sm text-[#b3b3b3]">Paste links on the left to get started</p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <AnimatePresence>
+                  {importTasks.map((task, index) => (
+                    <motion.div 
+                      key={task.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className={`group flex items-center gap-4 p-3 rounded-xl transition-colors ${
+                        task.status === 'success' ? 'bg-[#1ed760]/5' : 
+                        task.status === 'failed' ? 'bg-red-500/5' : 
+                        'hover:bg-white/5'
+                      }`}
+                    >
+                      {/* Icon / Status Indicator */}
+                      <div className="relative w-10 h-10 shrink-0 bg-[#282828] rounded-lg overflow-hidden flex items-center justify-center">
+                        {task.icon ? (
+                          <img src={task.icon} alt="Icon" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[#b3b3b3] font-mono text-xs">{index + 1}</span>
+                        )}
+                        
+                        {/* Overlay for processing */}
+                        {(task.status === 'scraping' || task.status === 'creating') && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[2px]">
+                            <Loader2 className="w-5 h-5 text-[#1ed760] animate-spin" />
+                          </div>
+                        )}
+                        {task.status === 'success' && (
+                          <div className="absolute inset-0 bg-[#1ed760]/20 flex items-center justify-center backdrop-blur-[1px]">
+                            <CheckCircle className="w-5 h-5 text-[#1ed760]" />
+                          </div>
+                        )}
+                        {task.status === 'failed' && (
+                          <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center backdrop-blur-[1px]">
+                            <XCircle className="w-5 h-5 text-red-500" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-white font-medium truncate text-sm">
+                          {task.appName || task.url}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className={`text-xs flex items-center gap-1 ${
+                            task.status === 'success' ? 'text-[#1ed760]' :
+                            task.status === 'failed' ? 'text-red-400' :
+                            task.status === 'scraping' || task.status === 'creating' ? 'text-[#1ed760]' :
+                            'text-[#b3b3b3]'
+                          }`}>
+                            {task.message}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="shrink-0 pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {(task.status === 'pending' || task.status === 'failed') && !isProcessing && (
+                          <button 
+                            onClick={() => handleRemoveTask(task.id)}
+                            className="p-2 text-[#b3b3b3] hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+
+          {/* Action Footer */}
+          <div className="p-4 border-t border-white/5 bg-[#181818] flex items-center justify-between">
+            <div className="text-sm font-medium text-[#b3b3b3]">
+              {isProcessing ? (
+                <span className="flex items-center gap-2 text-[#1ed760]">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Processing Queue...
+                </span>
+              ) : (
+                `${pendingCount} pending items`
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            
+            <button
+              onClick={processTasks}
+              disabled={isProcessing || pendingCount === 0}
+              className="flex items-center gap-2 bg-[#1ed760] hover:scale-105 disabled:hover:scale-100 disabled:bg-[#1ed760]/30 disabled:text-black/30 text-black px-6 py-2.5 rounded-full font-bold transition-all"
+            >
+              {isProcessing ? 'Importing...' : 'Start Import'}
+            </button>
+          </div>
+          
+        </div>
+      </div>
+      
+      {/* Global override for scrollbars in this component to match dark theme */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      `}} />
     </div>
   );
 };
