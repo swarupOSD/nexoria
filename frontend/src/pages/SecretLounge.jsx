@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ShieldAlert, LogIn, Plus, AlertTriangle, EyeOff, Hash, KeyRound, ArrowLeft } from 'lucide-react';
+import { Lock, ShieldCheck, LogIn, Plus, AlertTriangle, EyeOff, Hash, KeyRound, ArrowLeft } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
@@ -102,7 +102,7 @@ const SecretLounge = () => {
           <div className="flex justify-center mb-6">
             <div className="w-24 h-24 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 rounded-full p-[2px]">
               <div className="w-full h-full bg-black rounded-full flex items-center justify-center">
-                <ShieldAlert className="w-10 h-10 text-white" />
+                <ShieldCheck className="w-8 h-8 text-white" />
               </div>
             </div>
           </div>

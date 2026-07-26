@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldAlert, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldCheck, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
@@ -816,7 +816,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-1 sm:gap-2 truncate">
-              <span className="truncate">Secret Lounge</span> <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 shrink-0" />
+              <span className="truncate">Secret Lounge</span> <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0" />
             </h2>
             <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0">
               <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest uppercase truncate shrink-0 max-w-[80px] sm:max-w-none">Code: {roomData.teamCode}</span>
