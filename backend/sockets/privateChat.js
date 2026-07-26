@@ -52,6 +52,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
     socket.emit('privateRoomCreated', {
       teamCode,
       password,
+      ownerId: newRoom.ownerId,
       theme: newRoom.theme,
       participants: Array.from(newRoom.participants.values()),
       messages: newRoom.messages
@@ -91,6 +92,8 @@ export const registerPrivateChatHandlers = (io, socket) => {
     // Send success to joiner
     socket.emit('privateRoomJoined', {
       teamCode,
+      password: room.password,
+      ownerId: room.ownerId,
       theme: room.theme,
       participants: Array.from(room.participants.values()),
       messages: room.messages
