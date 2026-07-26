@@ -241,12 +241,10 @@ export const createTrack = async (req, res) => {
     const trackData = { ...req.body, addedBy: req.user._id };
     const track = await NexoriaTrack.create(trackData);
     
-    // If a file is attached, trigger upload and wait for it
+    // If a file is attached, trigger upload in background and return immediately
     if (req.file) {
-      await uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
-      // Fetch updated track to get the telegramFileId
-      const updatedTrack = await NexoriaTrack.findById(track._id);
-      return res.status(201).json({ success: true, data: updatedTrack });
+      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      return res.status(201).json({ success: true, data: track });
     }
 
     res.status(201).json({ success: true, data: track });
