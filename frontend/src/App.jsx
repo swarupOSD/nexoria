@@ -94,6 +94,7 @@ const MovieSettings = lazy(() => import('./pages/Admin/MovieSettings'));
 const AdminModeration = lazy(() => import('./pages/Admin/AdminModeration'));
 const AdminDownloads = lazy(() => import('./pages/Admin/AdminDownloads'));
 const CreatePost = lazy(() => import('./pages/Admin/CreatePost'));
+const BulkImport = lazy(() => import('./pages/Admin/BulkImport'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
 const SecretLounge = lazy(() => import('./pages/SecretLounge'));
 const VoiceLounge = lazy(() => import('./pages/VoiceLounge'));
@@ -350,6 +351,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="posts" element={<AdminPosts />} />
               <Route path="posts/create" element={<CreatePost />} />
+              <Route path="posts/bulk-import" element={<BulkImport />} />
               <Route path="posts/edit/:id" element={<CreatePost />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="comments" element={<AdminComments />} />

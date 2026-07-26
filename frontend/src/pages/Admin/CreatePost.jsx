@@ -147,7 +147,7 @@ const CreatePost = () => {
   const [scrapeUrl, setScrapeUrl] = useState('');
 
   const handleAutoScrape = async () => {
-    if (!scrapeUrl) return toast.error('Please enter a valid Google Play URL');
+    if (!scrapeUrl) return toast.error('Please enter a valid App Link');
     
     try {
       toast.loading('Scraping app details...', { id: 'scrape' });
@@ -171,6 +171,13 @@ const CreatePost = () => {
       
       if (response.description && editor) {
         editor.commands.setContent(`<p>${response.description}</p>`);
+      }
+      
+      if (response.downloadUrl) {
+        setDownloadLinks(prev => [
+          ...prev, 
+          { label: 'Download APK', url: response.downloadUrl }
+        ]);
       }
       
       toast.success('App details fetched successfully!', { id: 'scrape' });
@@ -525,7 +532,7 @@ const CreatePost = () => {
                   type="url" 
                   value={scrapeUrl}
                   onChange={(e) => setScrapeUrl(e.target.value)}
-                  placeholder="https://play.google.com/... or https://getmodsapk.com/..." 
+                  placeholder="Enter Play Store, DevUploads, or any App Link..." 
                   className="flex-1 px-4 py-3 bg-white dark:bg-[#111] border border-indigo-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-sm text-slate-700 dark:text-slate-200"
                 />
                 <button 

@@ -96,8 +96,70 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
         size,
         category,
         playStoreUrl: url,
+        downloadUrl: url,
         updatedAt: new Date().toISOString(),
       });
+    } else if (url.includes('devuploads.com') || url.includes('terabox.com') || url.includes('mediafire.com')) {
+      // Smart universal scraper for file hosts
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' },
+        timeout: 10000
+      });
+      const $ = cheerio.load(data);
+      
+      let filename = $('title').text() || $('h1').text() || '';
+      filename = filename.replace(/Download/i, '').replace(/Free/i, '').trim();
+      
+      // Clean filename to extract app name
+      let appName = filename
+        .replace(/\.apk|\.xapk|\.zip|\.rar/i, '')
+        .replace(/_|-|\./g, ' ')
+        .replace(/v\d+\.\d+(\.\d+)?/i, '')
+        .replace(/\d+\.\d+(\.\d+)?/i, '')
+        .replace(/mod|premium|pro|unlocked|hack|crack/ig, '')
+        .trim();
+        
+      if (!appName) appName = filename.substring(0, 15);
+      
+      let playStoreData = null;
+      try {
+        const searchResults = await gplay.search({ term: appName, num: 1 });
+        if (searchResults && searchResults.length > 0) {
+          playStoreData = await gplay.app({ appId: searchResults[0].appId });
+        }
+      } catch (e) {
+        console.error("Play Store search failed for:", appName);
+      }
+      
+      if (playStoreData) {
+        res.json({
+          title: playStoreData.title,
+          developer: playStoreData.developer,
+          description: playStoreData.description,
+          icon: playStoreData.icon,
+          screenshots: playStoreData.screenshots,
+          version: playStoreData.version || 'Varies',
+          size: playStoreData.size || 'Varies',
+          category: playStoreData.genre || 'Apps',
+          playStoreUrl: playStoreData.url,
+          downloadUrl: url,
+          updatedAt: playStoreData.updated,
+        });
+      } else {
+        res.json({
+          title: appName || 'Unknown App',
+          developer: 'Unknown',
+          description: '',
+          icon: '',
+          screenshots: [],
+          version: 'Varies',
+          size: 'Varies',
+          category: 'Apps',
+          playStoreUrl: '',
+          downloadUrl: url,
+          updatedAt: new Date().toISOString(),
+        });
+      }
     } else {
       // Fallback universal scraper using cheerio
       const { data } = await axios.get(url, {
@@ -130,6 +192,7 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
         size: 'Varies',
         category: 'Apps',
         playStoreUrl: url,
+        downloadUrl: url,
         updatedAt: new Date().toISOString(),
       });
     }

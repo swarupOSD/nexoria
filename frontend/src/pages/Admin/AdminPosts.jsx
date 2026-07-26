@@ -59,12 +59,20 @@ const AdminPosts = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage and moderate all applications and posts.</p>
           </div>
         </div>
-        <Link 
-          to={`${basePath}/create`} 
-          className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/20 text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max border border-blue-500/50"
-        >
-          <Plus className="w-5 h-5" /> Add New App
-        </Link>
+        <div className="flex gap-2">
+          <Link 
+            to={`${basePath}/bulk-import`} 
+            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 shadow-lg shadow-black/20 text-slate-200 text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max border border-slate-700"
+          >
+            <Download className="w-5 h-5" /> Bulk Import
+          </Link>
+          <Link 
+            to={`${basePath}/create`} 
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/20 text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition-all w-max border border-blue-500/50"
+          >
+            <Plus className="w-5 h-5" /> Add New App
+          </Link>
+        </div>
       </div>
 
       {/* Table Card */}
