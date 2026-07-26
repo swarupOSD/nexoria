@@ -745,7 +745,7 @@ const NexoriaPlayer = () => {
                       {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
                     </button>
                     <button onClick={() => dispatch(toggleAutoplay())} className={`p-2 hidden md:block ${autoplayEnabled ? 'text-green-500' : 'text-white/70'}`} title="Autoplay">
-                      <Infinity className="w-6 h-6" />
+                      <InfinityIcon className="w-6 h-6" />
                     </button>
                   </div>
                 </motion.div>
@@ -831,7 +831,7 @@ const NexoriaPlayer = () => {
                     {repeatMode === 'one' ? <Repeat1 className="w-[18px] h-[18px]" /> : <Repeat className="w-[18px] h-[18px]" />}
                   </button>
                   <button onClick={() => dispatch(toggleAutoplay())} className={`transition-colors ${autoplayEnabled ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`} title="Autoplay">
-                    <Infinity className="w-[18px] h-[18px]" />
+                    <InfinityIcon className="w-[18px] h-[18px]" />
                   </button>
                 </div>
                 {/* Scrubber */}
