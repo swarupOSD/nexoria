@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ShieldCheck, LogIn, Plus, AlertTriangle, EyeOff, Hash, KeyRound, ArrowLeft } from 'lucide-react';
+import { Lock, ShieldCheck, ShieldAlert, LogIn, Plus, AlertTriangle, EyeOff, Hash, KeyRound, ArrowLeft } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import SecretChatRoom from '../components/SecretChatRoom';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL } from '../features/api/apiSlice';
+
+// Derive the socket origin from BACKEND_URL (remove the /api suffix)
+const SOCKET_URL = BACKEND_URL.endsWith('/api')
+  ? BACKEND_URL.slice(0, -4)
+  : BACKEND_URL;
 
 const SecretLounge = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -24,7 +30,7 @@ const SecretLounge = () => {
       toast.error('You must be logged in to access the Secret Lounge.');
       navigate('/login');
     } else {
-      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      const newSocket = io(SOCKET_URL, {
         withCredentials: true,
         auth: { token }
       });
