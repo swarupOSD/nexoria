@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity, Sliders,
+  Repeat, Repeat1, Shuffle, Heart, X, ListMusic, Maximize2, MoreVertical, Link2, Download, ChevronDown, Mic2, Infinity as InfinityIcon, Sliders,
   RotateCcw, RotateCw, Share2, Moon
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -578,6 +578,10 @@ const NexoriaPlayer = () => {
                 >
                   {/* Top Header */}
                   <div className="flex items-center justify-between py-4">
+                    <button onClick={() => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none')} className="p-2 sm:p-2.5 rounded-full hover:bg-white/10 transition-colors text-white relative">
+                      {repeatMode === 'one' ? <Repeat1 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" /> : repeatMode === 'all' ? <Repeat className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" /> : <Repeat className="w-4 h-4 sm:w-5 sm:h-5 text-white/50" />}
+                      {repeatMode === 'all' && <InfinityIcon className="w-2 h-2 absolute top-1 right-1 text-purple-400" />}
+                    </button>
                     <button onClick={() => setIsExpanded(false)} className="p-2 text-white/70 hover:text-white">
                       <ChevronDown className="w-6 h-6" />
                     </button>
