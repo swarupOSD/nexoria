@@ -165,8 +165,43 @@ const calculateWinner = (squares) => {
   return null;
 };
 
+// ── View Once Image ────────────────────────────────────────────────────────────
+const ViewOnceImage = ({ msg, isMe, onExpire }) => {
+  const [status, setStatus] = useState('hidden');
+  const [timeLeft, setTimeLeft] = useState(5);
+
+  useEffect(() => {
+    let timer;
+    if (status === 'viewing' && timeLeft > 0) {
+      timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
+    } else if (status === 'viewing' && timeLeft === 0) {
+      onExpire(msg._id);
+    }
+    return () => clearInterval(timer);
+  }, [status, timeLeft, msg._id, onExpire]);
+
+  if (status === 'viewing') return (
+    <div className="relative rounded-xl overflow-hidden max-w-xs border-2 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)] bg-black">
+      <img src={msg.content} alt="View Once" className="w-full max-h-64 object-cover" />
+      <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded-full text-white font-bold text-xs flex items-center gap-1 backdrop-blur-md">
+        <Zap className="w-3 h-3 text-red-500 animate-pulse" /> {timeLeft}s
+      </div>
+    </div>
+  );
+
+  return (
+    <button onClick={() => setStatus('viewing')} className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-600/20 to-purple-600/20 border border-white/10 hover:border-white/30 transition-colors shadow-inner min-w-[200px]">
+      <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center animate-pulse shrink-0"><Zap className="w-5 h-5 text-red-400" /></div>
+      <div className="text-left flex-1 min-w-0">
+        <div className="text-sm font-bold text-white truncate">Tap to View</div>
+        <div className="text-[10px] text-white/50 truncate">Disappears in 5s</div>
+      </div>
+    </button>
+  );
+};
+
 // ── Message Bubble ─────────────────────────────────────────────────────────────
-const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate }) => {
+const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate, onExpireViewOnce }) => {
   const [showRx, setShowRx] = useState(false);
   const [burst, setBurst] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -256,7 +291,10 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           {msg.type === 'gif' && msg.gifData
             ? <div className="rounded-xl overflow-hidden max-w-xs"><img src={msg.gifData.url} alt={msg.gifData.title || 'GIF'} className="w-full max-h-48 object-cover" loading="lazy" /></div>
             : msg.type === 'image' && msg.content
-              ? <div className="rounded-xl overflow-hidden max-w-xs" onClick={() => setLightboxImg(msg.content)}><img src={msg.content} alt="Image" className="w-full max-h-64 object-cover" /></div>
+              ? (
+                msg.isViewOnce ? <ViewOnceImage msg={msg} isMe={isMe} onExpire={onExpireViewOnce} />
+                : <div className="rounded-xl overflow-hidden max-w-xs" onClick={() => setLightboxImg(msg.content)}><img src={msg.content} alt="Image" className="w-full max-h-64 object-cover" /></div>
+              )
               : msg.type === 'music' ? (
                 <div className="flex items-center gap-3 min-w-[200px]">
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
@@ -311,6 +349,41 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                   </div>
                 </div>
               ) : msg.type === 'game' ? (
+                msg.gameData?.gameType === 'rps' ? (
+                  <div className="w-48 bg-white/5 rounded-xl p-3 shadow-inner">
+                    <h4 className="text-center font-bold mb-3 text-white">Rock Paper Scissors</h4>
+                    {!msg.gameData.winner && !msg.gameData[isMe ? 'player1' : 'player2']?.choice ? (
+                      <div className="flex justify-between mb-2 gap-1 px-1">
+                        {['rock', 'paper', 'scissors'].map(c => (
+                          <button key={c} onClick={() => {
+                            const myKey = isMe ? 'player1' : 'player2';
+                            const newData = { ...msg.gameData };
+                            newData[myKey] = { choice: c };
+                            
+                            // check winner
+                            if (newData.player1?.choice && newData.player2?.choice) {
+                              const c1 = newData.player1.choice;
+                              const c2 = newData.player2.choice;
+                              if (c1 === c2) newData.winner = 'Tie';
+                              else if ((c1==='rock'&&c2==='scissors')||(c1==='paper'&&c2==='rock')||(c1==='scissors'&&c2==='paper')) newData.winner = 'Player 1';
+                              else newData.winner = 'Player 2';
+                            }
+                            onGameUpdate(msg._id, newData);
+                          }} className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-full flex items-center justify-center text-lg sm:text-xl hover:bg-white/20 transition-colors shadow-sm">
+                            {c === 'rock' ? '✊' : c === 'paper' ? '✋' : '✌️'}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center text-2xl mb-2 px-3">
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player1?.choice ? (msg.gameData.player1.choice === 'rock' ? '✊' : msg.gameData.player1.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
+                        <span className="text-sm font-bold text-white/50">VS</span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player2?.choice ? (msg.gameData.player2.choice === 'rock' ? '✊' : msg.gameData.player2.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
+                      </div>
+                    )}
+                    {msg.gameData?.winner && <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-center text-yellow-400 font-bold text-sm mt-2">{msg.gameData.winner === 'Tie' ? 'Tie!' : `${msg.gameData.winner} Wins!`}</motion.p>}
+                  </div>
+                ) : (
                 <div className="w-48 bg-white/5 rounded-xl p-3 shadow-inner">
                   <h4 className="text-center font-bold mb-3 text-white">Tic-Tac-Toe</h4>
                   <div className="grid grid-cols-3 gap-1 mb-2">
@@ -319,12 +392,13 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                         const newBoard = [...msg.gameData.board];
                         newBoard[i] = msg.gameData.xIsNext ? 'X' : 'O';
                         const winner = calculateWinner(newBoard);
-                        onGameUpdate(msg._id, { board: newBoard, xIsNext: !msg.gameData.xIsNext, winner });
+                        onGameUpdate(msg._id, { ...msg.gameData, board: newBoard, xIsNext: !msg.gameData.xIsNext, winner });
                       }} className="w-12 h-12 bg-white/10 rounded flex items-center justify-center text-xl font-bold hover:bg-white/20 transition-colors text-white">{cell}</button>
                     ))}
                   </div>
                   {msg.gameData?.winner && <p className="text-center text-green-400 font-bold text-sm">{msg.gameData.winner} Wins!</p>}
                 </div>
+                )
               ) : (
                 <div className="relative">
                   <div className={`transition-all duration-700 ${!isRevealed ? 'blur-md opacity-70 select-none' : ''}`} onMouseEnter={() => !isRevealed && setIsRevealed(true)} onClick={() => !isRevealed && setIsRevealed(true)}>
@@ -410,6 +484,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const [vanishMode, setVanishMode] = useState(false);
   const [selectedEffect, setSelectedEffect] = useState('');
   const [customBg, setCustomBg] = useState('');
+  const [isViewOnceMedia, setIsViewOnceMedia] = useState(false);
   const [showDraw, setShowDraw] = useState(false);
   const [showPoll, setShowPoll] = useState(false);
   const [smartReplies, setSmartReplies] = useState([]);
@@ -587,7 +662,11 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   };
 
   const handleCreateTicTacToe = () => {
-    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'game', content: 'Tic-Tac-Toe', isVanish: vanishMode, gameData: { board: Array(9).fill(null), xIsNext: true, winner: null } });
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'game', content: 'Tic-Tac-Toe', isVanish: vanishMode, gameData: { gameType: 'tictactoe', board: Array(9).fill(null), xIsNext: true, winner: null } });
+  };
+
+  const handleCreateRPS = () => {
+    socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'game', content: 'Rock Paper Scissors', isVanish: vanishMode, gameData: { gameType: 'rps', player1: { choice: null }, player2: { choice: null }, winner: null } });
   };
 
   const handleGenerateSummary = () => {
@@ -620,8 +699,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'image', content: event.target.result, replyTo });
+      socket.emit('sendPrivateMessage', { teamCode: roomData.teamCode, type: 'image', content: event.target.result, replyTo, isViewOnce: isViewOnceMedia });
       setReplyTo(null);
+      setIsViewOnceMedia(false);
     };
     reader.readAsDataURL(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -804,6 +884,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
               handlePlayMusic={handlePlayMusic}
               setLightboxImg={setLightboxImg}
               onGameUpdate={(msgId, data) => socket.emit('updatePrivateMessageGame', { teamCode: roomData.teamCode, messageId: msgId, gameData: data })}
+              onExpireViewOnce={(msgId) => socket.emit('expireViewOnce', { teamCode: roomData.teamCode, messageId: msgId })}
             />
             {isLastRead && (
               <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end gap-1 mb-2 pr-1">
@@ -864,6 +945,10 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
         <div className="max-w-4xl mx-auto flex items-center gap-2 relative">
           <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSendImage} className="hidden" />
           
+          <button onClick={() => setIsViewOnceMedia(!isViewOnceMedia)} className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isViewOnceMedia ? 'bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Send View-Once Media">
+            <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
           <div className="relative">
             <button type="button" onClick={() => setShowEmoji(!showEmoji)} className="w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors">
               <Smile className="w-5 h-5" />
@@ -893,6 +978,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   <button type="button" onClick={() => setShowDraw(!showDraw)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Draw Doodle"><PenTool className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setShowPoll(!showPoll)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Create Poll"><BarChart2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={handleCreateTicTacToe} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Tic-Tac-Toe"><Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={handleCreateRPS} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Rock-Paper-Scissors"><span className="text-sm sm:text-base">✌️</span></button>
                   <button type="button" onClick={() => setIsSecretMsg(!isSecretMsg)} className={`w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isSecretMsg ? 'bg-white text-black' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Secret Message"><Ghost className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setIsMusicModalOpen(true)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Share Music"><Music className="w-4 h-4 sm:w-5 sm:h-5" /></button>
                   <button type="button" onClick={() => setShowGif(!showGif)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors font-bold text-xs sm:text-sm">GIF</button>

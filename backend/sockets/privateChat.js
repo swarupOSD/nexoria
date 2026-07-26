@@ -98,7 +98,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
   });
 
   // Send a message or image or gif
-  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo, isVanish, effect, pollData, isSecret, gameData }) => {
+  socket.on('sendPrivateMessage', ({ teamCode, type, content, gifData, replyTo, isVanish, effect, pollData, isSecret, gameData, isViewOnce }) => {
     if (!socket.user) return;
     const room = activeRooms.get(teamCode);
     if (!room || !room.participants.has(socket.id)) return;
@@ -115,6 +115,7 @@ export const registerPrivateChatHandlers = (io, socket) => {
       pollData,
       isSecret,
       gameData,
+      isViewOnce,
       reactions: [],
       createdAt: Date.now(),
       isEdited: false,
@@ -164,6 +165,22 @@ export const registerPrivateChatHandlers = (io, socket) => {
 
     const message = room.messages.find(m => m._id === messageId);
     if (!message || message.sender._id.toString() !== socket.user._id.toString()) return;
+
+    message.isUnsent = true;
+    message.content = '';
+    message.gifData = null;
+
+    io.to(`private_${teamCode}`).emit('privateMessageUnsent', { messageId });
+  });
+
+  // Expire View Once message
+  socket.on('expireViewOnce', ({ teamCode, messageId }) => {
+    if (!socket.user) return;
+    const room = activeRooms.get(teamCode);
+    if (!room || !room.participants.has(socket.id)) return;
+
+    const message = room.messages.find(m => m._id === messageId);
+    if (!message || !message.isViewOnce) return;
 
     message.isUnsent = true;
     message.content = '';
