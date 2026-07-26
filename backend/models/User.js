@@ -100,6 +100,10 @@ const userSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
     },
+    friends: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
     twoFactorEnabled: {
       type: Boolean,
       default: false,
