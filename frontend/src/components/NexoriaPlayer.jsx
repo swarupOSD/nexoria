@@ -71,7 +71,6 @@ const NexoriaPlayer = () => {
   }, [currentTrack?._id]);
 
   const blobUrlsRef = useRef({});
-  const [activeAudioSrc, setActiveAudioSrc] = useState("");
 
   // Pre-resolve blob URLs for current track and next few tracks in queue
   useEffect(() => {
@@ -106,25 +105,35 @@ const NexoriaPlayer = () => {
       : currentTrack?.audioUrl || "";
       
     if (!networkSrc) {
-      if (isMounted) setActiveAudioSrc("");
+      if (audioRef.current) audioRef.current.src = "";
       return;
     }
     
-    // If we already have the blob url, use it immediately
+    const setAudioSrc = (src) => {
+      if (!isMounted || !audioRef.current) return;
+      // Only set src if it changed, to prevent interrupting playback started by handleSkipForward
+      if (audioRef.current.src !== src && !audioRef.current.src.endsWith(src)) {
+         audioRef.current.src = src;
+         if (isPlaying) {
+           const playPromise = audioRef.current.play();
+           if (playPromise !== undefined) playPromise.catch(e => console.log(e));
+         }
+      }
+    };
+
     if (blobUrlsRef.current[currentTrack?._id]) {
-      if (isMounted) setActiveAudioSrc(blobUrlsRef.current[currentTrack._id]);
+      setAudioSrc(blobUrlsRef.current[currentTrack._id]);
     } else if (downloadedTracks.includes(currentTrack?._id)) {
-      // It's downloaded but not resolved yet
       getBlobUrlForTrack(networkSrc).then(blobUrl => {
         if (blobUrl) {
           blobUrlsRef.current[currentTrack._id] = blobUrl;
-          if (isMounted) setActiveAudioSrc(blobUrl);
+          setAudioSrc(blobUrl);
         } else {
-          if (isMounted) setActiveAudioSrc(networkSrc);
+          setAudioSrc(networkSrc);
         }
       });
     } else {
-      if (isMounted) setActiveAudioSrc(networkSrc);
+      setAudioSrc(networkSrc);
     }
     
     return () => { isMounted = false; };
@@ -480,7 +489,6 @@ const NexoriaPlayer = () => {
       <audio
         id="nexoria-global-audio"
         ref={audioRef}
-        src={activeAudioSrc}
         autoPlay={isPlaying}
         playsInline
         preload="auto"
