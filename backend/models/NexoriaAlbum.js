@@ -6,7 +6,7 @@ const nexoriaAlbumSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Album title is required'],
       trim: true,
-      maxlength: [100, 'Album title cannot be more than 100 characters']
+      maxlength: [255, 'Album title cannot be more than 255 characters']
     },
     artist: {
       type: mongoose.Schema.ObjectId,

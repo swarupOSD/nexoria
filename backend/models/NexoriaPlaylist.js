@@ -6,7 +6,7 @@ const nexoriaPlaylistSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Playlist title is required'],
       trim: true,
-      maxlength: [100, 'Playlist title cannot be more than 100 characters']
+      maxlength: [255, 'Playlist title cannot be more than 255 characters']
     },
     description: {
       type: String,
