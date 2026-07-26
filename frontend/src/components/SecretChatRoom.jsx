@@ -798,9 +798,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       <div className="absolute inset-0 pointer-events-none transition-colors duration-1000 mix-blend-screen" style={{ backgroundColor: vibeColor }}></div>
 
       {/* ── IG Style Header ── */}
-      <div className="flex items-center justify-between px-4 py-3 border-b z-20 shadow-sm" style={{ background: 'rgba(0,0,0,0.2)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+      <div className="flex items-center justify-between px-2 sm:px-4 py-3 border-b z-20 shadow-sm gap-2" style={{ background: 'rgba(0,0,0,0.2)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="relative shrink-0">
             {participants.length > 1 ? (
               <div className="flex -space-x-2">
                 {participants.filter(p => p._id !== user._id).slice(0, 3).map(p => (
@@ -814,13 +814,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             )}
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
           </div>
-          <div className="flex flex-col">
-            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              Secret Lounge <ShieldAlert className="w-5 h-5 text-red-500" />
+          <div className="flex flex-col min-w-0 flex-1">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-1 sm:gap-2 truncate">
+              <span className="truncate">Secret Lounge</span> <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 shrink-0" />
             </h2>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-bold text-white/70 tracking-widest uppercase">Code: {roomData.teamCode}</span>
-              <span className="text-xs text-white/50">{participants.length} Active</span>
+            <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0">
+              <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-white/10 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-widest uppercase truncate shrink-0 max-w-[80px] sm:max-w-none">Code: {roomData.teamCode}</span>
+              <span className="text-[10px] sm:text-xs text-white/50 shrink-0">{participants.length} Active</span>
             </div>
           </div>
         </div>
@@ -957,14 +957,14 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
             <AnimatePresence>{showGif && <GifPicker onSelect={handleSendGif} onClose={() => setShowGif(false)} />}</AnimatePresence>
           </div>
 
-          <div className="relative flex-1">
-            <form onSubmit={handleSendText} className="flex items-center bg-[#262626] rounded-full px-4 border border-transparent focus-within:border-white/20 transition-all">
+          <div className="relative flex-1 min-w-0">
+            <form onSubmit={handleSendText} className="flex items-center bg-[#262626] rounded-full px-2 sm:px-4 border border-transparent focus-within:border-white/20 transition-all min-w-0">
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInput}
                 placeholder="Message..."
-                className="flex-1 bg-transparent text-white py-3 outline-none text-[15px] placeholder-white/40"
+                className="flex-1 bg-transparent text-white py-2 sm:py-3 outline-none text-[14px] sm:text-[15px] placeholder-white/40 min-w-0 w-full"
               />
               {inputValue.trim() || selectedEffect ? (
                 <div className="flex items-center gap-2">
