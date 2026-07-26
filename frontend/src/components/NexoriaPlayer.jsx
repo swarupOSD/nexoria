@@ -97,6 +97,11 @@ const NexoriaPlayer = () => {
   }, [currentTrack?._id, queue, downloadedTracks]);
 
   // Determine active audio source on track change
+  // Expose audioRef globally so pages can call imperative play without dispatch delay
+  useEffect(() => {
+    window.__nexoriaAudioRef = audioRef;
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
@@ -109,35 +114,37 @@ const NexoriaPlayer = () => {
       return;
     }
     
-    const setAudioSrc = (src) => {
+    const setAudioSrcAndPlay = (src) => {
       if (!isMounted || !audioRef.current) return;
-      // Only set src if it changed, to prevent interrupting playback started by handleSkipForward
-      if (audioRef.current.src !== src && !audioRef.current.src.endsWith(src)) {
-         audioRef.current.src = src;
-         if (isPlaying) {
-           const playPromise = audioRef.current.play();
-           if (playPromise !== undefined) playPromise.catch(e => console.log(e));
-         }
+      // Always set src on track change - the skipForward guard is handled separately
+      const currentSrc = audioRef.current.src;
+      const srcChanged = currentSrc !== src && !currentSrc.endsWith(encodeURIComponent(src.split('/').pop()));
+      if (srcChanged) {
+        audioRef.current.src = src;
+        audioRef.current.load();
       }
+      // Always attempt play immediately (no waiting for canplay event)
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) playPromise.catch(e => console.log('Track change play:', e));
     };
 
     if (blobUrlsRef.current[currentTrack?._id]) {
-      setAudioSrc(blobUrlsRef.current[currentTrack._id]);
+      setAudioSrcAndPlay(blobUrlsRef.current[currentTrack._id]);
     } else if (downloadedTracks.includes(currentTrack?._id)) {
       getBlobUrlForTrack(networkSrc).then(blobUrl => {
         if (blobUrl) {
           blobUrlsRef.current[currentTrack._id] = blobUrl;
-          setAudioSrc(blobUrl);
+          setAudioSrcAndPlay(blobUrl);
         } else {
-          setAudioSrc(networkSrc);
+          setAudioSrcAndPlay(networkSrc);
         }
       });
     } else {
-      setAudioSrc(networkSrc);
+      setAudioSrcAndPlay(networkSrc);
     }
     
     return () => { isMounted = false; };
-  }, [currentTrack?._id, downloadedTracks]);
+  }, [currentTrack?._id]);
 
   // Sync state to audio element for play/pause toggling
   useEffect(() => {
@@ -166,15 +173,16 @@ const NexoriaPlayer = () => {
     }
   }, [isPlaying]);
 
-  // Force play when currentTrack changes if it should be playing (fixes auto-play next song)
+  // Resume playback when page becomes visible again (tab switch, screen on)
   useEffect(() => {
-    if (audioRef.current && isPlaying && currentTrack) {
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-         playPromise.catch(error => console.log("Track change autoplay prevented:", error));
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isPlaying && audioRef.current?.paused) {
+        audioRef.current.play().catch(e => console.log('Visibility resume:', e));
       }
-    }
-  }, [currentTrack, isPlaying]);
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isPlaying]);
 
   // Pre-fetch recommendations when queue is empty to ensure smooth background autoplay on mobile
   useEffect(() => {
