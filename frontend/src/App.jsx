@@ -406,6 +406,7 @@ function App() {
               <Route path="premium-users" element={<ManagePremiumUsers />} />
               <Route path="apps" element={<AdminPosts />} />
               <Route path="apps/create" element={<CreatePost />} />
+              <Route path="apps/bulk-import" element={<BulkImport />} />
               <Route path="apps/edit/:id" element={<CreatePost />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="premium-requests" element={<SuperPremiumRequests />} />
