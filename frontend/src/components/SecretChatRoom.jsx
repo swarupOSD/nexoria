@@ -745,20 +745,20 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 relative">
-          <button onClick={handleGenerateSummary} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors" title="AI Chat Summary">
+        <div className="flex items-center gap-1.5 sm:gap-2 relative overflow-x-auto scrollbar-hide max-w-[50%] sm:max-w-none pb-1">
+          <button onClick={handleGenerateSummary} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors" title="AI Chat Summary">
             <MessageSquareCode className="w-5 h-5" />
           </button>
-          <button onClick={() => setVanishMode(!vanishMode)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${vanishMode ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'hover:bg-white/10 text-white'}`} title="Vanish Mode">
-            <EyeOff className="w-5 h-5" />
+          <button onClick={() => setVanishMode(!vanishMode)} className={`w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${vanishMode ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'hover:bg-white/10 text-white'}`} title="Vanish Mode">
+            <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <button onClick={() => handleCall('audio')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Phone className="w-5 h-5" /></button>
-          <button onClick={() => handleCall('video')} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Video className="w-5 h-5" /></button>
-          <button onClick={() => setShowTheme(!showTheme)} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors relative">
-            <Palette className="w-5 h-5" />
+          <button onClick={() => handleCall('audio')} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Phone className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+          <button onClick={() => handleCall('video')} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors"><Video className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+          <button onClick={() => setShowTheme(!showTheme)} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 text-white transition-colors relative">
+            <Palette className="w-4 h-4 sm:w-5 sm:h-5" />
             <div className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: tc.accent }}></div>
           </button>
-          <button onClick={onLeave} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-500/20 text-red-500 transition-colors"><LogOut className="w-5 h-5" /></button>
+          <button onClick={onLeave} className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center hover:bg-red-500/20 text-red-500 transition-colors"><LogOut className="w-4 h-4 sm:w-5 sm:h-5" /></button>
           
           <AnimatePresence>{showTheme && <ThemePicker currentTheme={activeTheme} onSelect={handleChangeTheme} onClose={() => setShowTheme(false)} customBg={customBg} setCustomBg={setCustomBg} />}</AnimatePresence>
         </div>
@@ -889,13 +889,13 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
                   <button type="button" onContextMenu={(e) => { e.preventDefault(); setSelectedEffect(prev => prev === 'confetti' ? 'laser' : 'confetti'); }} onClick={handleSendText} className="text-white font-bold text-sm ml-2" style={{ color: tc.accent }}>Send</button>
                 </div>
               ) : (
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => setShowDraw(!showDraw)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Draw Doodle"><PenTool className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setShowPoll(!showPoll)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Create Poll"><BarChart2 className="w-5 h-5" /></button>
-                  <button type="button" onClick={handleCreateTicTacToe} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Tic-Tac-Toe"><Gamepad2 className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setIsSecretMsg(!isSecretMsg)} className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isSecretMsg ? 'bg-white text-black' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Secret Message"><Ghost className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setIsMusicModalOpen(true)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Share Music"><Music className="w-5 h-5" /></button>
-                  <button type="button" onClick={() => setShowGif(!showGif)} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors font-bold text-sm">GIF</button>
+                <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide max-w-[140px] sm:max-w-none pr-2">
+                  <button type="button" onClick={() => setShowDraw(!showDraw)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Draw Doodle"><PenTool className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={() => setShowPoll(!showPoll)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Create Poll"><BarChart2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={handleCreateTicTacToe} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Play Tic-Tac-Toe"><Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={() => setIsSecretMsg(!isSecretMsg)} className={`w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isSecretMsg ? 'bg-white text-black' : 'bg-white/10 hover:bg-white/20 text-white'}`} title="Secret Message"><Ghost className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={() => setIsMusicModalOpen(true)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors" title="Share Music"><Music className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+                  <button type="button" onClick={() => setShowGif(!showGif)} className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors font-bold text-xs sm:text-sm">GIF</button>
                 </div>
               )}
             </form>
