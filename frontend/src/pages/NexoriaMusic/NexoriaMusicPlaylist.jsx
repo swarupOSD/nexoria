@@ -61,7 +61,7 @@ const NexoriaMusicPlaylist = () => {
     } else {
       // Immediately set audio src for zero-delay play
       if (window.__nexoriaAudioRef?.current) {
-        const baseUrl = (import.meta.env.VITE_API_URL || '').replace('/api', '');
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
         const src = track.telegramFileId
           ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
           : track.audioUrl || '';

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, Music, Play, Pause, Loader } from 'lucide-react';
 import axios from 'axios';
+import { BACKEND_URL } from '../features/api/apiSlice';
+
+const _SOCKET_BASE = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
 
 const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,8 +17,8 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
     setLoading(true);
     try {
       const endpoint = query 
-        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/nexoria-music/search?q=${encodeURIComponent(query)}`
-        : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/nexoria-music/tracks`;
+        ? `${_SOCKET_BASE}/api/nexoria-music/search?q=${encodeURIComponent(query)}`
+        : `${_SOCKET_BASE}/api/nexoria-music/tracks`;
         
       // Ensure we send cookies for auth if needed
       const res = await axios.get(endpoint, { withCredentials: true });
@@ -77,7 +80,7 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
 
     // Determine the audio URL - use stream endpoint if telegramFileId exists
     const audioSrc = track.telegramFileId 
-      ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/nexoria-music/stream/${track.telegramFileId}`
+      ? `${_SOCKET_BASE}/api/nexoria-music/stream/${track.telegramFileId}`
       : track.audioUrl;
 
     if (!audioSrc) return;
@@ -103,7 +106,7 @@ const MusicShareModal = ({ isOpen, onClose, onSelect }) => {
       artist: track.artist?.name || 'Unknown Artist',
       coverImage: track.coverImage || '/default-music-cover.jpg',
       audioUrl: track.telegramFileId 
-        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/nexoria-music/stream/${track.telegramFileId}`
+        ? `${_SOCKET_BASE}/api/nexoria-music/stream/${track.telegramFileId}`
         : track.audioUrl
     });
     onClose();

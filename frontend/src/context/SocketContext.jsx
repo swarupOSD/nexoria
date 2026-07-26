@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const SocketContext = createContext();
 
@@ -11,8 +12,9 @@ export const SocketProvider = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Only connect if we want it global or we can just always connect.
-    const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+    // Derive the socket origin from BACKEND_URL (strip /api suffix)
+    const SOCKET_URL = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+    const newSocket = io(SOCKET_URL, {
       withCredentials: true,
       autoConnect: true,
       reconnection: true,

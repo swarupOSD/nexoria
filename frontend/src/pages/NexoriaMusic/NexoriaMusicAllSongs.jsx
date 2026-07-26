@@ -6,6 +6,7 @@ import { useGetAllTracksConsumerQuery } from '../../features/api/nexoriaMusicApi
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import NexoriaMusicAddToPlaylistModal from '../../components/NexoriaMusicAddToPlaylistModal';
 import NexoriaMusicContextMenu from '../../components/NexoriaMusicContextMenu';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const NexoriaMusicAllSongs = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -29,7 +30,7 @@ const NexoriaMusicAllSongs = () => {
     } else {
       // Immediately set audio src for zero-delay play
       if (window.__nexoriaAudioRef?.current) {
-        const baseUrl = (import.meta.env.VITE_API_URL || '').replace('/api', '');
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
         const src = track.telegramFileId
           ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
           : track.audioUrl || '';
@@ -80,7 +81,7 @@ const NexoriaMusicAllSongs = () => {
           onClick={() => tracks.length > 0 && handlePlay(tracks[0], tracks)}
           className="w-14 h-14 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-xl"
         >
-          {isPlaying ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
+          {isPlaying && tracks.some(t => t._id === currentTrack?._id) ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
         </button>
       </div>
 

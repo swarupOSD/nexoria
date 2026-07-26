@@ -131,8 +131,18 @@ const NexoriaMusicHome = () => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      // NexoriaPlayer will automatically detect currentTrack change and play it.
-      dispatch(setQueue(trackList));
+      // Immediately set audio src for zero-delay play
+      if (window.__nexoriaAudioRef?.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        const src = track.telegramFileId
+          ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+          : track.audioUrl || '';
+        if (src) {
+          window.__nexoriaAudioRef.current.src = src;
+          window.__nexoriaAudioRef.current.play().catch(() => {});
+        }
+      }
+      dispatch(setQueue(trackList || []));
       dispatch(playTrack(track));
     }
   };
@@ -163,13 +173,13 @@ const NexoriaMusicHome = () => {
             <h1 className="text-2xl font-bold tracking-tight">{greetingText}</h1>
           </div>
           <div className="flex items-center gap-5">
-            <button onClick={() => toast.success('Notifications coming soon', { icon: '🔔' })} className="hover:scale-110 transition-transform">
+            <button onClick={() => navigate('/notifications')} className="hover:scale-110 transition-transform" title="Notifications">
               <Bell className="w-[22px] h-[22px] text-white" />
             </button>
-            <button onClick={() => toast.success('Listening history coming soon', { icon: '🕒' })} className="hover:scale-110 transition-transform">
+            <button onClick={() => navigate('/nexoria-music/queue')} className="hover:scale-110 transition-transform" title="Queue / History">
               <Clock className="w-[22px] h-[22px] text-white" />
             </button>
-            <button onClick={() => toast.success('Settings coming soon', { icon: '⚙️' })} className="hover:scale-110 transition-transform">
+            <button onClick={() => navigate('/nexoria-music/search')} className="hover:scale-110 transition-transform" title="Search">
               <Settings className="w-[22px] h-[22px] text-white" />
             </button>
           </div>

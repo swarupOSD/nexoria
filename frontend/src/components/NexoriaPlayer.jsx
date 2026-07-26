@@ -146,18 +146,7 @@ const NexoriaPlayer = () => {
     return () => { isMounted = false; };
   }, [currentTrack?._id]);
 
-  // Sync state to audio element for play/pause toggling
-  useEffect(() => {
-    let isMounted = true;
-    if (autoplayEnabled && queue.length === 0 && currentTrack) {
-      getRecommendations().unwrap().then(res => {
-        if (isMounted && res.data && res.data.length > 0) {
-          dispatch(setQueue(res.data));
-        }
-      }).catch(e => console.error("Prefetch failed:", e));
-    }
-    return () => { isMounted = false; };
-  }, [queue.length, autoplayEnabled, currentTrack?._id, getRecommendations, dispatch]);
+  // Sync play/pause state to audio element
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -554,6 +543,7 @@ const NexoriaPlayer = () => {
                           e.stopPropagation();
                           dispatch(toggleLikeTrack(currentTrack._id));
                         }}
+                        onPointerDown={(e) => e.stopPropagation()}
                       >
                         <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-400'}`} />
                       </button>
@@ -564,6 +554,7 @@ const NexoriaPlayer = () => {
                           if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
                           dispatch(togglePlayPause());
                         }}
+                        onPointerDown={(e) => e.stopPropagation()}
                       >
                         {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                       </button>
