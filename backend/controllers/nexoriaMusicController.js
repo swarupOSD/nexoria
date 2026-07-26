@@ -1530,7 +1530,47 @@ export const getAlbumDetailsConsumer = async (req, res) => {
 export const getLyricsConsumer = async (req, res) => {
   try {
     const trackId = req.params.trackId;
-    const lyrics = await NexoriaLyrics.findOne({ trackId });
+    let lyrics = await NexoriaLyrics.findOne({ trackId });
+    
+    // If not in DB, try to auto-fetch from LRCLIB
+    if (!lyrics) {
+      const track = await NexoriaTrack.findById(trackId).populate('artist');
+      if (track) {
+        try {
+          const query = `track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(track.artist?.name || '')}`;
+          const lrcRes = await axios.get(`https://lrclib.net/api/get?${query}`, { timeout: 4000 });
+          
+          if (lrcRes.data && (lrcRes.data.syncedLyrics || lrcRes.data.plainLyrics)) {
+            let synced = [];
+            if (lrcRes.data.syncedLyrics) {
+              const lines = lrcRes.data.syncedLyrics.split('\n').filter(l => l.trim());
+              const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+              for (const line of lines) {
+                const match = line.match(timeRegex);
+                if (match) {
+                  const mins = parseInt(match[1]);
+                  const secs = parseInt(match[2]);
+                  const ms = match[3].length === 2 ? parseInt(match[3]) * 10 : parseInt(match[3]);
+                  const time = mins * 60 + secs + (ms / 1000);
+                  synced.push({ time, text: match[4].trim() });
+                }
+              }
+            }
+            
+            // Save to DB so we don't fetch again
+            lyrics = await NexoriaLyrics.create({
+              trackId,
+              plainText: lrcRes.data.plainLyrics || lrcRes.data.syncedLyrics || '',
+              syncedLyrics: synced,
+              addedBy: req.user?._id || track.addedBy // fallback
+            });
+          }
+        } catch (fetchErr) {
+          logger.error('LRCLIB auto-fetch error: ' + fetchErr.message);
+        }
+      }
+    }
+
     if (!lyrics) {
       return res.status(404).json({ success: false, message: 'Lyrics not found for this track' });
     }
