@@ -97,7 +97,7 @@ const NexoriaMusicArtist = () => {
             <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">✓</span>
             <span className="text-sm font-bold uppercase tracking-wider">Verified Artist</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white drop-shadow-md truncate max-w-[800px]">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white drop-shadow-md line-clamp-2 w-full" title={artist.name}>
             {artist.name}
           </h1>
           <p className="text-zinc-300 text-sm md:text-base mt-2 font-medium max-w-2xl line-clamp-2">

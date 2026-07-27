@@ -204,7 +204,7 @@ const NexoriaMusicPlaylist = () => {
                 'Public Playlist'
               )}
             </span>
-            <h1 className="text-3xl sm:text-5xl md:text-8xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md truncate">{playlist.title}</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={playlist.title}>{playlist.title}</h1>
             {playlist.description && (
               <p className="text-[#b3b3b3] text-xs sm:text-sm md:text-base mb-1 sm:mb-2 font-medium truncate">{playlist.description}</p>
             )}

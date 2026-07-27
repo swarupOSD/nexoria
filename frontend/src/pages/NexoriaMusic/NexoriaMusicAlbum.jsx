@@ -111,7 +111,7 @@ const NexoriaMusicAlbum = () => {
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-sm font-bold uppercase tracking-wider text-white">Album</span>
-            <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white pb-2 drop-shadow-md truncate max-w-[800px]">{album.title}</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={album.title}>{album.title}</h1>
             
             <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium mt-2">
               {album.artist && (
