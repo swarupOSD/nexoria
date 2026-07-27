@@ -1,17 +1,27 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
 import { Users, UserX, Loader2, Activity } from 'lucide-react';
 import axios from 'axios';
 
 const OnlineUsersBoard = () => {
-  const { data: response, isLoading } = useQuery({
-    queryKey: ['onlineUsers'],
-    queryFn: async () => {
-      const res = await axios.get('/api/analytics/online-users', { withCredentials: true });
-      return res.data.data;
-    },
-    refetchInterval: 10000 // refresh every 10 seconds
-  });
+  const [response, setResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get('/api/analytics/online-users', { withCredentials: true });
+        setResponse(res.data.data);
+      } catch (error) {
+        console.error('Error fetching online users:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (isLoading) {
     return (
@@ -25,7 +35,7 @@ const OnlineUsersBoard = () => {
   const recentlyOffline = response?.recentlyOfflineUsers || [];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8 min-w-0 overflow-x-hidden w-full">
       <div>
         <h1 className="text-3xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
           <Activity className="w-8 h-8 text-emerald-500" />
@@ -34,9 +44,9 @@ const OnlineUsersBoard = () => {
         <p className="text-slate-500 mt-2">Monitor active users across the platform in real-time.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Online Now */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 md:p-6 border border-slate-200 dark:border-slate-700 shadow-sm min-w-0">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
               <Users className="w-6 h-6" /> Online Now
@@ -70,7 +80,7 @@ const OnlineUsersBoard = () => {
         </div>
 
         {/* Recently Offline */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 md:p-6 border border-slate-200 dark:border-slate-700 shadow-sm min-w-0">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold flex items-center gap-2 text-slate-500">
               <UserX className="w-6 h-6" /> Recently Offline

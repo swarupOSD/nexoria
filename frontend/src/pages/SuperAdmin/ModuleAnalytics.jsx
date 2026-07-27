@@ -42,7 +42,7 @@ const ModuleAnalytics = () => {
   const Icon = activeModuleInfo.icon;
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-4 md:space-y-6 pb-20 min-w-0 overflow-x-hidden w-full">
       <Helmet>
         <title>{activeModuleInfo.label} Analytics - Super Admin</title>
       </Helmet>
@@ -95,7 +95,7 @@ const ModuleAnalytics = () => {
           
           {/* Quick Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
               <div className={`p-3 rounded-xl ${activeModuleInfo.bg} ${activeModuleInfo.color}`}>
                 <Eye className="w-6 h-6" />
               </div>
@@ -104,7 +104,7 @@ const ModuleAnalytics = () => {
                 <h3 className="text-2xl font-bold dark:text-white">{(data.totalViews || 0).toLocaleString()}</h3>
               </div>
             </div>
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
               <div className={`p-3 rounded-xl ${activeModuleInfo.bg} ${activeModuleInfo.color}`}>
                 <Download className="w-6 h-6" />
               </div>
@@ -113,7 +113,7 @@ const ModuleAnalytics = () => {
                 <h3 className="text-2xl font-bold dark:text-white">{(data.totalDownloads || 0).toLocaleString()}</h3>
               </div>
             </div>
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">
                 <DollarSign className="w-6 h-6" />
               </div>
@@ -122,7 +122,7 @@ const ModuleAnalytics = () => {
                 <h3 className="text-2xl font-bold dark:text-white">${data.estimatedRevenue}</h3>
               </div>
             </div>
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
                 <Activity className="w-6 h-6" />
               </div>
@@ -133,9 +133,9 @@ const ModuleAnalytics = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             {/* Daily Traffic Chart */}
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 min-w-0">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold dark:text-white">Daily Traffic (Last 7 Days)</h3>
               </div>
@@ -165,7 +165,7 @@ const ModuleAnalytics = () => {
             </div>
 
             {/* Top Items */}
-            <div className="glass-card p-6 border border-slate-200 dark:border-slate-800">
+            <div className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800 min-w-0">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold dark:text-white">Top Performing Items</h3>
               </div>

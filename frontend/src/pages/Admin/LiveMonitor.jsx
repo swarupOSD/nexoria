@@ -52,7 +52,7 @@ const LiveMonitor = () => {
   }, [socket]);
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6 min-w-0 overflow-x-hidden w-full">
       <Helmet>
         <title>Live Monitor - Admin Panel</title>
       </Helmet>
@@ -100,7 +100,7 @@ const LiveMonitor = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 
         {/* LIVE REVENUE */}
-        <div className="glass-card p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><DollarSign className="text-green-500 w-5 h-5"/> Live Revenue Stream</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -127,7 +127,7 @@ const LiveMonitor = () => {
         </div>
 
         {/* LIVE DOWNLOADS */}
-        <div className="glass-card p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Download className="text-indigo-500 w-5 h-5"/> Live Downloads</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -156,7 +156,7 @@ const LiveMonitor = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* LIVE ACTIVITY FEED */}
-        <div className="glass-card p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Users className="text-purple-500 w-5 h-5"/> Live Activity Feed</h3>
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -182,7 +182,7 @@ const LiveMonitor = () => {
         </div>
 
         {/* LIVE MODERATION & NOTIFICATIONS */}
-        <div className="glass-card p-4 md:p-6">
+        <div className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Shield className="text-red-500 w-5 h-5"/> Priority Notifications</h3>
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>

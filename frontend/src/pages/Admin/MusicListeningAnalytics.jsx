@@ -28,7 +28,7 @@ const MusicListeningAnalytics = () => {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6 min-w-0 overflow-x-hidden w-full">
       <Helmet><title>Music Analytics - Admin Panel</title></Helmet>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -69,7 +69,7 @@ const MusicListeningAnalytics = () => {
       </div>
 
       {/* Plays Per Day Chart */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6 min-w-0">
         <h3 className="text-base font-bold dark:text-white mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-purple-500" /> Plays Per Day
         </h3>
@@ -94,7 +94,7 @@ const MusicListeningAnalytics = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Top Tracks */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-base font-bold dark:text-white mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-indigo-500" /> Top Tracks
           </h3>
@@ -122,7 +122,7 @@ const MusicListeningAnalytics = () => {
         </motion.div>
 
         {/* Top Listeners */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6 min-w-0">
           <h3 className="text-base font-bold dark:text-white mb-4 flex items-center gap-2">
             <Headphones className="w-5 h-5 text-blue-500" /> Top Listeners
           </h3>
@@ -153,7 +153,7 @@ const MusicListeningAnalytics = () => {
       </div>
 
       {/* Recent Listening History */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6 min-w-0">
         <h3 className="text-base font-bold dark:text-white mb-4 flex items-center gap-2">
           <Clock className="w-5 h-5 text-green-500" /> Recent Listening Activity (Last 24h)
         </h3>

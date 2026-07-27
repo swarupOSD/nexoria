@@ -103,6 +103,7 @@ const AdminLayout = () => {
         { name: 'Albums', icon: <Folder className="w-4 h-4" />, path: '/admin/nexoria-music/albums' },
         { name: 'Tracks', icon: <Music className="w-4 h-4" />, path: '/admin/nexoria-music/tracks' },
         { name: 'Genres', icon: <Settings className="w-4 h-4" />, path: '/admin/nexoria-music/genres' },
+        ...(activeUser?.role === 'owner' ? [{ name: 'Music Analytics', icon: <BarChart3 className="w-4 h-4 text-purple-500" />, path: '/admin/music-analytics' }] : []),
       ]
     },
     {
@@ -118,6 +119,7 @@ const AdminLayout = () => {
         { name: 'Comments', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/comments' },
         { name: 'Ratings', icon: <Star className="w-4 h-4" />, path: '/admin/ratings' },
         { name: 'Contact', icon: <Mail className="w-4 h-4" />, path: '/admin/contact' },
+        ...(activeUser?.role === 'owner' ? [{ name: 'Support Tickets', icon: <Ticket className="w-4 h-4 text-amber-500" />, path: '/admin/support-tickets' }] : []),
       ]
     },
     {
@@ -127,6 +129,7 @@ const AdminLayout = () => {
         { name: 'Moderation', icon: <ShieldAlert className="w-4 h-4" />, path: '/admin/moderation' },
         { name: 'Reports', icon: <AlertOctagon className="w-4 h-4" />, path: '/admin/reports' },
         { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/chat-management' },
+        ...(activeUser?.role === 'owner' ? [{ name: 'Chat Analytics', icon: <MessageCircle className="w-4 h-4 text-indigo-500" />, path: '/admin/private-chat-analytics' }] : []),
       ]
     },
     {

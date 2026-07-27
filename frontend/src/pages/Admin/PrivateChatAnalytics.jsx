@@ -315,7 +315,7 @@ const PrivateChatAnalytics = () => {
   ].filter(d => d.value > 0);
 
   return (
-    <div className="space-y-4 md:space-y-5">
+    <div className="space-y-4 md:space-y-5 min-w-0 overflow-x-hidden w-full">
       <Helmet><title>Private Chat Monitor - Admin Panel</title></Helmet>
 
       {/* Header */}
@@ -398,7 +398,7 @@ const PrivateChatAnalytics = () => {
 
           {/* Chart + Pie */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2 glass-card p-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2 glass-card p-4 min-w-0">
               <h3 className="text-sm font-bold dark:text-white mb-3 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-indigo-500" /> Messages Per Day
               </h3>
@@ -421,7 +421,7 @@ const PrivateChatAnalytics = () => {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 min-w-0">
               <h3 className="text-sm font-bold dark:text-white mb-3">Message Types</h3>
               {pieData.length > 0 ? (
                 <div className="h-48 w-full">
@@ -442,7 +442,7 @@ const PrivateChatAnalytics = () => {
           </div>
 
           {/* Top Senders */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 min-w-0">
             <h3 className="text-sm font-bold dark:text-white mb-3 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-purple-500" /> Most Active Users
             </h3>
