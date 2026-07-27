@@ -540,8 +540,8 @@ const VoiceLounge = () => {
       </div>
 
       {/* Control Bar */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <div className="bg-[#0f1219]/90 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-full shadow-2xl flex items-center gap-6">
+      <div className="fixed bottom-24 sm:bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div className="bg-[#0f1219]/90 backdrop-blur-xl border border-white/10 px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-2xl flex items-center gap-4 sm:gap-6 scale-90 sm:scale-100">
           <div className="flex flex-col items-center gap-1 text-slate-400">
             <div className="bg-slate-800 p-2 rounded-full">
               <Users className="w-5 h-5 text-indigo-400" />
@@ -555,13 +555,13 @@ const VoiceLounge = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={toggleMute}
-            className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${
+            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-lg transition-colors ${
               isMuted 
                 ? 'bg-red-500/20 border border-red-500/50 text-red-500 shadow-red-500/20' 
                 : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border border-transparent shadow-purple-500/30'
             }`}
           >
-            {isMuted ? <MicOff className="w-7 h-7" /> : <Mic className="w-7 h-7" />}
+            {isMuted ? <MicOff className="w-6 h-6 sm:w-7 sm:h-7" /> : <Mic className="w-6 h-6 sm:w-7 sm:h-7" />}
           </motion.button>
 
           <div className="w-px h-10 bg-white/10"></div>
