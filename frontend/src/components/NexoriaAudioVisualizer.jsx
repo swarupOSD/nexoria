@@ -11,11 +11,7 @@ const NexoriaAudioVisualizer = ({ audioRef, isPlaying }) => {
     // Only initialize once and when audio element is ready
     if (!audioRef.current || audioContextRef.current) return;
 
-    // TEMPORARY FIX: WebAudio API's createMediaElementSource is muting the audio
-    // because the backend proxy does not fully support CORS and Range requests.
-    // Disabling it entirely to restore sound playback across all devices.
-    return;
-
+    // Visualizer is now safely enabled with CORS fixed.
     try {
       // Create audio context
       const AudioContext = window.AudioContext || window.webkitAudioContext;

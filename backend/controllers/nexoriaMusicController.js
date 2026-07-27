@@ -489,6 +489,7 @@ export const streamTrack = async (req, res) => {
       
       // Explicitly tell the browser we accept range requests
       res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Access-Control-Allow-Origin', '*');
 
       // Determine correct Content-Type
       let contentType = proxyRes.headers['content-type'];

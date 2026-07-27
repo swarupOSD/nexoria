@@ -496,6 +496,7 @@ const NexoriaPlayer = () => {
         ref={audioRef}
         autoPlay={isPlaying}
         playsInline
+        crossOrigin="anonymous"
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleTimeUpdate}
