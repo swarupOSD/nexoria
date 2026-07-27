@@ -27,7 +27,7 @@ const SecretLounge = () => {
 
   useEffect(() => {
     if (!user) {
-      toast.error('You must be logged in to access the Secret Lounge.');
+      toast.error('You must be logged in to access the Incognito Lounge.');
       navigate('/login');
     } else {
       const newSocket = io(SOCKET_URL, {
@@ -113,14 +113,14 @@ const SecretLounge = () => {
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Secret Lounge</span>
+        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Incognito Lounge</span>
         <div className="w-8" />
       </div>
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg bg-[#000000] border border-gray-800 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 mt-14 sm:mt-0"
+        className="w-full max-w-lg bg-[#000000] border border-gray-800 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden relative z-10"
       >
         {/* Sleek Header */}
         <div className="border-b border-gray-800/60 p-4 flex items-center justify-center relative bg-white/[0.02]">
@@ -137,7 +137,7 @@ const SecretLounge = () => {
           </div>
           
           <h1 className="text-2xl font-bold text-center text-white mb-2">
-            Secret Lounge
+            Incognito Lounge
           </h1>
           <p className="text-gray-400 text-center text-sm mb-8">Zero trace. Ephemeral. Secure.</p>
 

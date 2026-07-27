@@ -349,7 +349,7 @@ const NexoriaMusicLayout = () => {
                 <button 
                   onClick={() => navigate('/secret-lounge')}
                   className="w-8 h-8 rounded-full bg-black/60 border border-green-500/50 flex items-center justify-center hover:scale-105 hover:border-green-400 hover:bg-green-950/80 transition-all shadow-md relative group"
-                  title="Secret Lounge"
+                  title="Incognito Lounge"
                 >
                   <ShieldAlert className="w-4 h-4 text-green-500" />
                   <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-black"></span>

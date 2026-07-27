@@ -126,7 +126,7 @@ const AdminLayout = () => {
         { name: 'Moderation', icon: <ShieldAlert className="w-4 h-4" />, path: '/admin/moderation' },
         { name: 'Reports', icon: <AlertOctagon className="w-4 h-4" />, path: '/admin/reports' },
         { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/chat-management' },
-        { name: 'Secret Lounge', icon: <Ghost className="w-4 h-4" />, path: '/admin/secret-lounge-management' },
+        { name: 'Incognito Lounge', icon: <Ghost className="w-4 h-4" />, path: '/admin/secret-lounge-management' },
       ]
     },
     {

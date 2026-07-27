@@ -55,7 +55,7 @@ const SecretLoungeManagement = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Ghost className="w-8 h-8 text-teal-500" />
-            Secret Lounge Management
+            Incognito Lounge Management
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
             Monitor and manage active ephemeral chat rooms. Rooms exist in memory and leave no trace.
@@ -141,7 +141,7 @@ const SecretLoungeManagement = () => {
               ) : filteredRooms.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
-                    No active Secret Lounge rooms found.
+                    No active Incognito Lounge rooms found.
                   </td>
                 </tr>
               ) : (

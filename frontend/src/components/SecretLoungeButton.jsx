@@ -7,16 +7,18 @@ const SecretLoungeButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Don't show if already on the secret lounge page
+  // Don't show if already on the incognito lounge page
   if (location.pathname === '/secret-lounge') return null;
 
   return (
     <motion.button
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => navigate('/secret-lounge')}
-      className="fixed bottom-6 right-6 z-[100] w-14 h-14 bg-black border border-green-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-950 transition-all group"
-      title="Enter Secret Lounge"
+      className="fixed bottom-24 sm:bottom-6 right-4 sm:right-6 z-[999] w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gray-900 to-black rounded-full shadow-[0_0_20px_rgba(34,197,94,0.3)] border border-green-500/30 flex items-center justify-center text-green-500 hover:text-green-400 hover:border-green-400 transition-all group overflow-hidden"
+      title="Enter Incognito Lounge"
     >
       <ShieldAlert className="w-6 h-6 text-green-500 group-hover:text-green-400" />
       <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
