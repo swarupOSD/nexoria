@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Users, Headphones, VideoOff, Crown, Lock, ShieldCheck } from 'lucide-react';
+import { Mic, MicOff, Users, Headphones, VideoOff, Crown, Lock, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
@@ -385,10 +385,22 @@ const VoiceLounge = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-[#0a0d14] pt-6 sm:pt-24 pb-20 relative overflow-hidden flex flex-col items-center">
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14 w-full self-start mb-6">
+        <button 
+          onClick={() => window.history.back()}
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Secret Voice</span>
+        <div className="w-8" />
+      </div>
+
       {/* Background Decor */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-900/30 rounded-full blur-[150px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/20 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-900/30 rounded-full blur-[150px] pointer-events-none hidden sm:block"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/20 rounded-full blur-[150px] pointer-events-none hidden sm:block"></div>
 
       <AnimatePresence>
         {isLocked ? (
@@ -473,7 +485,7 @@ const VoiceLounge = () => {
         {/* Avatar Grid */}
         <div className="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
           {Object.values(participants).map((p) => (
-            <div key={p._id || p.userId} className="flex flex-col items-center relative">
+            <div key={p._id || p.userId} className="flex flex-col items-center relative active:scale-95 transition-transform cursor-pointer">
               
               {/* Pulsing ring for speaking */}
               {p.isSpeaking && !p.isMuted && (
