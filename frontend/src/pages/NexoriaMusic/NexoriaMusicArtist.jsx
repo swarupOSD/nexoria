@@ -42,7 +42,16 @@ const NexoriaMusicArtist = () => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      // NexoriaPlayer will automatically detect currentTrack change and play it.
+      if (window.__nexoriaAudioRef?.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        const src = track.telegramFileId
+          ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+          : track.audioUrl || '';
+        if (src) {
+          window.__nexoriaAudioRef.current.src = src;
+          window.__nexoriaAudioRef.current.play().catch(() => {});
+        }
+      }
       dispatch(setQueue(trackList));
       dispatch(playTrack(track));
     }

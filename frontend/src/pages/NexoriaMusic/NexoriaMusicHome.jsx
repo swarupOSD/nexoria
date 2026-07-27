@@ -335,7 +335,7 @@ const NexoriaMusicHome = () => {
                   onClick={() => navigate('/nexoria-music/artist/' + artist._id)}
                   className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
                 >
-                  <div className="w-[116px] h-[116px] sm:w-full sm:h-auto sm:aspect-square bg-[#4338CA] rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-[116px] h-[116px] sm:w-full sm:aspect-square bg-[#4338CA] rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative mx-auto shrink-0">
                     {artist.image && (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     )}

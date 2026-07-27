@@ -59,15 +59,15 @@ const NexoriaMusicAllSongs = () => {
 
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
-      <div className="h-48 sm:h-64 bg-gradient-to-b from-[#2E1A47] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 relative z-0">
-        <div className="flex gap-4 sm:gap-6 items-end z-10 relative">
-          <div className="w-28 h-28 sm:w-48 sm:h-48 bg-gradient-to-br from-indigo-500 to-purple-800 shadow-2xl flex items-center justify-center rounded-sm shrink-0">
-            <Heart className="w-12 h-12 sm:w-20 sm:h-20 text-white" />
+      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#2E1A47] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-16 md:pt-6 relative z-0">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-end z-10 relative w-full">
+          <div className="w-48 h-48 sm:w-56 sm:h-56 bg-gradient-to-br from-indigo-500 to-purple-800 shadow-2xl flex items-center justify-center rounded-sm shrink-0 mx-auto md:mx-0">
+            <Heart className="w-24 h-24 text-white" />
           </div>
-          <div className="flex flex-col gap-1 sm:gap-2 min-w-0">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white">Collection</span>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md">All Songs</h1>
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-300 font-medium">
+          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1 w-full text-center md:text-left mt-2 md:mt-0">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center justify-center md:justify-start gap-2">Collection</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full">All Songs</h1>
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs sm:text-sm text-zinc-300 font-medium mt-1 flex-wrap">
               <span>Nexoria</span>
               <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
               <span>{tracks.length} songs</span>
