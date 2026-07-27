@@ -98,49 +98,78 @@ const Home = () => {
           </h1>
         </div>
 
-        {/* Quick Access Mobile Grid - Explains what Nexoria is */}
-        <div className="grid grid-cols-2 gap-3">
-          <Link to="/category/apps" className="bg-gradient-to-br from-blue-500/20 to-indigo-500/5 border border-blue-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-blue-500/20 rounded-full blur-xl"></div>
-            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-              <LayoutTemplate className="w-4 h-4 text-blue-400" />
+        {/* Quick Access Mobile Grid - Premium Menu */}
+        <div className="grid grid-cols-2 gap-3 md:gap-4 relative">
+          <Link to="/category/apps" className="bg-gradient-to-br from-blue-500/20 to-indigo-500/5 border border-blue-500/20 hover:border-blue-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/20 rounded-full blur-2xl group-active:bg-blue-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center border border-blue-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <LayoutTemplate className="w-4 h-4 text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Studio</h3>
-              <p className="text-[10px] text-blue-400/70 font-bold uppercase tracking-widest mt-0.5">Mod Apps & Tools</p>
-            </div>
-          </Link>
-
-          <Link to="/moviebox" className="bg-gradient-to-br from-rose-500/20 to-pink-500/5 border border-rose-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-500/20 rounded-full blur-xl"></div>
-            <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center border border-rose-500/30">
-              <Film className="w-4 h-4 text-rose-400" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white">MovieBox</h3>
-              <p className="text-[10px] text-rose-400/70 font-bold uppercase tracking-widest mt-0.5">Movies & Anime</p>
+            <div className="relative z-10">
+              <h3 className="text-[15px] font-black text-white tracking-tight">Studio</h3>
+              <p className="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mt-0.5">Mod Apps</p>
             </div>
           </Link>
 
-          <Link to="/category/games" className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/5 border border-purple-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-purple-500/20 rounded-full blur-xl"></div>
-            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
-              <Gamepad2 className="w-4 h-4 text-purple-400" />
+          <Link to="/moviebox" className="bg-gradient-to-br from-rose-500/20 to-pink-500/5 border border-rose-500/20 hover:border-rose-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/20 rounded-full blur-2xl group-active:bg-rose-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-500/20 to-pink-500/20 flex items-center justify-center border border-rose-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <Film className="w-4 h-4 text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Arcade</h3>
-              <p className="text-[10px] text-purple-400/70 font-bold uppercase tracking-widest mt-0.5">Premium Games</p>
+            <div className="relative z-10">
+              <h3 className="text-[15px] font-black text-white tracking-tight">MovieBox</h3>
+              <p className="text-[10px] text-rose-400/80 font-bold uppercase tracking-widest mt-0.5">Movies & Shows</p>
             </div>
           </Link>
 
-          <Link to="/nexoria-music" className="bg-gradient-to-br from-emerald-500/20 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
-            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/20 rounded-full blur-xl"></div>
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-              <Music className="w-4 h-4 text-emerald-400" />
+          <Link to="/category/games" className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/5 border border-purple-500/20 hover:border-purple-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-purple-500/20 rounded-full blur-2xl group-active:bg-purple-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 flex items-center justify-center border border-purple-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <Gamepad2 className="w-4 h-4 text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-white">Music</h3>
-              <p className="text-[10px] text-emerald-400/70 font-bold uppercase tracking-widest mt-0.5">Ad-Free Streaming</p>
+            <div className="relative z-10">
+              <h3 className="text-[15px] font-black text-white tracking-tight">Arcade</h3>
+              <p className="text-[10px] text-purple-400/80 font-bold uppercase tracking-widest mt-0.5">Premium Games</p>
+            </div>
+          </Link>
+
+          <Link to="/nexoria-music" className="bg-gradient-to-br from-emerald-500/20 to-teal-500/5 border border-emerald-500/20 hover:border-emerald-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/20 rounded-full blur-2xl group-active:bg-emerald-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center border border-emerald-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <Music className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-[15px] font-black text-white tracking-tight">Music</h3>
+              <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mt-0.5">Ad-Free Audio</p>
+            </div>
+          </Link>
+
+          {/* New Dashboard & Premium Menu Items */}
+          <Link to={user ? "/dashboard" : "/login"} className="bg-gradient-to-br from-amber-500/20 to-yellow-500/5 border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-amber-500/20 rounded-full blur-2xl group-active:bg-amber-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500/20 to-yellow-500/20 flex items-center justify-center border border-amber-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <User className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            </div>
+            <div className="relative z-10 flex justify-between items-center">
+              <div>
+                <h3 className="text-[15px] font-black text-white tracking-tight">Dashboard</h3>
+                <p className="text-[10px] text-amber-400/80 font-bold uppercase tracking-widest mt-0.5">My Account</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-amber-500/50" />
+            </div>
+          </Link>
+
+          <Link to="/premium" className="bg-gradient-to-br from-cyan-500/20 to-blue-500/5 border border-cyan-500/20 hover:border-cyan-500/40 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-all relative overflow-hidden group shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-cyan-500/20 rounded-full blur-2xl group-active:bg-cyan-500/40 transition-colors"></div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center border border-cyan-500/30 group-active:scale-110 transition-transform shadow-inner">
+              <Gem className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+            </div>
+            <div className="relative z-10 flex justify-between items-center">
+              <div>
+                <h3 className="text-[15px] font-black text-white tracking-tight">VIP Pass</h3>
+                <p className="text-[10px] text-cyan-400/80 font-bold uppercase tracking-widest mt-0.5">Go Premium</p>
+              </div>
+              <Star className="w-3 h-3 text-cyan-500/50 fill-cyan-500/50" />
             </div>
           </Link>
         </div>
