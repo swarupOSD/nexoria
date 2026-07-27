@@ -460,18 +460,18 @@ const CreatePost = () => {
   };
 
   if (isEditing && isFetchingPost) {
-    return <div className="text-center p-10 dark:text-white">Loading post data...</div>;
+    return <div className="text-center p-5 md:p-10 dark:text-white">Loading post data...</div>;
   }
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-4 md:space-y-6 pb-20">
       <Helmet>
         <title>Create New Post - Admin Panel</title>
       </Helmet>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass p-4 rounded-2xl sticky top-0 z-40 border border-slate-200 dark:border-slate-800 backdrop-blur-xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
@@ -504,20 +504,20 @@ const CreatePost = () => {
             type="button"
             disabled={isCreating || isUpdating}
             onClick={() => handleSave(true, false)}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-blue-500/30 text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-all"
+            className="px-4 md:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-blue-500/30 text-white text-sm font-bold rounded-xl flex items-center gap-2 transition-all"
           >
             <Save className="w-4 h-4" /> Save & Close
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
         
         {/* Left Column: Form & Editor */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-4 md:space-y-8">
           
           {/* Auto-Scraper Tool */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 p-6 rounded-3xl relative overflow-hidden">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 p-4 md:p-6 rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
               <Globe className="w-32 h-32 text-indigo-500" />
             </div>
@@ -539,7 +539,7 @@ const CreatePost = () => {
                   type="button"
                   onClick={handleAutoScrape}
                   disabled={isScraping}
-                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="px-4 md:px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isScraping ? (
                     <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Fetching...</>
@@ -552,8 +552,8 @@ const CreatePost = () => {
           </motion.div>
 
           {/* Basic Info */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 md:mb-6">
               <FileText className="w-5 h-5 text-blue-500" />
               <h2 className="text-lg font-bold dark:text-white">Basic Information</h2>
             </div>
@@ -578,7 +578,7 @@ const CreatePost = () => {
                   <input type="text" name="description" value={formData.description} onChange={handleChange} placeholder="A short summary of this app..." className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-2">
                 <div>
                   <ImageUpload 
                     type="logo" 
@@ -626,7 +626,7 @@ const CreatePost = () => {
               </div>
 
               {/* Mod Features Array Manager */}
-              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-6">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-4 md:mt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-sm dark:text-white">Mod Features</h3>
                   <button type="button" onClick={addModFeature} className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold rounded-lg flex items-center gap-1 hover:bg-green-200 transition">
@@ -658,8 +658,8 @@ const CreatePost = () => {
           </motion.div>
 
           {/* App Info Grid */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 md:mb-6">
               <Smartphone className="w-5 h-5 text-purple-500" />
               <h2 className="text-lg font-bold dark:text-white">App Information</h2>
             </div>
@@ -832,8 +832,8 @@ const CreatePost = () => {
           </motion.div>
 
           {/* MOD Information */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 md:mb-6">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
                 <h2 className="text-lg font-bold dark:text-white">MOD Features</h2>
@@ -869,7 +869,7 @@ const CreatePost = () => {
 
           {/* Article Editor */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card overflow-hidden border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 p-6 pb-4">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 p-4 md:p-6 pb-4">
               <FileText className="w-5 h-5 text-indigo-500" />
               <h2 className="text-lg font-bold dark:text-white">Article Content</h2>
             </div>
@@ -881,8 +881,8 @@ const CreatePost = () => {
           </motion.div>
 
           {/* Download & Links */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 md:mb-6">
               <div className="flex items-center gap-2">
                 <Download className="w-5 h-5 text-cyan-500" />
                 <h2 className="text-lg font-bold dark:text-white">Download Links</h2>
@@ -929,8 +929,8 @@ const CreatePost = () => {
           </motion.div>
 
           {/* SEO Details */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-6 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-4 md:p-6 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 md:mb-6">
               <Tag className="w-5 h-5 text-amber-500" />
               <h2 className="text-lg font-bold dark:text-white">SEO Optimization</h2>
             </div>
@@ -956,8 +956,8 @@ const CreatePost = () => {
         </div>
 
         {/* Right Column: Live Preview Panel */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="sticky top-24 space-y-6">
+        <div className="lg:col-span-4 space-y-4 md:space-y-6">
+          <div className="sticky top-24 space-y-4 md:space-y-6">
             
             {/* TOC Preview */}
             <div className="glass-card p-5 border border-slate-200 dark:border-slate-800">

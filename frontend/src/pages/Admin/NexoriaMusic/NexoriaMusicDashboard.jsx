@@ -28,7 +28,7 @@ const NexoriaMusicDashboard = () => {
     <div className="flex flex-col h-screen bg-[#121212] text-white font-poppins selection:bg-[#1ed760] selection:text-black">
       
       {/* Top Header */}
-      <header className="flex items-center justify-between px-6 py-5 bg-gradient-to-b from-[#121212] to-[#121212]/90 sticky top-0 z-50 border-b border-white/5 backdrop-blur-md">
+      <header className="flex items-center justify-between px-4 md:px-6 py-5 bg-gradient-to-b from-[#121212] to-[#121212]/90 sticky top-0 z-50 border-b border-white/5 backdrop-blur-md">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-[#1ed760] flex items-center justify-center font-black text-black text-2xl shadow-[0_0_20px_rgba(30,215,96,0.4)]">
             N
@@ -46,10 +46,10 @@ const NexoriaMusicDashboard = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-6 pb-24 sm:pb-6">
+      <main className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-4 md:px-6 pb-24 sm:pb-6">
         
         {/* Quick Actions Panel */}
-        <div className="w-full max-w-[1920px] mx-auto mt-6 mb-8 flex items-center gap-3 overflow-x-auto custom-scrollbar pb-2">
+        <div className="w-full max-w-[1920px] mx-auto mt-4 md:mt-6 mb-4 md:mb-8 flex items-center gap-3 overflow-x-auto custom-scrollbar pb-2">
            <button onClick={() => setActiveTab('tracks')} className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">
              <Music className="w-4 h-4" /> Add New Track
            </button>
@@ -107,7 +107,7 @@ const NexoriaMusicDashboard = () => {
       </div>
 
       {/* Desktop Sidebar (Optional fallback if user is on huge screen, but matching the mobile-first ethos) */}
-      <div className="hidden sm:flex fixed bottom-0 left-0 right-0 h-[70px] bg-[#181818] border-t border-white/5 items-center justify-center gap-8 z-50">
+      <div className="hidden sm:flex fixed bottom-0 left-0 right-0 h-[70px] bg-[#181818] border-t border-white/5 items-center justify-center gap-4 md:gap-8 z-50">
          {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;

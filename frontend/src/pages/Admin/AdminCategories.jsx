@@ -106,14 +106,14 @@ const AdminCategories = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Manage Categories - Admin Panel</title>
       </Helmet>
 
       {/* Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
@@ -154,9 +154,9 @@ const AdminCategories = () => {
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {isLoading ? (
-                <tr><td colSpan="7" className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" /></td></tr>
+                <tr><td colSpan="7" className="p-4 md:p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" /></td></tr>
               ) : categories.length === 0 ? (
-                <tr><td colSpan="7" className="p-8 text-center text-slate-500">No categories found.</td></tr>
+                <tr><td colSpan="7" className="p-4 md:p-8 text-center text-slate-500">No categories found.</td></tr>
               ) : categories.map((cat) => (
                 <tr key={cat._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                   <td className="p-4 font-semibold dark:text-white flex items-center gap-2">
@@ -211,9 +211,9 @@ const AdminCategories = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+              className="glass-card relative w-full max-w-md p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             >
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white">
                   {editingCat ? 'Edit Category' : 'Add New Category'}
                 </h2>
@@ -334,7 +334,7 @@ const AdminCategories = () => {
                   <label htmlFor="isActive" className="text-sm font-medium dark:text-slate-300">Active (Visible)</label>
                 </div>
                 
-                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex justify-end gap-3 mt-4 md:mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
                   <button 
                     type="button" 
                     onClick={handleCloseModal}

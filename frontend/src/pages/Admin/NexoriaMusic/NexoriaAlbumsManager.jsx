@@ -80,7 +80,7 @@ const NexoriaAlbumsManager = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -89,7 +89,7 @@ const NexoriaAlbumsManager = () => {
         </div>
         <button 
           onClick={openCreate}
-          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Album
         </button>
@@ -110,7 +110,7 @@ const NexoriaAlbumsManager = () => {
           <p className="text-[#b3b3b3] text-sm">Create your first album release</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
           {albums.map(album => (
             <div key={album._id} className="bg-[#181818] hover:bg-[#282828] rounded-md p-4 group transition-colors duration-300 flex flex-col cursor-default">
               <div className="aspect-square rounded-md bg-zinc-800 mb-4 relative overflow-hidden flex items-center justify-center shadow-md">
@@ -167,7 +167,7 @@ const NexoriaAlbumsManager = () => {
             
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               {/* Cover Preview (Square) */}
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-4 md:mb-6">
                 <div className="w-40 h-40 rounded-2xl overflow-hidden bg-[#181818] border-2 border-white/10 shadow-2xl relative">
                   {formData.coverImage ? (
                     <img src={formData.coverImage} alt="preview" className="w-full h-full object-cover" />

@@ -67,7 +67,7 @@ const NexoriaGenresManager = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -76,7 +76,7 @@ const NexoriaGenresManager = () => {
         </div>
         <button 
           onClick={openCreate}
-          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Genre
         </button>
@@ -97,7 +97,7 @@ const NexoriaGenresManager = () => {
           <p className="text-[#b3b3b3] text-sm">Create categories to organize your music</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
           {genres.map(genre => (
             <div 
               key={genre._id} 

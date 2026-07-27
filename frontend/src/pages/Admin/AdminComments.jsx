@@ -35,17 +35,17 @@ const AdminComments = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Manage Comments - Admin Panel</title>
       </Helmet>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 md:mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
               <LayoutTemplate className="w-6 h-6 text-primary" />
               Comments Moderation
             </h1>
@@ -82,7 +82,7 @@ const AdminComments = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
-              {isLoading && <tr><td colSpan="5" className="p-10 text-center text-slate-400">Loading...</td></tr>}
+              {isLoading && <tr><td colSpan="5" className="p-5 md:p-10 text-center text-slate-400">Loading...</td></tr>}
               {!isLoading && comments.map((comment) => (
                 <tr key={comment._id} className="hover:bg-slate-800/30 transition-colors group">
                   <td className="p-5 pl-6">

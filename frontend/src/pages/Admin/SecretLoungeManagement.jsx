@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 
 const StatCard = ({ icon: Icon, title, value, colorClass }) => (
-  <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+  <div className="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
     <div className="flex items-center gap-4">
       <div className={`p-4 rounded-xl ${colorClass} bg-opacity-10 dark:bg-opacity-20`}>
         <Icon className={`w-6 h-6 ${colorClass.replace('bg-', 'text-')}`} />
@@ -50,7 +50,7 @@ const SecretLoungeManagement = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 md:space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -72,7 +72,7 @@ const SecretLoungeManagement = () => {
       </div>
 
       {/* Analytics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard 
           icon={Activity} 
           title="Active Rooms" 
@@ -122,43 +122,43 @@ const SecretLoungeManagement = () => {
           <table className="w-full">
             <thead className="bg-slate-50 dark:bg-slate-900/50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Room Code</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Theme</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Users</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Messages</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Uptime</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Room Code</th>
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Theme</th>
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Users</th>
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Messages</th>
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Uptime</th>
+                <th className="px-4 md:px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
               {isLoading ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan="6" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-500">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto text-teal-500 mb-2" />
                     Loading rooms...
                   </td>
                 </tr>
               ) : filteredRooms.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan="6" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-500">
                     No active Private Chatting rooms found.
                   </td>
                 </tr>
               ) : (
                 filteredRooms.map((room) => (
                   <tr key={room.teamCode} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <ShieldAlert className="w-4 h-4 text-amber-500" />
                         <span className="font-mono font-bold text-slate-700 dark:text-slate-200">{room.teamCode}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <span className="px-2.5 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md capitalize">
                         {room.theme}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <div className="flex -space-x-2">
                         {room.participants.slice(0, 3).map((p, i) => (
                           <img 
@@ -176,17 +176,17 @@ const SecretLoungeManagement = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                         {room.messageCount}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-slate-500 dark:text-slate-400">
                         {formatDistanceToNow(new Date(room.createdAt))}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap text-right">
                       <button
                         onClick={() => handleDelete(room.teamCode)}
                         disabled={isDeleting}

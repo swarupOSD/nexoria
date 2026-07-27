@@ -15,17 +15,17 @@ const AdminDownloads = () => {
   const totalDownloads = data?.stats?.totalDownloads || 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Download Analytics - Admin Panel</title>
       </Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
-            <h1 className="text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-wide flex items-center gap-2">
               <LayoutTemplate className="w-6 h-6 text-primary" />
               Downloads Analytics
             </h1>
@@ -38,9 +38,9 @@ const AdminDownloads = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#111827] border border-slate-800/80 rounded-2xl md:col-span-2 overflow-hidden shadow-lg shadow-black/20">
-          <div className="p-6 border-b border-slate-800 bg-[#0B0F19]/30">
+          <div className="p-4 md:p-6 border-b border-slate-800 bg-[#0B0F19]/30">
             <h3 className="text-lg font-bold text-white">Top Downloaded Content</h3>
           </div>
           <div className="overflow-x-auto">
@@ -73,15 +73,15 @@ const AdminDownloads = () => {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#111827] border border-slate-800/80 rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-lg shadow-black/20">
-          <div className="p-6 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30 rotate-3 hover:rotate-0 transition-transform">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#111827] border border-slate-800/80 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-lg shadow-black/20">
+          <div className="p-4 md:p-6 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30 rotate-3 hover:rotate-0 transition-transform">
             <Download className="w-12 h-12 text-white" />
           </div>
-          <div className="mt-6">
+          <div className="mt-4 md:mt-6">
             <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{totalDownloads}</h2>
             <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-xs">Total Lifetime Downloads</p>
           </div>
-          <div className="w-full border-t border-slate-800 pt-6 mt-6">
+          <div className="w-full border-t border-slate-800 pt-6 mt-4 md:mt-6">
             <div className="flex justify-between text-sm mb-3 font-medium">
               <span className="text-slate-400">Bandwidth Used (This Month)</span>
               <span className="font-bold text-white">45.2 TB</span>

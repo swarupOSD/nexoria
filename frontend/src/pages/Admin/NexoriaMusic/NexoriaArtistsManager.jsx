@@ -75,7 +75,7 @@ const NexoriaArtistsManager = () => {
   const isSaving = isCreating || isUpdating;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -84,7 +84,7 @@ const NexoriaArtistsManager = () => {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+          className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-all"
         >
           <Plus className="w-4 h-4" /> Add Artist
         </button>
@@ -92,7 +92,7 @@ const NexoriaArtistsManager = () => {
 
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="aspect-square bg-white/5 rounded-full animate-pulse mx-auto w-[160px]" />
           ))}
@@ -106,7 +106,7 @@ const NexoriaArtistsManager = () => {
           <p className="text-[#b3b3b3] text-sm">Add your first artist to get started</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
           {artists.map(artist => (
             <div
               key={artist._id}
@@ -125,7 +125,7 @@ const NexoriaArtistsManager = () => {
                     }} 
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-3xl font-black text-white">
+                  <div className="w-full h-full flex items-center justify-center text-2xl md:text-3xl font-black text-white">
                     {artist.name?.[0]?.toUpperCase()}
                   </div>
                 )}
@@ -180,9 +180,9 @@ const NexoriaArtistsManager = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-6">
+            <form onSubmit={handleSubmit} className="p-5 space-y-4 md:space-y-6">
               {/* Live Preview (Banner + Avatar) */}
-              <div className="relative mb-8">
+              <div className="relative mb-4 md:mb-8">
                 {/* Banner */}
                 <div className="h-32 w-full rounded-lg bg-[#282828] overflow-hidden relative border border-white/5">
                   {formData.coverImage && (
@@ -283,14 +283,14 @@ const NexoriaArtistsManager = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-3 rounded-full font-bold text-white hover:scale-105 transition-transform"
+                  className="px-4 md:px-6 py-3 rounded-full font-bold text-white hover:scale-105 transition-transform"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-8 py-3 bg-[#1ed760] text-black font-bold rounded-full hover:scale-105 hover:bg-[#1fdf64] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 md:px-8 py-3 bg-[#1ed760] text-black font-bold rounded-full hover:scale-105 hover:bg-[#1fdf64] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isSaving ? (
                     <>

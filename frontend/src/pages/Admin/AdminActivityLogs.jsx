@@ -37,7 +37,7 @@ const AdminActivityLogs = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-white">System Activity Logs</h2>
@@ -69,26 +69,26 @@ const AdminActivityLogs = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-800/50 text-slate-400 border-b border-slate-800">
               <tr>
-                <th className="px-6 py-4 font-semibold">User</th>
-                <th className="px-6 py-4 font-semibold">Action</th>
-                <th className="px-6 py-4 font-semibold">Description</th>
-                <th className="px-6 py-4 font-semibold">IP Address</th>
-                <th className="px-6 py-4 font-semibold">Time</th>
+                <th className="px-4 md:px-6 py-4 font-semibold">User</th>
+                <th className="px-4 md:px-6 py-4 font-semibold">Action</th>
+                <th className="px-4 md:px-6 py-4 font-semibold">Description</th>
+                <th className="px-4 md:px-6 py-4 font-semibold">IP Address</th>
+                <th className="px-4 md:px-6 py-4 font-semibold">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
               {isLoading ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-slate-400">Loading activities...</td>
+                  <td colSpan="5" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-400">Loading activities...</td>
                 </tr>
               ) : activities.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-slate-400">No activity logs found.</td>
+                  <td colSpan="5" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-400">No activity logs found.</td>
                 </tr>
               ) : (
                 activities.map((activity) => (
                   <tr key={activity._id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       {activity.user ? (
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold uppercase">
@@ -103,22 +103,22 @@ const AdminActivityLogs = () => {
                         <span className="text-slate-500 italic">System / Anonymous</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       <span className="px-2.5 py-1 bg-slate-800 text-slate-300 border border-slate-700 rounded-md text-xs font-medium whitespace-nowrap">
                         {activity.actionType}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       <p className="text-slate-300 max-w-xs truncate" title={activity.description}>
                         {activity.description}
                       </p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       <span className="text-slate-400 font-mono text-xs">
                         {activity.ipAddress || 'N/A'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <p className="text-slate-300">{formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}</p>
                       <p className="text-xs text-slate-500">{format(new Date(activity.createdAt), 'PP p')}</p>
                     </td>

@@ -12,9 +12,7 @@ const LiveMonitor = () => {
   const [liveDownloads, setLiveDownloads] = useState([]);
   const [liveRevenue, setLiveRevenue] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  
-  // Fake server stats that "update" live for the demo (since we don't have real OS stats from Node)
-  const [serverStats, setServerStats] = useState({ connections: 0 });
+
 
   useEffect(() => {
     if (!socket) return;
@@ -22,7 +20,6 @@ const LiveMonitor = () => {
     // Online Stats
     socket.on('onlineStats', (stats) => {
       setOnlineStats(stats);
-      setServerStats(prev => ({ ...prev, connections: stats.total }));
     });
 
     // Activities
@@ -55,12 +52,12 @@ const LiveMonitor = () => {
   }, [socket]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Live Monitor - Admin Panel</title>
       </Helmet>
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
           <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
             <Activity className="w-6 h-6 text-green-500 animate-pulse" /> Live Monitor
@@ -80,7 +77,7 @@ const LiveMonitor = () => {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="glass-card p-4 border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
           <p className="text-xs font-semibold text-slate-500 mb-1">Total Online</p>
-          <p className="text-3xl font-bold text-blue-500">{onlineStats.total}</p>
+          <p className="text-2xl md:text-3xl font-bold text-blue-500">{onlineStats.total}</p>
         </div>
         <div className="glass-card p-4">
           <p className="text-xs font-semibold text-slate-500 mb-1">Guests</p>
@@ -100,23 +97,10 @@ const LiveMonitor = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* SERVER STATUS */}
-        <div className="glass-card p-6">
-          <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Database className="text-blue-500 w-5 h-5"/> Server Status</h3>
-          <div className="space-y-6">
-            <div className="text-sm text-slate-500 italic mb-4">
-              Real-time hardware monitoring is not available on the current host.
-            </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex justify-between items-center border border-slate-200 dark:border-slate-700">
-              <span className="text-sm font-bold">Active Connections</span>
-              <span className="text-lg font-bold text-green-500">{serverStats.connections}</span>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 
         {/* LIVE REVENUE */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-4 md:p-6">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><DollarSign className="text-green-500 w-5 h-5"/> Live Revenue Stream</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -143,7 +127,7 @@ const LiveMonitor = () => {
         </div>
 
         {/* LIVE DOWNLOADS */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-4 md:p-6">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Download className="text-indigo-500 w-5 h-5"/> Live Downloads</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -170,9 +154,9 @@ const LiveMonitor = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* LIVE ACTIVITY FEED */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-4 md:p-6">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Users className="text-purple-500 w-5 h-5"/> Live Activity Feed</h3>
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>
@@ -198,7 +182,7 @@ const LiveMonitor = () => {
         </div>
 
         {/* LIVE MODERATION & NOTIFICATIONS */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-4 md:p-6">
           <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Shield className="text-red-500 w-5 h-5"/> Priority Notifications</h3>
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
             <AnimatePresence>

@@ -32,26 +32,26 @@ const AdminAdblockAnalytics = () => {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold dark:text-white flex items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-bold dark:text-white flex items-center gap-2">
           <ShieldAlert className="w-8 h-8 text-red-500" />
           AdBlock Analytics
         </h1>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 border-l-4 border-red-500">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6 border-l-4 border-red-500">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Total Blocked Requests</p>
-              <h3 className="text-3xl font-bold dark:text-white mt-1">{totalDetections}</h3>
+              <h3 className="text-2xl md:text-3xl font-bold dark:text-white mt-1">{totalDetections}</h3>
             </div>
             <MonitorOff className="w-8 h-8 text-red-500/80" />
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 border-l-4 border-orange-500">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6 border-l-4 border-orange-500">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Top Detection Method</p>
@@ -64,10 +64,10 @@ const AdminAdblockAnalytics = () => {
         </motion.div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
         {/* Daily Trends Chart */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6">
-          <h2 className="text-lg font-bold dark:text-white mb-6">Detection Trends (Last 30 Days)</h2>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6">
+          <h2 className="text-lg font-bold dark:text-white mb-4 md:mb-6">Detection Trends (Last 30 Days)</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dailyTrends}>
@@ -82,8 +82,8 @@ const AdminAdblockAnalytics = () => {
         </motion.div>
 
         {/* Methods Breakdown */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
-          <h2 className="text-lg font-bold dark:text-white mb-6">Detection Methods</h2>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-4 md:p-6">
+          <h2 className="text-lg font-bold dark:text-white mb-4 md:mb-6">Detection Methods</h2>
           <div className="h-80 w-full flex items-center justify-center">
             {pieData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -121,8 +121,8 @@ const AdminAdblockAnalytics = () => {
       </div>
 
       {/* Top IPs */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6">
-        <h2 className="text-lg font-bold dark:text-white mb-6 flex items-center gap-2"><Globe className="w-5 h-5 text-blue-500" /> Top Offending IPs</h2>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-4 md:p-6">
+        <h2 className="text-lg font-bold dark:text-white mb-4 md:mb-6 flex items-center gap-2"><Globe className="w-5 h-5 text-blue-500" /> Top Offending IPs</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>

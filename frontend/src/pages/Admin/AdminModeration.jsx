@@ -95,14 +95,14 @@ const AdminModeration = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Content Moderation - Admin</title>
       </Helmet>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-white flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-3">
             <Shield className="w-8 h-8 text-blue-500" /> Content Moderation
           </h1>
           <p className="text-slate-400 mt-1">Review posts and handle user reports.</p>
@@ -110,7 +110,7 @@ const AdminModeration = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 mb-6">
+      <div className="flex space-x-2 border-b border-slate-800 mb-4 md:mb-6">
         <button
           onClick={() => setActiveTab('posts')}
           className={`px-4 py-3 font-semibold text-sm flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'posts' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
@@ -141,7 +141,7 @@ const AdminModeration = () => {
               </thead>
               <tbody className="divide-y divide-slate-800/50">
                 {loadingPosts ? (
-                  <tr><td colSpan="5" className="p-10 text-center text-slate-500">Loading posts...</td></tr>
+                  <tr><td colSpan="5" className="p-5 md:p-10 text-center text-slate-500">Loading posts...</td></tr>
                 ) : posts.map(post => (
                   <tr key={post._id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="p-5 font-medium text-white">
@@ -212,7 +212,7 @@ const AdminModeration = () => {
               </thead>
               <tbody className="divide-y divide-slate-800/50">
                 {loadingReports ? (
-                  <tr><td colSpan="5" className="p-10 text-center text-slate-500">Loading reports...</td></tr>
+                  <tr><td colSpan="5" className="p-5 md:p-10 text-center text-slate-500">Loading reports...</td></tr>
                 ) : reports.map(report => (
                   <tr key={report._id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="p-5">
@@ -253,7 +253,7 @@ const AdminModeration = () => {
                   </tr>
                 ))}
                 {reports.length === 0 && !loadingReports && (
-                  <tr><td colSpan="5" className="p-10 text-center text-slate-500">No reports found.</td></tr>
+                  <tr><td colSpan="5" className="p-5 md:p-10 text-center text-slate-500">No reports found.</td></tr>
                 )}
               </tbody>
             </table>

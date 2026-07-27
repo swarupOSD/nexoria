@@ -19,7 +19,7 @@ const SoundSongs = () => {
     'Remix', 'Devotional', 'Other'
   ];
 
-  if (isLoading) return <div className="p-8 flex justify-center"><div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div></div>;
+  if (isLoading) return <div className="p-4 md:p-8 flex justify-center"><div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div></div>;
   
   const songs = data?.data || [];
 
@@ -46,8 +46,8 @@ const SoundSongs = () => {
   };
 
   return (
-    <div className="p-6 relative">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 md:p-6 relative">
+      <div className="flex justify-between items-center mb-4 md:mb-6">
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Manage Songs</h1>
         <Link to="/superadmin/sound/add-song" className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
           <Plus className="w-4 h-4" /> Add Song
@@ -95,7 +95,7 @@ const SoundSongs = () => {
             ))}
             {songs.length === 0 && (
               <tr>
-                <td colSpan="4" className="p-8 text-center text-slate-500">
+                <td colSpan="4" className="p-4 md:p-8 text-center text-slate-500">
                   No songs found. Add some music!
                 </td>
               </tr>
@@ -108,8 +108,8 @@ const SoundSongs = () => {
       {/* Edit Modal */}
       {editSong && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 md:mb-6">
               <h2 className="text-xl font-bold text-slate-800 dark:text-white">Edit Song</h2>
               <button onClick={() => setEditSong(null)} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                 <X className="w-5 h-5" />
@@ -155,7 +155,7 @@ const SoundSongs = () => {
                   </label>
                 </div>
               </div>
-              <button disabled={isUpdating} type="submit" className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors mt-6">
+              <button disabled={isUpdating} type="submit" className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors mt-4 md:mt-6">
                 {isUpdating ? 'Updating...' : 'Save Changes'}
               </button>
             </form>

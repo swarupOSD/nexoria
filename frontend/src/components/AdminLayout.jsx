@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, FileText, Folder, MessageSquare, 
-  Settings, LogOut, ShieldAlert, User, Moon, Sun, 
+  Settings, LogOut, ShieldAlert, User, Moon, Sun, ArrowLeft,
   Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail, 
   ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart, Ghost
 } from 'lucide-react';
@@ -245,10 +245,15 @@ const AdminLayout = () => {
         
         {/* Top Navbar (Vercel Style) */}
         <header className="h-14 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-6 shrink-0 relative z-50">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-1.5 -ml-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md">
+          <div className="flex items-center gap-2 md:gap-4">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-1.5 -ml-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors active:scale-95">
               <Menu className="w-5 h-5" />
             </button>
+            {location.pathname !== '/admin' && (
+              <button onClick={() => navigate('/admin')} className="md:hidden p-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors active:scale-95">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
             
             {/* Breadcrumbs */}
             <div className="hidden sm:flex items-center text-sm font-medium text-slate-500 dark:text-slate-400">

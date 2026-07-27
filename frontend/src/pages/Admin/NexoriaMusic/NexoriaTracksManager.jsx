@@ -181,7 +181,7 @@ const NexoriaTracksManager = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -197,7 +197,7 @@ const NexoriaTracksManager = () => {
           </button>
           <button 
             onClick={openCreate}
-            className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+            className="flex items-center gap-2 bg-[#1ed760] hover:scale-104 active:scale-100 hover:bg-[#1fdf64] text-black px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-all"
           >
             <Plus className="w-4 h-4" /> Add Track
           </button>
@@ -471,7 +471,7 @@ const NexoriaTracksManager = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-4 mt-8">
+                <div className="flex justify-end gap-4 mt-4 md:mt-8">
                 <button 
                   type="submit" 
                   disabled={isCreating || isUpdating}

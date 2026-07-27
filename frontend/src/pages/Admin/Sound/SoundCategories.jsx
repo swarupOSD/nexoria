@@ -10,8 +10,8 @@ const SoundCategories = () => {
   ];
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-4 md:mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Database className="w-6 h-6 text-indigo-500" /> Manage Categories
@@ -20,7 +20,7 @@ const SoundCategories = () => {
         </div>
       </div>
 
-      <div className="mb-8 p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 rounded-xl flex gap-3">
+      <div className="mb-4 md:mb-8 p-4 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 rounded-xl flex gap-3">
         <Info className="w-6 h-6 text-indigo-500 flex-shrink-0" />
         <div>
           <h3 className="text-sm font-bold text-indigo-800 dark:text-indigo-400">Schema Locked Categories</h3>

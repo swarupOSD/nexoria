@@ -33,10 +33,10 @@ const NexoriaPremiumManager = () => {
 
   if (isError || !data?.data) {
     return (
-      <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-6 rounded-lg text-center">
+      <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 md:p-6 rounded-lg text-center">
         <h3 className="font-bold text-lg mb-2">Analytics Error</h3>
         <p>Failed to load premium revenue data. Please try again.</p>
-        <button onClick={refetch} className="mt-4 px-6 py-2 bg-red-500/20 rounded-full font-bold hover:bg-red-500/30 transition-colors">Retry</button>
+        <button onClick={refetch} className="mt-4 px-4 md:px-6 py-2 bg-red-500/20 rounded-full font-bold hover:bg-red-500/30 transition-colors">Retry</button>
       </div>
     );
   }
@@ -52,12 +52,12 @@ const NexoriaPremiumManager = () => {
   ];
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 pb-10">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-4 md:space-y-8 pb-10">
       
       {/* Header */}
       <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-3">
             <span className="bg-gradient-to-br from-[#ffd700] to-[#f7971e] text-transparent bg-clip-text">Premium & Revenue</span>
             <Crown className="w-8 h-8 text-[#ffd700]" />
           </h2>
@@ -66,10 +66,10 @@ const NexoriaPremiumManager = () => {
       </motion.div>
 
       {/* Summary Cards */}
-      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         
         {/* Total Revenue */}
-        <div className="bg-gradient-to-br from-[#ffd700]/10 to-transparent p-6 rounded-2xl border border-[#ffd700]/20 relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-[#ffd700]/10 to-transparent p-4 md:p-6 rounded-2xl border border-[#ffd700]/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <DollarSign className="w-24 h-24 text-[#ffd700]" />
           </div>
@@ -77,42 +77,42 @@ const NexoriaPremiumManager = () => {
             <p className="text-[#ffd700] font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
               <IndianRupee className="w-4 h-4" /> Total Revenue
             </p>
-            <h3 className="text-4xl font-black text-white">₹{totalRevenue.toLocaleString()}</h3>
+            <h3 className="text-3xl md:text-4xl font-black text-white">₹{totalRevenue.toLocaleString()}</h3>
           </div>
         </div>
 
         {/* Active Premium */}
-        <div className="bg-[#181818] p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
+        <div className="bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
           <p className="text-slate-400 font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
             <Crown className="w-4 h-4" /> Active Premium
           </p>
-          <h3 className="text-4xl font-black text-[#1ed760]">{users.premium.toLocaleString()}</h3>
+          <h3 className="text-3xl md:text-4xl font-black text-[#1ed760]">{users.premium.toLocaleString()}</h3>
         </div>
 
         {/* Conversion Rate */}
-        <div className="bg-[#181818] p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
+        <div className="bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
           <p className="text-slate-400 font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
             <TrendingUp className="w-4 h-4" /> Conversion Rate
           </p>
-          <h3 className="text-4xl font-black text-white">{conversionRate}%</h3>
+          <h3 className="text-3xl md:text-4xl font-black text-white">{conversionRate}%</h3>
         </div>
 
         {/* Total Users */}
-        <div className="bg-[#181818] p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
+        <div className="bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5 hover:bg-[#282828] transition-colors">
           <p className="text-slate-400 font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
             <Users className="w-4 h-4" /> Total User Base
           </p>
-          <h3 className="text-4xl font-black text-white">{totalUsers.toLocaleString()}</h3>
+          <h3 className="text-3xl md:text-4xl font-black text-white">{totalUsers.toLocaleString()}</h3>
         </div>
 
       </motion.div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         
         {/* Revenue Over Time */}
-        <motion.div variants={item} className="lg:col-span-2 bg-[#181818] p-6 rounded-2xl border border-white/5">
-          <h3 className="text-xl font-bold text-white mb-6">Revenue Growth (6 Months)</h3>
+        <motion.div variants={item} className="lg:col-span-2 bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5">
+          <h3 className="text-xl font-bold text-white mb-4 md:mb-6">Revenue Growth (6 Months)</h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueOverTime}>
@@ -136,7 +136,7 @@ const NexoriaPremiumManager = () => {
         </motion.div>
 
         {/* User Distribution */}
-        <motion.div variants={item} className="bg-[#181818] p-6 rounded-2xl border border-white/5 flex flex-col">
+        <motion.div variants={item} className="bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5 flex flex-col">
           <h3 className="text-xl font-bold text-white mb-2">User Distribution</h3>
           <div className="flex-1 min-h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -162,7 +162,7 @@ const NexoriaPremiumManager = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-6 mt-4">
+          <div className="flex justify-center gap-4 md:gap-6 mt-4">
             {pieData.map((entry, index) => (
               <div key={entry.name} className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: PIE_COLORS[index] }} />
@@ -175,7 +175,7 @@ const NexoriaPremiumManager = () => {
 
       {/* Recent Transactions */}
       <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5">
-        <div className="p-6 border-b border-white/5">
+        <div className="p-4 md:p-6 border-b border-white/5">
           <h3 className="text-xl font-bold text-white">Recent Premium Activations</h3>
         </div>
         <div className="overflow-x-auto">
@@ -221,7 +221,7 @@ const NexoriaPremiumManager = () => {
               ))}
               {recentTransactions.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="p-8 text-center text-[#b3b3b3]">
+                  <td colSpan="4" className="p-4 md:p-8 text-center text-[#b3b3b3]">
                     No recent premium activations found.
                   </td>
                 </tr>

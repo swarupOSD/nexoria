@@ -208,13 +208,13 @@ const AdminUsers = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Manage Users - Admin</title>
       </Helmet>
 
       <div className="flex justify-between items-center">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
@@ -389,8 +389,8 @@ const AdminUsers = () => {
         {isModerationModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModerationModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white capitalize flex items-center gap-2">
                   <ShieldAlert className="w-5 h-5 text-red-500" /> {moderationAction} User
                 </h2>
@@ -451,7 +451,7 @@ const AdminUsers = () => {
                   </div>
                 )}
 
-                <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                <div className="mt-4 md:mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
                   <button type="button" onClick={() => setIsModerationModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold transition">Cancel</button>
                   <button type="submit" className={`flex-1 py-2 text-white rounded-xl font-semibold transition ${moderationAction === 'ban' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}>Apply Action</button>
                 </div>
@@ -466,8 +466,8 @@ const AdminUsers = () => {
         {isNoteModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNoteModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white flex items-center gap-2">
                   <FileText className="w-5 h-5 text-blue-500" /> Admin Notes
                 </h2>
@@ -498,8 +498,8 @@ const AdminUsers = () => {
         {isPremiumModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPremiumModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white flex items-center gap-2"><Star className="w-5 h-5 text-yellow-500" /> Manage Premium</h2>
                 <button onClick={() => setIsPremiumModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <X className="w-5 h-5 text-slate-500" />
@@ -542,7 +542,7 @@ const AdminUsers = () => {
                   <input type="number" name="customDays" placeholder="e.g. 90" className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500" />
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                <div className="mt-4 md:mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
                   <button type="button" onClick={() => setIsPremiumModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold transition">Cancel</button>
                   <button type="submit" className="flex-1 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-semibold transition shadow-lg shadow-yellow-500/30">Confirm</button>
                 </div>
@@ -557,8 +557,8 @@ const AdminUsers = () => {
         {isMessageModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMessageModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-visible">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-visible">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white flex items-center gap-2"><Send className="w-5 h-5 text-primary" /> Send Personal Message</h2>
                 <button onClick={() => setIsMessageModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <X className="w-5 h-5 text-slate-500" />
@@ -603,7 +603,7 @@ const AdminUsers = () => {
                   ></textarea>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                <div className="mt-4 md:mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-3">
                   <button type="button" onClick={() => setIsMessageModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold transition">Cancel</button>
                   <button type="submit" disabled={isSendingMessage} className="flex-1 py-2 bg-primary hover:bg-accent text-white rounded-xl font-semibold transition shadow-lg shadow-primary/30 flex justify-center items-center gap-2 disabled:opacity-70">
                     <Send className="w-4 h-4" /> {isSendingMessage ? 'Sending...' : 'Send Message'}

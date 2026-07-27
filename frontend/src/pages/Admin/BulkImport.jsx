@@ -166,11 +166,11 @@ const BulkImport = () => {
   const pendingCount = importTasks.filter(t => t.status === 'pending' || t.status === 'failed').length;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center gap-4 mb-4">
         <BackButton />
         <div>
-          <h1 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 tracking-tight">
             Bulk App Importer 
             <span className="bg-[#1ed760] text-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Beta</span>
           </h1>
@@ -180,10 +180,10 @@ const BulkImport = () => {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
         
         {/* Left Col: Input Zone */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           {/* File Picker Zone (Exactly like Music Uploader) */}
           <div className="bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(30,215,96,0.03)] flex flex-col h-[350px]">
             <div className="flex items-center p-4 border-b border-white/5 bg-[#181818]">
@@ -209,7 +209,7 @@ const BulkImport = () => {
           </div>
 
           {/* Links Zone */}
-          <div className="bg-[#121212] border border-white/10 p-6 rounded-2xl shadow-[0_0_30px_rgba(30,215,96,0.03)]">
+          <div className="bg-[#121212] border border-white/10 p-4 md:p-6 rounded-2xl shadow-[0_0_30px_rgba(30,215,96,0.03)]">
             <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
               <LinkIcon className="w-5 h-5 text-[#1ed760]" />
               Paste Links
@@ -227,7 +227,7 @@ const BulkImport = () => {
             <button
               onClick={handleAddLinks}
               disabled={isProcessing || !linksText.trim()}
-              className="w-full mt-4 flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white disabled:bg-white/5 disabled:text-white/30 px-6 py-2.5 rounded-full font-bold transition-colors"
+              className="w-full mt-4 flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 text-white disabled:bg-white/5 disabled:text-white/30 px-4 md:px-6 py-2.5 rounded-full font-bold transition-colors"
             >
                Add Links to Queue
             </button>
@@ -238,7 +238,7 @@ const BulkImport = () => {
         <div className="flex flex-col bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)] min-h-[600px]">
           
           {/* Queue Header */}
-          <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#181818]">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/5 bg-[#181818]">
             <h3 className="font-bold text-white text-lg flex items-center justify-between w-full">
               <span>Import Queue ({importTasks.length})</span>
               {isProcessing && <span className="text-[#1ed760] text-sm">Processing {importProgress.current}/{importProgress.total}</span>}
@@ -248,7 +248,7 @@ const BulkImport = () => {
           {/* Queue List */}
           <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
             {importTasks.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50">
+              <div className="h-full flex flex-col items-center justify-center text-center p-4 md:p-8 opacity-50">
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Box className="w-8 h-8 text-white/50" />
                 </div>
@@ -303,18 +303,18 @@ const BulkImport = () => {
           </div>
 
           {/* Action Footer */}
-          <div className="p-6 border-t border-white/5 bg-[#181818] flex justify-between gap-3">
+          <div className="p-4 md:p-6 border-t border-white/5 bg-[#181818] flex justify-between gap-3">
              <button 
                 onClick={handleClearCompleted}
                 disabled={isProcessing}
-                className="px-6 py-2.5 rounded-full font-bold text-white hover:bg-white/10 transition-colors disabled:opacity-50"
+                className="px-4 md:px-6 py-2.5 rounded-full font-bold text-white hover:bg-white/10 transition-colors disabled:opacity-50"
               >
                 Clear Done
               </button>
             <button
               onClick={processTasks}
               disabled={isProcessing || pendingCount === 0}
-              className="flex items-center gap-2 bg-[#1ed760] hover:scale-105 disabled:hover:scale-100 disabled:bg-[#1ed760]/30 disabled:text-black/30 text-black px-8 py-2.5 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(30,215,96,0.3)]"
+              className="flex items-center gap-2 bg-[#1ed760] hover:scale-105 disabled:hover:scale-100 disabled:bg-[#1ed760]/30 disabled:text-black/30 text-black px-4 md:px-8 py-2.5 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(30,215,96,0.3)]"
             >
               {isProcessing ? 'Publishing...' : 'Start Publish'}
             </button>

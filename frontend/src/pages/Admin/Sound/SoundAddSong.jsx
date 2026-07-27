@@ -60,11 +60,11 @@ const SoundAddSong = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl space-y-8 pb-20">
+    <div className="p-4 md:p-6 max-w-4xl space-y-4 md:space-y-8 pb-20">
       <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Add New Song</h1>
       
       {/* Auto-Scraper Tool */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 p-6 rounded-3xl relative overflow-hidden">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 p-4 md:p-6 rounded-3xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
           <Globe className="w-32 h-32 text-pink-500" />
         </div>
@@ -86,7 +86,7 @@ const SoundAddSong = () => {
               type="button"
               onClick={handleAutoScrape}
               disabled={isScraping}
-              className="px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="px-4 md:px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isScraping ? (
                 <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Fetching...</>
@@ -98,8 +98,8 @@ const SoundAddSong = () => {
         </div>
       </motion.div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 bg-white dark:bg-slate-800 p-4 md:p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
             <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-purple-500" />

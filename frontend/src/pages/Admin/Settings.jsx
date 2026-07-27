@@ -30,19 +30,19 @@ const AdminSettings = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
       <Helmet>
         <title>Site Settings - Admin</title>
       </Helmet>
 
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold dark:text-white">Global Site Settings</h1>
-        <button onClick={handleSubmit} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow">
+        <button onClick={handleSubmit} className="flex items-center gap-2 bg-blue-600 text-white px-4 md:px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow">
           <Save className="w-4 h-4" /> Save Changes
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <div className="md:col-span-1 space-y-2">
           <div className="glass-card p-4 hover:border-blue-500 cursor-pointer border-l-4 border-blue-500 transition-all">
             <h3 className="font-bold flex items-center gap-2"><Globe className="w-5 h-5 text-blue-500" /> General & SEO</h3>
@@ -58,8 +58,8 @@ const AdminSettings = () => {
           </div>
         </div>
 
-        <div className="md:col-span-2 space-y-6">
-          <div className="glass-card p-6 space-y-4">
+        <div className="md:col-span-2 space-y-4 md:space-y-6">
+          <div className="glass-card p-4 md:p-6 space-y-4">
             <h2 className="text-xl font-bold border-b pb-2 dark:border-slate-700 flex items-center gap-2">
               <SettingsIcon className="w-5 h-5" /> Site Configuration
             </h2>

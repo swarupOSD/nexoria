@@ -44,7 +44,7 @@ const Dashboard = () => {
   const topDownloadedData = data?.topDownloaded?.map(d => ({ name: d.title.substring(0, 10), downloads: d.downloads })) || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Dashboard Overview - Admin Panel</title>
       </Helmet>
@@ -60,27 +60,24 @@ const Dashboard = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Platform metrics and analytics</p>
           </div>
         </div>
-        <button onClick={() => window.print()} className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity">
-          <TrendingUp className="w-4 h-4" /> Generate Report
-        </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {stats.map((stat, idx) => (
           <motion.div
             key={stat.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="cyber-glass neon-border p-6 rounded-xl flex items-center gap-4 relative overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+            className="cyber-glass neon-border p-4 md:p-6 rounded-xl flex items-center gap-4 relative overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
           >
             <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-glow`}>
               {stat.icon}
             </div>
             <div>
               <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">{stat.title}</p>
-              <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
+              <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
                 <CountUp value={stat.value} />
               </h3>
             </div>
@@ -91,16 +88,16 @@ const Dashboard = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         
         {/* Main Downloads Chart */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 cyber-glass neon-border rounded-xl p-6 shadow-lg shadow-primary/10"
+          className="lg:col-span-2 cyber-glass neon-border rounded-xl p-4 md:p-6 shadow-lg shadow-primary/10"
         >
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Downloads Analytics</h3>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 md:mb-6">Downloads Analytics</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={downloadsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -130,9 +127,9 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="cyber-glass neon-border rounded-xl p-6 shadow-lg shadow-primary/10"
+          className="cyber-glass neon-border rounded-xl p-4 md:p-6 shadow-lg shadow-primary/10"
         >
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Top Downloaded</h3>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 md:mb-6">Top Downloaded</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topDownloadedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -149,23 +146,23 @@ const Dashboard = () => {
       </div>
 
       {/* Link Health Monitor & Performance Tracker */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
         {/* Link Health */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm"
+          className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-4 md:p-6 shadow-sm"
         >
-          <h3 className="text-lg font-bold dark:text-white mb-6">Link Health Stats</h3>
+          <h3 className="text-lg font-bold dark:text-white mb-4 md:mb-6">Link Health Stats</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200/50 dark:border-white/10">
               <p className="text-sm text-slate-500 font-semibold mb-1">Active Links</p>
-              <p className="text-3xl font-bold text-green-500"><CountUp value={data?.linkStats?.activeLinksCount || 0} /></p>
+              <p className="text-2xl md:text-3xl font-bold text-green-500"><CountUp value={data?.linkStats?.activeLinksCount || 0} /></p>
             </div>
             <div className="bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200/50 dark:border-white/10">
               <p className="text-sm text-slate-500 font-semibold mb-1">Inactive/Broken</p>
-              <p className="text-3xl font-bold text-red-500"><CountUp value={data?.linkStats?.inactiveLinksCount || 0} /></p>
+              <p className="text-2xl md:text-3xl font-bold text-red-500"><CountUp value={data?.linkStats?.inactiveLinksCount || 0} /></p>
             </div>
             <div className="bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200/50 dark:border-white/10">
               <p className="text-sm text-slate-500 font-semibold mb-1">Primary Downloads</p>
@@ -183,7 +180,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm flex flex-col gap-6"
+          className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-xl p-4 md:p-6 shadow-sm flex flex-col gap-4 md:gap-6"
         >
           <div>
             <h3 className="text-lg font-bold dark:text-white mb-4">Top Featured Performance</h3>

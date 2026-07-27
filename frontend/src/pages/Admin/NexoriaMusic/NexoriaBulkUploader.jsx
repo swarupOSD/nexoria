@@ -210,7 +210,7 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
           className="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-[0_0_50px_rgba(30,215,96,0.1)]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#181818] rounded-t-2xl">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/5 bg-[#181818] rounded-t-2xl">
             <div>
               <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
                 Bulk Audio Uploader <span className="bg-[#1ed760] text-black text-xs px-2 py-0.5 rounded-full uppercase tracking-widest ml-2">Beta</span>
@@ -222,7 +222,7 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6 custom-scrollbar">
             {/* Drag Zone */}
             <div 
               className={`relative border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center text-center transition-all ${dragActive ? 'border-[#1ed760] bg-[#1ed760]/5' : 'border-white/10 hover:border-white/20 hover:bg-white/5'}`}
@@ -286,18 +286,18 @@ const NexoriaBulkUploader = ({ isOpen, onClose }) => {
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-white/5 bg-[#181818] rounded-b-2xl flex justify-end gap-3">
+          <div className="p-4 md:p-6 border-t border-white/5 bg-[#181818] rounded-b-2xl flex justify-end gap-3">
             <button 
               onClick={onClose} 
               disabled={isUploading}
-              className="px-6 py-2.5 rounded-full font-bold text-white hover:bg-white/10 transition-colors disabled:opacity-50"
+              className="px-4 md:px-6 py-2.5 rounded-full font-bold text-white hover:bg-white/10 transition-colors disabled:opacity-50"
             >
               Close
             </button>
             <button 
               onClick={handleUploadAll}
               disabled={isUploading || filesData.filter(f => f.status === 'pending' || f.status === 'error').length === 0}
-              className="flex items-center gap-2 px-8 py-2.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black rounded-full font-bold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-[0_0_20px_rgba(30,215,96,0.3)]"
+              className="flex items-center gap-2 px-4 md:px-8 py-2.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black rounded-full font-bold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-[0_0_20px_rgba(30,215,96,0.3)]"
             >
               {isUploading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>

@@ -27,7 +27,7 @@ const AdminLoginActivityLogs = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <Helmet>
         <title>Login Activity - Admin</title>
       </Helmet>
@@ -57,25 +57,25 @@ const AdminLoginActivityLogs = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">User Info</th>
-                <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">IP Address</th>
-                <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Device / Browser</th>
-                <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Timestamp</th>
+                <th className="px-4 md:px-6 py-4 font-semibold uppercase tracking-wider text-xs">User Info</th>
+                <th className="px-4 md:px-6 py-4 font-semibold uppercase tracking-wider text-xs">IP Address</th>
+                <th className="px-4 md:px-6 py-4 font-semibold uppercase tracking-wider text-xs">Device / Browser</th>
+                <th className="px-4 md:px-6 py-4 font-semibold uppercase tracking-wider text-xs">Timestamp</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800/50">
               {isLoading ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-8 text-center text-slate-500">Loading login history...</td>
+                  <td colSpan="4" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-500">Loading login history...</td>
                 </tr>
               ) : filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-8 text-center text-slate-500">No login activity found.</td>
+                  <td colSpan="4" className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-500">No login activity found.</td>
                 </tr>
               ) : (
                 filteredLogs.map((activity) => (
                   <tr key={activity._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       {activity.user ? (
                         <div className="flex items-center gap-3">
                           <img src={activity.user.profileImage || '/default.jpg'} alt="Avatar" className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
@@ -88,7 +88,7 @@ const AdminLoginActivityLogs = () => {
                         <span className="text-slate-500 italic">Unknown User</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-slate-400" />
                         <span className="text-slate-600 dark:text-slate-400 font-mono text-xs">
@@ -96,7 +96,7 @@ const AdminLoginActivityLogs = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center gap-2 max-w-xs">
                         <Monitor className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                         <span className="text-slate-600 dark:text-slate-400 text-xs truncate" title={activity.userAgent}>
@@ -104,7 +104,7 @@ const AdminLoginActivityLogs = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-slate-400" />
                         <div>

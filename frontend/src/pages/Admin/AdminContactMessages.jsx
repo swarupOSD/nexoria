@@ -46,11 +46,11 @@ const AdminContactMessages = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet><title>Contact Messages - Admin</title></Helmet>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
@@ -89,11 +89,11 @@ const AdminContactMessages = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800/50">
               {isLoading ? (
                 <tr>
-                  <td colSpan="4" className="text-center p-8 text-slate-500">Loading messages...</td>
+                  <td colSpan="4" className="text-center p-4 md:p-8 text-slate-500">Loading messages...</td>
                 </tr>
               ) : messages.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="text-center p-8 text-slate-500">No contact messages found.</td>
+                  <td colSpan="4" className="text-center p-4 md:p-8 text-slate-500">No contact messages found.</td>
                 </tr>
               ) : (
                 messages.map((msg) => (

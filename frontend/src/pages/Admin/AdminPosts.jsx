@@ -43,7 +43,7 @@ const AdminPosts = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Posts Management - Admin Panel</title>
       </Helmet>
@@ -122,9 +122,9 @@ const AdminPosts = () => {
             </thead>
             <tbody className="divide-y divide-slate-800/50">
               {isLoading ? (
-                <tr><td colSpan="7" className="p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" /></td></tr>
+                <tr><td colSpan="7" className="p-5 md:p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" /></td></tr>
               ) : posts.length === 0 ? (
-                <tr><td colSpan="7" className="p-10 text-center text-slate-500 font-medium">No apps found.</td></tr>
+                <tr><td colSpan="7" className="p-5 md:p-10 text-center text-slate-500 font-medium">No apps found.</td></tr>
               ) : posts.map((post) => (
                 <tr key={post._id} className="hover:bg-slate-800/30 transition-colors group">
                   <td className="p-5 pl-6">

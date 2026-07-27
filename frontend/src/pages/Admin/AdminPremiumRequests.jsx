@@ -35,12 +35,12 @@ const AdminPremiumRequests = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Premium Requests - Admin</title>
       </Helmet>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
         <div className="flex items-center gap-3">
           <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
@@ -131,8 +131,8 @@ const AdminPremiumRequests = () => {
         {isModalOpen && selectedPayment && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-2xl p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-2xl p-4 md:p-6 shadow-2xl z-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl font-bold dark:text-white">Payment Proof</h2>
                 <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <X className="w-5 h-5 text-slate-500" />
@@ -154,11 +154,11 @@ const AdminPremiumRequests = () => {
                 {selectedPayment.proofImage ? (
                   <img src={selectedPayment.proofImage} alt="Payment Proof" className="max-h-96 object-contain" />
                 ) : (
-                  <p className="p-10 text-slate-500">No proof image provided.</p>
+                  <p className="p-5 md:p-10 text-slate-500">No proof image provided.</p>
                 )}
               </div>
 
-              <div className="mt-6 flex justify-end gap-3">
+              <div className="mt-4 md:mt-6 flex justify-end gap-3">
                 {selectedPayment.proofImage && (
                   <a href={selectedPayment.proofImage} target="_blank" rel="noreferrer" className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg flex items-center gap-2 font-semibold text-sm transition">
                     <ExternalLink className="w-4 h-4" /> Open Original

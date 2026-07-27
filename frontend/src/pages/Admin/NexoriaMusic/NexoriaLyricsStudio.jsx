@@ -187,7 +187,7 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
           className="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-5xl h-[85vh] flex flex-col shadow-[0_0_50px_rgba(30,215,96,0.15)] overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-white/5 bg-gradient-to-r from-[#181818] to-[#121212]">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#181818] to-[#121212]">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-lg bg-zinc-800 shrink-0 overflow-hidden shadow-md">
                 {track.coverImage || track.album?.coverImage || track.artist?.image ? (
@@ -212,7 +212,7 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
           <div className="flex-1 overflow-hidden flex">
             {step === 1 ? (
               // Step 1: Paste Plain Text
-              <div className="flex-1 p-8 flex flex-col gap-4">
+              <div className="flex-1 p-4 md:p-8 flex flex-col gap-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-8 h-8 rounded-full bg-[#1ed760]/20 flex items-center justify-center text-[#1ed760] font-bold">1</div>
                   <h3 className="text-xl font-bold">Paste Plain Text Lyrics</h3>
@@ -221,13 +221,13 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
                 <textarea 
                   value={plainLyrics}
                   onChange={(e) => setPlainLyrics(e.target.value)}
-                  className="flex-1 w-full bg-[#181818] border border-white/10 rounded-xl p-6 text-white text-lg focus:outline-none focus:border-[#1ed760]/50 focus:ring-1 focus:ring-[#1ed760]/50 transition-all custom-scrollbar resize-none leading-relaxed"
+                  className="flex-1 w-full bg-[#181818] border border-white/10 rounded-xl p-4 md:p-6 text-white text-lg focus:outline-none focus:border-[#1ed760]/50 focus:ring-1 focus:ring-[#1ed760]/50 transition-all custom-scrollbar resize-none leading-relaxed"
                   placeholder="Just paste the raw text here..."
                 />
                 <div className="flex justify-end mt-2">
                   <button 
                     onClick={handleStartSync}
-                    className="px-8 py-3 bg-[#1ed760] hover:bg-[#1fdf64] text-black rounded-full font-bold transition-transform hover:scale-105 active:scale-95 flex items-center gap-2"
+                    className="px-4 md:px-8 py-3 bg-[#1ed760] hover:bg-[#1fdf64] text-black rounded-full font-bold transition-transform hover:scale-105 active:scale-95 flex items-center gap-2"
                   >
                     <Mic2 className="w-5 h-5" /> Start Syncing
                   </button>
@@ -238,13 +238,13 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
               <div className="flex-1 flex flex-col lg:flex-row h-full">
                 
                 {/* Left Side: Audio Player & Controls */}
-                <div className="w-full lg:w-1/3 bg-[#181818] border-r border-white/5 p-6 flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
+                <div className="w-full lg:w-1/3 bg-[#181818] border-r border-white/5 p-4 md:p-6 flex flex-col gap-4 md:gap-8 h-full overflow-y-auto custom-scrollbar">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-[#1ed760]/20 flex items-center justify-center text-[#1ed760] font-bold">2</div>
                     <h3 className="text-xl font-bold">Sync Mode</h3>
                   </div>
                   
-                  <div className="bg-[#282828] rounded-xl p-6 flex flex-col items-center gap-4 border border-white/5 shadow-inner text-center">
+                  <div className="bg-[#282828] rounded-xl p-4 md:p-6 flex flex-col items-center gap-4 border border-white/5 shadow-inner text-center">
                      <p className="text-[#b3b3b3] text-sm leading-relaxed">
                        Press the <strong className="text-white">Play</strong> button. Every time the singer sings the highlighted line, press <strong className="text-white">Spacebar</strong> or click the sync button.
                      </p>
@@ -273,7 +273,7 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
                      </div>
                      
                      {/* Playback Controls */}
-                     <div className="flex items-center gap-6 mt-4">
+                     <div className="flex items-center gap-4 md:gap-6 mt-4">
                        <button onClick={() => { if(audioRef.current) audioRef.current.currentTime -= 5; }} className="text-[#b3b3b3] hover:text-white transition-colors">
                          <Rewind className="w-6 h-6" />
                        </button>
@@ -327,7 +327,7 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
                 </div>
                 
                 {/* Right Side: Lyrics List */}
-                <div className="w-full lg:w-2/3 p-8 h-full overflow-y-auto custom-scrollbar relative">
+                <div className="w-full lg:w-2/3 p-4 md:p-8 h-full overflow-y-auto custom-scrollbar relative">
                    <div className="space-y-4 pb-32">
                      {lines.map((line, idx) => {
                        const isCurrent = idx === currentLineIndex;
@@ -358,7 +358,7 @@ const NexoriaLyricsStudio = ({ isOpen, onClose, track }) => {
                      })}
                      
                      {currentLineIndex >= lines.length && (
-                       <div className="p-8 text-center bg-[#181818] border border-white/5 rounded-xl">
+                       <div className="p-4 md:p-8 text-center bg-[#181818] border border-white/5 rounded-xl">
                          <CheckCircle className="w-12 h-12 text-[#1ed760] mx-auto mb-3" />
                          <h3 className="text-xl font-bold text-white">All lines synced!</h3>
                          <p className="text-[#b3b3b3] text-sm mt-1">You can now save the lyrics.</p>

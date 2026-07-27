@@ -45,10 +45,10 @@ const NexoriaAnalyticsManager = () => {
 
   if (isError || !data?.data) {
     return (
-      <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-6 rounded-lg text-center">
+      <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 md:p-6 rounded-lg text-center">
         <h3 className="font-bold text-lg mb-2">Analytics Error</h3>
         <p>Failed to load deep analytics data. Please try again.</p>
-        <button onClick={refetch} className="mt-4 px-6 py-2 bg-red-500/20 rounded-full font-bold hover:bg-red-500/30 transition-colors">Retry</button>
+        <button onClick={refetch} className="mt-4 px-4 md:px-6 py-2 bg-red-500/20 rounded-full font-bold hover:bg-red-500/30 transition-colors">Retry</button>
       </div>
     );
   }
@@ -67,7 +67,7 @@ const NexoriaAnalyticsManager = () => {
     <div className="pb-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
         <div>
-          <h2 className="text-4xl font-black tracking-tighter mb-2 bg-gradient-to-r from-white via-white to-white/50 bg-clip-text text-transparent">Deep Audience Insights</h2>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-2 bg-gradient-to-r from-white via-white to-white/50 bg-clip-text text-transparent">Deep Audience Insights</h2>
           <p className="text-[#b3b3b3] font-medium">A to Z Tracking: Know exactly who is listening to what, and how often.</p>
         </div>
         <button 
@@ -80,12 +80,12 @@ const NexoriaAnalyticsManager = () => {
         </button>
       </div>
 
-      <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
+      <motion.div variants={container} initial="hidden" animate="show" className="space-y-4 md:space-y-8">
         
         {/* Top Stats Overview & Chart */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1 flex flex-col gap-6">
-            <motion.div variants={item} className="relative overflow-hidden bg-gradient-to-br from-[#282828] to-[#121212] p-6 rounded-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all border border-white/5 group">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="lg:col-span-1 flex flex-col gap-4 md:gap-6">
+            <motion.div variants={item} className="relative overflow-hidden bg-gradient-to-br from-[#282828] to-[#121212] p-4 md:p-6 rounded-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all border border-white/5 group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <PlayCircle className="w-24 h-24 text-[#1ed760]" />
               </div>
@@ -104,7 +104,7 @@ const NexoriaAnalyticsManager = () => {
               </div>
             </motion.div>
             
-            <motion.div variants={item} className="relative overflow-hidden bg-gradient-to-br from-[#282828] to-[#121212] p-6 rounded-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all border border-white/5 group">
+            <motion.div variants={item} className="relative overflow-hidden bg-gradient-to-br from-[#282828] to-[#121212] p-4 md:p-6 rounded-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all border border-white/5 group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="w-24 h-24 text-[#1ed760]" />
               </div>
@@ -124,8 +124,8 @@ const NexoriaAnalyticsManager = () => {
             </motion.div>
           </div>
 
-          <motion.div variants={item} className="lg:col-span-2 bg-[#181818] p-6 rounded-2xl border border-white/5 shadow-lg flex flex-col h-[340px]">
-            <div className="flex items-center justify-between mb-6">
+          <motion.div variants={item} className="lg:col-span-2 bg-[#181818] p-4 md:p-6 rounded-2xl border border-white/5 shadow-lg flex flex-col h-[340px]">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
               <div>
                 <h3 className="text-xl font-bold">Streaming Performance</h3>
                 <p className="text-[#b3b3b3] text-sm">Streams recorded over the last 7 days</p>
@@ -157,10 +157,10 @@ const NexoriaAnalyticsManager = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
           {/* Top Listeners (Who listens the most) */}
           <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[450px]">
-            <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-bold mb-1 flex items-center gap-2">Top Listeners <Flame className="w-5 h-5 text-orange-500" /></h3>
                 <p className="text-xs text-[#b3b3b3]">Users with the highest total stream counts.</p>
@@ -202,7 +202,7 @@ const NexoriaAnalyticsManager = () => {
 
           {/* Repeat Listeners (Who listens to what repeatedly) */}
           <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[450px]">
-            <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-bold mb-1">Song Obsessions</h3>
                 <p className="text-xs text-[#b3b3b3]">Users listening to the exact same song repeatedly.</p>
@@ -250,10 +250,10 @@ const NexoriaAnalyticsManager = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
            {/* Trending Genres & Types (Sad, Romantic, etc.) */}
            <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[450px]">
-            <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-bold mb-1">Trending Vibes & Genres</h3>
                 <p className="text-xs text-[#b3b3b3]">Which type of songs are people listening to most.</p>
@@ -262,7 +262,7 @@ const NexoriaAnalyticsManager = () => {
                 <BarChart2 className="w-5 h-5 text-purple-400" />
               </div>
             </div>
-            <div className="p-6 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
+            <div className="p-4 md:p-6 flex-1 flex flex-col gap-4 md:gap-6 overflow-y-auto custom-scrollbar">
               {trendingTypes.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-[#b3b3b3]">
                   <BarChart2 className="w-12 h-12 mb-3 opacity-20" />
@@ -297,7 +297,7 @@ const NexoriaAnalyticsManager = () => {
 
           {/* Live Activity Feed */}
           <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[450px]">
-            <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-xl font-bold mb-1 flex items-center gap-2">Live Activity Stream <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1ed760] opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-[#1ed760]"></span></span></h3>
                 <p className="text-xs text-[#b3b3b3]">Real-time look at what's playing right now.</p>
@@ -340,7 +340,7 @@ const NexoriaAnalyticsManager = () => {
 
         {/* Geographical Listener Map */}
         <motion.div variants={item} className="bg-[#181818] rounded-2xl overflow-hidden border border-white/5 shadow-lg flex flex-col h-[500px]">
-          <div className="p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
+          <div className="p-4 md:p-6 border-b border-white/5 bg-gradient-to-r from-[#282828]/80 to-[#181818] flex items-center justify-between shrink-0">
             <div>
               <h3 className="font-bold text-lg text-white flex items-center gap-2">
                 <Flame className="w-5 h-5 text-[#1ed760]" />

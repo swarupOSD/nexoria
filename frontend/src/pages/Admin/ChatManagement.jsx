@@ -74,7 +74,7 @@ const ChatManagement = () => {
       );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Helmet>
         <title>Chat Management - Admin Panel</title>
       </Helmet>
@@ -102,17 +102,17 @@ const ChatManagement = () => {
       </div>
 
       {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <motion.div 
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-[#111111] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
+          className="bg-white dark:bg-[#111111] p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
         >
           <div className="p-4 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-glow">
             <MessageSquare className="w-6 h-6" />
           </div>
           <div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Conversations</p>
-            <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
+            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
               {loadingAnalytics ? '...' : analytics.totalConversations || 0}
             </h3>
           </div>
@@ -120,14 +120,14 @@ const ChatManagement = () => {
 
         <motion.div 
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-[#111111] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
+          className="bg-white dark:bg-[#111111] p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
         >
           <div className="p-4 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-glow">
             <BarChart3 className="w-6 h-6" />
           </div>
           <div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Messages</p>
-            <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
+            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
               {loadingAnalytics ? '...' : analytics.totalMessages || 0}
             </h3>
           </div>
@@ -135,14 +135,14 @@ const ChatManagement = () => {
 
         <motion.div 
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-[#111111] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
+          className="bg-white dark:bg-[#111111] p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4 relative overflow-hidden"
         >
           <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-glow">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Last 24 Hours</p>
-            <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
+            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white mt-1">
               {loadingAnalytics ? '...' : analytics.activeLast24h || 0}
             </h3>
           </div>
@@ -153,7 +153,7 @@ const ChatManagement = () => {
       {!loadingAnalytics && analytics.themeStats && (
         <motion.div 
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-[#111111] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
+          className="bg-white dark:bg-[#111111] p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
         >
           <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <Palette className="w-4 h-4 text-primary" /> Active Chat Theme Distribution
@@ -201,11 +201,11 @@ const ChatManagement = () => {
         {/* Conversations Table */}
         <div className="overflow-x-auto">
           {loadingConvs ? (
-            <div className="p-12 text-center text-slate-400 flex items-center justify-center gap-2">
+            <div className="p-6 md:p-12 text-center text-slate-400 flex items-center justify-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-primary" /> Loading conversations...
             </div>
           ) : filteredConvs.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
+            <div className="p-6 md:p-12 text-center text-slate-400">
               No conversations found.
             </div>
           ) : (

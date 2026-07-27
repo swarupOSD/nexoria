@@ -131,7 +131,7 @@ const NexoriaPlaylistBuilder = () => {
   ).slice(0, 50); // Limit results for performance
 
   return (
-    <div className="flex h-[calc(100vh-140px)] gap-6 p-6">
+    <div className="flex h-[calc(100vh-140px)] gap-4 md:gap-6 p-4 md:p-6">
       
       {/* LEFT PANEL: Playlists List */}
       <div className="w-[300px] shrink-0 bg-[#0F0F23] rounded-2xl border border-white/10 flex flex-col overflow-hidden">
@@ -149,11 +149,11 @@ const NexoriaPlaylistBuilder = () => {
         
         <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
           {isLoadingPlaylists ? (
-            <div className="p-8 flex justify-center text-zinc-500">
+            <div className="p-4 md:p-8 flex justify-center text-zinc-500">
               <Loader2 className="w-6 h-6 animate-spin" />
             </div>
           ) : playlists.length === 0 ? (
-            <div className="p-8 text-center text-zinc-500 text-sm">
+            <div className="p-4 md:p-8 text-center text-zinc-500 text-sm">
               No playlists found. Create one!
             </div>
           ) : (
@@ -204,8 +204,8 @@ const NexoriaPlaylistBuilder = () => {
             
             {/* Editor Form & Reorder List */}
             <div className="flex-1 flex flex-col border-r border-white/10 overflow-hidden">
-              <div className="p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-transparent">
-                <div className="flex gap-6">
+              <div className="p-4 md:p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-transparent">
+                <div className="flex gap-4 md:gap-6">
                   {/* Image Preview */}
                   <div className="w-32 h-32 rounded-xl bg-zinc-800 border-2 border-dashed border-white/20 flex flex-col items-center justify-center shrink-0 relative overflow-hidden group">
                     {formData.coverImage ? (
@@ -225,7 +225,7 @@ const NexoriaPlaylistBuilder = () => {
                         type="text" 
                         value={formData.title}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
-                        className="w-full bg-transparent border-b-2 border-white/10 focus:border-indigo-500 text-3xl font-black text-white px-0 py-2 outline-none transition-colors"
+                        className="w-full bg-transparent border-b-2 border-white/10 focus:border-indigo-500 text-2xl md:text-3xl font-black text-white px-0 py-2 outline-none transition-colors"
                         placeholder="Playlist Title"
                       />
                     </div>
@@ -267,10 +267,10 @@ const NexoriaPlaylistBuilder = () => {
                 </div>
                 
                 {/* Actions */}
-                <div className="mt-6 flex justify-end">
+                <div className="mt-4 md:mt-6 flex justify-end">
                   <button 
                     onClick={handleSave}
-                    className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/20"
+                    className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 md:px-6 py-2 rounded-full font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/20"
                   >
                     <Save className="w-4 h-4" /> {isCreating ? 'Create Playlist' : 'Save Changes'}
                   </button>
@@ -279,7 +279,7 @@ const NexoriaPlaylistBuilder = () => {
 
               {/* Tracks Drag and Drop Area */}
               <div className="flex-1 flex flex-col overflow-hidden bg-black/20">
-                <div className="px-6 py-3 border-b border-white/5 flex items-center justify-between">
+                <div className="px-4 md:px-6 py-3 border-b border-white/5 flex items-center justify-between">
                   <h3 className="text-sm font-bold text-white">Tracks ({formData.tracks.length})</h3>
                   <span className="text-xs text-zinc-500">Drag to reorder</span>
                 </div>
@@ -359,7 +359,7 @@ const NexoriaPlaylistBuilder = () => {
               
               <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
                 {isLoadingTracks ? (
-                  <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-zinc-500" /></div>
+                  <div className="flex justify-center p-4 md:p-8"><Loader2 className="w-6 h-6 animate-spin text-zinc-500" /></div>
                 ) : (
                   filteredSearchTracks.map(track => {
                     const isAdded = formData.tracks.some(t => t._id === track._id);
