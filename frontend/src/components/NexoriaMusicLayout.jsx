@@ -353,7 +353,7 @@ const NexoriaMusicLayout = () => {
         <main id="music-main-content" className="flex-1 overflow-y-auto custom-scrollbar relative">
           <Outlet />
           {/* Bottom spacer for player */}
-          <div className="h-[130px] sm:h-[120px]"></div>
+          <div className="h-[150px] sm:h-[120px]"></div>
         </main>
       </div>
 
@@ -364,8 +364,8 @@ const NexoriaMusicLayout = () => {
         </div>
       )}
 
-      {/* Mobile Bottom Navigation (Visible only on mobile when mini player is active/inactive) */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-gradient-to-t from-[#0F0F23] via-[#0F0F23] to-[#0F0F23]/90 backdrop-blur-lg border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
+      {/* Mobile Bottom Navigation (Visible only on mobile) */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-[#0F0F23] border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
         {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);

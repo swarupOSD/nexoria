@@ -80,6 +80,11 @@ body[data-theme="cyberpunk"] button:hover {
 }
 
 @layer base {
+  html, body {
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
   body {
     @apply bg-slate-50 text-slate-900 transition-colors duration-500 min-h-screen relative overflow-x-hidden font-sans;
     background-image: 

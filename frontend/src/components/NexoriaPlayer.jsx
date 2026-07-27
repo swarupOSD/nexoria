@@ -529,9 +529,9 @@ const NexoriaPlayer = () => {
                   initial={{ y: '100%', opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: '100%', opacity: 0 }}
-                  className="fixed bottom-[calc(60px+env(safe-area-inset-bottom,0px))] left-2 right-2 z-[90] bg-[#1E1B4B] border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col"
+                  className="fixed bottom-[calc(65px+env(safe-area-inset-bottom,0px))] left-2 right-2 z-[90] bg-[#1E1B4B] border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col active:scale-[0.98] transition-transform"
                   onClick={() => setIsExpanded(true)}
-                  drag="y">
+                >
                   <div className="flex items-center p-2 gap-3">
                     {/* Small Image */}
                     <div className="w-10 h-10 rounded-md overflow-hidden bg-[#4338CA] shrink-0 shadow-inner">
