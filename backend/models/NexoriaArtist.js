@@ -6,7 +6,7 @@ const nexoriaArtistSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Artist name is required'],
       trim: true,
-      maxlength: [255, 'Artist name cannot be more than 255 characters']
+      maxlength: [1000, 'Artist name cannot be more than 1000 characters']
     },
     bio: {
       type: String,

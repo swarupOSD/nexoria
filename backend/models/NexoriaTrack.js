@@ -6,7 +6,7 @@ const nexoriaTrackSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Track title is required'],
       trim: true,
-      maxlength: [255, 'Track title cannot be more than 255 characters']
+      maxlength: [1000, 'Track title cannot be more than 1000 characters']
     },
     artist: {
       type: mongoose.Schema.ObjectId,
