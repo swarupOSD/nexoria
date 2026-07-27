@@ -94,19 +94,31 @@ const SecretLounge = () => {
       {/* Clean Dark Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#121212] via-black to-black pointer-events-none"></div>
 
-      {/* Back Button */}
+      {/* PC Back Button (Hidden on Mobile) */}
       <button
         onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 z-20 flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium"
+        className="hidden sm:flex absolute top-4 left-4 z-20 items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium active:scale-90"
       >
         <ArrowLeft className="w-5 h-5" />
         Back
       </button>
 
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden absolute top-0 left-0 w-full z-50 bg-[#000000]/90 backdrop-blur-xl border-b border-gray-800 flex items-center px-4 h-14">
+        <button 
+          onClick={() => navigate(-1)}
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="flex-1 text-center font-bold text-white text-sm tracking-widest uppercase truncate px-2">Secret Lounge</span>
+        <div className="w-8" />
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg bg-[#000000] border border-gray-800 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden relative z-10"
+        className="w-full max-w-lg bg-[#000000] border border-gray-800 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 mt-14 sm:mt-0"
       >
         {/* Sleek Header */}
         <div className="border-b border-gray-800 p-4 flex items-center justify-center relative">
@@ -146,7 +158,7 @@ const SecretLounge = () => {
               
               <button 
                 onClick={() => setHasAcceptedTerms(true)}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all"
+                className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all active:scale-[0.98]"
               >
                 I Accept & Enter
               </button>
@@ -161,7 +173,7 @@ const SecretLounge = () => {
                 >
                   <button 
                     onClick={handleCreateRoom}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#262626] hover:bg-[#363636] rounded-full text-white font-semibold transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#262626] hover:bg-[#363636] rounded-full text-white font-semibold transition-all active:scale-[0.98]"
                   >
                     <Plus className="w-5 h-5" /> Initialize New Room
                   </button>
@@ -174,7 +186,7 @@ const SecretLounge = () => {
 
                   <button 
                     onClick={() => setIsJoining(true)}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all active:scale-[0.98]"
                   >
                     <LogIn className="w-5 h-5" /> Connect to Room
                   </button>
@@ -220,7 +232,7 @@ const SecretLounge = () => {
                     </div>
                     <button 
                       type="submit"
-                      className="w-full mt-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all"
+                      className="w-full mt-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 rounded-full text-white font-semibold transition-all active:scale-[0.98]"
                     >
                       Connect
                     </button>

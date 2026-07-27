@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldCheck, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
 import { useSelector } from 'react-redux';
@@ -800,6 +800,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       {/* â”€â”€ IG Style Header â”€â”€ */}
       <div className="flex items-center justify-between px-2 sm:px-4 py-3 border-b z-20 shadow-sm gap-2" style={{ background: 'rgba(0,0,0,0.2)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <button onClick={onLeave} className="sm:hidden w-8 h-8 rounded-full flex items-center justify-center text-white active:scale-90 transition-transform bg-white/10 shrink-0">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <div className="relative shrink-0">
             {participants.length > 1 ? (
               <div className="flex -space-x-2">
@@ -936,7 +939,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       </div>
 
       {/* â”€â”€ Input Area â”€â”€ */}
-      <div className="p-3 z-20 pb-6" style={{ background: vanishMode ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="p-3 z-20 pb-24 sm:pb-6" style={{ background: vanishMode ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         
         {/* Smart Replies */}
         <AnimatePresence>
