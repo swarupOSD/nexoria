@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
-import { LayoutDashboard, UserCircle, ShoppingBag, Settings, Loader2, ArrowLeft, Heart, Download, HelpCircle, Gift, Music, Smartphone, Coins } from 'lucide-react';
+import { LayoutDashboard, UserCircle, ShoppingBag, Settings, Loader2, Menu, X, ArrowLeft, Heart, Download, HelpCircle, Gift, Music, Smartphone, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useGetMeQuery } from '../features/auth/authApiSlice';
@@ -43,6 +43,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const { data: meData, isLoading: meLoading, refetch: refetchUser } = useGetMeQuery(undefined, { refetchOnMountOrArgChange: true });
   const { data: requestsRes, isLoading: requestsLoading } = useGetMyRequestsQuery();
@@ -110,14 +111,8 @@ const UserDashboard = () => {
 
   const themeClass = getThemeClass(user?.profileTheme || 'default');
 
-  const tabContentVariants = {
-    hidden: { opacity: 0, y: 10 },
-    enter: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
-    exit: { opacity: 0, y: -10, transition: { duration: 0.2, ease: 'easeIn' } }
-  };
-
   return (
-    <div className={`font-jakarta min-h-screen pb-20 transition-colors duration-500 ${themeClass} relative overflow-x-hidden`}>
+    <div className={`font-jakarta min-h-screen pb-12 transition-colors duration-500 ${themeClass} relative overflow-hidden`}>
       
       {/* Global Background Glows if default theme */}
       {(!user?.profileTheme || user?.profileTheme === 'default') && (
@@ -130,60 +125,113 @@ const UserDashboard = () => {
         <title>Dashboard - {user?.name}</title>
       </Helmet>
 
-      {/* Sleek App Header */}
-      <div className="sticky top-0 z-40 bg-black/40 backdrop-blur-3xl border-b border-white/5 shadow-2xl">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate('/')} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all backdrop-blur-md active:scale-95">
+      {/* Top Navigation Bar for Dashboard */}
+      <div className="sticky top-0 z-30 bg-white/5 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate('/')} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/70 hover:text-white transition-all hidden sm:block backdrop-blur-md">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2">
-              <img src={user?.profileImage || '/default-avatar.png'} alt={user?.name} className="w-8 h-8 rounded-full border border-white/10 object-cover" />
-              <div>
-                <h1 className="text-base font-black text-white leading-tight">Dashboard</h1>
-                <p className="text-[10px] text-white/50 uppercase tracking-wider">{user?.name}</p>
-              </div>
-            </div>
+            <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
+              Dashboard
+            </h1>
           </div>
-        </div>
-
-        {/* Horizontal Scrollable Tabs */}
-        <div className="max-w-4xl mx-auto px-2 pb-2">
-          <div className="flex overflow-x-auto gap-2 pb-2 pt-1 scrollbar-hide px-2">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all active:scale-95 ${
-                  activeTab === tab.id
-                    ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]'
-                    : 'bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/5'
-                }`}
-              >
-                <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? '' : 'opacity-70'}`} />
-                {tab.label}
-                {tab.id === 'overview' && unreadCount > 0 && (
-                  <span className="ml-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                )}
-              </button>
-            ))}
-          </div>
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-white transition-colors backdrop-blur-md"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            variants={tabContentVariants}
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            className="w-full h-full"
-          >
-            {renderContent()}
-          </motion.div>
-        </AnimatePresence>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block w-72 shrink-0 relative z-10">
+            <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-3xl space-y-2 sticky top-24 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)] translate-x-1'
+                      : 'text-white/50 hover:text-white hover:bg-white/10 hover:translate-x-1'
+                  }`}
+                >
+                  <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'animate-pulse' : ''}`} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Sidebar Overlay */}
+          <AnimatePresence>
+            {isSidebarOpen && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-md"
+                />
+                <motion.div
+                  initial={{ x: '-100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '-100%' }}
+                  transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                  className="fixed top-0 left-0 bottom-0 w-72 bg-[#030303]/90 backdrop-blur-3xl z-50 p-6 lg:hidden shadow-[20px_0_40px_rgba(0,0,0,0.5)] border-r border-white/10 overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-2xl font-black text-white">Menu</h2>
+                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {TABS.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          setActiveTab(tab.id);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl font-bold transition-all ${
+                          activeTab === tab.id
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)]'
+                            : 'text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10'
+                        }`}
+                      >
+                        <tab.icon className="w-5 h-5" />
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Content Area */}
+          <div className="flex-1 min-w-0">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+        </div>
       </div>
     </div>
   );

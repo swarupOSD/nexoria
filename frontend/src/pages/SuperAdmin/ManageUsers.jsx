@@ -1,7 +1,8 @@
+import CustomSearchBar from '../../components/CustomSearchBar';
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Trash2, Shield, X, Star, Crown, ShieldAlert, AlertTriangle, FileText, Lock, LayoutTemplate, ArrowLeft, Filter, CheckCircle2 } from 'lucide-react';
+import { Search, Filter, Trash2, Eye, Shield, X, Star, Crown, ShieldAlert, AlertTriangle, FileText, Lock , LayoutTemplate } from 'lucide-react';
 import { 
   useGetUsersQuery, 
   useDeleteUserMutation, 
@@ -19,18 +20,18 @@ import {
   useUpdateRestrictionsMutation
 } from '../../features/api/userModerationApiSlice';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import BackButton from '../../components/BackButton';
 
 const AdminNotesList = ({ userId }) => {
   const { data: notesRes, isLoading } = useGetAdminNotesQuery(userId);
-  if (isLoading) return <p className="text-[10px] text-blue-500 font-bold uppercase tracking-widest animate-pulse">Loading notes...</p>;
+  if (isLoading) return <p>Loading notes...</p>;
   const notes = notesRes?.data || [];
   return (
-    <div className="space-y-2 mt-4 max-h-40 overflow-y-auto custom-scrollbar pr-2">
-      {notes.length === 0 ? <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">No notes found.</p> : notes.map(note => (
-        <div key={note._id} className="bg-white/5 border border-white/10 p-3 rounded-2xl text-sm">
-          <p className="text-white text-xs">{note.note}</p>
-          <div className="text-[10px] text-slate-500 mt-2 flex justify-between font-bold uppercase tracking-widest">
+    <div className="space-y-3 mt-4 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+      {notes.length === 0 ? <p className="text-slate-500 text-sm">No notes found.</p> : notes.map(note => (
+        <div key={note._id} className="bg-slate-100 dark:bg-slate-800 p-3 rounded-lg text-sm">
+          <p className="text-slate-700 dark:text-slate-300">{note.note}</p>
+          <div className="text-xs text-slate-500 mt-2 flex justify-between">
             <span>By: {note.admin?.name || 'Admin'}</span>
             <span>{new Date(note.createdAt).toLocaleDateString()}</span>
           </div>
@@ -42,19 +43,22 @@ const AdminNotesList = ({ userId }) => {
 
 const ManageUsers = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [roleFilter, setRoleFilter] = useState('All Roles');
+  const [statusFilter, setStatusFilter] = useState('All Status');
   
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const [isModerationModalOpen, setIsModerationModalOpen] = useState(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   
   const [selectedUser, setSelectedUser] = useState(null);
-  const [moderationAction, setModerationAction] = useState('suspend'); 
+  const [moderationAction, setModerationAction] = useState('suspend'); // suspend, ban, warn, restrict
   const [selectedUsersIds, setSelectedUsersIds] = useState([]);
 
   const { data: usersData, isLoading, refetch } = useGetUsersQuery();
   const [deleteUser] = useDeleteUserMutation();
   const [managePremium] = useManagePremiumMutation();
+  
   const [banUser] = useBanUserMutation();
   const [unbanUser] = useUnbanUserMutation();
   const [suspendUser] = useSuspendUserMutation();
@@ -62,33 +66,38 @@ const ManageUsers = () => {
   const [warnUser] = useWarnUserMutation();
   const [addAdminNote] = useAddAdminNoteMutation();
   const [updateRestrictions] = useUpdateRestrictionsMutation();
-  const navigate = useNavigate();
 
   const users = usersData?.data || [];
 
   const filteredUsers = users.filter(u => {
     const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase());
-    if (!matchesSearch) return false;
-    
-    switch (activeFilter) {
-      case 'Premium': return u.isPremium;
-      case 'Admin': return u.role === 'admin';
-      case 'SuperAdmin': return u.role === 'superadmin';
-      case 'Banned': return u.status === 'banned';
-      case 'Suspended': return u.status === 'suspended';
-      default: return true;
-    }
+    const roleMatches = roleFilter === 'All Roles' ? true :
+                        roleFilter === 'Premium User' ? u.isPremium :
+                        roleFilter.toLowerCase() === u.role;
+    const statusMatches = statusFilter === 'All Status' ? true :
+                          statusFilter.toLowerCase() === u.status;
+    return matchesSearch && roleMatches && statusMatches;
   });
 
   const toggleSelectUser = (id) => {
     setSelectedUsersIds(prev => prev.includes(id) ? prev.filter(userId => userId !== id) : [...prev, id]);
   };
 
+  const selectAll = () => {
+    if (selectedUsersIds.length === filteredUsers.length) {
+      setSelectedUsersIds([]);
+    } else {
+      setSelectedUsersIds(filteredUsers.map(u => u._id));
+    }
+  };
+
   const handleBulkAction = async (action) => {
-    if (selectedUsersIds.length === 0) return;
+    if (selectedUsersIds.length === 0) {
+      toast.error('Select users first');
+      return;
+    }
     if (!window.confirm(`Are you sure you want to ${action} ${selectedUsersIds.length} users?`)) return;
 
-    const toastId = toast.loading(`Processing ${selectedUsersIds.length} users...`);
     for (const id of selectedUsersIds) {
       try {
         if (action === 'delete') await deleteUser(id).unwrap();
@@ -97,7 +106,6 @@ const ManageUsers = () => {
         if (action === 'restore') await restoreUser(id);
       } catch(e) {}
     }
-    toast.success(`Bulk ${action} complete`, { id: toastId });
     setSelectedUsersIds([]);
     refetch();
   };
@@ -156,216 +164,196 @@ const ManageUsers = () => {
     } catch (error) {}
   };
 
-  const getRoleBadge = (user) => {
-    if (user.role === 'owner') return <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_10px_rgba(245,158,11,0.5)] flex items-center gap-1 uppercase tracking-widest"><Crown className="w-2.5 h-2.5" /> CREATOR</span>;
-    if (user.role === 'superadmin') return <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-red-500/20 text-red-400 border border-red-500/20 flex items-center gap-1 uppercase tracking-widest"><Shield className="w-2.5 h-2.5" /> SUPERADMIN</span>;
-    if (user.role === 'admin') return <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-500/20 text-purple-400 border border-purple-500/20 flex items-center gap-1 uppercase tracking-widest"><Shield className="w-2.5 h-2.5" /> ADMIN</span>;
-    if (user.isPremium) return <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-yellow-500/20 text-yellow-400 border border-yellow-500/20 flex items-center gap-1 uppercase tracking-widest"><Star className="w-2.5 h-2.5" /> PREMIUM</span>;
-    return <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-500/10 text-blue-400 border border-blue-500/10 flex items-center gap-1 uppercase tracking-widest">USER</span>;
-  };
-
-  const getStatusBadge = (status) => {
-    if (status === 'active') return <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>;
-    if (status === 'suspended') return <span className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></span>;
-    return <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>;
-  };
-
-  const filters = ['All', 'Premium', 'Admin', 'SuperAdmin', 'Banned', 'Suspended'];
-
   return (
-    <div className="min-h-screen pb-32">
+    <div className="space-y-6">
       <Helmet>
         <title>Manage Users - Super Admin</title>
       </Helmet>
 
-      {/* Sleek Premium App Header */}
-      <div className="sticky top-0 z-30 bg-[#0A0A0A]/80 backdrop-blur-3xl border-b border-white/5 shadow-2xl pt-4">
-        <div className="max-w-4xl mx-auto px-4 flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4 relative z-10">
-            <button onClick={() => navigate(-1)} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all backdrop-blur-md active:scale-95">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                <LayoutTemplate className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 leading-tight">God's Eye</h1>
-                <p className="text-[10px] text-blue-400/60 font-bold uppercase tracking-widest">User Management</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Search & Filter Bar */}
-        <div className="max-w-4xl mx-auto px-4 pb-4 space-y-3">
-          <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input 
-              type="text" 
-              placeholder="Search by name or email..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-11 pr-4 text-sm text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
-            />
-          </div>
-          
-          <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide">
-            {filters.map(filter => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-all active:scale-95 ${
-                  activeFilter === filter
-                    ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]'
-                    : 'bg-white/5 text-white/50 hover:text-white/80 border border-white/5 hover:bg-white/10'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
+          <div>
+            <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+              <LayoutTemplate className="w-6 h-6 text-primary" />
+              User Management
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">Advanced enforcement and moderation tools.</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 mt-6">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Scanning Database...</span>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card overflow-hidden"
+      >
+        <div className="p-4 border-b border-slate-200 dark:border-night-border flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div className="flex gap-4 w-full lg:w-auto">
+            <div className="relative flex-1 lg:w-64">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+              <CustomSearchBar value={searchQuery} placeholder="Search users..." name="text"  onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+            <select 
+              value={roleFilter} 
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="premium-input px-4 py-2 text-sm"
+            >
+              <option>All Roles</option>
+              <option>User</option>
+              <option>Premium User</option>
+              <option>Admin</option>
+              <option>Super Admin</option>
+            </select>
+            <select 
+              value={statusFilter} 
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="premium-input px-4 py-2 text-sm"
+            >
+              <option>All Status</option>
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+              <option value="banned">Banned</option>
+              <option value="deleted">Deleted</option>
+            </select>
           </div>
-        ) : filteredUsers.length === 0 ? (
-          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5 border-dashed mt-4">
-            <Search className="w-12 h-12 text-white/20 mx-auto mb-3" />
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">No users found.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <AnimatePresence>
-              {filteredUsers.map((user) => (
-                <motion.div 
-                  key={user._id}
-                  initial={{ opacity: 0, scale: 0.95 }} 
-                  animate={{ opacity: 1, scale: 1 }} 
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className={`bg-[#0A0A0A]/80 backdrop-blur-xl border ${selectedUsersIds.includes(user._id) ? 'border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)]' : 'border-white/5'} rounded-3xl p-4 transition-all relative overflow-hidden flex flex-col justify-between`}
-                >
-                  <div className="flex items-start justify-between gap-3 mb-4">
+
+          {selectedUsersIds.length > 0 && (
+            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-900">
+              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 mr-2">{selectedUsersIds.length} Selected</span>
+              <button onClick={() => handleBulkAction('suspend')} className="text-xs bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded transition">Suspend</button>
+              <button onClick={() => handleBulkAction('ban')} className="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded transition">Ban</button>
+              <button onClick={() => handleBulkAction('restore')} className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded transition">Restore</button>
+              <button onClick={() => handleBulkAction('delete')} className="text-xs bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded transition"><Trash2 className="w-3.5 h-3.5"/></button>
+            </div>
+          )}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr className="bg-slate-50/50 dark:bg-night-bg text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
+                <th className="p-4 w-10"><input type="checkbox" onChange={selectAll} checked={selectedUsersIds.length === filteredUsers.length && filteredUsers.length > 0} className="rounded border-slate-300 text-primary focus:ring-primary" /></th>
+                <th className="p-4 font-semibold">User Info</th>
+                <th className="p-4 font-semibold">Role</th>
+                <th className="p-4 font-semibold">Status</th>
+                <th className="p-4 font-semibold">Warnings</th>
+                <th className="p-4 font-semibold text-right">Moderation Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 dark:divide-night-border">
+              {isLoading ? (
+                <tr><td colSpan="6" className="p-4 text-center">Loading users...</td></tr>
+              ) : filteredUsers.map((user) => (
+                <tr key={user._id} className={`hover:bg-slate-50/50 dark:hover:bg-night-bg transition-colors ${selectedUsersIds.includes(user._id) ? 'bg-primary/10' : ''}`}>
+                  <td className="p-4">
+                    <input type="checkbox" checked={selectedUsersIds.includes(user._id)} onChange={() => toggleSelectUser(user._id)} className="rounded border-slate-300 text-primary focus:ring-primary" />
+                  </td>
+                  <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <img src={user.profileImage || '/default.jpg'} alt="Avatar" className="w-12 h-12 rounded-full object-cover border border-white/10" />
-                        <div className="absolute bottom-0 right-0 border-2 border-[#0A0A0A] rounded-full">
-                          {getStatusBadge(user.status)}
+                      <img src={user.profileImage || '/default.jpg'} alt="Avatar" className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
+                      <div>
+                        <div className="font-semibold dark:text-white text-sm flex items-center gap-1">
+                          {user.name}
+                          {user.isPremium && <Crown className="w-3 h-3 text-yellow-500" title="Premium User" />}
                         </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-sm font-black text-white truncate max-w-[150px]">{user.name}</h3>
-                        <p className="text-[10px] text-white/40 font-mono truncate max-w-[150px]">{user.email}</p>
+                        <div className="text-xs text-slate-500">{user.email}</div>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        {user.warnings > 0 && (
-                          <div className="flex items-center gap-1 text-[10px] text-orange-400 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded">
-                            <AlertTriangle className="w-3 h-3" /> {user.warnings}
-                          </div>
-                        )}
-                        {getRoleBadge(user)}
-                      </div>
-                      <button 
-                        onClick={() => toggleSelectUser(user._id)}
-                        className={`w-6 h-6 rounded-full border flex items-center justify-center transition-colors ${selectedUsersIds.includes(user._id) ? 'bg-blue-500 border-blue-500 text-white' : 'border-white/20 text-transparent hover:border-white/50'}`}
-                      >
-                        <CheckCircle2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {user.role !== 'owner' && (
-                    <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide">
-                      <button onClick={() => { setSelectedUser(user); setIsNoteModalOpen(true); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white/70 text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                        <FileText className="w-3.5 h-3.5" /> Notes
-                      </button>
-                      
-                      <button onClick={() => openModerationModal(user, 'restrict')} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                        <Lock className="w-3.5 h-3.5" /> Restrict
-                      </button>
-
-                      {user.status === 'active' ? (
+                  </td>
+                  <td className="p-4">
+                      {user.role === 'owner' ? (
+                        <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center gap-1 border border-amber-300/50 uppercase">
+                          <Crown className="w-3 h-3" /> NEXORIA CREATOR
+                        </span>
+                      ) : (
+                        <span className={`flex items-center gap-1 text-xs font-semibold capitalize ${
+                          user.role === 'superadmin' ? 'text-red-500' :
+                          user.role === 'admin' ? 'text-purple-500' :
+                          user.isPremium ? 'text-yellow-500' : 'text-blue-500'
+                        }`}>
+                          {user.role === 'superadmin' && <Shield className="w-3 h-3" />}
+                          {user.isPremium && user.role === 'user' ? 'Premium User' : user.role}
+                        </span>
+                      )}
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
+                      user.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
+                      user.status === 'suspended' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-slate-600 dark:text-slate-400">
+                      <AlertTriangle className={`w-4 h-4 ${user.warnings > 0 ? 'text-orange-500' : 'text-slate-400'}`} /> {user.warnings || 0}
+                    </span>
+                  </td>
+                  <td className="p-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {user.role !== 'owner' && (
                         <>
-                          <button onClick={() => openModerationModal(user, 'warn')} className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                            <AlertTriangle className="w-3.5 h-3.5" /> Warn
+                          <button onClick={() => { setSelectedUser(user); setIsNoteModalOpen(true); }} title="Admin Notes" className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 rounded-lg transition">
+                            <FileText className="w-4 h-4" />
                           </button>
-                          <button onClick={() => openModerationModal(user, 'suspend')} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                            Suspend
+                          <button onClick={() => openModerationModal(user, 'warn')} title="Warn User" className="p-1.5 hover:bg-yellow-100 text-yellow-600 rounded-lg transition">
+                            <AlertTriangle className="w-4 h-4" />
                           </button>
-                          <button onClick={() => openModerationModal(user, 'ban')} className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                            Ban
+                          <button onClick={() => openModerationModal(user, 'restrict')} title="Account Restrictions" className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-lg transition">
+                            <Lock className="w-4 h-4" />
+                          </button>
+                          
+                          {user.status === 'active' ? (
+                            <>
+                              <button onClick={() => openModerationModal(user, 'suspend')} title="Suspend User" className="p-1.5 bg-orange-100 text-orange-600 hover:bg-orange-200 rounded-lg transition">
+                                Suspend
+                              </button>
+                              <button onClick={() => openModerationModal(user, 'ban')} title="Ban User" className="p-1.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition">
+                                Ban
+                              </button>
+                            </>
+                          ) : (
+                            <button onClick={() => handleQuickAction(user.status === 'banned' ? 'unban' : 'restore', user)} className="p-1.5 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition">
+                              Restore
+                            </button>
+                          )}
+
+                          <button onClick={() => setIsPremiumModalOpen(true) || setSelectedUser(user)} title="Manage Premium" className="p-1.5 hover:bg-yellow-100 text-yellow-500 rounded-lg transition">
+                            <Star className="w-4 h-4" />
                           </button>
                         </>
-                      ) : (
-                        <button onClick={() => handleQuickAction(user.status === 'banned' ? 'unban' : 'restore', user)} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                          Restore
-                        </button>
                       )}
-
-                      <button onClick={() => setIsPremiumModalOpen(true) || setSelectedUser(user)} className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 hover:from-amber-500/20 hover:to-yellow-500/20 text-amber-500 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap active:scale-95">
-                        <Star className="w-3.5 h-3.5" /> Premium
-                      </button>
                     </div>
-                  )}
-                </motion.div>
+                  </td>
+                </tr>
               ))}
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
-
-      {/* Floating Bulk Action Bar */}
-      <AnimatePresence>
-        {selectedUsersIds.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-md bg-[#111]/90 backdrop-blur-3xl border border-white/10 rounded-full p-2 shadow-[0_20px_40px_rgba(0,0,0,0.8)] flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2 pl-3">
-              <span className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-black text-white">
-                {selectedUsersIds.length}
-              </span>
-              <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest hidden sm:inline">Selected</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => handleBulkAction('suspend')} className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 active:scale-95 transition-all">Suspend</button>
-              <button onClick={() => handleBulkAction('ban')} className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-500/10 text-red-500 hover:bg-red-500/20 active:scale-95 transition-all">Ban</button>
-              <button onClick={() => handleBulkAction('restore')} className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 active:scale-95 transition-all">Restore</button>
-              <button onClick={() => handleBulkAction('delete')} className="w-8 h-8 rounded-full flex items-center justify-center bg-red-600 hover:bg-red-700 text-white active:scale-95 transition-all ml-1"><Trash2 className="w-3.5 h-3.5"/></button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
 
       {/* Moderation Modal */}
       <AnimatePresence>
         {isModerationModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModerationModalOpen(false)} className="absolute inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#111]/90 backdrop-blur-3xl relative w-full max-w-md p-6 shadow-2xl z-10 border border-white/10 rounded-3xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModerationModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-night-border bg-white dark:bg-slate-900">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                <h2 className="text-xl font-bold dark:text-white capitalize flex items-center gap-2">
                   <ShieldAlert className="w-5 h-5 text-red-500" /> {moderationAction} User
                 </h2>
-                <button onClick={() => setIsModerationModalOpen(false)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
-                  <X className="w-5 h-5 text-white/50" />
+                <button onClick={() => setIsModerationModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
 
-              <div className="mb-6 p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center gap-3">
+              <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center gap-3">
                 <img src={selectedUser.profileImage || '/default.jpg'} className="w-10 h-10 rounded-full" alt="avatar" />
                 <div>
-                  <p className="text-sm font-black text-white">{selectedUser.name}</p>
-                  <p className="text-[10px] font-mono text-white/40">{selectedUser.email}</p>
+                  <p className="text-sm font-bold dark:text-white">{selectedUser.name}</p>
+                  <p className="text-xs text-slate-500">{selectedUser.email}</p>
                 </div>
               </div>
 
@@ -373,48 +361,49 @@ const ManageUsers = () => {
                 {moderationAction !== 'restrict' ? (
                   <>
                     <div>
-                      <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Reason</label>
-                      <textarea name="reason" required placeholder={`Reason for ${moderationAction}...`} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 h-24 resize-none transition-all"></textarea>
+                      <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Reason</label>
+                      <textarea name="reason" required placeholder={`Reason for ${moderationAction}...`} className="premium-input w-full h-24 resize-none"></textarea>
                     </div>
                     
                     {(moderationAction === 'suspend' || moderationAction === 'ban') && (
                       <div>
-                        <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Duration (Days)</label>
-                        <select name="days" className="w-full bg-black/50 border border-white/10 rounded-full py-3 px-4 text-sm text-white focus:outline-none focus:border-red-500/50 appearance-none transition-all">
+                        <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Duration (Days)</label>
+                        <select name="days" className="premium-input w-full">
                           <option value="1">1 Day</option>
                           <option value="3">3 Days</option>
                           <option value="7">7 Days</option>
                           <option value="30">30 Days</option>
                           {moderationAction === 'ban' && <option value="">Permanent</option>}
                         </select>
+                        {moderationAction === 'suspend' && <p className="text-xs text-slate-500 mt-1">Suspension will automatically lift after this period.</p>}
                       </div>
                     )}
                   </>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-4">Toggle restrictions for this user</p>
-                    <label className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl cursor-pointer transition-colors">
-                      <input type="checkbox" name="disableCommenting" defaultChecked={selectedUser.restrictions?.disableCommenting} className="w-5 h-5 rounded bg-black/50 border-white/20 text-blue-500 focus:ring-blue-500" />
-                      <span className="text-sm font-bold text-white">Disable Commenting</span>
+                    <p className="text-sm text-slate-500 mb-4">Toggle restrictions for this user.</p>
+                    <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-night-bg rounded-lg cursor-pointer">
+                      <input type="checkbox" name="disableCommenting" defaultChecked={selectedUser.restrictions?.disableCommenting} className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                      <span className="text-sm font-semibold dark:text-slate-300">Disable Commenting</span>
                     </label>
-                    <label className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl cursor-pointer transition-colors">
-                      <input type="checkbox" name="disableRatings" defaultChecked={selectedUser.restrictions?.disableRatings} className="w-5 h-5 rounded bg-black/50 border-white/20 text-blue-500 focus:ring-blue-500" />
-                      <span className="text-sm font-bold text-white">Disable Ratings</span>
+                    <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-night-bg rounded-lg cursor-pointer">
+                      <input type="checkbox" name="disableRatings" defaultChecked={selectedUser.restrictions?.disableRatings} className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                      <span className="text-sm font-semibold dark:text-slate-300">Disable Ratings</span>
                     </label>
-                    <label className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl cursor-pointer transition-colors">
-                      <input type="checkbox" name="disableUploads" defaultChecked={selectedUser.restrictions?.disableUploads} className="w-5 h-5 rounded bg-black/50 border-white/20 text-blue-500 focus:ring-blue-500" />
-                      <span className="text-sm font-bold text-white">Disable Avatar Uploads</span>
+                    <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-night-bg rounded-lg cursor-pointer">
+                      <input type="checkbox" name="disableUploads" defaultChecked={selectedUser.restrictions?.disableUploads} className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                      <span className="text-sm font-semibold dark:text-slate-300">Disable Avatar Uploads</span>
                     </label>
-                    <label className="flex items-center gap-3 p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-2xl cursor-pointer transition-colors">
-                      <input type="checkbox" name="avatarReset" className="w-5 h-5 rounded bg-black/50 border-red-500/30 text-red-500 focus:ring-red-500" />
-                      <span className="text-sm font-bold text-red-400">Force Reset Avatar</span>
+                    <label className="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/50 rounded-lg cursor-pointer">
+                      <input type="checkbox" name="avatarReset" className="w-5 h-5 rounded border-red-300 text-red-600 focus:ring-red-500" />
+                      <span className="text-sm font-semibold text-red-600 dark:text-red-400">Force Reset Avatar to Default</span>
                     </label>
                   </div>
                 )}
 
-                <div className="mt-8 flex gap-3">
-                  <button type="button" onClick={() => setIsModerationModalOpen(false)} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 rounded-full font-bold text-white/70 text-sm transition-all active:scale-95">Cancel</button>
-                  <button type="submit" className={`flex-1 py-3.5 text-white rounded-full font-bold text-sm transition-all active:scale-95 ${moderationAction === 'ban' ? 'bg-red-600 hover:bg-red-700 shadow-[0_0_20px_rgba(220,38,38,0.4)]' : 'bg-blue-600 hover:bg-blue-700 shadow-[0_0_20px_rgba(37,99,235,0.4)]'}`}>Confirm Action</button>
+                <div className="mt-8 pt-4 border-t border-slate-200 dark:border-night-border flex gap-3">
+                  <button type="button" onClick={() => setIsModerationModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-night-bg hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl font-semibold transition">Cancel</button>
+                  <button type="submit" className={`flex-1 py-2 text-white rounded-xl font-semibold transition ${moderationAction === 'ban' ? 'bg-red-600 hover:bg-red-700' : 'premium-btn shadow-glow'}`}>Apply Action</button>
                 </div>
               </form>
             </motion.div>
@@ -426,28 +415,28 @@ const ManageUsers = () => {
       <AnimatePresence>
         {isNoteModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNoteModalOpen(false)} className="absolute inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#111]/90 backdrop-blur-3xl relative w-full max-w-md p-6 shadow-2xl z-10 border border-white/10 rounded-3xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNoteModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-night-border bg-white dark:bg-slate-900">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-500" /> Admin Notes
+                <h2 className="text-xl font-bold dark:text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" /> Admin Notes
                 </h2>
-                <button onClick={() => setIsNoteModalOpen(false)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
-                  <X className="w-5 h-5 text-white/50" />
+                <button onClick={() => setIsNoteModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
 
               <div className="mb-4">
-                <p className="text-sm font-black text-white">{selectedUser.name}</p>
-                <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Internal logs only</p>
+                <p className="text-sm font-semibold dark:text-white">{selectedUser.name}</p>
+                <p className="text-xs text-slate-500">Only visible to administrators.</p>
               </div>
 
               <AdminNotesList userId={selectedUser._id} />
 
-              <form onSubmit={handleNoteSubmit} className="mt-6">
-                <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Add New Note</label>
-                <textarea name="note" required placeholder="Type internal note here..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-blue-500/50 h-24 resize-none transition-all mb-3"></textarea>
-                <button type="submit" className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-sm transition-all active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.4)]">Save Note</button>
+              <form onSubmit={handleNoteSubmit} className="mt-4 pt-4 border-t border-slate-200 dark:border-night-border">
+                <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Add New Note</label>
+                <textarea name="note" required placeholder="Type internal note here..." className="premium-input w-full h-20 resize-none mb-3"></textarea>
+                <button type="submit" className="premium-btn w-full mt-2">Add Note</button>
               </form>
             </motion.div>
           </div>
@@ -458,14 +447,12 @@ const ManageUsers = () => {
       <AnimatePresence>
         {isPremiumModalOpen && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPremiumModalOpen(false)} className="absolute inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#111]/90 backdrop-blur-3xl relative w-full max-w-md p-6 shadow-2xl z-10 border border-white/10 rounded-3xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPremiumModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card relative w-full max-w-md p-6 shadow-2xl z-10 border border-slate-200 dark:border-night-border bg-white dark:bg-slate-900">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-amber-500" /> Manage Premium
-                </h2>
-                <button onClick={() => setIsPremiumModalOpen(false)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
-                  <X className="w-5 h-5 text-white/50" />
+                <h2 className="text-xl font-bold dark:text-white flex items-center gap-2"><Star className="w-5 h-5 text-accent" /> Manage Premium</h2>
+                <button onClick={() => setIsPremiumModalOpen(false)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
 
@@ -483,16 +470,16 @@ const ManageUsers = () => {
               }} className="space-y-4">
                 
                 <div>
-                  <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Action</label>
-                  <select name="action" defaultValue={selectedUser.isPremium ? "grant" : "grant"} className="w-full bg-black/50 border border-white/10 rounded-full py-3 px-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none transition-all">
+                  <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Action</label>
+                  <select name="action" defaultValue={selectedUser.isPremium ? "grant" : "grant"} className="premium-input w-full">
                     <option value="grant">Grant / Update Premium</option>
                     <option value="revoke">Revoke Premium</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Premium Plan</label>
-                  <select name="premiumType" defaultValue={selectedUser.premiumType || '30 Days'} className="w-full bg-black/50 border border-white/10 rounded-full py-3 px-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none transition-all">
+                  <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Premium Plan</label>
+                  <select name="premiumType" defaultValue={selectedUser.premiumType || '30 Days'} className="premium-input w-full">
                     <option value="7 Days">7 Days</option>
                     <option value="30 Days">30 Days</option>
                     <option value="Lifetime">Lifetime</option>
@@ -501,13 +488,12 @@ const ManageUsers = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold mb-2 text-white/50 uppercase tracking-widest">Custom Days (if applicable)</label>
-                  <input type="number" name="customDays" placeholder="e.g. 90" className="w-full bg-white/5 border border-white/10 rounded-full py-3 px-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-amber-500/50 transition-all" />
+                  <label className="block text-sm font-semibold mb-2 dark:text-slate-300">Custom Days (if applicable)</label>
+                  <input type="number" name="customDays" placeholder="e.g. 90" className="premium-input w-full" />
                 </div>
-                
-                <div className="mt-8 flex gap-3">
-                  <button type="button" onClick={() => setIsPremiumModalOpen(false)} className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 rounded-full font-bold text-white/70 text-sm transition-all active:scale-95">Cancel</button>
-                  <button type="submit" className="flex-1 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-black rounded-full font-black text-sm transition-all active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.4)]">Confirm</button>
+                <div className="mt-8 pt-4 border-t border-slate-200 dark:border-night-border flex gap-3">
+                  <button type="button" onClick={() => setIsPremiumModalOpen(false)} className="flex-1 py-2 bg-slate-100 dark:bg-night-bg hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl font-semibold transition">Cancel</button>
+                  <button type="submit" className="flex-1 py-2 bg-accent hover:bg-purple-600 text-white rounded-xl font-semibold transition shadow-glow">Confirm</button>
                 </div>
               </form>
             </motion.div>
