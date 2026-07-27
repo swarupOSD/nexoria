@@ -9,7 +9,7 @@ router.get('/dashboard', getDashboardAnalytics);
 router.get('/admin', protect, authorize('admin', 'superadmin', 'owner'), getAdminAnalytics);
 router.get('/superadmin', protect, authorize('superadmin', 'owner'), getSuperAdminAnalytics);
 router.get('/superadmin/module/:module', protect, authorize('superadmin', 'owner'), getModuleAnalytics);
-router.get('/online-users', protect, authorize('admin', 'superadmin', 'owner'), getOnlineUsersBoard);
+router.get('/online-users', protect, authorize('owner'), getOnlineUsersBoard);
 // Music Analytics
 router.get('/music', protect, authorize('owner'), getMusicAnalytics);
 // Private Chat Analytics (stats)

@@ -74,7 +74,7 @@ const AdminLayout = () => {
       title: 'Overview',
       items: [
         { name: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" />, path: '/admin' },
-        { name: 'Live Monitor', icon: <Activity className="w-4 h-4" />, path: '/admin/live-monitor' },
+        ...(activeUser?.role === 'owner' ? [{ name: 'Live Monitor', icon: <Activity className="w-4 h-4" />, path: '/admin/live-monitor' }] : []),
       ]
     },
     {
