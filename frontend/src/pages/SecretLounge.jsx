@@ -91,8 +91,10 @@ const SecretLounge = () => {
 
   return (
     <div className="min-h-screen bg-[#000000] text-gray-100 font-sans flex items-center justify-center p-4 relative overflow-hidden select-none">
-      {/* Clean Dark Background */}
+      {/* Clean Dark Background & Premium Decor */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#121212] via-black to-black pointer-events-none"></div>
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-900/20 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/10 rounded-full blur-[150px] pointer-events-none"></div>
 
       {/* PC Back Button (Hidden on Mobile) */}
       <button
@@ -111,7 +113,7 @@ const SecretLounge = () => {
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="flex-1 text-center font-bold text-white text-sm tracking-widest uppercase truncate px-2">Secret Lounge</span>
+        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Secret Lounge</span>
         <div className="w-8" />
       </div>
 
@@ -121,8 +123,8 @@ const SecretLounge = () => {
         className="w-full max-w-lg bg-[#000000] border border-gray-800 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 mt-14 sm:mt-0"
       >
         {/* Sleek Header */}
-        <div className="border-b border-gray-800 p-4 flex items-center justify-center relative">
-          <span className="font-semibold text-sm">Direct Messages</span>
+        <div className="border-b border-gray-800/60 p-4 flex items-center justify-center relative bg-white/[0.02]">
+          <span className="font-bold text-xs text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-500 uppercase tracking-widest">Direct Messages</span>
         </div>
 
         <div className="p-6 sm:p-8">
