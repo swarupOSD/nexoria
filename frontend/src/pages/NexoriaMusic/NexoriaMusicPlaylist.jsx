@@ -174,7 +174,7 @@ const NexoriaMusicPlaylist = () => {
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
       {/* Header Gradient */}
-      <div className="h-[25vh] min-h-[200px] sm:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 relative z-0">
+      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-16 md:pt-6 relative z-0">
         <button 
           onClick={() => navigate(-1)}
           className="absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors"
@@ -182,8 +182,8 @@ const NexoriaMusicPlaylist = () => {
           <ArrowLeft className="w-6 h-6" />
         </button>
         
-        <div className="flex gap-4 sm:gap-6 items-end z-10 relative w-full">
-          <div className="w-28 h-28 sm:w-48 sm:h-48 bg-[#1E1B4B] shadow-2xl flex items-center justify-center rounded-sm overflow-hidden shrink-0">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-end z-10 relative w-full">
+          <div className="w-48 h-48 sm:w-56 sm:h-56 bg-[#1E1B4B] shadow-2xl flex items-center justify-center rounded-sm overflow-hidden shrink-0 mx-auto md:mx-0">
             {playlist.coverImage ? (
               <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover" />
             ) : (
@@ -193,8 +193,8 @@ const NexoriaMusicPlaylist = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1 w-full text-center md:text-left mt-2 md:mt-0">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center justify-center md:justify-start gap-2">
               {playlist.isCollaborative ? (
                 <>
                   <Users className="w-4 h-4 text-[#22C55E]" />
@@ -204,11 +204,11 @@ const NexoriaMusicPlaylist = () => {
                 'Public Playlist'
               )}
             </span>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={playlist.title}>{playlist.title}</h1>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={playlist.title}>{playlist.title}</h1>
             {playlist.description && (
-              <p className="text-[#b3b3b3] text-xs sm:text-sm md:text-base mb-1 sm:mb-2 font-medium truncate">{playlist.description}</p>
+              <p className="text-[#b3b3b3] text-xs sm:text-sm md:text-base mb-1 sm:mb-2 font-medium line-clamp-2 md:line-clamp-1">{playlist.description}</p>
             )}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-300 font-medium">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs sm:text-sm text-zinc-300 font-medium flex-wrap">
               <span 
                 className="font-bold text-white hover:underline cursor-pointer"
                 onClick={() => {

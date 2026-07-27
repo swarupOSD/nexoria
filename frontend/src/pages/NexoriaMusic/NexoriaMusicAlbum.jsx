@@ -90,17 +90,16 @@ const NexoriaMusicAlbum = () => {
 
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
-      {/* Header Gradient */}
-      <div className="h-[30vh] min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-6 pb-6 relative z-0">
+      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-16 md:pt-6 relative z-0">
         <button 
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors"
+          className="absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
         
-        <div className="flex gap-6 items-end z-10 relative">
-          <div className="w-48 h-48 sm:w-56 sm:h-56 bg-[#1E1B4B] shadow-2xl flex items-center justify-center rounded-sm overflow-hidden shrink-0">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-end z-10 relative w-full">
+          <div className="w-48 h-48 sm:w-56 sm:h-56 bg-[#1E1B4B] shadow-2xl flex items-center justify-center rounded-sm overflow-hidden shrink-0 mx-auto md:mx-0">
             {album.coverImage ? (
               <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
             ) : (
@@ -109,14 +108,14 @@ const NexoriaMusicAlbum = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-bold uppercase tracking-wider text-white">Album</span>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={album.title}>{album.title}</h1>
+          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1 w-full text-center md:text-left mt-2 md:mt-0">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white">Album</span>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={album.title}>{album.title}</h1>
             
-            <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium mt-2">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs sm:text-sm text-zinc-300 font-medium flex-wrap">
               {album.artist && (
                 <>
-                  <div className="w-6 h-6 rounded-full overflow-hidden bg-[#4338CA]">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full overflow-hidden bg-[#4338CA]">
                     {album.artist.image && <img src={album.artist.image} alt={album.artist.name} className="w-full h-full object-cover" />}
                   </div>
                   <Link to={`/nexoria-music/artist/${album.artist._id}`} className="font-bold text-white hover:underline cursor-pointer">

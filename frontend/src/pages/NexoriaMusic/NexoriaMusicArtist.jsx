@@ -76,33 +76,36 @@ const NexoriaMusicArtist = () => {
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
       {/* Header Banner */}
-      <div className="relative h-[40vh] min-h-[340px] flex flex-col justify-end px-6 pb-6 overflow-hidden">
-        {artist.image && (
-          <div 
-            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${artist.image})` }}
-          />
-        )}
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0F0F23] via-[#0F0F23]/80 to-transparent" />
-        
+      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-16 md:pt-6 relative z-0">
         <button 
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 z-10 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors"
+          className="absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors z-20"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-
-        <div className="relative z-10 flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">✓</span>
-            <span className="text-sm font-bold uppercase tracking-wider">Verified Artist</span>
+        
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-end z-10 relative w-full">
+          <div className="w-48 h-48 sm:w-56 sm:h-56 shadow-2xl flex items-center justify-center rounded-full overflow-hidden shrink-0 mx-auto md:mx-0">
+            {artist.image ? (
+              <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-[#1E1B4B] flex items-center justify-center text-[#b3b3b3]">
+                <User className="w-20 h-20 sm:w-24 sm:h-24" />
+              </div>
+            )}
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white drop-shadow-md line-clamp-2 w-full" title={artist.name}>
-            {artist.name}
-          </h1>
-          <p className="text-zinc-300 text-sm md:text-base mt-2 font-medium max-w-2xl line-clamp-2">
-            {artist.bio || "Explore the popular tracks and albums from this artist."}
-          </p>
+          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1 w-full text-center md:text-left mt-2 md:mt-0">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-white">
+              <span className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold shadow-md">✓</span>
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Verified Artist</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter text-white drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={artist.name}>
+              {artist.name}
+            </h1>
+            <p className="text-zinc-300 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 font-medium line-clamp-2 md:line-clamp-3">
+              {artist.bio || "Explore the popular tracks and albums from this artist."}
+            </p>
+          </div>
         </div>
       </div>
 
