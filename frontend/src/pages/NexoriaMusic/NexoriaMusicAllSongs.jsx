@@ -124,7 +124,7 @@ const NexoriaMusicAllSongs = () => {
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#4338CA] shrink-0 rounded shadow-md overflow-hidden">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
-                      <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt="" className="w-full h-full object-cover" />
+                      <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt="" className="w-full h-full object-cover" loading="lazy" />
                     )}
                   </div>
                   <div className="flex flex-col min-w-0">

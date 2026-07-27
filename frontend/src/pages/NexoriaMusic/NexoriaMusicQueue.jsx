@@ -9,6 +9,7 @@ import {
 } from '../../features/music/nexoriaMusicSlice';
 import { Play, MoreHorizontal, X, ArrowLeft } from 'lucide-react';
 import DropdownMenu from '../../components/DropdownMenu';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const NexoriaMusicQueue = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,16 @@ const NexoriaMusicQueue = () => {
 
   const handlePlayFromQueue = (index) => {
     const track = queue[index];
+    if (window.__nexoriaAudioRef?.current) {
+      const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+      const src = track.telegramFileId
+        ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
+        : track.audioUrl || '';
+      if (src) {
+        window.__nexoriaAudioRef.current.src = src;
+        window.__nexoriaAudioRef.current.play().catch(() => {});
+      }
+    }
     dispatch(playTrack(track));
     dispatch(removeFromQueue(index));
   };
@@ -121,6 +132,7 @@ const NexoriaMusicQueue = () => {
                                   src={track.coverImage || track.album?.coverImage || track.artist?.image} 
                                   alt="" 
                                   className="w-full h-full object-cover rounded"
+                                  loading="lazy"
                                 />
                               </div>
                               <div className="flex flex-col min-w-0 flex-1">
