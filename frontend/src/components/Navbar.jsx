@@ -389,7 +389,7 @@ const Navbar = () => {
                   <Mic className="w-4 h-4" /> Voice Lounge
                 </Link>
                 <Link to="/secret-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-teal-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Ghost className="w-4 h-4" /> Incognito Lounge
+                  <Ghost className="w-4 h-4" /> Private Chatting
                 </Link>
               </div>
             </DropdownMenu>
@@ -791,7 +791,7 @@ const Navbar = () => {
                       <Mic className="w-5 h-5" /> Voice Lounge 🎤
                     </Link>
                     <Link to="/secret-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-teal-400/10 to-emerald-500/10 hover:from-teal-400/20 hover:to-emerald-500/20 border border-teal-400/20 rounded-2xl font-bold text-sm text-teal-600 dark:text-teal-400 transition-colors">
-                      <Ghost className="w-5 h-5" /> Incognito Lounge 👻
+                      <Ghost className="w-5 h-5" /> Private Chatting 👻
                     </Link>
                   </div>
 

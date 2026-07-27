@@ -27,7 +27,7 @@ const SecretLounge = () => {
 
   useEffect(() => {
     if (!user) {
-      toast.error('You must be logged in to access the Incognito Lounge.');
+      toast.error('You must be logged in to access Private Chatting.');
       navigate('/login');
     } else {
       const newSocket = io(SOCKET_URL, {
@@ -113,7 +113,7 @@ const SecretLounge = () => {
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Incognito Lounge</span>
+        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 text-sm tracking-widest uppercase truncate px-2">Private Chatting</span>
         <div className="w-8" />
       </div>
 
@@ -137,7 +137,7 @@ const SecretLounge = () => {
           </div>
           
           <h1 className="text-2xl font-bold text-center text-white mb-2">
-            Incognito Lounge
+            Private Chatting
           </h1>
           <p className="text-gray-400 text-center text-sm mb-8">Zero trace. Ephemeral. Secure.</p>
 

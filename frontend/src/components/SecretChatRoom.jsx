@@ -819,7 +819,7 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <h2 className="text-lg sm:text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 flex items-center gap-1 sm:gap-2 truncate">
-              <span className="truncate">Incognito Lounge</span> <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 shrink-0" />
+              <span className="truncate">Private Chatting</span> <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 shrink-0" />
             </h2>
             <div className="flex items-center gap-1 sm:gap-2 mt-0.5 min-w-0 flex-wrap">
               <button
