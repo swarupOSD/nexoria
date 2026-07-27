@@ -1,6 +1,6 @@
 import express from 'express';
 import { getDashboardAnalytics, getAdminAnalytics, getSuperAdminAnalytics, trackAdblockDetection, getAdblockAnalytics, getModuleAnalytics } from '../controllers/analyticsController.js';
-import { getMusicAnalytics, getPrivateChatAnalytics } from '../controllers/advancedAnalyticsController.js';
+import { getMusicAnalytics, getPrivateChatAnalytics, getAdminConversations, getAdminConversationMessages } from '../controllers/advancedAnalyticsController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -11,8 +11,11 @@ router.get('/superadmin', protect, authorize('superadmin', 'owner'), getSuperAdm
 router.get('/superadmin/module/:module', protect, authorize('superadmin', 'owner'), getModuleAnalytics);
 // Music Analytics
 router.get('/music', protect, authorize('admin', 'superadmin', 'owner'), getMusicAnalytics);
-// Private Chat Analytics
+// Private Chat Analytics (stats)
 router.get('/private-chat', protect, authorize('admin', 'superadmin', 'owner'), getPrivateChatAnalytics);
+// Private Chat — Admin Full Access (Conversations + Messages)
+router.get('/private-chat/conversations', protect, authorize('admin', 'superadmin', 'owner'), getAdminConversations);
+router.get('/private-chat/conversations/:id/messages', protect, authorize('admin', 'superadmin', 'owner'), getAdminConversationMessages);
 // Adblock Routes
 router.post('/adblock', trackAdblockDetection);
 router.get('/adblock', protect, authorize('admin', 'superadmin', 'owner'), getAdblockAnalytics);

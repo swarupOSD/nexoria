@@ -29,15 +29,27 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
       query: () => '/analytics/adblock',
       providesTags: ['Analytics'],
     }),
-    // NEW: Music Analytics
+    // Music Analytics
     getMusicAnalytics: builder.query({
       query: (days = 7) => `/analytics/music?days=${days}`,
       providesTags: ['Analytics'],
     }),
-    // NEW: Private Chat Analytics
+    // Private Chat Analytics (stats)
     getPrivateChatAnalytics: builder.query({
       query: (days = 7) => `/analytics/private-chat?days=${days}`,
       providesTags: ['Analytics'],
+    }),
+    // Admin: All Conversations list
+    getAdminConversations: builder.query({
+      query: ({ page = 1, limit = 20, search = '' } = {}) =>
+        `/analytics/private-chat/conversations?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`,
+      providesTags: ['AdminConversations'],
+    }),
+    // Admin: All messages in a specific conversation
+    getAdminConversationMessages: builder.query({
+      query: ({ conversationId, page = 1, limit = 50 }) =>
+        `/analytics/private-chat/conversations/${conversationId}/messages?page=${page}&limit=${limit}`,
+      providesTags: (result, error, { conversationId }) => [{ type: 'AdminConvMessages', id: conversationId }],
     }),
   }),
 });
@@ -51,4 +63,6 @@ export const {
   useGetAdblockAnalyticsQuery,
   useGetMusicAnalyticsQuery,
   useGetPrivateChatAnalyticsQuery,
+  useGetAdminConversationsQuery,
+  useGetAdminConversationMessagesQuery,
 } = analyticsApiSlice;
