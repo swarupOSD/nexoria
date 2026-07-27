@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award, Gamepad2, Film, Music, Smartphone, User, Rocket, Gem } from 'lucide-react';
+import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award, Gamepad2, Film, Music, Smartphone, User, Rocket, Gem, LayoutTemplate, PlayCircle } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useSelector } from 'react-redux';
@@ -31,38 +31,38 @@ const AppCard = React.memo(({ app }) => {
     <motion.div 
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="snap-start shrink-0 w-[160px] md:w-[180px] group cursor-pointer"
+      className="snap-start shrink-0 w-[130px] md:w-[180px] group cursor-pointer"
     >
       <Link to={`/post/${app.slug}`} className="block relative">
         {/* Glow behind card */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-purple-500/20 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-purple-500/20 rounded-3xl md:rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
         
-        <div className="relative z-10 flex flex-col gap-4">
-          <div className="aspect-square w-full rounded-[2.5rem] overflow-hidden relative bg-white/5 border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] group-hover:shadow-[0_20px_40px_rgba(59,130,246,0.3)] group-hover:border-blue-500/50 transition-all duration-300 backdrop-blur-xl">
+        <div className="relative z-10 flex flex-col gap-3 md:gap-4">
+          <div className="aspect-square w-full rounded-3xl md:rounded-[2.5rem] overflow-hidden relative bg-white/5 border border-white/10 shadow-lg group-hover:shadow-[0_20px_40px_rgba(59,130,246,0.3)] group-hover:border-blue-500/50 transition-all duration-300 backdrop-blur-xl">
             {/* Glossy overlay effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none rounded-[2.5rem]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none rounded-3xl md:rounded-[2.5rem]" />
             
-            <div className="absolute inset-4 bg-black/40 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border border-white/5 z-10">
+            <div className="absolute inset-2 md:inset-4 bg-black/40 rounded-2xl md:rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border border-white/5 z-10">
               <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-500 relative" />
             </div>
             
             {isPremium && (
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-[1.5rem] rounded-tr-[2.5rem] shadow-lg uppercase tracking-widest z-30 border-b border-l border-white/20 backdrop-blur-md">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-bl-xl md:rounded-bl-[1.5rem] rounded-tr-3xl md:rounded-tr-[2.5rem] shadow-lg uppercase tracking-widest z-30 border-b border-l border-white/20 backdrop-blur-md">
                 PRO
               </div>
             )}
             {app.auraScore > 0 && (
-              <div className="absolute bottom-2 right-2 z-30">
+              <div className="absolute bottom-1 md:bottom-2 right-1 md:right-2 z-30 scale-75 md:scale-100 origin-bottom-right">
                 <AuraBadge score={app.auraScore} />
               </div>
             )}
           </div>
           
-          <div className="space-y-2 px-2">
-            <h3 className="font-black text-white text-[16px] line-clamp-1 group-hover:text-blue-400 transition-colors duration-300 tracking-tight">{app.title}</h3>
-            <div className="flex items-center gap-3 text-xs font-bold text-white/50">
-              <span className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5"><Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> {app.averageRating || '4.5'}</span>
-              <span className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5"><Download className="w-3.5 h-3.5 text-blue-400" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
+          <div className="space-y-1 md:space-y-2 px-1 md:px-2">
+            <h3 className="font-black text-white text-[13px] md:text-[16px] line-clamp-1 group-hover:text-blue-400 transition-colors duration-300 tracking-tight leading-tight">{app.title}</h3>
+            <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs font-bold text-white/50">
+              <span className="flex items-center gap-1 md:gap-1.5 bg-black/40 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-white/5"><Star className="w-3 h-3 md:w-3.5 md:h-3.5 fill-amber-400 text-amber-400" /> {app.averageRating || '4.5'}</span>
+              <span className="flex items-center gap-1 md:gap-1.5 bg-black/40 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-white/5"><Download className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-400" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
             </div>
           </div>
         </div>
@@ -76,19 +76,94 @@ const Home = () => {
   const { data: categoriesData, refetch: refetchCats, isError: catError } = useGetCategoriesQuery();
   const categories = categoriesData?.data || [];
 
-
   const { data: trendingRes, refetch: refetchTrend } = useGetPostsQuery({ isTrending: true, limit: 12 });
   const { data: featuredRes, refetch: refetchFeat } = useGetPostsQuery({ isFeatured: true, limit: 12 });
   const { data: editorChoiceRes, refetch: refetchEd } = useGetPostsQuery({ editorChoice: true, limit: 12 });
 
   return (
-    <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-20 selection:bg-blue-500/30">
+    <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-24 md:pb-20 selection:bg-blue-500/30">
       <SEO title="Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One" />
       <AdPlacement location="Header" />
 
-      {/* 🚀 Futuristic Nexoria Hero Section */}
-      <div className="relative overflow-hidden bg-[#030303] min-h-[85vh] flex items-center justify-center">
-        
+      {/* 📱 ULTRA-COMPACT MOBILE HERO (VISIBLE ONLY ON PHONES) */}
+      <div className="md:hidden pt-20 px-4 pb-6 space-y-6">
+        {/* Welcome Text */}
+        <div className="flex flex-col">
+          <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+            Welcome to Nexoria
+          </span>
+          <h1 className="text-3xl font-black text-white leading-[1.1] tracking-tight">
+            The Ultimate <br/> Entertainment Hub
+          </h1>
+        </div>
+
+        {/* Quick Access Mobile Grid - Explains what Nexoria is */}
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/category/apps" className="bg-gradient-to-br from-blue-500/20 to-indigo-500/5 border border-blue-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
+            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-blue-500/20 rounded-full blur-xl"></div>
+            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+              <LayoutTemplate className="w-4 h-4 text-blue-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white">Studio</h3>
+              <p className="text-[10px] text-blue-400/70 font-bold uppercase tracking-widest mt-0.5">Mod Apps & Tools</p>
+            </div>
+          </Link>
+
+          <Link to="/moviebox" className="bg-gradient-to-br from-rose-500/20 to-pink-500/5 border border-rose-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
+            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-500/20 rounded-full blur-xl"></div>
+            <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center border border-rose-500/30">
+              <Film className="w-4 h-4 text-rose-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white">MovieBox</h3>
+              <p className="text-[10px] text-rose-400/70 font-bold uppercase tracking-widest mt-0.5">Movies & Anime</p>
+            </div>
+          </Link>
+
+          <Link to="/category/games" className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/5 border border-purple-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
+            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-purple-500/20 rounded-full blur-xl"></div>
+            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
+              <Gamepad2 className="w-4 h-4 text-purple-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white">Arcade</h3>
+              <p className="text-[10px] text-purple-400/70 font-bold uppercase tracking-widest mt-0.5">Premium Games</p>
+            </div>
+          </Link>
+
+          <Link to="/music" className="bg-gradient-to-br from-emerald-500/20 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
+            <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/20 rounded-full blur-xl"></div>
+            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+              <Music className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white">Music</h3>
+              <p className="text-[10px] text-emerald-400/70 font-bold uppercase tracking-widest mt-0.5">Ad-Free Streaming</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Global Stats - Mobile Version */}
+        <div className="flex justify-between items-center bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+          <div className="text-center flex-1 border-r border-white/10">
+            <p className="text-lg font-black text-white">50K+</p>
+            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Users</p>
+          </div>
+          <div className="text-center flex-1 border-r border-white/10">
+            <p className="text-lg font-black text-white">10K+</p>
+            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Items</p>
+          </div>
+          <div className="text-center flex-1">
+            <p className="text-lg font-black text-white flex justify-center items-center gap-1">4.9 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" /></p>
+            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Rating</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 💻 HUGE DESKTOP HERO (VISIBLE ONLY ON DESKTOP) */}
+      <div className="hidden md:flex relative overflow-hidden bg-[#030303] min-h-[85vh] items-center justify-center">
         {/* Cinematic Animated Background Images */}
         <motion.div 
           initial={{ opacity: 0 }}
@@ -135,7 +210,6 @@ const Home = () => {
         </motion.div>
 
         <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center mt-10 perspective-1000">
-          {/* Top Badge */}
           <motion.div 
             initial={{ opacity: 0, y: -20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -151,7 +225,6 @@ const Home = () => {
             </span>
           </motion.div>
           
-          {/* Main Title */}
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -161,7 +234,6 @@ const Home = () => {
             Everything You <span className="text-blue-400 drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">Watch</span>, Play & <span className="text-purple-400 drop-shadow-[0_0_20px_rgba(168,85,247,0.3)]">Create</span>
           </motion.h1>
           
-          {/* Subtitle Badges */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -175,7 +247,6 @@ const Home = () => {
             <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><Music className="w-4 h-4 text-amber-400" /> Every Beat</span>
           </motion.div>
           
-          {/* Call to Actions */}
           <motion.div 
             initial={{ opacity: 0, y: 20, rotateX: 20 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -192,7 +263,6 @@ const Home = () => {
             </Link>
           </motion.div>
 
-          {/* Stats / Trust Badges */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -215,21 +285,21 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 py-12 lg:py-20 space-y-24 max-w-[1400px]">
+      <div className="px-4 md:px-6 py-6 md:py-20 space-y-10 md:space-y-24 max-w-[1400px] mx-auto">
         <ForYouCarousel />
-
+        
         <Leaderboard />
         
         {/* Categories Section */}
         <section>
-          <div className="flex items-end justify-between mb-8">
+          <div className="flex items-end justify-between mb-4 md:mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 shadow-inner"><Compass className="w-8 h-8 text-blue-400" /></div> Explore Categories
+              <h2 className="text-2xl md:text-4xl font-black flex items-center gap-2 md:gap-3 text-white tracking-tight">
+                <div className="p-2 md:p-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10 shadow-inner"><Compass className="w-6 h-6 md:w-8 md:h-8 text-blue-400" /></div> Categories
               </h2>
-              <p className="text-white/60 mt-3 font-medium">Discover apps by your favorite genres</p>
+              <p className="text-[11px] md:text-base text-white/50 md:text-white/60 mt-2 font-bold uppercase tracking-widest md:normal-case md:font-medium md:tracking-normal">Discover by genres</p>
             </div>
-            <Link to="/category/apps" className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 text-[15px] group bg-blue-500/10 px-4 py-2 rounded-xl transition-colors border border-blue-500/20">
+            <Link to="/category/apps" className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 text-[13px] md:text-[15px] group bg-blue-500/10 px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl transition-colors border border-blue-500/20 active:scale-95">
               View All <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -237,12 +307,12 @@ const Home = () => {
           {catError ? (
             <RetryComponent onRetry={refetchCats} message="Failed to load Categories" />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-6">
+            <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-6 pt-2 snap-x hide-scrollbar px-2 -mx-2 md:px-0 md:mx-0">
               {categories.map(cat => (
-                <Link key={cat._id} to={`/category/${cat.slug}`} className="relative p-6 rounded-[2.5rem] bg-white/5 backdrop-blur-3xl border border-white/10 hover:border-white/20 flex flex-col items-start hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 group overflow-hidden hover:-translate-y-1">
+                <Link key={cat._id} to={`/category/${cat.slug}`} className="snap-start shrink-0 w-[240px] md:w-auto relative p-5 md:p-6 rounded-[2rem] md:rounded-[2.5rem] bg-white/5 backdrop-blur-3xl border border-white/10 hover:border-white/20 flex flex-col items-start hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 group overflow-hidden active:scale-95 md:active:scale-100 hover:-translate-y-1">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-colors duration-500 -mr-10 -mt-10"></div>
                   
-                  <div className="w-14 h-14 rounded-2xl bg-black/20 flex items-center justify-center mb-6 group-hover:-translate-y-2 group-hover:scale-110 transition-transform duration-500 overflow-hidden relative z-10 border border-white/5 shadow-inner">
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black/20 flex items-center justify-center mb-4 md:mb-6 group-hover:-translate-y-2 group-hover:scale-110 transition-transform duration-500 overflow-hidden relative z-10 border border-white/5 shadow-inner">
                     {cat.image && cat.image !== 'default-category.jpg' ? (
                        <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
                     ) : (
@@ -251,13 +321,13 @@ const Home = () => {
                   </div>
                   
                   <div className="relative z-10 w-full">
-                    <h3 className="text-xl font-black text-white mb-2 group-hover:text-blue-400 transition-colors tracking-tight">{cat.name}</h3>
-                    <p className="text-[15px] text-white/50 line-clamp-2 leading-relaxed font-medium group-hover:text-white/70 transition-colors">
+                    <h3 className="text-lg md:text-xl font-black text-white mb-1.5 md:mb-2 group-hover:text-blue-400 transition-colors tracking-tight">{cat.name}</h3>
+                    <p className="text-[13px] md:text-[15px] text-white/50 line-clamp-2 leading-relaxed font-medium group-hover:text-white/70 transition-colors">
                       {cat.description || `Explore the best applications, games, and tools in ${cat.name}.`}
                     </p>
                   </div>
                   
-                  <div className="absolute bottom-6 right-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 z-10">
+                  <div className="absolute bottom-5 md:bottom-6 right-5 md:right-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 z-10 hidden md:block">
                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary backdrop-blur-md">
                       <ChevronRight className="w-4 h-4" />
                     </div>
@@ -273,12 +343,12 @@ const Home = () => {
         {/* Featured Apps */}
         {featuredRes?.data?.length > 0 && (
           <section className="relative">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 shadow-inner"><Sparkles className="w-8 h-8 text-amber-400" /></div> Featured Picks
+            <div className="flex items-end justify-between mb-4 md:mb-8">
+              <h2 className="text-2xl md:text-4xl font-black flex items-center gap-2 md:gap-3 text-white tracking-tight">
+                <div className="p-2 md:p-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10 shadow-inner"><Sparkles className="w-6 h-6 md:w-8 md:h-8 text-amber-400" /></div> Featured Picks
               </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
+            <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 pt-2 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {featuredRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>
@@ -286,13 +356,13 @@ const Home = () => {
 
         {/* Trending Now */}
         {trendingRes?.data?.length > 0 && (
-          <section className="relative mt-12">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 shadow-inner"><Flame className="w-8 h-8 text-rose-500" /></div> Trending Now
+          <section className="relative mt-8 md:mt-12">
+            <div className="flex items-end justify-between mb-4 md:mb-8">
+              <h2 className="text-2xl md:text-4xl font-black flex items-center gap-2 md:gap-3 text-white tracking-tight">
+                <div className="p-2 md:p-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10 shadow-inner"><Flame className="w-6 h-6 md:w-8 md:h-8 text-rose-500" /></div> Trending Now
               </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
+            <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 pt-2 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {trendingRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>
@@ -300,13 +370,13 @@ const Home = () => {
         
         {/* Editor's Choice */}
         {editorChoiceRes?.data?.length > 0 && (
-          <section className="relative mt-12">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3 text-white tracking-tight">
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/10 shadow-inner"><Award className="w-8 h-8 text-purple-500" /></div> Editor's Choice
+          <section className="relative mt-8 md:mt-12">
+            <div className="flex items-end justify-between mb-4 md:mb-8">
+              <h2 className="text-2xl md:text-4xl font-black flex items-center gap-2 md:gap-3 text-white tracking-tight">
+                <div className="p-2 md:p-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10 shadow-inner"><Award className="w-6 h-6 md:w-8 md:h-8 text-purple-500" /></div> Editor's Choice
               </h2>
             </div>
-            <div className="flex overflow-x-auto gap-6 pb-6 pt-4 snap-x hide-scrollbar px-2 -mx-2">
+            <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 pt-2 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">
               {editorChoiceRes.data.map(app => <AppCard key={app._id} app={app} />)}
             </div>
           </section>
@@ -314,6 +384,16 @@ const Home = () => {
 
         <AdPlacement location="Footer" />
       </div>
+
+      <style jsx="true">{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 };
