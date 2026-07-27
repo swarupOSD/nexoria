@@ -583,13 +583,6 @@ const NexoriaPlayer = () => {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  drag="y"
-                  dragConstraints={{ top: 0, bottom: 0 }}
-                  onDragEnd={(e, { offset, velocity }) => {
-                    if (offset.y > 100 || velocity.y > 500) {
-                      setIsExpanded(false);
-                    }
-                  }}
                   className="fixed inset-0 z-[100] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pb-safe pt-4"
                 >
                   {/* Top Header */}
