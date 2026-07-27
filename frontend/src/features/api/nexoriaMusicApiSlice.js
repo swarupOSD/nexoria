@@ -325,6 +325,7 @@ export const {
   useGetDailyMixQuery,
   useGetAllTracksConsumerQuery,
   useGetPlaylistsQuery,
+  useGetPublicPlaylistsQuery,
   useGetPlaylistDetailsQuery,
   useCreatePlaylistMutation,
   useAddTrackToPlaylistMutation,
