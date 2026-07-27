@@ -492,3 +492,38 @@ export const getModuleAnalytics = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
+
+// @desc    Get Online Users Board Data
+// @route   GET /api/analytics/online-users
+// @access  Private/SuperAdmin
+export const getOnlineUsersBoard = async (req, res) => {
+  try {
+    const { getOnlineUserIds } = await import('../config/socket.js');
+    const onlineIds = await getOnlineUserIds();
+    
+    // Fetch user details for those who are online
+    const onlineUsers = await User.find({ _id: { $in: onlineIds } })
+      .select('username name email role profileImage lastLogin isPremium status country');
+      
+    // Find users who are offline but recently active (last 24 hours)
+    const recentlyOfflineUsers = await User.find({
+      _id: { $nin: onlineIds },
+      lastLogin: { $gte: getDateNDaysAgo(1) }
+    })
+    .sort({ lastLogin: -1 })
+    .limit(20)
+    .select('username name email role profileImage lastLogin isPremium status');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        onlineCount: onlineIds.length,
+        onlineUsers,
+        recentlyOfflineUsers
+      }
+    });
+  } catch (error) {
+    logger.error(`Online Users Board Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};

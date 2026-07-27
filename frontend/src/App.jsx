@@ -120,6 +120,7 @@ const NexoriaPlaylistBuilder = lazy(() => import('./pages/Admin/NexoriaMusic/Nex
 const ChatManagement = lazy(() => import('./pages/Admin/ChatManagement'));
 const SecretLoungeManagement = lazy(() => import('./pages/Admin/SecretLoungeManagement'));
 const AdminSupportTickets = lazy(() => import('./pages/Admin/SupportTickets'));
+const OnlineUsersBoard = lazy(() => import('./pages/Admin/OnlineUsersBoard'));
 const AdminMusicAnalytics = lazy(() => import('./pages/Admin/MusicListeningAnalytics'));
 const AdminPrivateChatAnalytics = lazy(() => import('./pages/Admin/PrivateChatAnalytics'));
 
@@ -501,6 +502,7 @@ function App() {
               <Route path="support-tickets" element={<AdminSupportTickets />} />
               <Route path="music-analytics" element={<AdminMusicAnalytics />} />
               <Route path="private-chat-analytics" element={<AdminPrivateChatAnalytics />} />
+              <Route path="online-users" element={<OnlineUsersBoard />} />
             </Route>
           </Routes>
         </Suspense>

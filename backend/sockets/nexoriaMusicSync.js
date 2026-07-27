@@ -1,5 +1,6 @@
 import logger from '../middlewares/logger.js';
 import User from '../models/User.js';
+import { emitAdminEvent } from '../utils/tracker.js';
 
 // Memory cache for active listening states
 const activeMusicStates = new Map();
@@ -26,6 +27,15 @@ export const registerNexoriaMusicSyncHandlers = (io, socket) => {
           updatedAt: Date.now()
         };
         activeMusicStates.set(socket.user._id.toString(), friendActivityPayload);
+        
+        if (statePayload.isPlaying) {
+          emitAdminEvent('newActivity', {
+            user: { name: socket.user.name, avatar: socket.user.profileImage },
+            description: `Started listening to "${statePayload.currentTrack.title || statePayload.currentTrack.name}"`,
+            actionType: 'Music Play',
+            createdAt: Date.now()
+          });
+        }
 
         // Fetch user's friends to broadcast
         const userWithFriends = await User.findById(socket.user._id).select('friends');

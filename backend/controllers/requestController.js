@@ -1,5 +1,5 @@
 import Request from '../models/Request.js';
-import { sendNotification } from '../utils/tracker.js';
+import { sendNotification, logActivity } from '../utils/tracker.js';
 
 // @desc    Get all requests
 // @route   GET /api/requests
@@ -53,6 +53,8 @@ export const createRequest = async (req, res) => {
       description,
       user: req.user.id,
     });
+
+    await logActivity(req.user.id, 'Request Submitted', `Submitted a ${type} request for "${title}"`, req);
 
     res.status(201).json({ success: true, data: request });
   } catch (err) {

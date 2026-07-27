@@ -7,6 +7,7 @@ import BackButton from '../../components/BackButton';
 const UserRequestsAdmin = () => {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('All');
+  const [typeFilter, setTypeFilter] = useState('All');
   const [adminResponse, setAdminResponse] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
 
@@ -14,6 +15,7 @@ const UserRequestsAdmin = () => {
     page,
     limit: 15,
     status: statusFilter !== 'All' ? statusFilter : undefined,
+    type: typeFilter !== 'All' ? typeFilter : undefined,
   });
 
   const [updateStatus, { isLoading: isUpdating }] = useUpdateRequestStatusMutation();
@@ -47,17 +49,32 @@ const UserRequestsAdmin = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white">User Requests</h1>
-        <select 
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2"
-        >
-          <option value="All">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="Rejected">Rejected</option>
-        </select>
+        <div className="flex gap-4">
+          <select 
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2"
+          >
+            <option value="All">All Types</option>
+            <option value="Movie">Movie</option>
+            <option value="Web Series">Web Series</option>
+            <option value="App">App</option>
+            <option value="Game">Game</option>
+            <option value="Song">Song</option>
+            <option value="Other">Other</option>
+          </select>
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">

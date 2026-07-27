@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { emitAdminEvent } from '../utils/tracker.js';
 
 // In-memory store for ephemeral rooms. Key: teamCode
 const activeRooms = new Map();
@@ -130,6 +131,13 @@ export const registerPrivateChatHandlers = (io, socket) => {
     if (room.messages.length > 500) room.messages.shift();
 
     io.to(`private_${teamCode}`).emit('newPrivateMessage', messageObj);
+    
+    emitAdminEvent('newActivity', {
+      user: { name: socket.user.name, avatar: socket.user.profileImage },
+      description: `Sent a private message in room ${teamCode}`,
+      actionType: 'Private Chat',
+      createdAt: Date.now()
+    });
   });
 
   // Theme Change

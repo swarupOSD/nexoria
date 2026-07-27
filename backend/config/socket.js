@@ -142,6 +142,16 @@ export const getIO = () => {
   return io;
 };
 
+export const getOnlineUserIds = async () => {
+  if (!io) return [];
+  const sockets = await io.fetchSockets();
+  const userIds = new Set();
+  sockets.forEach(s => {
+    if (s.user) userIds.add(s.user._id.toString());
+  });
+  return Array.from(userIds);
+};
+
 const broadcastOnlineStats = async () => {
   if (!io) return;
   const sockets = await io.fetchSockets();

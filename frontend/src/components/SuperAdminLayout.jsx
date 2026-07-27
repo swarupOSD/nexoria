@@ -102,6 +102,7 @@ const SuperAdminLayout = () => {
         { name: 'Manage Users', icon: <Users className="w-4 h-4" />, path: '/superadmin/users' },
         { name: 'Manage Admins', icon: <Shield className="w-4 h-4" />, path: '/superadmin/admins' },
         { name: 'Roles & Perms', icon: <Key className="w-4 h-4" />, path: '/superadmin/roles' },
+        { name: 'Live Status Board', icon: <Activity className="w-4 h-4 text-emerald-400" />, path: '/superadmin/online-users' },
       ]
     },
     {

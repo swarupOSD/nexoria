@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDashboardAnalytics, getAdminAnalytics, getSuperAdminAnalytics, trackAdblockDetection, getAdblockAnalytics, getModuleAnalytics } from '../controllers/analyticsController.js';
+import { getDashboardAnalytics, getAdminAnalytics, getSuperAdminAnalytics, trackAdblockDetection, getAdblockAnalytics, getModuleAnalytics, getOnlineUsersBoard } from '../controllers/analyticsController.js';
 import { getMusicAnalytics, getPrivateChatAnalytics, getAdminConversations, getAdminConversationMessages } from '../controllers/advancedAnalyticsController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -9,6 +9,7 @@ router.get('/dashboard', getDashboardAnalytics);
 router.get('/admin', protect, authorize('admin', 'superadmin', 'owner'), getAdminAnalytics);
 router.get('/superadmin', protect, authorize('superadmin', 'owner'), getSuperAdminAnalytics);
 router.get('/superadmin/module/:module', protect, authorize('superadmin', 'owner'), getModuleAnalytics);
+router.get('/online-users', protect, authorize('admin', 'superadmin', 'owner'), getOnlineUsersBoard);
 // Music Analytics
 router.get('/music', protect, authorize('owner'), getMusicAnalytics);
 // Private Chat Analytics (stats)
