@@ -105,11 +105,6 @@ const NexoriaMusicAllSongs = () => {
             return (
               <div 
                 key={track._id} 
-                draggable={true}
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('trackId', track._id);
-                  e.dataTransfer.effectAllowed = 'copy';
-                }}
                 className="grid grid-cols-[40px_1fr_60px] sm:grid-cols-[40px_minmax(0,4fr)_minmax(0,2fr)_80px] gap-2 sm:gap-4 px-2 sm:px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer"
                 onClick={() => handlePlay(track, tracks)}
                 onContextMenu={(e) => handleContextMenu(e, track)}
