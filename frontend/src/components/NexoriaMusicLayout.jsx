@@ -88,7 +88,17 @@ const NexoriaMusicLayout = () => {
     }
 
     const { currentTrack, queue, isPlaying, currentTime } = nexoriaMusicState;
-    socket.emit('nexoria_music_state_update', { currentTrack, queue, isPlaying, currentTime });
+    
+    // WARNING: Sending a massive array over WebSockets blocks the main thread on mobile and causes severe lag!
+    // We only send a tiny slice of the queue (e.g. next 20 songs) for sync purposes.
+    const optimizedQueue = queue?.slice(0, 20) || [];
+    
+    socket.emit('nexoria_music_state_update', { 
+      currentTrack, 
+      queue: optimizedQueue, 
+      isPlaying, 
+      currentTime 
+    });
     
   }, [socket, user, nexoriaMusicState.currentTrack, nexoriaMusicState.isPlaying, nexoriaMusicState.queue, nexoriaMusicState.isRemoteControlled]);
 
