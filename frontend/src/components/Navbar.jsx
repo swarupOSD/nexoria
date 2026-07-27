@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  Search, Menu, Moon, Sun, X, ChevronDown, User as UserIcon, Users, MessageSquare,
+  Search, Menu, Moon, Sun, X, ChevronDown, ChevronRight, User as UserIcon, Users, MessageSquare,
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
   Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud, Ghost
 } from 'lucide-react';
@@ -432,7 +432,7 @@ const Navbar = () => {
                 {showSearchSuggest && (
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden overflow-y-auto max-h-[400px]"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl active:scale-[0.98] shadow-2xl overflow-hidden overflow-y-auto max-h-[400px]"
                   >
                     {isListening && (
                       <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 bg-red-50 dark:bg-red-900/20">
@@ -686,8 +686,8 @@ const Navbar = () => {
                 className="fixed top-0 bottom-0 left-0 h-[100dvh] w-[85%] max-w-[320px] bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10 z-[101] lg:hidden flex flex-col shadow-2xl"
               >
                 {/* Drawer Header & Profile */}
-                <div className="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
-                  <div className="flex justify-between items-center mb-6">
+                <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+                  <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2">
                       <Logo src={settings?.logo} />
                       <span className="font-heading text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent tracking-tight">
@@ -700,20 +700,25 @@ const Navbar = () => {
                   </div>
                   
                   {user ? (
-                    <div className="flex items-center gap-4 group">
-                      <div className={`shrink-0 rounded-2xl ${
-                          user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_15px_orange]' :
-                          user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_20px_cyan]' :
-                          user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
-                          user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary/50'
-                      }`}>
-                        <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-14 h-14 rounded-2xl object-cover shadow-lg" alt="Profile" />
+                    <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between group active:scale-[0.98] transition-transform bg-white/50 dark:bg-slate-800/50 p-2 rounded-xl active:scale-[0.98] border border-slate-200 dark:border-slate-700">
+                      <div className="flex items-center gap-3">
+                        <div className={`shrink-0 rounded-xl ${
+                            user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_15px_orange]' :
+                            user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_20px_cyan]' :
+                            user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
+                            user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary/50'
+                        }`}>
+                          <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-12 h-12 rounded-xl object-cover shadow-sm" alt="Profile" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-base text-slate-900 dark:text-white line-clamp-1">{user.name}</p>
+                          <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{user.role}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-lg text-slate-900 dark:text-white line-clamp-1">{user.name}</p>
-                        <p className="text-xs text-primary font-bold uppercase tracking-wider">{user.role}</p>
+                      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                        <ChevronRight className="w-4 h-4" />
                       </div>
-                    </div>
+                    </Link>
                   ) : (
                     <div className="flex flex-col gap-3">
                       <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Join our community</p>
@@ -726,7 +731,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Drawer Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 [&::-webkit-scrollbar]:hidden">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 [&::-webkit-scrollbar]:hidden">
                   <form onSubmit={handleSearchSubmit} className="relative flex justify-center mt-2">
                     <CustomSearchBar 
                       value={searchQuery}
@@ -750,47 +755,52 @@ const Navbar = () => {
                   </form>
 
                   <div className="space-y-2">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Navigation</h4>
-                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Navigation</h4>
+                    {user && (
+                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                        <UserIcon className="w-5 h-5 text-emerald-500" /> My Dashboard
+                      </Link>
+                    )}
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-primary" /> Home
                     </Link>
-                    <Link to="/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Smartphone className="w-5 h-5 text-indigo-500" /> Apps
                     </Link>
-                    <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <LayoutGrid className="w-5 h-5 text-blue-500" /> Categories
                     </Link>
-                    <Link to="/moviebox/games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/moviebox/games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-blue-500" /> Games
                     </Link>
-                    <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Music className="w-5 h-5 text-purple-500" /> Classic Sound
                     </Link>
-                    <Link to="/nexoria-music" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/nexoria-music" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Music className="w-5 h-5 text-pink-500" /> Nexoria Music
                     </Link>
-                    <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-red-500" /> Arena
                     </Link>
-                    <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
+                    <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-xl active:scale-[0.98] font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
                       🔥 Aura Leaderboard
                     </Link>
-                    <Link to="/video-downloader" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/video-downloader" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <DownloadCloud className="w-5 h-5 text-emerald-500" /> YT Downloader
                     </Link>
-                    <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
+                    <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Compass className="w-5 h-5 text-indigo-500" /> Requests
                     </Link>
-                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-2xl font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
+                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
                       <Star className="w-5 h-5" /> Premium 💎
                     </Link>
-                    <Link to="/vip-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-2xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
+                    <Link to="/vip-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
                       <Crown className="w-5 h-5" /> VIP Lounge 👑
                     </Link>
-                    <Link to="/voice-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-400/10 to-pink-500/10 hover:from-purple-400/20 hover:to-pink-500/20 border border-purple-400/20 rounded-2xl font-bold text-sm text-purple-600 dark:text-purple-400 transition-colors">
+                    <Link to="/voice-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-purple-400/10 to-pink-500/10 hover:from-purple-400/20 hover:to-pink-500/20 border border-purple-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-purple-600 dark:text-purple-400 transition-colors">
                       <Mic className="w-5 h-5" /> Voice Lounge 🎤
                     </Link>
-                    <Link to="/secret-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-teal-400/10 to-emerald-500/10 hover:from-teal-400/20 hover:to-emerald-500/20 border border-teal-400/20 rounded-2xl font-bold text-sm text-teal-600 dark:text-teal-400 transition-colors">
+                    <Link to="/secret-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-teal-400/10 to-emerald-500/10 hover:from-teal-400/20 hover:to-emerald-500/20 border border-teal-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-teal-600 dark:text-teal-400 transition-colors">
                       <Ghost className="w-5 h-5" /> Private Chatting 👻
                     </Link>
                   </div>
@@ -799,7 +809,7 @@ const Navbar = () => {
                     <div className="space-y-2 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
                       <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Account & Settings</h4>
                       
-                      <div className="flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl mb-2">
+                      <div className="flex items-center justify-between px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl active:scale-[0.98] mb-2">
                         <span className="font-bold text-sm text-slate-700 dark:text-slate-200">Content Mode</span>
                         <button
                           onClick={() => {
@@ -817,14 +827,11 @@ const Navbar = () => {
                         </button>
                       </div>
 
-                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
-                        <UserIcon className="w-5 h-5 text-slate-400" /> My Dashboard
-                      </Link>
-                      <Link to="/messages" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
+                      <Link to="/messages" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl active:scale-[0.98] font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                         <MessageSquare className="w-5 h-5 text-slate-400" /> Messages
                       </Link>
                       {['admin', 'superadmin', 'owner'].includes(user.role) && (
-                        <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-2xl font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
+                        <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl active:scale-[0.98] font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
                           <ShieldAlert className="w-5 h-5 text-slate-400" /> Admin Panel
                         </Link>
                       )}
@@ -833,7 +840,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Drawer Footer */}
-                <div className="p-6 border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0 mt-auto flex flex-col gap-4">
+                <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0 mt-auto flex flex-col gap-4">
                   <div className="flex justify-between items-center px-2">
                     <span className="font-bold text-sm text-slate-600 dark:text-slate-300">Theme</span>
                     <div className="flex gap-2">
@@ -849,7 +856,7 @@ const Navbar = () => {
                     </div>
                   </div>
                   {user && (
-                    <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full flex items-center justify-center gap-2 py-3.5 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-2xl font-bold text-sm transition-colors hover:bg-red-100 dark:hover:bg-red-900/40">
+                    <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full flex items-center justify-center gap-2 py-3.5 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl active:scale-[0.98] font-bold text-sm transition-colors hover:bg-red-100 dark:hover:bg-red-900/40">
                       <LogOut className="w-4 h-4" /> Sign Out
                     </button>
                   )}
