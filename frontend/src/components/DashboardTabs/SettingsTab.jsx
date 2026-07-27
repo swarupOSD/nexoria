@@ -74,9 +74,9 @@ const SettingsTab = ({ user }) => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6">
-        <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
+    <div className="space-y-4 md:space-y-6 max-w-4xl">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6">
+        <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
           <Lock className="w-5 h-5 text-primary" /> Security & Authentication
         </h3>
         <div className="space-y-4">
@@ -85,15 +85,15 @@ const SettingsTab = ({ user }) => {
               <p className="font-bold dark:text-white">Change Password</p>
               <p className="text-sm text-slate-500">Update your account password securely.</p>
             </div>
-            <Link to="/change-password" className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold transition whitespace-nowrap text-center">
+            <Link to="/change-password" className="px-4 md:px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold transition whitespace-nowrap text-center">
               Update Password
             </Link>
           </div>
         </div>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6">
-        <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6">
+        <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
           <Palette className="w-5 h-5 text-indigo-500" /> Preferences
         </h3>
         <div className="space-y-4">
@@ -140,8 +140,8 @@ const SettingsTab = ({ user }) => {
         </div>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6 border-l-4 border-l-red-500">
-        <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2 text-red-500">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6 border-l-4 border-l-red-500">
+        <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2 text-red-500">
           <Shield className="w-5 h-5" /> Danger Zone
         </h3>
         <div className="space-y-4">
@@ -150,7 +150,7 @@ const SettingsTab = ({ user }) => {
               <p className="font-bold text-red-600 dark:text-red-400">Logout</p>
               <p className="text-sm text-red-500/80">End your current session securely.</p>
             </div>
-            <button onClick={handleLogout} className="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition flex items-center justify-center gap-2">
+            <button onClick={handleLogout} className="px-4 md:px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition flex items-center justify-center gap-2">
               <LogOut className="w-4 h-4" /> Logout
             </button>
           </div>

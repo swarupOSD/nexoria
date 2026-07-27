@@ -37,7 +37,7 @@ const AppDownloadTab = () => {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-4xl space-y-4 md:space-y-6">
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
@@ -47,11 +47,11 @@ const AppDownloadTab = () => {
         <div className="absolute -top-32 -right-32 w-64 h-64 bg-primary/20 rounded-full blur-[80px]" />
         <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-accent/20 rounded-full blur-[80px]" />
 
-        <div className="p-8 md:p-12 relative z-10">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        <div className="p-5 md:p-8 md:p-12 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
             
             {/* Left Content */}
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-4 md:space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold">
                 <Sparkles className="w-4 h-4" />
                 <span>Next-Gen Experience</span>
@@ -109,13 +109,13 @@ const AppDownloadTab = () => {
               className="w-64 h-[500px] bg-slate-900 rounded-[3rem] p-2 shadow-2xl border-4 border-slate-800 relative hidden md:block shrink-0"
             >
               {/* Screen */}
-              <div className="w-full h-full bg-[#0A0A0A] rounded-[2.5rem] overflow-hidden relative flex flex-col items-center justify-center text-center p-6 border border-white/5">
+              <div className="w-full h-full bg-[#0A0A0A] rounded-[2.5rem] overflow-hidden relative flex flex-col items-center justify-center text-center p-4 md:p-6 border border-white/5">
                 <Smartphone className="w-16 h-16 text-primary mb-4" />
                 <h3 className="text-xl font-black text-white mb-2">Nexoria</h3>
                 <p className="text-sm text-slate-400">Your premium hub</p>
                 
                 {/* Fake App Grid */}
-                <div className="grid grid-cols-4 gap-3 mt-8 opacity-20">
+                <div className="grid grid-cols-4 gap-3 mt-4 md:mt-8 opacity-20">
                   {[...Array(12)].map((_, i) => (
                     <div key={i} className="aspect-square bg-white rounded-lg" />
                   ))}

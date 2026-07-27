@@ -5,10 +5,10 @@ import { formatDistanceToNow } from 'date-fns';
 
 const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, recentActivity }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-5 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden">
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl"></div>
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary/10 text-primary rounded-xl"><Download className="w-6 h-6" /></div>
@@ -19,7 +19,7 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-5 border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent relative overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-5 border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent relative overflow-hidden">
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-amber-500/10 rounded-full blur-xl"></div>
           <div className="flex items-center gap-4">
             <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl"><Star className="w-6 h-6" /></div>
@@ -30,7 +30,7 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-5 border border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-transparent relative overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-5 border border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-transparent relative overflow-hidden">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl"><Bell className="w-6 h-6" /></div>
             <div>
@@ -40,7 +40,7 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-5 border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent relative overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-4 md:p-5 border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent relative overflow-hidden">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl"><Calendar className="w-6 h-6" /></div>
             <div>
@@ -53,11 +53,11 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Main Content Area */}
-        <div className="lg:col-span-2 space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-4 md:p-6">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
               <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
                 <Activity className="w-5 h-5 text-primary" /> Recent Activity
               </h3>
@@ -93,8 +93,8 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
         </div>
 
         {/* Sidebar Area */}
-        <div className="space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-6 border-t-4 border-t-amber-500">
+        <div className="space-y-4 md:space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-4 md:p-6 border-t-4 border-t-amber-500">
             <h3 className="text-lg font-bold dark:text-white mb-4">Quick Actions</h3>
             <div className="space-y-3">
               <Link to="/premium" className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white rounded-xl font-bold transition shadow-lg shadow-yellow-500/20">
@@ -106,7 +106,7 @@ const OverviewTab = ({ user, purchases, notificationsCount, premiumRequests, rec
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass-card p-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass-card p-4 md:p-6">
             <h3 className="text-lg font-bold dark:text-white mb-4">Account Status</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">

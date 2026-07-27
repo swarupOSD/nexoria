@@ -20,7 +20,7 @@ const WishlistTab = ({ user }) => {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
+    return <div className="p-5 md:p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
   }
 
   const wishlist = wishlistRes?.data || [];
@@ -28,11 +28,11 @@ const WishlistTab = ({ user }) => {
   if (wishlist.length === 0) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-12 text-center">
-        <div className="w-20 h-20 bg-rose-50 dark:bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-rose-50 dark:bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
           <Heart className="w-10 h-10 text-rose-300 dark:text-rose-500/50" />
         </div>
         <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Your wishlist is empty</h3>
-        <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8">
+        <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-4 md:mb-8">
           Save your favorite apps and games here to download them later or keep track of their updates.
         </p>
         <Link to="/categories" className="btn-primary inline-flex">
@@ -43,7 +43,7 @@ const WishlistTab = ({ user }) => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Heart className="w-6 h-6 text-rose-500 fill-current" /> My Wishlist
@@ -53,7 +53,7 @@ const WishlistTab = ({ user }) => {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {wishlist.map((post) => (
           <motion.div 
             key={post._id}
@@ -63,7 +63,7 @@ const WishlistTab = ({ user }) => {
             exit={{ opacity: 0, scale: 0.9 }}
             className="glass-card group hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
           >
-            <div className="p-5 flex items-start gap-4 flex-1">
+            <div className="p-4 md:p-5 flex items-start gap-4 flex-1">
               <Link to={`/post/${post.slug}`} className="shrink-0">
                 <FallbackImage 
                   src={post.appLogo} 

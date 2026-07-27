@@ -42,13 +42,13 @@ const AppRequestsTab = ({ user }) => {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
+    return <div className="p-5 md:p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
   }
 
   const requests = requestsRes?.data || [];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 md:space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <HelpCircle className="w-6 h-6 text-emerald-500" /> My App Requests
@@ -60,7 +60,7 @@ const AppRequestsTab = ({ user }) => {
 
       {requests.length === 0 ? (
         <div className="glass-card p-12 text-center">
-          <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
             <HelpCircle className="w-10 h-10 text-emerald-300 dark:text-emerald-500/50" />
           </div>
           <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">No Requests Yet</h3>
@@ -71,7 +71,7 @@ const AppRequestsTab = ({ user }) => {
       ) : (
         <div className="grid gap-4">
           {requests.map(req => (
-            <div key={req._id} className="glass-card p-5 hover:shadow-lg transition-shadow">
+            <div key={req._id} className="glass-card p-4 md:p-5 hover:shadow-lg transition-shadow">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">{req.appName}</h3>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(req.status)}`}>
@@ -108,13 +108,13 @@ const AppRequestsTab = ({ user }) => {
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800"
             >
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white">Request an App</h3>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded-full transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">App / Game Name</label>
                   <input type="text" name="appName" value={formData.appName} onChange={handleChange} required className="premium-input w-full" placeholder="e.g. Minecraft PE" />

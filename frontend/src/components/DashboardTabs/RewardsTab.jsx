@@ -72,7 +72,7 @@ const RewardsTab = ({ user }) => {
   const xpProgress = ((user?.xp || 0) / nextLevelXp) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -86,7 +86,7 @@ const RewardsTab = ({ user }) => {
         {/* Level Card */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden"
+          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6 relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Trophy className="w-24 h-24" />
@@ -101,7 +101,7 @@ const RewardsTab = ({ user }) => {
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">Level {user?.level || 1}</p>
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-4 md:mt-6">
               <div className="flex justify-between text-xs mb-2 text-slate-600 dark:text-white/60">
                 <span>{user?.xp || 0} XP</span>
                 <span>{nextLevelXp} XP</span>
@@ -119,7 +119,7 @@ const RewardsTab = ({ user }) => {
         {/* Points Card */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden"
+          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6 relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Award className="w-24 h-24" />
@@ -134,7 +134,7 @@ const RewardsTab = ({ user }) => {
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{user?.rewardPoints || 0}</p>
               </div>
             </div>
-            <p className="mt-6 text-sm text-slate-500 dark:text-white/50">
+            <p className="mt-4 md:mt-6 text-sm text-slate-500 dark:text-white/50">
               Redeem points for premium days or exclusive app requests.
             </p>
             <button className="mt-3 text-sm font-medium text-emerald-500 hover:text-emerald-400 flex items-center gap-1 transition-colors">
@@ -146,7 +146,7 @@ const RewardsTab = ({ user }) => {
         {/* Referrals Card */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden"
+          className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6 relative overflow-hidden"
         >
            <div className="absolute top-0 right-0 p-4 opacity-10">
             <Users className="w-24 h-24" />
@@ -161,7 +161,7 @@ const RewardsTab = ({ user }) => {
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{user?.referralCount || 0}</p>
               </div>
             </div>
-            <p className="mt-6 text-sm text-slate-500 dark:text-white/50">
+            <p className="mt-4 md:mt-6 text-sm text-slate-500 dark:text-white/50">
               Earn 50 Points for every friend who joins via your link.
             </p>
           </div>
@@ -169,7 +169,7 @@ const RewardsTab = ({ user }) => {
       </div>
 
       {/* Referral Link Section */}
-      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Your Referral Link</h3>
         <p className="text-sm text-slate-500 dark:text-white/50 mb-4">Share this link to earn points and XP when friends register.</p>
         
@@ -194,7 +194,7 @@ const RewardsTab = ({ user }) => {
       </div>
 
       {/* Coupon Redemption */}
-      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
           <Gift className="w-5 h-5 text-indigo-500" /> Redeem Coupon
         </h3>
@@ -221,7 +221,7 @@ const RewardsTab = ({ user }) => {
       </div>
 
       {/* Activity Timeline */}
-      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+      <div className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-4 md:p-6">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-slate-400" /> Activity Timeline
         </h3>
@@ -235,7 +235,7 @@ const RewardsTab = ({ user }) => {
             No recent activity to show. Complete actions to earn XP and Points!
           </div>
         ) : (
-          <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 dark:before:via-white/10 before:to-transparent">
+          <div className="space-y-4 md:space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 dark:before:via-white/10 before:to-transparent">
             {activities.map((activity, index) => (
               <div key={activity._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                 <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white dark:border-[#0A0A0A] bg-blue-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">

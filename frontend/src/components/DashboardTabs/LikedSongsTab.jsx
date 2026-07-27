@@ -25,8 +25,8 @@ const LikedSongsTab = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-[#0A0A0A] rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-white/5">
-      <div className="flex items-center gap-3 mb-8">
+    <div className="bg-white dark:bg-[#0A0A0A] rounded-3xl p-4 md:p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-white/5">
+      <div className="flex items-center gap-3 mb-4 md:mb-8">
         <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">
           <Heart className="w-6 h-6 text-rose-500" />
         </div>
@@ -40,8 +40,8 @@ const LikedSongsTab = () => {
         <div className="text-center py-16 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800 border-dashed">
           <Music className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">No liked songs yet</h3>
-          <p className="text-slate-500 max-w-md mx-auto mb-6">Discover new music and tap the heart icon to save them to your collection.</p>
-          <Link to="/sound" className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors">
+          <p className="text-slate-500 max-w-md mx-auto mb-4 md:mb-6">Discover new music and tap the heart icon to save them to your collection.</p>
+          <Link to="/sound" className="px-4 md:px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors">
             Explore Music
           </Link>
         </div>

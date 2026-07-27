@@ -23,24 +23,24 @@ const MusicAnalyticsTab = () => {
   if (!analytics) return null;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+    <div className="space-y-4 md:space-y-8 animate-fade-in">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-5 md:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
           <Headphones className="w-64 h-64 rotate-12" />
         </div>
         <div className="relative z-10">
           <h2 className="text-3xl font-black mb-2">Your Sound Wrapped</h2>
-          <p className="text-purple-100 font-medium max-w-lg mb-8">
+          <p className="text-purple-100 font-medium max-w-lg mb-4 md:mb-8">
             Here's a look back at your listening history and favorite tracks. Keep the music playing!
           </p>
           
-          <div className="grid grid-cols-2 gap-6 max-w-xl">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+          <div className="grid grid-cols-2 gap-4 md:gap-6 max-w-xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/20">
               <Clock className="w-8 h-8 text-purple-300 mb-3" />
               <div className="text-3xl font-black">{analytics.totalMinutes}</div>
               <div className="text-purple-200 text-sm font-medium">Minutes Listened</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/20">
               <Play className="w-8 h-8 text-purple-300 mb-3" />
               <div className="text-3xl font-black">{analytics.totalStreams}</div>
               <div className="text-purple-200 text-sm font-medium">Total Streams</div>
@@ -55,10 +55,10 @@ const MusicAnalyticsTab = () => {
         data={analytics} 
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         {/* Top Played */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-3 mb-4 md:mb-6">
             <div className="p-3 bg-purple-100 dark:bg-purple-500/20 rounded-xl text-purple-600 dark:text-purple-400">
               <Play className="w-6 h-6 fill-current" />
             </div>
@@ -91,8 +91,8 @@ const MusicAnalyticsTab = () => {
         </div>
 
         {/* Most Loved */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 md:p-6 lg:p-8 shadow-sm border border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-3 mb-4 md:mb-6">
             <div className="p-3 bg-rose-100 dark:bg-rose-500/20 rounded-xl text-rose-600 dark:text-rose-400">
               <Heart className="w-6 h-6 fill-current" />
             </div>

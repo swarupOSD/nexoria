@@ -5,10 +5,10 @@ import FallbackImage from '../FallbackImage';
 
 const PurchasesTab = ({ purchases, premiumRequests }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Purchased Apps */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6">
-        <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-4 md:p-6">
+        <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
           <ShoppingCart className="w-5 h-5 text-primary" /> Purchased Apps
         </h3>
         
@@ -59,8 +59,8 @@ const PurchasesTab = ({ purchases, premiumRequests }) => {
       </motion.div>
 
       {/* Premium History */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6">
-        <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6">
+        <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2">
           <CreditCard className="w-5 h-5 text-amber-500" /> Premium Memberships
         </h3>
         

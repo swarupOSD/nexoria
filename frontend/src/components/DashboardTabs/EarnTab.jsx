@@ -33,7 +33,7 @@ const EarnTab = () => {
   if (!isEnabled) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Gift className="w-20 h-20 text-slate-700 mb-6" />
+        <Gift className="w-20 h-20 text-slate-700 mb-4 md:mb-6" />
         <h2 className="text-2xl font-black text-white mb-2">Offers Currently Unavailable</h2>
         <p className="text-slate-400 max-w-md">
           There are no offers available at the moment. Please check back later to earn more Reward Points!
@@ -43,9 +43,9 @@ const EarnTab = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header section */}
-      <div className="bg-gradient-to-r from-primary/10 to-transparent p-6 rounded-2xl border border-primary/20">
+      <div className="bg-gradient-to-r from-primary/10 to-transparent p-4 md:p-6 rounded-2xl border border-primary/20">
         <h2 className="text-2xl font-black text-white flex items-center gap-3 mb-2">
           <Coins className="w-7 h-7 text-amber-500" />
           Earn Free Aura / Points

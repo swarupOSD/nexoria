@@ -163,7 +163,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Hero Section */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card overflow-hidden rounded-2xl relative border-none shadow-2xl">
         <div className="h-48 md:h-64 relative bg-slate-200 dark:bg-slate-800 w-full group">
@@ -182,8 +182,8 @@ const ProfileTab = ({ user, token, refetchUser }) => {
           )}
         </div>
 
-        <div className="px-6 pb-6 relative">
-          <div className="flex flex-col md:flex-row gap-6 md:items-end -mt-16 md:-mt-20">
+        <div className="px-4 md:px-6 pb-6 relative">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-end -mt-16 md:-mt-20">
             <div className="relative group">
               <FallbackImage 
                 src={profileImage} 
@@ -227,15 +227,15 @@ const ProfileTab = ({ user, token, refetchUser }) => {
 
             <div className="md:mb-4 w-full md:w-auto">
               {!isEditing ? (
-                <button onClick={() => setIsEditing(true)} className="w-full md:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/30 transition">
+                <button onClick={() => setIsEditing(true)} className="w-full md:w-auto px-4 md:px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/30 transition">
                   Edit Profile
                 </button>
               ) : (
                 <div className="flex gap-2">
-                  <button onClick={() => setIsEditing(false)} className="flex-1 md:w-auto px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold transition">
+                  <button onClick={() => setIsEditing(false)} className="flex-1 md:w-auto px-4 md:px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold transition">
                     Cancel
                   </button>
-                  <button onClick={handleUpdate} disabled={isUpdating} className="flex-1 md:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/30 transition disabled:opacity-50 flex justify-center items-center">
+                  <button onClick={handleUpdate} disabled={isUpdating} className="flex-1 md:w-auto px-4 md:px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-lg shadow-primary/30 transition disabled:opacity-50 flex justify-center items-center">
                     {isUpdating ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
@@ -245,10 +245,10 @@ const ProfileTab = ({ user, token, refetchUser }) => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6">
-            <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Personal Information</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-4 md:p-6">
+            <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Personal Information</h3>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
@@ -315,8 +315,8 @@ const ProfileTab = ({ user, token, refetchUser }) => {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6">
-            <h3 className="text-xl font-bold dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Social Links</h3>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-4 md:p-6">
+            <h3 className="text-xl font-bold dark:text-white mb-4 md:mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Social Links</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
                 { id: 'telegram', icon: Send, color: 'text-blue-500' },
@@ -352,8 +352,8 @@ const ProfileTab = ({ user, token, refetchUser }) => {
           </motion.div>
         </div>
 
-        <div className="space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
+        <div className="space-y-4 md:space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-4 md:p-6">
             <h3 className="text-lg font-bold dark:text-white mb-4">Profile Completion</h3>
             <div className="relative pt-1 mb-4">
               <div className="flex mb-2 items-center justify-between">
@@ -373,7 +373,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
           </motion.div>
 
           {/* Badges & Achievements */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-4 md:p-6">
             <h3 className="text-lg font-bold dark:text-white mb-4">Achievements</h3>
             {user?.badges && user.badges.length > 0 ? (
               <div className="flex flex-wrap gap-3">
@@ -422,7 +422,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
           </motion.div>
           
           {/* Security & 2FA */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-card p-4 md:p-6">
             <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-emerald-500" /> Security</h3>
             
             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-white/10">
