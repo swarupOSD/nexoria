@@ -4,7 +4,7 @@ import { protect, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.get('/', protect, authorize('admin', 'superadmin'), getAdminSecretRooms);
-router.delete('/:teamCode', protect, authorize('admin', 'superadmin'), deleteAdminSecretRoom);
+router.get('/', protect, authorize('owner'), getAdminSecretRooms);
+router.delete('/:teamCode', protect, authorize('owner'), deleteAdminSecretRoom);
 
 export default router;

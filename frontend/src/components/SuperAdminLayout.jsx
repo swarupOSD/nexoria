@@ -132,7 +132,7 @@ const SuperAdminLayout = () => {
         { name: 'Manage Albums', icon: <Database className="w-4 h-4 text-indigo-400" />, path: '/superadmin/nexoria-music/albums' },
         { name: 'Manage Tracks', icon: <Music className="w-4 h-4 text-pink-400" />, path: '/superadmin/nexoria-music/tracks' },
         { name: 'Manage Genres', icon: <ListVideo className="w-4 h-4 text-orange-400" />, path: '/superadmin/nexoria-music/genres' },
-        { name: '🎧 Listening Analytics', icon: <BarChart3 className="w-4 h-4 text-purple-400" />, path: '/superadmin/music-analytics' },
+        ...(activeUser?.role === 'owner' ? [{ name: '🎧 Listening Analytics', icon: <BarChart3 className="w-4 h-4 text-purple-400" />, path: '/superadmin/music-analytics' }] : []),
       ]
     },
     {
@@ -168,7 +168,7 @@ const SuperAdminLayout = () => {
         { name: 'Premium Users', icon: <Crown className="w-4 h-4" />, path: '/superadmin/premium-users' },
         { name: 'Premium Requests', icon: <Crown className="w-4 h-4" />, path: '/superadmin/premium-requests' },
         { name: 'Support Center', icon: <ShieldAlert className="w-4 h-4" />, path: '/superadmin/support-center' },
-        { name: '🎫 Support Tickets', icon: <Ticket className="w-4 h-4 text-amber-400" />, path: '/superadmin/support-tickets' },
+        ...(activeUser?.role === 'owner' ? [{ name: '🎫 Support Tickets', icon: <Ticket className="w-4 h-4 text-amber-400" />, path: '/superadmin/support-tickets' }] : []),
       ]
     },
     {
@@ -190,8 +190,10 @@ const SuperAdminLayout = () => {
         { name: 'Hero Displays', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/hero-displays' },
         { name: 'Footer Management', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/footer-management' },
         { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/superadmin/chat-management' },
-        { name: 'Private Chatting', icon: <Ghost className="w-4 h-4" />, path: '/superadmin/secret-lounge-management' },
-        { name: '📊 Chat Analytics', icon: <MessageCircle className="w-4 h-4 text-indigo-400" />, path: '/superadmin/private-chat-analytics' },
+        ...(activeUser?.role === 'owner' ? [
+          { name: 'Private Chatting', icon: <Ghost className="w-4 h-4" />, path: '/superadmin/secret-lounge-management' },
+          { name: '📊 Chat Analytics', icon: <MessageCircle className="w-4 h-4 text-indigo-400" />, path: '/superadmin/private-chat-analytics' },
+        ] : []),
       ]
     }
   ];
