@@ -112,7 +112,7 @@ const UserDashboard = () => {
   const themeClass = getThemeClass(user?.profileTheme || 'default');
 
   return (
-    <div className={`font-jakarta min-h-screen pb-12 transition-colors duration-500 ${themeClass} relative overflow-hidden`}>
+    <div className={`font-jakarta min-h-screen pb-12 transition-colors duration-500 ${themeClass} relative overflow-x-hidden`}>
       
       {/* Global Background Glows if default theme */}
       {(!user?.profileTheme || user?.profileTheme === 'default') && (
@@ -128,8 +128,8 @@ const UserDashboard = () => {
       {/* Top Navigation Bar for Dashboard */}
       <div className="sticky top-0 z-30 bg-white/5 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/')} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/70 hover:text-white transition-all hidden sm:block backdrop-blur-md">
+          <div className="flex items-center gap-3 md:gap-4">
+            <button onClick={() => navigate('/')} className="p-2 md:p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/70 hover:text-white transition-all backdrop-blur-md active:scale-95">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
@@ -184,15 +184,15 @@ const UserDashboard = () => {
                   animate={{ x: 0 }}
                   exit={{ x: '-100%' }}
                   transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                  className="fixed top-0 left-0 bottom-0 w-72 bg-[#030303]/90 backdrop-blur-3xl z-50 p-6 lg:hidden shadow-[20px_0_40px_rgba(0,0,0,0.5)] border-r border-white/10 overflow-y-auto"
+                  className="fixed top-0 left-0 bottom-0 w-[280px] bg-[#030303]/95 backdrop-blur-3xl z-50 p-4 lg:hidden shadow-[20px_0_40px_rgba(0,0,0,0.5)] border-r border-white/10 overflow-y-auto"
                 >
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-black text-white">Menu</h2>
-                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors">
+                  <div className="flex items-center justify-between mb-5 px-1">
+                    <h2 className="text-xl font-black text-white tracking-tight">Menu</h2>
+                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors active:scale-95">
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {TABS.map((tab) => (
                       <button
                         key={tab.id}
@@ -200,10 +200,10 @@ const UserDashboard = () => {
                           setActiveTab(tab.id);
                           setIsSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl font-bold transition-all ${
+                        className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-[14px] ${
                           activeTab === tab.id
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)]'
-                            : 'text-white/50 hover:text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.3)]'
+                            : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10'
                         }`}
                       >
                         <tab.icon className="w-5 h-5" />
