@@ -7,7 +7,8 @@ import {
   useGetMusicRecommendationsQuery,
   useGetDiscoverWeeklyQuery,
   useGetReleaseRadarQuery,
-  useGetDailyMixQuery
+  useGetDailyMixQuery,
+  useGetPublicPlaylistsQuery
 } from '../../features/api/nexoriaMusicApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,6 +34,7 @@ const NexoriaMusicHome = () => {
   const { data: discoverData, isLoading: loadingDiscover } = useGetDiscoverWeeklyQuery(undefined, { skip: !user });
   const { data: radarData, isLoading: loadingRadar } = useGetReleaseRadarQuery(undefined, { skip: !user });
   const { data: mixData, isLoading: loadingMix } = useGetDailyMixQuery(undefined, { skip: !user });
+  const { data: publicPlaylistsRes, isLoading: loadingPublicPlaylists } = useGetPublicPlaylistsQuery();
 
   const artists = artistsRes?.data || [];
   const allTracks = tracksRes?.data || [];
@@ -320,6 +322,47 @@ const NexoriaMusicHome = () => {
             )}
           </div>
         </section>
+
+        {/* Section: Featured Playlists (Admin) */}
+        {(!loadingPublicPlaylists && publicPlaylistsRes?.data?.length > 0) && (
+          <section className="mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Featured Playlists</h2>
+            
+            <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
+              {publicPlaylistsRes.data.map((playlist) => (
+                <div 
+                  key={playlist._id}
+                  onClick={() => navigate(`/nexoria-music/playlist/${playlist._id}`)}
+                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-white/5 hover:bg-white/10 rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                >
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                    {playlist.coverImage && (
+                      <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover" />
+                    )}
+                    <div className="absolute bottom-2 right-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 drop-shadow-xl z-10 hidden sm:flex items-center gap-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (playlist.tracks && playlist.tracks.length > 0) {
+                             handlePlay(playlist.tracks[0], playlist.tracks);
+                          } else {
+                             navigate(`/nexoria-music/playlist/${playlist._id}`);
+                          }
+                        }}
+                        className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 hover:bg-[#22C55E] shadow-lg"
+                        title="Play Playlist"
+                      >
+                        <Play className="w-6 h-6 fill-current ml-1" />
+                      </button>
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{playlist.title}</h3>
+                  <p className="text-xs text-white/70 line-clamp-2">By Nexoria Music</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Section: Popular Artists */}
         <section className="mb-10">

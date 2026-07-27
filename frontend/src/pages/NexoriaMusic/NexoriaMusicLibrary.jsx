@@ -2,13 +2,16 @@ import React from 'react';
 import { Heart, Download, Music, Plus, Search, Play } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useGetPlaylistsQuery } from '../../features/api/nexoriaMusicApiSlice';
+import { useGetPlaylistsQuery, useGetPublicPlaylistsQuery } from '../../features/api/nexoriaMusicApiSlice';
 
 const NexoriaMusicLibrary = () => {
   const navigate = useNavigate();
   const { likedTracks, downloadedTracks } = useSelector(state => state.nexoriaMusic);
   const { data: playlistsRes, isLoading } = useGetPlaylistsQuery();
   const playlists = playlistsRes?.data || [];
+  
+  const { data: publicPlaylistsRes, isLoading: publicLoading } = useGetPublicPlaylistsQuery();
+  const publicPlaylists = publicPlaylistsRes?.data || [];
 
   return (
     <div className="min-h-full bg-[#0F0F23] text-white p-6 sm:p-8">
@@ -102,6 +105,37 @@ const NexoriaMusicLibrary = () => {
           ))
         )}
       </div>
+
+      {/* Public / Featured Playlists */}
+      {(!publicLoading && publicPlaylists.length > 0) && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-6">Featured & Trending</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {publicPlaylists.map(playlist => (
+              <Link 
+                key={playlist._id}
+                to={`/nexoria-music/playlist/${playlist._id}`}
+                className="bg-white/5 hover:bg-white/10 p-4 rounded-md transition-all group flex flex-col gap-4 cursor-pointer"
+              >
+                <div className="w-full aspect-square bg-[#27272A] rounded shadow-lg flex items-center justify-center relative overflow-hidden">
+                  {playlist.coverImage ? (
+                    <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <Music className="w-12 h-12 text-zinc-500" />
+                  )}
+                  <div className="absolute right-2 bottom-2 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all shadow-xl">
+                    <Play className="w-6 h-6 text-black fill-current ml-1" />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="font-bold text-white truncate text-base">{playlist.title}</h3>
+                  <p className="text-sm text-zinc-400 font-medium line-clamp-1 text-ellipsis">By Nexoria Music</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

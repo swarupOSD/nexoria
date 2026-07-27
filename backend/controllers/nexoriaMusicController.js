@@ -1173,6 +1173,18 @@ export const getUserPlaylists = async (req, res) => {
   }
 };
 
+export const getPublicPlaylists = async (req, res) => {
+  try {
+    const playlists = await NexoriaPlaylist.find({ isPublic: true, type: { $in: ['Featured', 'Trending'] } })
+      .populate('creator', 'name')
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: playlists });
+  } catch (error) {
+    logger.error(`Get Public Playlists Error: ${error.message}`);
+    res.status(500).json({ success: false, message: 'Failed to fetch public playlists' });
+  }
+};
+
 // ==========================================
 // ADMIN: FEATURED PLAYLIST MANAGEMENT
 // ==========================================

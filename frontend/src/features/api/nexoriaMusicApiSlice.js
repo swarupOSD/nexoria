@@ -159,6 +159,10 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       query: () => '/nexoria-music/playlists',
       providesTags: ['NexoriaPlaylist'],
     }),
+    getPublicPlaylists: builder.query({
+      query: () => '/nexoria-music/public-playlists',
+      providesTags: ['NexoriaPlaylist'],
+    }),
     getPlaylistDetails: builder.query({
       query: (id) => `/nexoria-music/playlists/${id}`,
       providesTags: (result, error, id) => [{ type: 'NexoriaPlaylist', id }],

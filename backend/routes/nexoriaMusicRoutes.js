@@ -34,6 +34,7 @@ import {
   getDailyMix,
   createPlaylist,
   getUserPlaylists,
+  getPublicPlaylists,
   getPlaylistDetails,
   addTrackToPlaylist,
   removeTrackFromPlaylist,
@@ -72,6 +73,8 @@ router.route('/tracks/:trackId/lyrics').get(getLyricsConsumer);
 router.route('/users/:id').get(protect, getUserProfile);
 
 // PLAYLISTS
+router.route('/public-playlists').get(getPublicPlaylists);
+
 router.route('/playlists')
   .post(protect, createPlaylist)
   .get(protect, getUserPlaylists);
