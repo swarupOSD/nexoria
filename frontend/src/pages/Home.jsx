@@ -133,7 +133,7 @@ const Home = () => {
             </div>
           </Link>
 
-          <Link to="/music" className="bg-gradient-to-br from-emerald-500/20 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
+          <Link to="/nexoria-music" className="bg-gradient-to-br from-emerald-500/20 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 flex flex-col gap-3 active:scale-95 transition-transform relative overflow-hidden group">
             <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/20 rounded-full blur-xl"></div>
             <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
               <Music className="w-4 h-4 text-emerald-400" />
