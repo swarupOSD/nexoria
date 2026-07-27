@@ -1310,14 +1310,19 @@ export const getPlaylistDetails = async (req, res) => {
 export const addTrackToPlaylist = async (req, res) => {
   try {
     const { trackId } = req.body;
-    const playlist = await NexoriaPlaylist.findById(req.params.id);
+    const playlist = await NexoriaPlaylist.findById(req.params.id).populate('creator', 'role');
     
     if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
     
-    const isOwner = playlist.creator.toString() === req.user._id.toString();
+    const isOwner = playlist.creator._id.toString() === req.user._id.toString();
+    const creatorRole = playlist.creator.role || 'user';
     const isCollaborator = playlist.collaborators?.includes(req.user._id) || playlist.isCollaborative;
     
-    if (!isOwner && !isCollaborator) {
+    if (['admin', 'superadmin', 'owner'].includes(creatorRole)) {
+      if (!['admin', 'superadmin', 'owner'].includes(req.user.role)) {
+        return res.status(403).json({ success: false, message: 'Cannot modify official playlists' });
+      }
+    } else if (!isOwner && !isCollaborator) {
       return res.status(403).json({ success: false, message: 'Not authorized to modify this playlist' });
     }
     
@@ -1345,14 +1350,19 @@ export const addTrackToPlaylist = async (req, res) => {
 export const removeTrackFromPlaylist = async (req, res) => {
   try {
     const { trackId } = req.params;
-    const playlist = await NexoriaPlaylist.findById(req.params.id);
+    const playlist = await NexoriaPlaylist.findById(req.params.id).populate('creator', 'role');
     
     if (!playlist) return res.status(404).json({ success: false, message: 'Playlist not found' });
     
-    const isOwner = playlist.creator.toString() === req.user._id.toString();
+    const isOwner = playlist.creator._id.toString() === req.user._id.toString();
+    const creatorRole = playlist.creator.role || 'user';
     const isCollaborator = playlist.collaborators?.includes(req.user._id) || playlist.isCollaborative;
     
-    if (!isOwner && !isCollaborator) {
+    if (['admin', 'superadmin', 'owner'].includes(creatorRole)) {
+      if (!['admin', 'superadmin', 'owner'].includes(req.user.role)) {
+        return res.status(403).json({ success: false, message: 'Cannot modify official playlists' });
+      }
+    } else if (!isOwner && !isCollaborator) {
       return res.status(403).json({ success: false, message: 'Not authorized to modify this playlist' });
     }
     

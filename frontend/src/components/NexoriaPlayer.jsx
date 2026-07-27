@@ -545,19 +545,19 @@ const NexoriaPlayer = () => {
                       <p className="text-zinc-400 text-xs truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
                     </div>
                     {/* Actions */}
-                    <div className="flex items-center gap-2 pr-1">
+                    <div className="flex items-center gap-1 pr-1">
                       <button 
-                        className="p-2"
+                        className="p-3 active:scale-90 transition-transform"
                         onClick={(e) => {
                           e.stopPropagation();
                           dispatch(toggleLikeTrack(currentTrack._id));
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                       >
-                        <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-400'}`} />
+                        <Heart className={`w-6 h-6 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-400'}`} />
                       </button>
                       <button 
-                        className="p-2 text-white"
+                        className="p-3 text-white active:scale-90 transition-transform"
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
@@ -565,7 +565,7 @@ const NexoriaPlayer = () => {
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                       >
-                        {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
+                        {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
                       </button>
                     </div>
                   </div>
@@ -583,7 +583,7 @@ const NexoriaPlayer = () => {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  className="fixed inset-0 z-[100] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pb-safe pt-4"
+                  className="fixed inset-0 z-[999] bg-gradient-to-b from-zinc-900 to-black flex flex-col px-6 pb-8 pb-safe pt-4"
                 >
                   {/* Top Header */}
                   <div className="flex items-center justify-between py-4">

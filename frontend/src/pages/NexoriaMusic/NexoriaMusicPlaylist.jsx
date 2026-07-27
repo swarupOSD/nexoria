@@ -280,13 +280,19 @@ const NexoriaMusicPlaylist = () => {
               <MoreHorizontal className="w-12 h-12 text-[#94A3B8]" />
             </div>
             <h3 className="text-xl font-bold mb-2">It's a bit empty here...</h3>
-            <p className="text-[#94A3B8] font-medium">Find some songs to add to your playlist.</p>
-            <button 
-              onClick={() => navigate('/nexoria-music/tracks')}
-              className="mt-6 px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
-            >
-              Find Songs
-            </button>
+            {isOwner ? (
+              <>
+                <p className="text-[#94A3B8] font-medium">Find some songs to add to your playlist.</p>
+                <button 
+                  onClick={() => navigate('/nexoria-music/tracks')}
+                  className="mt-6 px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
+                >
+                  Find Songs
+                </button>
+              </>
+            ) : (
+              <p className="text-[#94A3B8] font-medium">The creator hasn't added any songs yet.</p>
+            )}
           </div>
         ) : (
           <>

@@ -75,7 +75,7 @@ export const trackDownload = async (req, res) => {
     const finalUrl = (settings && settings.ads && settings.ads.globalDownloadUrl) ? settings.ads.globalDownloadUrl : (link ? link.url : '');
 
     if (!finalUrl) {
-      return res.status(400).json({ success: false, message: 'Global download link is not configured.' });
+      return res.status(400).json({ success: false, message: 'Download link is not configured.' });
     }
 
     res.status(200).json({ success: true, downloadUrl: finalUrl });
