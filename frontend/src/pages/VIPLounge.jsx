@@ -6,7 +6,7 @@ import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useGetSongsQuery } from '../features/api/musicApiSlice';
 import { useGetMoviesQuery } from '../features/movie/movieApiSlice';
 import { useGetActiveArenaGamesQuery } from '../features/arenaGame/arenaGameApiSlice';
-import { Crown, Lock, Star, Play, Coins, ExternalLink, Gamepad2, Smartphone, Music, Clapperboard } from 'lucide-react';
+import { Crown, Lock, Star, Play, Coins, ExternalLink, Gamepad2, Smartphone, Music, Clapperboard, ArrowLeft } from 'lucide-react';
 import { AuraBadge } from '../components/AuraScore';
 
 const VIPLounge = () => {
@@ -87,19 +87,32 @@ const VIPLounge = () => {
   };
 
   return (
-    <div className="p-4 sm:p-8 min-h-screen">
-      <div className="mb-12 max-w-4xl relative group">
-        <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 md:blur-2xl rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
-        <div className="relative">
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight flex items-center gap-3">
-            <span className="text-5xl drop-shadow-2xl">👑</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500 drop-shadow-lg">Global VIP Lounge</span>
-          </h1>
-          <p className="text-amber-200/70 font-medium text-lg max-w-2xl leading-relaxed">
-            Exclusive premium content. Unlocked instantly for VIP members.
-          </p>
-        </div>
+    <div className="min-h-screen pb-20 bg-[#030303]">
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#030303]/90 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14">
+        <button 
+          onClick={() => navigate(-1)}
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="flex-1 text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 text-sm tracking-widest uppercase truncate px-2">VIP Lounge</span>
+        <div className="w-8" />
       </div>
+
+      <div className="p-4 sm:p-8 pt-6 sm:pt-8">
+        <div className="mb-8 md:mb-12 max-w-4xl relative group">
+          <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 md:blur-2xl rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700 hidden sm:block"></div>
+          <div className="relative">
+            <h1 className="text-3xl md:text-5xl font-black text-white mb-2 md:mb-4 tracking-tight flex items-center gap-3">
+              <span className="text-4xl md:text-5xl drop-shadow-2xl">👑</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500 drop-shadow-lg">Global VIP Lounge</span>
+            </h1>
+            <p className="text-amber-200/70 font-medium text-base md:text-lg max-w-2xl leading-relaxed">
+              Exclusive premium content. Unlocked instantly for VIP members.
+            </p>
+          </div>
+        </div>
 
       {!isVIP ? (
         // LOCKED STATE
@@ -159,6 +172,7 @@ const VIPLounge = () => {
           {renderContent()}
         </>
       )}
+      </div>
     </div>
   );
 };
@@ -177,7 +191,7 @@ const EmptyState = ({ label }) => (
 );
 
 const GameCard = ({ item }) => (
-  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
+  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 active:scale-[0.98] relative">
     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 md:blur-3xl blur-xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
     <div className="relative aspect-video bg-black/50 overflow-hidden border-b border-amber-500/10">
       {item.banner || item.logo || item.thumbnail ? (
@@ -222,7 +236,7 @@ const GameCard = ({ item }) => (
 );
 
 const AppCard = ({ item, navigate }) => (
-  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
+  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 active:scale-[0.98] relative">
     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 md:blur-3xl blur-xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
     <div className="relative aspect-video bg-black/50 overflow-hidden border-b border-amber-500/10">
       <img src={item.featuredImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -241,7 +255,7 @@ const AppCard = ({ item, navigate }) => (
 );
 
 const SongCard = ({ item, navigate }) => (
-  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative p-4 flex gap-4">
+  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 active:scale-[0.98] relative p-4 flex gap-4">
     <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative">
       <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -259,7 +273,7 @@ const SongCard = ({ item, navigate }) => (
 );
 
 const MovieCard = ({ item, navigate }) => (
-  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative">
+  <div className="block group bg-gradient-to-b from-[#1a1a1f] to-slate-900 rounded-2xl overflow-hidden border border-amber-500/20 hover:border-amber-500/50 transition-all hover:shadow-[0_10px_30px_rgba(245,158,11,0.15)] hover:-translate-y-1 active:scale-[0.98] relative">
     <div className="relative aspect-[2/3] bg-black/50 overflow-hidden">
       <img src={item.posterImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-[#1a1a1f]/20 to-transparent"></div>

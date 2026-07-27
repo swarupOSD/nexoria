@@ -750,7 +750,6 @@ const NexoriaPlayer = () => {
                         <Moon className="w-5 h-5" />
                       </button>
                   </div>
-                  </div>
                 </motion.div>
               )}
             </div>
