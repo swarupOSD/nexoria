@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Settings, Bell, Clock, MoreHorizontal } from 'lucide-react';
+import { Play, Pause, Settings, Bell, Clock, MoreHorizontal, ArrowLeft, Music } from 'lucide-react';
 import { 
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
@@ -154,58 +154,64 @@ const NexoriaMusicHome = () => {
         {/* Dynamic Background Gradient based on time of day (Spotify Mobile style) */}
         <div className="absolute top-0 left-0 right-0 h-[332px] bg-gradient-to-b from-[#1E1B4B] to-[#0F0F23] pointer-events-none z-0 opacity-80" />
       
-      <div className="relative z-10 px-4 pt-20 max-w-[1920px] mx-auto sm:pt-20">
-        
-        {/* Mobile Header: Profile, Title, Icons */}
-        <div className="flex items-center justify-between mb-6 sm:hidden">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/user/dashboard')}
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden flex items-center justify-center font-bold text-white text-sm">
-              {user?.profilePicture ? (
-                <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                user?.name?.[0]?.toUpperCase() || 'U'
-              )}
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight">{greetingText}</h1>
-          </div>
-          <div className="flex items-center gap-5">
-            <button onClick={() => navigate('/notifications')} className="hover:scale-110 transition-transform" title="Notifications">
-              <Bell className="w-[22px] h-[22px] text-white" />
-            </button>
-            <button onClick={() => navigate('/nexoria-music/queue')} className="hover:scale-110 transition-transform" title="Queue / History">
-              <Clock className="w-[22px] h-[22px] text-white" />
-            </button>
-            <button onClick={() => navigate('/nexoria-music/search')} className="hover:scale-110 transition-transform" title="Search">
-              <Settings className="w-[22px] h-[22px] text-white" />
-            </button>
+      {/* 📱 MOBILE EXCLUSIVE: STICKY HEADER */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#0F0F23]/90 backdrop-blur-3xl border-b border-white/5 pt-4 pb-3 px-4 shadow-2xl flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => navigate('/')} 
+            className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all active:scale-95 border border-white/5"
+            title="Back to Dashboard"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 tracking-tight leading-tight">Nexoria Music</h1>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-emerald-500/80">Premium Audio</p>
           </div>
         </div>
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/nexoria-music/queue')} className="active:scale-90 transition-transform" title="Queue / History">
+            <Clock className="w-5 h-5 text-white/80" />
+          </button>
+          <button onClick={() => navigate('/nexoria-music/search')} className="active:scale-90 transition-transform" title="Search">
+            <Settings className="w-5 h-5 text-white/80" />
+          </button>
+        </div>
+      </div>
 
-        {/* Desktop Header Greeting */}
+      <div className="relative z-10 px-3 sm:px-4 pt-2 max-w-[1920px] mx-auto sm:pt-20">
+        
+        {/* 💻 DESKTOP EXCLUSIVE: Header Greeting */}
         <div className="hidden sm:flex items-center gap-4 mb-6">
           <button 
-            onClick={() => navigate('/user/dashboard')}
+            onClick={() => navigate('/')}
             className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors backdrop-blur-md"
-            title="Back to Hub"
+            title="Back to Dashboard"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-[32px] font-bold tracking-tight">{greetingText}</h1>
         </div>
 
+        {/* 📱 MOBILE EXCLUSIVE: Greeting */}
+        <div className="sm:hidden flex items-center gap-3 mb-4 mt-2">
+          <div className="w-10 h-10 rounded-full bg-[#1E1B4B] border border-white/10 overflow-hidden flex items-center justify-center font-bold text-white text-base">
+            {user?.profilePicture ? (
+              <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.[0]?.toUpperCase() || 'U'
+            )}
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">{greetingText}</h1>
+        </div>
+
         {/* Category Chips (All, Music, Podcasts) */}
-        <div className="flex gap-2 mb-6 overflow-x-auto hide-scrollbar pb-1">
+        <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-auto hide-scrollbar pb-1">
           {['All', 'Music', 'Podcasts'].map(chip => (
             <button
               key={chip}
               onClick={() => setActiveChip(chip)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors active:scale-95 ${
                 activeChip === chip 
                   ? 'bg-[#22C55E] text-black' 
                   : 'bg-white/10 text-white hover:bg-white/20'
@@ -217,24 +223,24 @@ const NexoriaMusicHome = () => {
         </div>
         
         {/* 6-Grid (Recently Played) */}
-        <section className="mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+        <section className="mb-6 sm:mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
             {loadingTracks || loadingRecent ? (
-              [1,2,3,4,5,6].map(i => <div key={i} className="h-14 bg-white/10 rounded-md animate-pulse" />)
+              [1,2,3,4,5,6].map(i => <div key={i} className="h-12 sm:h-14 bg-white/10 rounded-md sm:rounded-lg animate-pulse" />)
             ) : (
               topGridTracks.map(track => (
                 <div 
                   key={track._id}
-                  className="bg-white/10 hover:bg-white/20 transition-colors duration-200 rounded-md flex items-center gap-3 group cursor-pointer overflow-hidden relative shadow-sm"
+                  className="bg-white/10 hover:bg-white/20 transition-all duration-200 rounded-md sm:rounded-lg flex items-center gap-2 sm:gap-3 group cursor-pointer overflow-hidden relative shadow-sm active:scale-[0.98] sm:active:scale-100"
                   onClick={() => handlePlay(track, topGridTracks)}
                   onContextMenu={(e) => handleContextMenu(e, track)}
                 >
-                  <div className="h-14 w-14 bg-[#4338CA] shrink-0 shadow-md">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 bg-[#4338CA] shrink-0 shadow-md">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
                   </div>
-                  <span className="font-bold text-xs sm:text-sm line-clamp-2 pr-2 text-white">{track.title}</span>
+                  <span className="font-bold text-[11px] sm:text-sm line-clamp-2 pr-2 text-white leading-tight">{track.title}</span>
                   
                   {/* Play Button Overlay (Spotify Desktop) */}
                   <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-xl hidden sm:flex items-center gap-2">
@@ -256,20 +262,20 @@ const NexoriaMusicHome = () => {
         </section>
 
         {/* Section: Made For You */}
-        <section className="mb-10">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Made For You</h2>
+        <section className="mb-8 sm:mb-10">
+          <h2 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 tracking-tight hover:underline cursor-pointer">Made For You</h2>
           
-          <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
+          <div className="flex overflow-x-auto custom-scrollbar gap-3 sm:gap-4 pb-4 sm:pb-6 -mx-3 px-3 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
             {loadingDiscover || loadingRadar || loadingMix ? (
-              [1,2,3,4,5].map(i => <div key={i} className="w-[140px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
+              [1,2,3,4,5].map(i => <div key={i} className="w-[120px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
             ) : algorithmicPlaylists.length > 0 ? (
               algorithmicPlaylists.map((playlist) => (
                 <div 
                   key={playlist._id}
                   onClick={() => navigate(`/nexoria-music/playlist/${playlist._id}`, { state: { algorithmicPlaylist: playlist } })}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-white/5 hover:bg-white/10 rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                  className="w-[120px] sm:w-[180px] shrink-0 p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-colors duration-300 cursor-pointer group snap-start active:scale-[0.98] sm:active:scale-100"
                 >
-                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md sm:rounded-lg mb-2 sm:mb-3 overflow-hidden shadow-lg relative">
                     {playlist.coverImage && (
                       <img src={playlist.coverImage} alt={playlist.name} className="w-full h-full object-cover" />
                     )}
@@ -286,8 +292,8 @@ const NexoriaMusicHome = () => {
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{playlist.name}</h3>
-                  <p className="text-xs text-white/70 line-clamp-2">{playlist.description}</p>
+                  <h3 className="font-bold text-xs sm:text-base truncate text-white mb-0.5 sm:mb-1">{playlist.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-white/60 sm:text-white/70 line-clamp-2 leading-tight">{playlist.description}</p>
                 </div>
               ))
             ) : (
@@ -296,9 +302,9 @@ const NexoriaMusicHome = () => {
                   key={track._id}
                   onClick={() => handlePlay(track, madeForYouTracks)}
                   onContextMenu={(e) => handleContextMenu(e, track)}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                  className="w-[120px] sm:w-[180px] shrink-0 p-2 sm:p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-lg sm:rounded-xl transition-colors duration-300 cursor-pointer group snap-start active:scale-[0.98] sm:active:scale-100"
                 >
-                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md sm:rounded-lg mb-2 sm:mb-3 overflow-hidden shadow-lg relative">
                     {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                       <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                     )}
@@ -315,8 +321,8 @@ const NexoriaMusicHome = () => {
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{track.title}</h3>
-                  <p className="text-xs sm:text-sm text-white/70 line-clamp-1">{track.artist?.name || 'Unknown Artist'}</p>
+                  <h3 className="font-bold text-xs sm:text-base truncate text-white mb-0.5 sm:mb-1">{track.title}</h3>
+                  <p className="text-[10px] sm:text-sm text-white/60 sm:text-white/70 line-clamp-1">{track.artist?.name || 'Unknown Artist'}</p>
                 </div>
               ))
             )}
@@ -325,17 +331,17 @@ const NexoriaMusicHome = () => {
 
         {/* Section: Featured Playlists (Admin) */}
         {(!loadingPublicPlaylists && publicPlaylistsRes?.data?.length > 0) && (
-          <section className="mb-10">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Featured Playlists</h2>
+          <section className="mb-8 sm:mb-10">
+            <h2 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 tracking-tight hover:underline cursor-pointer">Featured Playlists</h2>
             
-            <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
+            <div className="flex overflow-x-auto custom-scrollbar gap-3 sm:gap-4 pb-4 sm:pb-6 -mx-3 px-3 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
               {publicPlaylistsRes.data.map((playlist) => (
                 <div 
                   key={playlist._id}
                   onClick={() => navigate(`/nexoria-music/playlist/${playlist._id}`)}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-white/5 hover:bg-white/10 rounded-md transition-colors duration-300 cursor-pointer group snap-start"
+                  className="w-[120px] sm:w-[180px] shrink-0 p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-lg sm:rounded-xl transition-colors duration-300 cursor-pointer group snap-start active:scale-[0.98] sm:active:scale-100"
                 >
-                  <div className="w-full aspect-square bg-[#4338CA] rounded-md mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative">
+                  <div className="w-full aspect-square bg-[#4338CA] rounded-md sm:rounded-lg mb-2 sm:mb-3 overflow-hidden shadow-lg relative">
                     {playlist.coverImage && (
                       <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover" />
                     )}
@@ -356,8 +362,8 @@ const NexoriaMusicHome = () => {
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base truncate text-white mb-1">{playlist.title}</h3>
-                  <p className="text-xs text-white/70 line-clamp-2">By Nexoria Music</p>
+                  <h3 className="font-bold text-xs sm:text-base truncate text-white mb-0.5 sm:mb-1">{playlist.title}</h3>
+                  <p className="text-[10px] sm:text-xs text-white/60 sm:text-white/70 line-clamp-2 leading-tight">By Nexoria Music</p>
                 </div>
               ))}
             </div>
@@ -366,19 +372,19 @@ const NexoriaMusicHome = () => {
 
         {/* Section: Popular Artists */}
         <section className="mb-10">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 tracking-tight hover:underline cursor-pointer">Popular Artists</h2>
+          <h2 className="text-lg sm:text-2xl font-bold mb-3 sm:mb-4 tracking-tight hover:underline cursor-pointer">Popular Artists</h2>
           
-          <div className="flex overflow-x-auto custom-scrollbar gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
+          <div className="flex overflow-x-auto custom-scrollbar gap-3 sm:gap-4 pb-4 sm:pb-6 -mx-3 px-3 sm:mx-0 sm:px-0 scroll-smooth snap-x snap-mandatory">
             {loadingArtists ? (
-              [1,2,3,4,5].map(i => <div key={i} className="w-[140px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
+              [1,2,3,4,5].map(i => <div key={i} className="w-[120px] sm:w-[180px] shrink-0 aspect-[3/4] bg-white/5 rounded-md animate-pulse" />)
             ) : (
               artists.map((artist) => (
                 <div 
                   key={artist._id}
                   onClick={() => navigate('/nexoria-music/artist/' + artist._id)}
-                  className="w-[140px] sm:w-[180px] shrink-0 p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-md transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left"
+                  className="w-[120px] sm:w-[180px] shrink-0 p-2 sm:p-3 bg-[#1E1B4B] hover:bg-[#1E1B4B] rounded-lg sm:rounded-xl transition-colors duration-300 cursor-pointer group snap-start flex flex-col items-center sm:items-start text-center sm:text-left active:scale-[0.98] sm:active:scale-100"
                 >
-                  <div className="w-[116px] h-[116px] sm:w-full sm:aspect-square bg-[#4338CA] rounded-full mb-3 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.5)] relative mx-auto shrink-0">
+                  <div className="w-[100px] h-[100px] sm:w-full sm:aspect-square bg-[#4338CA] rounded-full mb-2 sm:mb-3 overflow-hidden shadow-lg relative mx-auto shrink-0">
                     {artist.image && (
                       <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
                     )}
@@ -396,11 +402,11 @@ const NexoriaMusicHome = () => {
                   </div>
                   <h3 
                     onClick={() => navigate('/nexoria-music/artist/' + artist._id)}
-                    className="font-bold text-sm sm:text-base w-full truncate mb-1 text-white hover:underline cursor-pointer"
+                    className="font-bold text-xs sm:text-base w-full truncate mb-0.5 sm:mb-1 text-white hover:underline cursor-pointer"
                   >
                     {artist.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#94A3B8] w-full font-medium">Artist</p>
+                  <p className="text-[10px] sm:text-sm text-white/60 sm:text-[#94A3B8] w-full font-medium">Artist</p>
                 </div>
               ))
             )}
