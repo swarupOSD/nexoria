@@ -14,12 +14,16 @@ const DownloadTimer = () => {
   const bannerRef = useRef(null);
 
   const [step, setStep] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer per step
+  const [timeLeft, setTimeLeft] = useState(0); 
+  const [timerInitialized, setTimerInitialized] = useState(false);
   const [canProceed, setCanProceed] = useState(false);
   const [canDownload, setCanDownload] = useState(false);
   const [trackDownload, { isLoading }] = useTrackDownloadMutation();
   const { user } = useSelector((state) => state.auth);
   const { data: settingsRes } = useGetSettingsQuery();
+
+  const timerSeconds = settingsRes?.data?.ads?.timerSeconds ?? 15;
+  const totalClicks = settingsRes?.data?.ads?.downloadClicks ?? 1;
 
   const shouldShowAds = () => {
     if (!settingsRes?.data?.ads?.enabled) return false;
@@ -28,6 +32,13 @@ const DownloadTimer = () => {
     if (user.role === 'admin' || user.role === 'superadmin' || user.role === 'owner') return false;
     return true;
   };
+
+  useEffect(() => {
+    if (!timerInitialized && settingsRes) {
+      setTimeLeft(timerSeconds);
+      setTimerInitialized(true);
+    }
+  }, [settingsRes, timerInitialized, timerSeconds]);
 
   useEffect(() => {
     if (shouldShowAds() && settingsRes?.data?.ads?.downloadBannerScript && bannerRef.current) {
@@ -51,26 +62,30 @@ const DownloadTimer = () => {
       return;
     }
 
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      if (step === 1) {
-        setCanProceed(true);
+    if (timerInitialized) {
+      if (timeLeft > 0) {
+        const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+        return () => clearTimeout(timer);
       } else {
-        setCanDownload(true);
+        if (step < totalClicks) {
+          setCanProceed(true);
+        } else {
+          setCanDownload(true);
+        }
       }
     }
-  }, [timeLeft, step, state, navigate]);
+  }, [timeLeft, step, state, navigate, timerInitialized, totalClicks]);
 
   const handleNextStep = () => {
-    setStep(2);
-    setTimeLeft(30);
-    setCanProceed(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (step < totalClicks) {
+      setStep(prev => prev + 1);
+      setTimeLeft(timerSeconds);
+      setCanProceed(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    if (shouldShowAds() && settingsRes?.data?.ads?.smartlinkUrl) {
-      window.open(settingsRes.data.ads.smartlinkUrl, '_blank');
+      if (shouldShowAds() && settingsRes?.data?.ads?.smartlinkUrl) {
+        window.open(settingsRes.data.ads.smartlinkUrl, '_blank');
+      }
     }
   };
 
@@ -151,14 +166,14 @@ const DownloadTimer = () => {
         </div>
         
         <h1 className="text-3xl font-black mb-2 dark:text-white">
-          {step === 1 ? 'Generating Link...' : 'Almost Done!'}
+          {step < totalClicks ? `Step ${step} of ${totalClicks}` : 'Almost Done!'}
         </h1>
         <p className="text-slate-500 mb-8 font-medium">
-          {step === 1 ? 'Please wait while we securely generate your download link.' : 'Final step before your download begins.'}
+          {step < totalClicks ? 'Please wait while we securely generate your download link.' : 'Final step before your download begins.'}
         </p>
 
         {/* Progress Circle */}
-        {((step === 1 && !canProceed) || (step === 2 && !canDownload)) ? (
+        {((step < totalClicks && !canProceed) || (step === totalClicks && !canDownload)) ? (
           <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="45" className="fill-none stroke-slate-200 dark:stroke-slate-800" strokeWidth="8" />
@@ -167,7 +182,7 @@ const DownloadTimer = () => {
                 className="fill-none stroke-primary transition-all duration-1000 ease-linear" 
                 strokeWidth="8" 
                 strokeDasharray="283" 
-                strokeDashoffset={283 - (283 * ((30 - timeLeft) / 30))}
+                strokeDashoffset={283 - (283 * ((timerSeconds - timeLeft) / timerSeconds))}
                 strokeLinecap="round" 
               />
             </svg>
@@ -178,12 +193,12 @@ const DownloadTimer = () => {
           </div>
         ) : (
           <div className="mb-8 animate-bounce">
-            {step === 1 && canProceed ? (
+            {step < totalClicks && canProceed ? (
               <button 
                 onClick={handleNextStep}
                 className="w-full py-4 px-8 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-xl shadow-blue-500/30 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95"
               >
-                Continue to Download <ArrowRight className="w-6 h-6" />
+                Continue to Next Step <ArrowRight className="w-6 h-6" />
               </button>
             ) : (
               <button 
