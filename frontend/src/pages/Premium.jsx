@@ -77,6 +77,18 @@ const Premium = () => {
     <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-20 overflow-hidden relative selection:bg-blue-500/30">
       <SEO title="Premium - Elevate Your Experience" />
       
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#030303]/90 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14">
+        <button 
+          onClick={() => navigate(-1)}
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowRight className="w-6 h-6 rotate-180" />
+        </button>
+        <span className="flex-1 text-center font-bold text-white text-sm tracking-widest uppercase">Premium</span>
+        <div className="w-8" />
+      </div>
+
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[150px]"></div>
@@ -94,9 +106,9 @@ const Premium = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="container mx-auto px-4 pt-24 pb-16 text-center max-w-5xl relative z-10"
+        className="container mx-auto px-4 pt-8 pb-10 md:pt-24 md:pb-16 text-center max-w-5xl relative z-10"
       >
-        <div className="absolute top-8 left-4 md:left-8">
+        <div className="hidden sm:block absolute top-8 left-4 md:left-8">
           <BackButton fallbackRoute="/" />
         </div>
         <motion.div 
@@ -161,7 +173,7 @@ const Premium = () => {
               key={idx}
               variants={itemVariants}
               whileHover={{ y: -10, scale: 1.02 }}
-              className={`bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 transition-all duration-300 relative overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] ${item.border}`}
+              className={`bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 transition-all duration-300 relative overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.5)] active:scale-[0.98] ${item.border}`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className={`w-16 h-16 rounded-2xl ${item.bg} flex items-center justify-center mb-6 shadow-inner relative z-10`}>
@@ -198,7 +210,7 @@ const Premium = () => {
                   key={plan._id} 
                   variants={itemVariants}
                   whileHover={{ y: -15 }}
-                  className={`relative bg-[#0F0F0F] rounded-3xl p-1 flex flex-col transition-all duration-300 ${isPopular ? 'scale-105 md:scale-110 z-20 shadow-[0_0_50px_rgba(168,85,247,0.2)]' : 'border border-white/10 hover:border-purple-500/50'}`}
+                  className={`relative bg-[#0F0F0F] rounded-3xl p-1 flex flex-col transition-all duration-300 active:scale-[0.98] ${isPopular ? 'scale-105 md:scale-110 z-20 shadow-[0_0_50px_rgba(168,85,247,0.2)]' : 'border border-white/10 hover:border-purple-500/50'}`}
                 >
                   {isPopular && (
                     <div className="absolute inset-0 bg-gradient-to-b from-purple-500 to-orange-500 rounded-3xl -z-10 blur-sm opacity-50"></div>
