@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGetRequestsQuery, useCreateRequestMutation, useToggleUpvoteMutation } from '../features/api/requestApiSlice';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { Heart, Plus, X, Loader2, Film, Gamepad2, Smartphone, Wrench, CheckCircle, AlertCircle, Tv } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart, Plus, X, Loader2, Film, Gamepad2, Smartphone, Wrench, CheckCircle, AlertCircle, Tv, ArrowLeft, Send } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 
 const FeatureRequests = () => {
@@ -14,6 +14,7 @@ const FeatureRequests = () => {
   const [sort, setSort] = useState('popular');
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Form State
   const [title, setTitle] = useState('');
@@ -62,25 +63,25 @@ const FeatureRequests = () => {
 
   const getTypeIcon = (reqType) => {
     switch (reqType) {
-      case 'Movie': return <Film className="w-5 h-5 text-blue-500" />;
-      case 'Web Series': return <Tv className="w-5 h-5 text-purple-500" />;
-      case 'Game': return <Gamepad2 className="w-5 h-5 text-green-500" />;
-      case 'App': return <Smartphone className="w-5 h-5 text-amber-500" />;
-      default: return <Wrench className="w-5 h-5 text-slate-500" />;
+      case 'Movie': return <Film className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />;
+      case 'Web Series': return <Tv className="w-4 h-4 md:w-5 md:h-5 text-purple-500" />;
+      case 'Game': return <Gamepad2 className="w-4 h-4 md:w-5 md:h-5 text-green-500" />;
+      case 'App': return <Smartphone className="w-4 h-4 md:w-5 md:h-5 text-amber-500" />;
+      default: return <Wrench className="w-4 h-4 md:w-5 md:h-5 text-slate-500" />;
     }
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'Completed': return <span className="px-2 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1"><CheckCircle className="w-3 h-3"/> Completed</span>;
-      case 'In Progress': return <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin"/> Working</span>;
-      case 'Rejected': return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-500/10 text-red-500 border border-red-500/20 flex items-center gap-1"><X className="w-3 h-3"/> Rejected</span>;
-      default: return <span className="px-2 py-1 text-xs font-medium rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Pending</span>;
+      case 'Completed': return <span className="px-2 py-0.5 md:py-1 text-[9px] md:text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1 w-fit"><CheckCircle className="w-2.5 h-2.5 md:w-3 md:h-3"/> Completed</span>;
+      case 'In Progress': return <span className="px-2 py-0.5 md:py-1 text-[9px] md:text-xs font-medium rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center gap-1 w-fit"><Loader2 className="w-2.5 h-2.5 md:w-3 md:h-3 animate-spin"/> Working</span>;
+      case 'Rejected': return <span className="px-2 py-0.5 md:py-1 text-[9px] md:text-xs font-medium rounded-full bg-red-500/10 text-red-500 border border-red-500/20 flex items-center gap-1 w-fit"><X className="w-2.5 h-2.5 md:w-3 md:h-3"/> Rejected</span>;
+      default: return <span className="px-2 py-0.5 md:py-1 text-[9px] md:text-xs font-medium rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1 w-fit"><AlertCircle className="w-2.5 h-2.5 md:w-3 md:h-3"/> Pending</span>;
     }
   };
 
   return (
-    <div className="font-jakarta min-h-screen bg-[#030303] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 relative overflow-hidden selection:bg-blue-500/30">
+    <div className="font-jakarta min-h-screen bg-[#030303] text-white md:pt-24 pb-20 md:pb-12 px-0 md:px-4 sm:px-6 lg:px-8 transition-colors duration-500 relative overflow-hidden selection:bg-blue-500/30">
       
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -88,19 +89,38 @@ const FeatureRequests = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[150px]"></div>
         
         {/* Animated Rings for visual interest */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] aspect-square flex items-center justify-center opacity-20">
+        <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] aspect-square items-center justify-center opacity-20">
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} className="absolute w-[100%] h-[100%] rounded-full border border-white/[0.03]" />
           <motion.div animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="absolute w-[80%] h-[80%] rounded-full border border-white/[0.05]" />
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      {/* 📱 MOBILE EXCLUSIVE: STICKY HEADER */}
+      <div className="md:hidden sticky top-0 z-50 bg-[#030303]/90 backdrop-blur-3xl border-b border-white/5 pt-4 pb-3 px-4 shadow-2xl flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all active:scale-95 border border-white/5">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight leading-tight">Requests</h1>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-purple-400/80">Community Needs</p>
+          </div>
+        </div>
+        <button 
+          onClick={() => user ? setIsModalOpen(true) : toast.info('Please log in to submit a request')}
+          className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 active:scale-95 transition-transform"
+        >
+          <Plus className="w-5 h-5 text-blue-400" />
+        </button>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10 px-3 md:px-0">
         
-        {/* Header Section */}
-        <div className="mb-6">
+        {/* 💻 DESKTOP EXCLUSIVE: Header Section */}
+        <div className="hidden md:block mb-6">
           <BackButton fallbackRoute="/" />
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative group bg-white/5 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        <div className="hidden md:flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative group bg-white/5 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden">
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-600/20 blur-2xl rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
           <div className="relative z-10">
             <motion.h1 
@@ -133,24 +153,24 @@ const FeatureRequests = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-8 p-4 bg-white/5 rounded-[2rem] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-3xl">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white/50 tracking-wide uppercase">Sort:</span>
+        <div className="flex flex-row md:flex-wrap overflow-x-auto md:overflow-visible gap-2 md:gap-4 mb-6 md:mb-8 md:p-4 bg-transparent md:bg-white/5 rounded-none md:rounded-[2rem] border-none md:border border-white/10 md:shadow-[0_10px_30px_rgba(0,0,0,0.5)] md:backdrop-blur-3xl scrollbar-hide snap-x">
+          <div className="flex items-center gap-1 md:gap-2 shrink-0 snap-start bg-white/5 md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-none">
+            <span className="text-[10px] md:text-sm font-bold text-white/50 tracking-wide uppercase">Sort:</span>
             <select 
               value={sort} 
               onChange={(e) => setSort(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-xl py-2 px-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/50 focus:outline-none text-white appearance-none"
+              className="bg-transparent md:bg-black/40 border-none md:border border-white/10 rounded-none md:rounded-xl md:py-2 px-1 md:px-4 text-[11px] md:text-sm font-bold focus:outline-none text-white appearance-none"
             >
               <option className="bg-[#111]" value="popular">Most Upvoted</option>
               <option className="bg-[#111]" value="newest">Newest First</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white/50 tracking-wide uppercase">Type:</span>
+          <div className="flex items-center gap-1 md:gap-2 shrink-0 snap-start bg-white/5 md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-none">
+            <span className="text-[10px] md:text-sm font-bold text-white/50 tracking-wide uppercase">Type:</span>
             <select 
               value={filterType} 
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-xl py-2 px-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/50 focus:outline-none text-white appearance-none"
+              className="bg-transparent md:bg-black/40 border-none md:border border-white/10 rounded-none md:rounded-xl md:py-2 px-1 md:px-4 text-[11px] md:text-sm font-bold focus:outline-none text-white appearance-none"
             >
               <option className="bg-[#111]" value="All">All Types</option>
               <option className="bg-[#111]" value="Movie">Movies</option>
@@ -159,17 +179,17 @@ const FeatureRequests = () => {
               <option className="bg-[#111]" value="App">Apps</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white/50 tracking-wide uppercase">Status:</span>
+          <div className="flex items-center gap-1 md:gap-2 shrink-0 snap-start bg-white/5 md:bg-transparent px-3 py-2 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-none">
+            <span className="text-[10px] md:text-sm font-bold text-white/50 tracking-wide uppercase">Status:</span>
             <select 
               value={filterStatus} 
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="bg-slate-100 dark:bg-slate-900 border-none rounded-lg py-2 px-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500"
+              className="bg-transparent md:bg-black/40 border-none md:border border-white/10 rounded-none md:rounded-xl md:py-2 px-1 md:px-4 text-[11px] md:text-sm font-bold focus:outline-none text-white appearance-none"
             >
-              <option value="All">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
+              <option className="bg-[#111]" value="All">All Statuses</option>
+              <option className="bg-[#111]" value="Pending">Pending</option>
+              <option className="bg-[#111]" value="In Progress">In Progress</option>
+              <option className="bg-[#111]" value="Completed">Completed</option>
             </select>
           </div>
         </div>
@@ -177,18 +197,18 @@ const FeatureRequests = () => {
         {/* Requests Grid */}
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin w-10 h-10 text-blue-500" />
+            <Loader2 className="animate-spin w-8 h-8 md:w-10 md:h-10 text-blue-500" />
           </div>
         ) : data?.data?.length === 0 ? (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 border-dashed">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 mb-4 shadow-inner">
-              <Film className="w-8 h-8 text-white/40" />
+          <div className="text-center py-16 md:py-20 bg-white/5 backdrop-blur-2xl rounded-2xl md:rounded-[2.5rem] border border-white/10 border-dashed">
+            <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/5 mb-3 md:mb-4 shadow-inner">
+              <Film className="w-6 h-6 md:w-8 md:h-8 text-white/40" />
             </div>
-            <h3 className="text-2xl font-black mb-2 tracking-tight text-white">No Requests Found</h3>
-            <p className="text-white/50 font-medium">Be the first to request something in this category!</p>
+            <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight text-white">No Requests Found</h3>
+            <p className="text-xs md:text-base text-white/50 font-medium">Be the first to request something in this category!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             <AnimatePresence>
               {data?.data?.map((req, index) => {
                 const isUpvoted = user && req.upvotedBy.includes(user._id);
@@ -199,52 +219,52 @@ const FeatureRequests = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: index * 0.05 }}
-                    className="relative group bg-white/5 backdrop-blur-2xl rounded-[2rem] p-6 border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+                    className="relative group bg-white/5 backdrop-blur-2xl rounded-2xl md:rounded-[2rem] p-4 md:p-6 border border-white/10 shadow-[0_5px_15px_rgba(0,0,0,0.2)] md:shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 bg-white/5 rounded-xl border border-white/5 shadow-inner group-hover:scale-110 transition-transform">
+                    <div className="flex justify-between items-start mb-3 md:mb-4">
+                      <div className="flex items-center gap-2.5 md:gap-3">
+                        <div className="p-2 md:p-3 bg-white/5 rounded-xl border border-white/5 shadow-inner md:group-hover:scale-110 transition-transform">
                           {getTypeIcon(req.type)}
                         </div>
-                        <div>
-                          <span className="text-xs font-bold text-white/50 uppercase tracking-wider block mb-1">{req.type}</span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] md:text-xs font-bold text-white/50 uppercase tracking-wider">{req.type}</span>
                           {getStatusBadge(req.status)}
                         </div>
                       </div>
                       <button 
                         onClick={() => handleUpvote(req._id)}
                         disabled={isUpvoting}
-                        className={`flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all shadow-inner ${
+                        className={`flex flex-col items-center justify-center w-10 h-12 md:w-12 md:h-14 rounded-xl transition-all shadow-inner active:scale-90 ${
                           isUpvoted 
                             ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' 
                             : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        {isUpvoted ? <Heart className="w-5 h-5 mb-1 fill-current" /> : <Heart className="w-5 h-5 mb-1" />}
-                        <span className="text-xs font-black">{req.upvotes}</span>
+                        {isUpvoted ? <Heart className="w-4 h-4 md:w-5 md:h-5 mb-0.5 md:mb-1 fill-current" /> : <Heart className="w-4 h-4 md:w-5 md:h-5 mb-0.5 md:mb-1" />}
+                        <span className="text-[10px] md:text-xs font-black">{req.upvotes}</span>
                       </button>
                     </div>
 
-                    <h3 className="text-xl font-black mb-2 line-clamp-1 tracking-tight text-white group-hover:text-blue-400 transition-colors">{req.title}</h3>
-                    <p className="text-[15px] text-white/60 font-medium mb-4 line-clamp-3 min-h-[60px] leading-relaxed">
+                    <h3 className="text-base md:text-xl font-black mb-1.5 md:mb-2 line-clamp-1 tracking-tight text-white group-hover:text-blue-400 transition-colors">{req.title}</h3>
+                    <p className="text-[13px] md:text-[15px] text-white/60 font-medium mb-3 md:mb-4 line-clamp-3 min-h-[50px] md:min-h-[60px] leading-relaxed">
                       {req.description}
                     </p>
 
                     {req.adminResponse && (
-                      <div className="mb-4 p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl backdrop-blur-md">
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-wider block mb-1">Admin Response:</span>
-                        <p className="text-sm font-medium text-white/90">{req.adminResponse}</p>
+                      <div className="mb-3 md:mb-4 p-3 md:p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl backdrop-blur-md">
+                        <span className="text-[9px] md:text-[10px] font-black text-blue-400 uppercase tracking-wider block mb-1">Admin Response:</span>
+                        <p className="text-xs md:text-sm font-medium text-white/90">{req.adminResponse}</p>
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 mt-auto pt-4 border-t border-white/10">
+                    <div className="flex items-center gap-2 mt-auto pt-3 md:pt-4 border-t border-white/10">
                       <img 
                         src={req.user?.profileImage || '/default-avatar.png'} 
                         alt={req.user?.name} 
-                        className="w-7 h-7 rounded-full border border-white/20"
+                        className="w-5 h-5 md:w-7 md:h-7 rounded-full border border-white/20"
                       />
-                      <span className="text-xs font-bold text-white/50">
-                        Requested by {req.user?.name}
+                      <span className="text-[10px] md:text-xs font-bold text-white/50">
+                        Requested by <span className="text-white/70">{req.user?.name}</span>
                       </span>
                     </div>
                   </motion.div>
@@ -256,19 +276,19 @@ const FeatureRequests = () => {
 
         {/* Pagination (Simple) */}
         {data?.totalPages > 1 && (
-          <div className="flex justify-center mt-12 gap-3 items-center">
+          <div className="flex justify-center mt-8 md:mt-12 gap-2 md:gap-3 items-center">
             <button 
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 disabled:opacity-50 font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-md shadow-inner"
+              className="px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-white/5 border border-white/10 disabled:opacity-50 font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-md shadow-inner text-xs md:text-base active:scale-95"
             >
-              Previous
+              Prev
             </button>
-            <span className="px-4 py-2 font-black text-white/50 tracking-wide">Page {page} of {data.totalPages}</span>
+            <span className="px-2 md:px-4 py-2 font-black text-[11px] md:text-base text-white/50 tracking-wide">Page {page} of {data.totalPages}</span>
             <button 
               onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
               disabled={page === data.totalPages}
-              className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 disabled:opacity-50 font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-md shadow-inner"
+              className="px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-white/5 border border-white/10 disabled:opacity-50 font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-md shadow-inner text-xs md:text-base active:scale-95"
             >
               Next
             </button>
@@ -292,26 +312,26 @@ const FeatureRequests = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-black/80 backdrop-blur-3xl rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden border border-white/10"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-full max-w-lg bg-black/80 backdrop-blur-3xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden border border-white/10"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
-              <div className="p-8 relative z-10">
-                <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-3xl font-black text-white tracking-tight">New Request</h2>
+              <div className="p-5 md:p-8 relative z-10">
+                <div className="flex justify-between items-center mb-6 md:mb-8">
+                  <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">New Request</h2>
                   <button 
                     onClick={() => setIsModalOpen(false)}
-                    className="p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors"
+                    className="p-2 md:p-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors active:scale-90"
                   >
-                    <X className="w-5 h-5 text-white/70" />
+                    <X className="w-4 h-4 md:w-5 md:h-5 text-white/70" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                   <div className="relative group">
                     <select 
                       value={type}
                       onChange={(e) => setType(e.target.value)}
-                      className="peer w-full h-14 bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-2xl px-4 pt-4 pb-1 text-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-base shadow-inner appearance-none"
+                      className="peer w-full h-12 md:h-14 bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-xl md:rounded-2xl px-3 md:px-4 pt-4 pb-1 text-white focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-sm md:text-base shadow-inner appearance-none"
                     >
                       <option className="bg-[#111]" value="Movie">Movie</option>
                       <option className="bg-[#111]" value="Web Series">Web Series</option>
@@ -319,7 +339,7 @@ const FeatureRequests = () => {
                       <option className="bg-[#111]" value="App">App</option>
                       <option className="bg-[#111]" value="Other">Other</option>
                     </select>
-                    <label className="absolute left-4 top-[6px] text-blue-400 text-[11px] font-bold uppercase tracking-wider">
+                    <label className="absolute left-3 md:left-4 top-[4px] md:top-[6px] text-blue-400 text-[9px] md:text-[11px] font-bold uppercase tracking-wider">
                       Category
                     </label>
                   </div>
@@ -330,10 +350,10 @@ const FeatureRequests = () => {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Name / Title"
-                      className="peer w-full h-14 bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-2xl px-4 pt-4 pb-1 text-white placeholder-transparent focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-base shadow-inner"
+                      className="peer w-full h-12 md:h-14 bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-xl md:rounded-2xl px-3 md:px-4 pt-4 pb-1 text-white placeholder-transparent focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-sm md:text-base shadow-inner"
                       required
                     />
-                    <label className="absolute left-4 top-[18px] text-white/40 text-base transition-all pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-[16px] peer-focus:top-[6px] peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-blue-400 peer-[&:not(:placeholder-shown)]:top-[6px] peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold uppercase tracking-wider">
+                    <label className="absolute left-3 md:left-4 top-[14px] md:top-[18px] text-white/40 text-sm md:text-base transition-all pointer-events-none peer-placeholder-shown:text-sm md:peer-placeholder-shown:text-base peer-placeholder-shown:top-[14px] md:peer-placeholder-shown:top-[16px] peer-focus:top-[4px] md:peer-focus:top-[6px] peer-focus:text-[9px] md:peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-blue-400 peer-[&:not(:placeholder-shown)]:top-[4px] md:peer-[&:not(:placeholder-shown)]:top-[6px] peer-[&:not(:placeholder-shown)]:text-[9px] md:peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold uppercase tracking-wider">
                       Name / Title
                     </label>
                   </div>
@@ -343,10 +363,10 @@ const FeatureRequests = () => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Details (Optional context)"
-                      className="peer w-full bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-2xl px-4 pt-6 pb-4 text-white placeholder-transparent focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-base shadow-inner resize-none h-32"
+                      className="peer w-full bg-black/40 border border-white/10 focus:border-blue-500/50 rounded-xl md:rounded-2xl px-3 md:px-4 pt-5 md:pt-6 pb-3 md:pb-4 text-white placeholder-transparent focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-sm md:text-base shadow-inner resize-none h-24 md:h-32"
                       required
                     ></textarea>
-                    <label className="absolute left-4 top-[18px] text-white/40 text-base transition-all pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-[20px] peer-focus:top-[8px] peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-blue-400 peer-[&:not(:placeholder-shown)]:top-[8px] peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold uppercase tracking-wider">
+                    <label className="absolute left-3 md:left-4 top-[14px] md:top-[18px] text-white/40 text-sm md:text-base transition-all pointer-events-none peer-placeholder-shown:text-sm md:peer-placeholder-shown:text-base peer-placeholder-shown:top-[14px] md:peer-placeholder-shown:top-[20px] peer-focus:top-[6px] md:peer-focus:top-[8px] peer-focus:text-[9px] md:peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-blue-400 peer-[&:not(:placeholder-shown)]:top-[6px] md:peer-[&:not(:placeholder-shown)]:top-[8px] peer-[&:not(:placeholder-shown)]:text-[9px] md:peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold uppercase tracking-wider">
                       Details (Optional context)
                     </label>
                   </div>
@@ -354,11 +374,11 @@ const FeatureRequests = () => {
                   <button 
                     type="submit"
                     disabled={isCreating || !title || !description}
-                    className="group relative w-full h-14 mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-2xl font-black text-[15px] transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_10px_20px_rgba(59,130,246,0.3)] hover:shadow-[0_15px_30px_rgba(59,130,246,0.5)] active:scale-[0.98]"
+                    className="group relative w-full h-12 md:h-14 mt-2 md:mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl md:rounded-2xl font-black text-sm md:text-[15px] transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_5px_15px_rgba(59,130,246,0.2)] md:shadow-[0_10px_20px_rgba(59,130,246,0.3)] hover:shadow-[0_15px_30px_rgba(59,130,246,0.5)] active:scale-[0.98]"
                   >
                     <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-                    <div className="relative z-10 flex items-center justify-center gap-2 text-lg">
-                      {isCreating ? <Loader2 className="animate-spin w-5 h-5" /> : 'Submit Request'}
+                    <div className="relative z-10 flex items-center justify-center gap-2 text-base md:text-lg">
+                      {isCreating ? <Loader2 className="animate-spin w-4 h-4 md:w-5 md:h-5" /> : <><Send className="w-4 h-4" /> Submit Request</>}
                     </div>
                   </button>
                 </form>
@@ -367,7 +387,16 @@ const FeatureRequests = () => {
           </>
         )}
       </AnimatePresence>
-
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+      `}} />
     </div>
   );
 };
