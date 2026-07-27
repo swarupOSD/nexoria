@@ -84,11 +84,23 @@ const NexoriaMusicArtist = () => {
 
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
-      {/* Header Banner */}
-      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-16 md:pt-6 relative z-0">
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#0F0F23]/80 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14">
         <button 
           onClick={() => navigate(-1)}
-          className="absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full flex items-center justify-center transition-colors z-20"
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="flex-1 text-center font-bold text-white text-sm truncate px-2">{artist.name}</span>
+        <div className="w-8" /> {/* Spacer for centering */}
+      </div>
+
+      {/* Header Banner */}
+      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-6 sm:pt-16 relative z-0">
+        <button 
+          onClick={() => navigate(-1)}
+          className="hidden sm:flex absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full items-center justify-center transition-colors z-20"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
@@ -147,7 +159,7 @@ const NexoriaMusicArtist = () => {
             {popularTracks.map((track, idx) => (
               <div 
                 key={track._id} 
-                className="grid grid-cols-[32px_1fr_80px] md:grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium"
+                className="grid grid-cols-[32px_1fr_80px] md:grid-cols-[32px_minmax(120px,_4fr)_minmax(120px,_1fr)] gap-4 px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer text-sm font-medium active:scale-[0.98] transition-transform"
                 onClick={() => handlePlay(track, popularTracks)}
               >
                 <div className="text-[#94A3B8] text-right group-hover:hidden">{idx + 1}</div>

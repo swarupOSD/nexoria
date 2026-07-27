@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search as SearchIcon, Play, Pause, Heart, X } from 'lucide-react';
+import { Search as SearchIcon, Play, Pause, Heart, X, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { BACKEND_URL } from '../../features/api/apiSlice';
@@ -72,7 +72,19 @@ const NexoriaMusicSearch = () => {
 
   return (
     <div className="min-h-full bg-[#0F0F23] text-white">
-      <div className="px-4 sm:px-6 pt-20 pb-8 max-w-[1920px] mx-auto">
+      {/* Mobile Sticky Header */}
+      <div className="sm:hidden sticky top-0 z-50 bg-[#0F0F23]/95 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14">
+        <button 
+          onClick={() => window.history.back()}
+          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="flex-1 text-center font-bold text-white text-sm truncate px-2">Search</span>
+        <div className="w-8" /> {/* Spacer for centering */}
+      </div>
+
+      <div className="px-4 sm:px-6 pt-6 sm:pt-20 pb-8 max-w-[1920px] mx-auto">
         
         {/* Search Bar */}
         <div className="relative max-w-lg mb-8">

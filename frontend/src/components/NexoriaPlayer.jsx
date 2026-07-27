@@ -587,55 +587,18 @@ const NexoriaPlayer = () => {
                 >
                   {/* Top Header */}
                   <div className="flex items-center justify-between py-4">
-                    <button onClick={() => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none')} className="p-2 sm:p-2.5 rounded-full hover:bg-white/10 transition-colors text-white relative">
-                      {repeatMode === 'one' ? <Repeat1 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" /> : repeatMode === 'all' ? <Repeat className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" /> : <Repeat className="w-4 h-4 sm:w-5 sm:h-5 text-white/50" />}
-                      {repeatMode === 'all' && <InfinityIcon className="w-2 h-2 absolute top-1 right-1 text-purple-400" />}
-                    </button>
-                    <button onClick={() => setIsExpanded(false)} className="p-2 text-white/70 hover:text-white">
-                      <ChevronDown className="w-6 h-6" />
+                    <button onClick={() => setIsExpanded(false)} className="p-2 text-white/70 hover:text-white active:scale-90 transition-transform">
+                      <ChevronDown className="w-7 h-7" />
                     </button>
                     <span className="text-xs uppercase tracking-widest font-semibold text-white/70">
                       {currentTrack.album?.title || 'Playing from Library'}
                     </span>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => {
-                          setIsExpanded(false);
-                          navigate(`/nexoria-music/lyrics/${currentTrack._id}`);
-                        }}
-                        className={`p-2 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
-                      >
-                        <Mic2 className="w-5 h-5" />
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setIsExpanded(false);
-                          navigate(`/nexoria-music/queue`);
-                        }}
-                        className={`p-2 transition-colors ${location.pathname.includes('/queue') ? 'text-green-500' : 'text-white/70 hover:text-white'}`}
-                      >
-                        <ListMusic className="w-5 h-5" />
-                      </button>
-                      <button 
-                        onClick={() => setSleepTimerModalOpen(true)}
-                        className={`p-2 transition-colors ${sleepTimer ? 'text-indigo-400' : 'text-white/70 hover:text-white'}`}
-                        title="Sleep Timer"
-                      >
-                        <Moon className="w-5 h-5" />
-                      </button>
-                      <button 
-                        onClick={() => setEqModalOpen(true)}
-                        className="p-2 text-white/70 hover:text-white transition-colors"
-                      >
-                        <Sliders className="w-5 h-5" />
-                      </button>
-                      <button 
-                        onClick={handleMoreClick}
-                        className="p-2 text-white/70 hover:text-white relative"
-                      >
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
-                    </div>
+                    <button 
+                      onClick={handleMoreClick}
+                      className="p-2 text-white/70 hover:text-white relative active:scale-90 transition-transform"
+                    >
+                      <MoreVertical className="w-6 h-6" />
+                    </button>
                   </div>
 
                   {/* Audio Visualizer Background */}
@@ -709,8 +672,8 @@ const NexoriaPlayer = () => {
                   </div>
 
                   {/* Main Controls */}
-                  <div className="flex items-center justify-between mb-10 px-2">
-                    <button onClick={() => dispatch(toggleShuffle())} className={`p-2 ${shuffleMode ? 'text-green-500' : 'text-white/70'}`}>
+                  <div className="flex items-center justify-between mb-8 px-2">
+                    <button onClick={() => dispatch(toggleShuffle())} className={`p-2 active:scale-90 transition-transform ${shuffleMode ? 'text-green-500' : 'text-white/70'}`}>
                       <Shuffle className="w-6 h-6" />
                     </button>
                     {currentTrack.trackType === 'podcast' ? (
@@ -728,7 +691,7 @@ const NexoriaPlayer = () => {
                         if (!isPlaying && audioRef.current) audioRef.current.play().catch(err => console.log(err));
                         dispatch(togglePlayPause());
                       }}
-                      className="w-[72px] h-[72px] bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shrink-0"
+                      className="w-[72px] h-[72px] bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shrink-0 shadow-[0_10px_30px_rgba(255,255,255,0.3)]"
                     >
                       {isPlaying ? <Pause className="w-9 h-9 fill-current" /> : <Play className="w-9 h-9 fill-current ml-1" />}
                     </button>
@@ -742,12 +705,51 @@ const NexoriaPlayer = () => {
                         <SkipForward className="w-10 h-10 fill-current" />
                       </button>
                     )}
-                    <button onClick={() => dispatch(toggleRepeat())} className={`p-2 ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
+                    <button onClick={() => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none')} className={`p-2 active:scale-90 transition-transform relative ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
                       {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
+                      {repeatMode === 'all' && <InfinityIcon className="w-2 h-2 absolute top-1.5 right-1.5 text-green-500" />}
                     </button>
-                    <button onClick={() => dispatch(toggleAutoplay())} className={`p-2 hidden md:block ${autoplayEnabled ? 'text-green-500' : 'text-white/70'}`} title="Autoplay">
-                      <InfinityIcon className="w-6 h-6" />
-                    </button>
+                  </div>
+
+                  {/* Bottom Extra Tools Toolbar (Spotify Style) */}
+                  <div className="flex items-center justify-between px-4 mt-auto mb-2">
+                     <button 
+                      onClick={() => setShareModalData({ isOpen: true, track: currentTrack })}
+                      className="p-3 text-white/60 hover:text-white active:scale-90 transition-transform"
+                     >
+                       <Share2 className="w-5 h-5" />
+                     </button>
+                     <button 
+                        onClick={() => {
+                          setIsExpanded(false);
+                          navigate(`/nexoria-music/lyrics/${currentTrack._id}`);
+                        }}
+                        className={`p-3 active:scale-90 transition-all ${location.pathname.includes('/lyrics/') ? 'text-green-500 font-bold' : 'text-white/60 hover:text-white'}`}
+                      >
+                        <Mic2 className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setIsExpanded(false);
+                          navigate(`/nexoria-music/queue`);
+                        }}
+                        className={`p-3 active:scale-90 transition-all ${location.pathname.includes('/queue') ? 'text-green-500 font-bold' : 'text-white/60 hover:text-white'}`}
+                      >
+                        <ListMusic className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => setEqModalOpen(true)}
+                        className="p-3 text-white/60 hover:text-white active:scale-90 transition-transform"
+                      >
+                        <Sliders className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => setSleepTimerModalOpen(true)}
+                        className={`p-3 active:scale-90 transition-transform ${sleepTimer ? 'text-green-500' : 'text-white/60 hover:text-white'}`}
+                      >
+                        <Moon className="w-5 h-5" />
+                      </button>
+                  </div>
                   </div>
                 </motion.div>
               )}
