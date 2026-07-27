@@ -29,6 +29,16 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
       query: () => '/analytics/adblock',
       providesTags: ['Analytics'],
     }),
+    // NEW: Music Analytics
+    getMusicAnalytics: builder.query({
+      query: (days = 7) => `/analytics/music?days=${days}`,
+      providesTags: ['Analytics'],
+    }),
+    // NEW: Private Chat Analytics
+    getPrivateChatAnalytics: builder.query({
+      query: (days = 7) => `/analytics/private-chat?days=${days}`,
+      providesTags: ['Analytics'],
+    }),
   }),
 });
 
@@ -39,4 +49,6 @@ export const {
   useGetModuleAnalyticsQuery,
   useTrackAdblockMutation,
   useGetAdblockAnalyticsQuery,
+  useGetMusicAnalyticsQuery,
+  useGetPrivateChatAnalyticsQuery,
 } = analyticsApiSlice;

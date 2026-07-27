@@ -10,7 +10,7 @@ const requestSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['Movie', 'Web Series', 'Game', 'App', 'Other'],
+      enum: ['Movie', 'Web Series', 'Game', 'App', 'Song', 'Other'],
       required: [true, 'Please specify the type of request'],
     },
     description: {

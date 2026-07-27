@@ -21,6 +21,7 @@ import RewardsTab from '../components/DashboardTabs/RewardsTab';
 import MusicAnalyticsTab from '../components/DashboardTabs/MusicAnalyticsTab';
 import AppDownloadTab from '../components/DashboardTabs/AppDownloadTab';
 import EarnTab from '../components/DashboardTabs/EarnTab';
+import SupportTicketTab from '../components/DashboardTabs/SupportTicketTab';
 import { useNavigate } from 'react-router-dom';
 
 const TABS = [
@@ -32,6 +33,7 @@ const TABS = [
   { id: 'downloads', label: 'Downloads', icon: Download },
   { id: 'earn', label: 'Earn Points', icon: Coins },
   { id: 'requests', label: 'App Requests', icon: HelpCircle },
+  { id: 'support', label: 'Support Tickets', icon: HelpCircle },
   { id: 'rewards', label: 'Rewards & Levels', icon: Gift },
   { id: 'app-download', label: 'Nexoria App', icon: Smartphone },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -93,6 +95,8 @@ const UserDashboard = () => {
         return <RewardsTab user={user} />;
       case 'app-download':
         return <AppDownloadTab />;
+      case 'support':
+        return <SupportTicketTab />;
       case 'settings':
         return <SettingsTab user={user} />;
       default:

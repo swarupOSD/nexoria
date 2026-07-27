@@ -3,8 +3,9 @@ import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-d
 import { 
   LayoutDashboard, FileText, Folder, MessageSquare, 
   Settings, LogOut, ShieldAlert, User, Moon, Sun, ArrowLeft,
-  Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail, 
-  ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart, Ghost
+  Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail,
+  ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart, Ghost,
+  Ticket, BarChart3, MessageCircle
 } from 'lucide-react';
 import NotificationBell from './Layout/NotificationBell';
 import { useTheme } from '../context/ThemeContext';
@@ -102,6 +103,7 @@ const AdminLayout = () => {
         { name: 'Albums', icon: <Folder className="w-4 h-4" />, path: '/admin/nexoria-music/albums' },
         { name: 'Tracks', icon: <Music className="w-4 h-4" />, path: '/admin/nexoria-music/tracks' },
         { name: 'Genres', icon: <Settings className="w-4 h-4" />, path: '/admin/nexoria-music/genres' },
+        { name: '🎧 Listening Analytics', icon: <BarChart3 className="w-4 h-4 text-purple-400" />, path: '/admin/music-analytics' },
       ]
     },
     {
@@ -127,6 +129,8 @@ const AdminLayout = () => {
         { name: 'Reports', icon: <AlertOctagon className="w-4 h-4" />, path: '/admin/reports' },
         { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/admin/chat-management' },
         { name: 'Private Chatting', icon: <Ghost className="w-4 h-4" />, path: '/admin/secret-lounge-management' },
+        { name: '📊 Chat Analytics', icon: <MessageCircle className="w-4 h-4 text-indigo-400" />, path: '/admin/private-chat-analytics' },
+        { name: '🎫 Support Tickets', icon: <Ticket className="w-4 h-4 text-amber-400" />, path: '/admin/support-tickets' },
       ]
     },
     {

@@ -186,6 +186,7 @@ import nexoriaMusicRoutes from './routes/nexoriaMusicRoutes.js';
 import creatorRoutes from './routes/creatorRoutes.js';
 import friendRoutes from './routes/friendRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
+import supportTicketRoutes from './routes/supportTicketRoutes.js';
 
 // CSRF Route
 app.get('/api/csrf-token', csrfTokenRoute);
@@ -250,6 +251,7 @@ app.use('/api/nexoria-music', nexoriaMusicRoutes);
 app.use('/api/creator', adminLimiter, creatorRoutes);
 app.use('/api/friends', apiLimiter, friendRoutes);
 app.use('/api/recommendations', apiLimiter, recommendationRoutes);
+app.use('/api/support-tickets', supportTicketRoutes);
 
 import path from 'path';
 
