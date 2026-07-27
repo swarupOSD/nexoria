@@ -497,6 +497,10 @@ function App() {
               <Route path="games/edit/:id" element={<AdminEditGame />} />
               <Route path="arena-games" element={<ManageArenaGames />} />
               <Route path="chat-management" element={<ChatManagement />} />
+              <Route path="secret-lounge-management" element={<SecretLoungeManagement />} />
+              <Route path="support-tickets" element={<AdminSupportTickets />} />
+              <Route path="music-analytics" element={<AdminMusicAnalytics />} />
+              <Route path="private-chat-analytics" element={<AdminPrivateChatAnalytics />} />
             </Route>
           </Routes>
         </Suspense>
