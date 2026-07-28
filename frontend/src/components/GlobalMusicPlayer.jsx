@@ -233,16 +233,35 @@ const GlobalMusicPlayer = () => {
       recordListenHistory({ id: currentSong._id, listenTime: Math.floor(playedSeconds) });
     }
     
-    // Smart Radio Logic
-    if (queue.length === 0 && isRadioMode && radioSongsRes?.data) {
+    let nextSongObj = null;
+
+    // Determine the next song
+    if (queue.length > 0) {
+      nextSongObj = queue[0];
+    } else if (isRadioMode && radioSongsRes?.data) {
       const allSongs = radioSongsRes.data;
-      // Filter out current song to avoid immediate repetition
       const available = allSongs.filter(s => s._id !== currentSong?._id);
       if (available.length > 0) {
-        const randomSong = available[Math.floor(Math.random() * available.length)];
-        dispatch(playSong(randomSong));
-        return; // Don't call playNext
+        nextSongObj = available[Math.floor(Math.random() * available.length)];
       }
+    } else if (loopMode === 1 && currentSong) {
+      nextSongObj = currentSong;
+    } else if (loopMode === 2 && currentSong) {
+      nextSongObj = currentSong;
+    }
+
+    // CRITICAL HACK FOR MOBILE BACKGROUND PLAYBACK:
+    // Change src and play synchronously inside the onEnded event stack.
+    // This bypasses iOS/Android background autoplay restrictions.
+    if (nextSongObj && audioRef.current) {
+      audioRef.current.src = nextSongObj.audioUrl;
+      audioRef.current.play().catch(e => console.warn('Mobile auto-play hack blocked:', e));
+    }
+
+    // Now update Redux state
+    if (queue.length === 0 && isRadioMode && nextSongObj) {
+      dispatch(playSong(nextSongObj));
+      return;
     }
     
     dispatch(playNext());

@@ -1,5 +1,6 @@
 import { Conversation, PrivateMessage } from '../models/PrivateChat.js';
 import User from '../models/User.js';
+import mongoose from 'mongoose';
 
 // Helper to populate a message fully
 const populateMessage = (msgId) =>
@@ -19,7 +20,7 @@ export const registerDirectMessageHandlers = (io, socket) => {
     try {
       // Find or create conversation
       let conversation = await Conversation.findOne({
-        participants: { $all: [socket.user._id, receiverId] }
+        participants: { $all: [socket.user._id, new mongoose.Types.ObjectId(receiverId)] }
       });
 
       if (!conversation) {
@@ -94,7 +95,7 @@ export const registerDirectMessageHandlers = (io, socket) => {
     if (!socket.user || !receiverId) return;
     try {
       const conversation = await Conversation.findOne({
-        participants: { $all: [socket.user._id, receiverId] }
+        participants: { $all: [socket.user._id, new mongoose.Types.ObjectId(receiverId)] }
       });
 
       if (!conversation) {
@@ -222,7 +223,7 @@ export const registerDirectMessageHandlers = (io, socket) => {
 
     try {
       const conversation = await Conversation.findOne({
-        participants: { $all: [socket.user._id, receiverId] }
+        participants: { $all: [socket.user._id, new mongoose.Types.ObjectId(receiverId)] }
       });
       if (!conversation) return;
 

@@ -327,7 +327,18 @@ const Messages = () => {
     socket.on('messagesSeen', () => setMessages(prev => prev.map(m => ({ ...m, isRead: true }))));
     socket.on('userTyping', ({ userId }) => { if (activeChat?._id === userId) setIsPartnerTyping(true); });
     socket.on('userStoppedTyping', ({ userId }) => { if (activeChat?._id === userId) setIsPartnerTyping(false); });
-    socket.on('conversationThemeChanged', ({ theme }) => setActiveTheme(theme));
+    socket.on('conversationThemeChanged', ({ conversationId, theme }) => {
+      setConversations(prev => {
+        const updated = prev.map(c => c._id === conversationId ? { ...c, theme } : c);
+        if (activeChatRef.current) {
+          const activeConv = updated.find(c => c.participants?.some(p => p._id === activeChatRef.current._id));
+          if (activeConv && activeConv._id === conversationId) {
+            setActiveTheme(theme);
+          }
+        }
+        return updated;
+      });
+    });
     socket.on('incomingCall', data => {
       setIsReceivingCall(true);
       setCallerInfo({ from: data.from, name: data.name });

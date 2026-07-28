@@ -112,7 +112,7 @@ const UserRequestsAdmin = () => {
                       value={req.status}
                       onChange={(e) => {
                         if (e.target.value === 'Completed' || e.target.value === 'Rejected') {
-                          setSelectedRequest(req);
+                          setSelectedRequest({ request: req, intendedStatus: e.target.value });
                         } else {
                           handleStatusChange(req._id, e.target.value);
                         }
@@ -132,7 +132,7 @@ const UserRequestsAdmin = () => {
                   </td>
                 </tr>
 
-                {selectedRequest?._id === req._id && (
+                {selectedRequest?.request?._id === req._id && (
                   <tr>
                     <td colSpan="6" className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                       <div className="flex items-end gap-4">
@@ -147,7 +147,7 @@ const UserRequestsAdmin = () => {
                           />
                         </div>
                         <button 
-                          onClick={() => handleStatusChange(req._id, document.querySelector(`select[value="${req.status}"]`).value || 'Completed', adminResponse)}
+                          onClick={() => handleStatusChange(req._id, selectedRequest.intendedStatus, adminResponse)}
                           className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-500"
                         >
                           Confirm & Save

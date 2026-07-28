@@ -16,3 +16,14 @@
 ## Split Deployment Architecture Rules (Vercel + Render)
 - **Frontend API Fetching Rule:** NEVER use raw relative paths like `fetch('/api/...')` or `axios.get('/api/...')` anywhere in the frontend code. In split deployments (Frontend on Vercel, Backend on Render), relative paths resolve to the Vercel domain, resulting in 404s or returning `index.html`. ALWAYS import `BACKEND_URL` from the central configuration (e.g., `features/api/apiSlice.js`) and use template literals: `fetch(`${BACKEND_URL}/endpoint`)`.
 - **Socket.io CORS Configuration Rule:** When configuring Socket.io on a dedicated backend server (e.g., Render/Railway) that serves a frontend on a different domain (Vercel/Netlify), ensure CORS is configured to dynamically accept all valid origins (`origin: (origin, callback) => callback(null, true)`), or explicitly mirror the Express CORS configuration. Hardcoded origin arrays easily break when deployment URLs change, causing immediate and silent failure of all real-time features.
+- **Express CORS Rule:** Like Socket.io, the main Express `cors()` configuration must also dynamically accept all origins (`origin: (origin, callback) => callback(null, true)`). NEVER lock down CORS to a strict hardcoded array of `allowedOrigins`, as this will immediately block Vercel preview environments and dynamic domain changes.
+- **Payload Limits Rule:** Do NOT reduce `express.json` or `express.urlencoded` limits below `50mb`. The application relies on transferring large Base64 encoded images (e.g., App Logos, Featured Images, Banners) from the frontend to the backend. Shrinking this limit causes immediate "Payload Too Large" (502) crashes.
+
+## Custom Global Confirm Modal
+- **Never use `window.confirm()`:** Always use the custom async confirm modal: `await window.appConfirm('Message')`.
+- **Async Execution:** `window.appConfirm` returns a Promise. You must use `await` and ensure the surrounding function is `async`.
+- **Example Usage:**
+  ```javascript
+  const confirm = await window.appConfirm('Are you sure you want to delete this?');
+  if (!confirm) return;
+  ```
