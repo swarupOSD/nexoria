@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Users, UserX, Loader2, Activity } from 'lucide-react';
+import { useSocket } from '../../context/SocketContext';
 import axios from 'axios';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const OnlineUsersBoard = () => {
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const socket = useSocket();
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Initial fetch to get recently offline users (which aren't in socket stats)
+    const fetchInitial = async () => {
       try {
-        const res = await axios.get('/api/analytics/online-users', { withCredentials: true });
+        const res = await axios.get(`${BACKEND_URL}/analytics/online-users`, { withCredentials: true });
         setResponse(res.data.data);
       } catch (error) {
         console.error('Error fetching online users:', error);
@@ -17,11 +21,20 @@ const OnlineUsersBoard = () => {
         setIsLoading(false);
       }
     };
+    fetchInitial();
 
-    fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!socket) return;
+
+    const handleOnlineStats = (stats) => {
+      fetchInitial();
+    };
+
+    socket.on('onlineStats', handleOnlineStats);
+    
+    return () => {
+      socket.off('onlineStats', handleOnlineStats);
+    };
+  }, [socket]);
 
   if (isLoading) {
     return (

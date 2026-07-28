@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Globe, Search, Save, Loader2, Link as LinkIcon, RefreshCw, AlertCircle, Share2 , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const SEOManager = () => {
   const [settings, setSettings] = useState({
@@ -17,7 +18,7 @@ const SEOManager = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch('/api/settings');
+      const res = await fetch(`${BACKEND_URL}/settings`);
       const data = await res.json();
       if (data.success && data.data) {
         setSettings({
@@ -50,7 +51,7 @@ const SEOManager = () => {
 
     const uploadToast = toast.loading('Uploading OpenGraph Image...');
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${BACKEND_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,
@@ -72,7 +73,7 @@ const SEOManager = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch(`${BACKEND_URL}/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

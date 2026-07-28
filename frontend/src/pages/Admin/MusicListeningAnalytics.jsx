@@ -1,21 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { 
   Music, TrendingUp, Users, Clock, Headphones, 
-  Play, BarChart3, Calendar, RefreshCw
+  Play, BarChart3, RefreshCw
 } from 'lucide-react';
-import { useGetMusicAnalyticsQuery } from '../../features/analytics/analyticsApiSlice';
+import axios from 'axios';
+import { useSocket } from '../../context/SocketContext';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, BarChart, Bar 
+  ResponsiveContainer 
 } from 'recharts';
 import CountUp from '../../components/CountUp';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const MusicListeningAnalytics = () => {
   const [days, setDays] = useState(7);
-  const { data: res, isLoading, refetch } = useGetMusicAnalyticsQuery(days);
-  const data = res?.data || {};
+  const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const socket = useSocket();
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`${BACKEND_URL}/analytics/music?days=${days}`, { withCredentials: true });
+      setData(res.data.data || {});
+    } catch (error) {
+      console.error('Error fetching music analytics:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+
+    if (!socket) return;
+
+    const handleMusicUpdate = () => {
+      axios.get(`${BACKEND_URL}/analytics/music?days=${days}`, { withCredentials: true })
+        .then(res => setData(res.data.data || {}))
+        .catch(err => console.error('Error silent refetch:', err));
+    };
+
+    socket.on('musicAnalyticsUpdate', handleMusicUpdate);
+    return () => {
+      socket.off('musicAnalyticsUpdate', handleMusicUpdate);
+    };
+  }, [days, socket]);
 
   const playsPerDay = data.playsPerDay || [];
   const topTracks = data.topTracks || [];
@@ -44,8 +76,8 @@ const MusicListeningAnalytics = () => {
             <option value={7}>Last 7 days</option>
             <option value={30}>Last 30 days</option>
           </select>
-          <button onClick={refetch} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95">
-            <RefreshCw className="w-4 h-4 dark:text-white" />
+          <button onClick={fetchData} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95">
+            <RefreshCw className={`w-4 h-4 dark:text-white ${isLoading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>

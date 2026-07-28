@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useGetAllTicketsQuery, useResolveTicketMutation, useDeleteTicketMutation } from '../../features/supportTicket/supportTicketApiSlice';
+import { useSocket } from '../../context/SocketContext';
+import { useEffect } from 'react';
 
 const PRIORITY_COLORS = {
   urgent: 'bg-red-500/10 text-red-500 border-red-500/20',
@@ -42,6 +44,14 @@ const SupportTicketAdmin = () => {
   const { data, isLoading, refetch } = useGetAllTicketsQuery({ status: statusFilter, type: typeFilter });
   const [resolveTicket, { isLoading: isResolving }] = useResolveTicketMutation();
   const [deleteTicket] = useDeleteTicketMutation();
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewTicket = () => refetch();
+    socket.on('newSupportTicket', handleNewTicket);
+    return () => socket.off('newSupportTicket', handleNewTicket);
+  }, [socket, refetch]);
 
   const tickets = data?.data || [];
   const stats = data?.stats || {};

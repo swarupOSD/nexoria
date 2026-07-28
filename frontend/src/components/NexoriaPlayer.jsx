@@ -705,7 +705,7 @@ const NexoriaPlayer = () => {
                         <SkipForward className="w-10 h-10 fill-current" />
                       </button>
                     )}
-                    <button onClick={() => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none')} className={`p-2 active:scale-90 transition-transform relative ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
+                    <button onClick={() => dispatch(toggleRepeat())} className={`p-2 active:scale-90 transition-transform relative ${repeatMode !== 'none' ? 'text-green-500' : 'text-white/70'}`}>
                       {repeatMode === 'one' ? <Repeat1 className="w-6 h-6" /> : <Repeat className="w-6 h-6" />}
                       {repeatMode === 'all' && <InfinityIcon className="w-2 h-2 absolute top-1.5 right-1.5 text-green-500" />}
                     </button>

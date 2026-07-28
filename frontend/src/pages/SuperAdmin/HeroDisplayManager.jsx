@@ -4,6 +4,7 @@ import { Plus, Trash2, Edit, Layers, Loader2, Image as ImageIcon, X, Link as Lin
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
 import { 
+import { BACKEND_URL } from '../../features/api/apiSlice';
   useGetAdminHeroDisplaysQuery, 
   useCreateHeroDisplayMutation, 
   useUpdateHeroDisplayMutation, 
@@ -63,7 +64,7 @@ const HeroDisplayManager = () => {
     formData.append('image', file);
     const t = toast.loading('Uploading...');
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${BACKEND_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,

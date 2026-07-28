@@ -6,6 +6,7 @@ import { Download as DownloadIcon, ShieldCheck, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 import AdPlacement from '../components/AdPlacement';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const DownloadFlow = () => {
   const { slug } = useParams();
@@ -47,7 +48,7 @@ const DownloadFlow = () => {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const res = await fetch(`/api/downloads/${post._id}`, {
+      const res = await fetch(`${BACKEND_URL}/downloads/${post._id}`, {
         method: 'POST',
         headers
       });

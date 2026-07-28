@@ -64,6 +64,9 @@ export const registerDirectMessageHandlers = (io, socket) => {
         .lean();
       io.to(receiverId.toString()).emit('conversationsList', receiverConversations);
 
+      // Notify admins of new chat activity for real-time analytics
+      io.to('admin').emit('chatAnalyticsUpdate');
+
     } catch (err) {
       console.error('Error sending DM:', err);
       socket.emit('dmError', { message: 'Failed to send message.' });

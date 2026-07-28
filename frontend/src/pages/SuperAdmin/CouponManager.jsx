@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Trash2, Gift, Copy, Loader2, Calendar, Users, AlertCircle , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const CouponManager = () => {
   const [coupons, setCoupons] = useState([]);
@@ -18,7 +19,7 @@ const CouponManager = () => {
 
   const fetchCoupons = async () => {
     try {
-      const res = await fetch('/api/coupons', {
+      const res = await fetch(`${BACKEND_URL}/coupons`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();
@@ -39,7 +40,7 @@ const CouponManager = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/coupons', {
+      const res = await fetch(`${BACKEND_URL}/coupons`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ const CouponManager = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this coupon?')) return;
     try {
-      const res = await fetch(`/api/coupons/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/coupons/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });

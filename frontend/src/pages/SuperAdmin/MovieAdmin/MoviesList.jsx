@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import BackButton from '../../../components/BackButton';
 import { 
+import { BACKEND_URL } from '../../../features/api/apiSlice';
   Plus, Edit2, Trash2, Search, Filter, Loader2, X, Eye, EyeOff,
   Image as ImageIcon, CheckCircle, Video, Tag, Clock, Globe, Download
 , LayoutTemplate } from 'lucide-react';
@@ -138,7 +139,7 @@ const MovieManagement = ({ type = 'Movie' }) => {
     formData.append(type === 'video' ? 'video' : 'image', file);
     const token = localStorage.getItem('token');
     
-    const endpoint = type === 'video' ? '/api/upload/video' : '/api/upload/image';
+    const endpoint = type === 'video' ? `${BACKEND_URL}/upload/video` : `${BACKEND_URL}/upload/image`;
     
     const res = await fetch(endpoint, {
       method: 'POST',

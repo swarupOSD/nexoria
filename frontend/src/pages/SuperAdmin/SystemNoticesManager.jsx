@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit, Megaphone, Loader2, Bell, Calendar, X, Info, AlertTriangle, CheckCircle, AlertOctagon , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const typeConfig = {
   info:    { label: 'Info',    bg: 'bg-blue-100 dark:bg-blue-900/30',    text: 'text-blue-700 dark:text-blue-300',    icon: <Info className="w-4 h-4" />,           accent: 'border-blue-400'    },
@@ -41,7 +42,7 @@ const SystemNoticesManager = () => {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch('/api/system-notices/admin', {
+      const res = await fetch(`${BACKEND_URL}/system-notices/admin`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();
@@ -74,7 +75,7 @@ const SystemNoticesManager = () => {
     setSaving(true);
     try {
       const payload = { title, content, type, isActive, link, linkText, expiresAt: expiresAt || null, notifyUsers };
-      const url = editingId ? `/api/system-notices/${editingId}` : '/api/system-notices';
+      const url = editingId ? `${BACKEND_URL}/system-notices/${editingId}` : `${BACKEND_URL}/system-notices`;
       const method = editingId ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -93,7 +94,7 @@ const SystemNoticesManager = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this notice?')) return;
     try {
-      const res = await fetch(`/api/system-notices/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/system-notices/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });

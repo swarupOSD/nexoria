@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -12,6 +12,7 @@ import {
   useGetAdminConversationsQuery,
   useGetAdminConversationMessagesQuery
 } from '../../features/analytics/analyticsApiSlice';
+import { useSocket } from '../../context/SocketContext';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, PieChart, Pie, Cell, Legend
@@ -306,6 +307,14 @@ const PrivateChatAnalytics = () => {
   const messagesPerDay = data.messagesPerDay || [];
   const topSenders = data.topSenders || [];
   const summary = data.summary || {};
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleChatUpdate = () => refetch();
+    socket.on('chatAnalyticsUpdate', handleChatUpdate);
+    return () => socket.off('chatAnalyticsUpdate', handleChatUpdate);
+  }, [socket, refetch]);
 
   const pieData = [
     { name: 'Text', value: summary.textCount || 0 },

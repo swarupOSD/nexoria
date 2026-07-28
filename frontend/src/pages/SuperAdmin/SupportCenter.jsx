@@ -16,6 +16,7 @@ import {
 } from '../../features/contact/contactApiSlice';
 import { useSelector } from 'react-redux';
 import { useSocket } from '../../context/SocketContext';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 class TicketErrorBoundary extends Component {
   constructor(props) {
@@ -112,7 +113,7 @@ const SupportCenter = ({ isEmbedded = false }) => {
 
     const uploadToast = toast.loading('Uploading attachment...');
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${BACKEND_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,

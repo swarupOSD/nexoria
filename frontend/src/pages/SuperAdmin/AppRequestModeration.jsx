@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Clock, CheckCircle, XCircle, ArrowRightCircle, Inbox, Loader2, Save , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const AppRequestModeration = () => {
   const [requests, setRequests] = useState([]);
@@ -11,7 +12,7 @@ const AppRequestModeration = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch('/api/app-requests', {
+      const res = await fetch(`${BACKEND_URL}/app-requests`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();
@@ -36,7 +37,7 @@ const AppRequestModeration = () => {
         payload.adminNotes = editingNotes[id];
       }
 
-      const res = await fetch(`/api/app-requests/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/app-requests/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -9,6 +9,7 @@ import {
 import { useSelector } from 'react-redux';
 import SupportCenter from './SupportCenter';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const FooterManagement = () => {
   const { data: settingsRes, isLoading } = useGetSettingsQuery();
@@ -169,7 +170,7 @@ const FooterManagement = () => {
     fd.append('image', file);
 
     try {
-      const res = await fetch(`/api/upload/${type === 'logo' ? 'logo' : 'image'}`, {
+      const res = await fetch(`${BACKEND_URL}/upload/${type === 'logo' ? 'logo' : 'image'}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: fd

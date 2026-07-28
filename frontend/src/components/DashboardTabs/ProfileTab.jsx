@@ -7,6 +7,7 @@ import { useUpdateProfileMutation, useGenerate2FAMutation, useVerify2FAMutation,
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../features/auth/authSlice';
 import { toast } from 'react-hot-toast';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const ProfileTab = ({ user, token, refetchUser }) => {
   const dispatch = useDispatch();
@@ -87,7 +88,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
         const fd = new FormData();
         fd.append('image', blob, 'image.jpg');
         
-        const uploadRes = await fetch('/api/upload/profile', {
+        const uploadRes = await fetch(`${BACKEND_URL}/upload/profile`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: fd

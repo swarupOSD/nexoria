@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldCheck, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode } from 'lucide-react';
+import { Send, Image as ImageIcon, X, Trash2, Edit2, Check, ShieldCheck, Users, LogOut, Copy, Music, Play, Pause, Info, Phone, Video, Smile, Mic, Square, CheckCheck, Reply, Palette, Loader2, Search, EyeOff, Sparkles, PenTool, BarChart2, ChevronRight, Zap, Ghost, Gamepad2, Languages, MessageSquareCode, MessageSquare, Settings, Lock, Eye, ArrowLeft } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import MusicShareModal from './MusicShareModal';
@@ -8,25 +8,25 @@ import CallOverlay from './CallOverlay';
 import UserActionModal from './UserActionModal';
 import { usePermissions } from '../contexts/PermissionContext';
 
-// â”€â”€ Theme Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Theme Config ──────────────────────────────────────────────────────────────────
 const THEMES = {
-  default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: 'ðŸ’¬' },
-  monochrome:{ name: 'Monochrome',bg: '#111111', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: 'ðŸ–¤', textColor: '#000000' },
-  cyberpunk: { name: 'Cyberpunk', bg: 'linear-gradient(to bottom, #000000, #1a0033)', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: 'âš¡' },
-  tie_dye:   { name: 'Tie-Dye',   bg: 'linear-gradient(45deg, #1a0022, #001a44)', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: 'ðŸŒ€' },
-  love:      { name: 'Love',      bg: 'linear-gradient(to bottom right, #330011, #000000)', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: 'â¤ï¸' },
-  ocean:     { name: 'Ocean',     bg: 'linear-gradient(to bottom, #001122, #002233)', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: 'ðŸŒŠ' },
-  lo_fi:     { name: 'Lo-Fi',     bg: 'linear-gradient(to bottom, #221100, #110500)', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: 'ðŸŒ‡' },
-  galaxy:    { name: 'Galaxy',    bg: 'radial-gradient(circle at top right, #2a004d, #000000)', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: 'ðŸŒŒ' },
+  default:   { name: 'Instagram', bg: '#000000', accent: '#3797F0', myBubble: 'linear-gradient(135deg, #00B2FF, #006AFF)', theirBubble: '#262626', emoji: '💬' },
+  monochrome:{ name: 'Monochrome',bg: '#111111', accent: '#FFFFFF', myBubble: '#FFFFFF', theirBubble: '#262626', emoji: '🖤', textColor: '#000000' },
+  cyberpunk: { name: 'Cyberpunk', bg: 'linear-gradient(to bottom, #000000, #1a0033)', accent: '#00FFFF', myBubble: 'linear-gradient(135deg, #FF00FF, #00FFFF)', theirBubble: '#1A1A1A', emoji: '⚡' },
+  tie_dye:   { name: 'Tie-Dye',   bg: 'linear-gradient(45deg, #1a0022, #001a44)', accent: '#FF00E5', myBubble: 'linear-gradient(135deg, #FF00E5, #005EFE, #00FF85)', theirBubble: '#262626', emoji: '🌀' },
+  love:      { name: 'Love',      bg: 'linear-gradient(to bottom right, #330011, #000000)', accent: '#FF0055', myBubble: 'linear-gradient(135deg, #FF0055, #FF7B00)', theirBubble: '#262626', emoji: '❤️' },
+  ocean:     { name: 'Ocean',     bg: 'linear-gradient(to bottom, #001122, #002233)', accent: '#00FFB2', myBubble: 'linear-gradient(135deg, #00FFB2, #00B2FF)', theirBubble: '#262626', emoji: '🌊' },
+  lo_fi:     { name: 'Lo-Fi',     bg: 'linear-gradient(to bottom, #221100, #110500)', accent: '#F39C12', myBubble: 'linear-gradient(135deg, #F39C12, #D35400)', theirBubble: '#262626', emoji: '🌅' },
+  galaxy:    { name: 'Galaxy',    bg: 'radial-gradient(circle at top right, #2a004d, #000000)', accent: '#8A2BE2', myBubble: 'linear-gradient(135deg, #4B0082, #8A2BE2, #0000FF)', theirBubble: '#262626', emoji: '🌌' },
 };
 
-const REACTIONS = ['â¤ï¸', 'ðŸ˜‚', 'ðŸ˜®', 'ðŸ˜¢', 'ðŸ˜¡', 'ðŸ‘'];
-const EMOJIS = ['ðŸ˜€','ðŸ˜‚','ðŸ¥º','ðŸ˜','ðŸ¤©','ðŸ˜Ž','ðŸ¥³','ðŸ˜Š','ðŸ¤”','ðŸ˜´','ðŸ˜­','ðŸ˜¤','ðŸ¤¬','ðŸ˜±','ðŸ¥´','ðŸ˜‡','ðŸ«‚','â¤ï¸','ðŸ”¥','âœ¨','ðŸ’¯','ðŸ‘€','ðŸŽ‰','ðŸŽµ','ðŸ’ª','ðŸ‘‹','ðŸ™','ðŸ’€','ðŸ˜ˆ','ðŸ‘‘','ðŸŒˆ','ðŸ•','ðŸŽ®','ðŸ“±','ðŸš€','â­','ðŸ«‚','ðŸ¤¯','ðŸ¤©','ðŸ¤¤'];
+const REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
+const EMOJIS = ['😀','😂','🥹','😊','🤩','😎','🥳','😇','🤔','😴','😭','😡','🤬','😱','🙄','😇','🤝','❤️','🔥','✨','💯','👀','🎉','🎵','💪','👋','🙏','💀','😈','👑','🌈','🍕','🎮','📱','🚀','⭐','🤝','🤯','🤩','🤤'];
 const GIPHY_KEY = import.meta.env.VITE_GIPHY_API_KEY || 'Qco0W0lBeOeaFGKv7DudhCA70LYaFOVf';
 
 const fmtTime = (d) => new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-// â”€â”€ GIF Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── GIF Picker ────────────────────────────────────────────────────────────────────
 const GifPicker = ({ onSelect, onClose }) => {
   const [q, setQ] = useState('');
   const [gifs, setGifs] = useState([]);
@@ -82,7 +82,7 @@ const GifPicker = ({ onSelect, onClose }) => {
   );
 };
 
-// â”€â”€ Emoji Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Emoji Picker ──────────────────────────────────────────────────────────────────
 const EmojiPickerComponent = ({ onSelect, onClose }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
@@ -102,7 +102,7 @@ const EmojiPickerComponent = ({ onSelect, onClose }) => (
   </motion.div>
 );
 
-// â”€â”€ Reaction Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Reaction Picker ───────────────────────────────────────────────────────────────
 const ReactionPicker = ({ onSelect, onClose }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
@@ -117,7 +117,7 @@ const ReactionPicker = ({ onSelect, onClose }) => (
   </motion.div>
 );
 
-// â”€â”€ Theme Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Theme Picker ──────────────────────────────────────────────────────────────────
 const ThemePicker = ({ currentTheme, onSelect, onClose, customBg, setCustomBg }) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
@@ -165,7 +165,7 @@ const calculateWinner = (squares) => {
   return null;
 };
 
-// â”€â”€ View Once Image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── View Once Image ───────────────────────────────────────────────────────────────
 const ViewOnceImage = ({ msg, isMe, onExpire }) => {
   const [status, setStatus] = useState('hidden');
   const [timeLeft, setTimeLeft] = useState(5);
@@ -200,7 +200,7 @@ const ViewOnceImage = ({ msg, isMe, onExpire }) => {
   );
 };
 
-// â”€â”€ Message Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Message Bubble ────────────────────────────────────────────────────────────────
 const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, playingAudioId, handlePlayMusic, isSamePrev, isSameNext, isLastRead, setLightboxImg, onGameUpdate, onExpireViewOnce }) => {
   const [showRx, setShowRx] = useState(false);
   const [burst, setBurst] = useState(false);
@@ -227,7 +227,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
   );
 
   const handleDoubleTap = () => {
-    onReact(msg._id, 'â¤ï¸');
+    onReact(msg._id, '❤️');
     setBurst(true);
     setTimeout(() => setBurst(false), 1200);
   };
@@ -262,7 +262,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           <div className="mb-1 px-3 py-1.5 rounded-xl text-xs"
             style={{ background: 'rgba(255,255,255,0.05)', borderLeft: `2px solid ${tc.accent}`, color: 'rgba(255,255,255,0.5)', textAlign: isMe ? 'right' : 'left' }}>
             <div className="text-[10px] mb-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>Replying to</div>
-            <div className="truncate">{msg.replyTo.content || 'ðŸ“· Media'}</div>
+            <div className="truncate">{msg.replyTo.content || '📷 Media'}</div>
           </div>
         )}
 
@@ -284,7 +284,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
           {burst && (
             <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-50">
               {[...Array(6)].map((_, i) => (
-                <motion.div key={i} initial={{ scale: 0.5, y: 0, opacity: 1, x: 0 }} animate={{ scale: 1.5, y: -60 - Math.random()*40, x: (Math.random()-0.5)*80, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="absolute text-2xl">â¤ï¸</motion.div>
+                <motion.div key={i} initial={{ scale: 0.5, y: 0, opacity: 1, x: 0 }} animate={{ scale: 1.5, y: -60 - Math.random()*40, x: (Math.random()-0.5)*80, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="absolute text-2xl">❤️</motion.div>
               ))}
             </div>
           )}
@@ -328,7 +328,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                       const speeds = [1, 1.5, 2];
                       const currentIdx = speeds.indexOf(audio.playbackRate) || 0;
                       audio.playbackRate = speeds[(currentIdx + 1) % speeds.length];
-                      toast(`Speed set to ${audio.playbackRate}x`, { icon: 'âš¡' });
+                      toast(`Speed set to ${audio.playbackRate}x`, { icon: '⚡' });
                     }
                   }} className="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-full text-white/80 hover:bg-white/20">1x</button>
                   <audio ref={audioRef} src={msg.content} onEnded={() => handlePlayMusic(null)} preload="none" />
@@ -370,15 +370,15 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
                             }
                             onGameUpdate(msg._id, newData);
                           }} className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-full flex items-center justify-center text-lg sm:text-xl hover:bg-white/20 transition-colors shadow-sm">
-                            {c === 'rock' ? 'âœŠ' : c === 'paper' ? 'âœ‹' : 'âœŒï¸'}
+                            {c === 'rock' ? '✊' : c === 'paper' ? '✋' : '✌️'}
                           </button>
                         ))}
                       </div>
                     ) : (
                       <div className="flex justify-between items-center text-2xl mb-2 px-3">
-                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player1?.choice ? (msg.gameData.player1.choice === 'rock' ? 'âœŠ' : msg.gameData.player1.choice === 'paper' ? 'âœ‹' : 'âœŒï¸') : 'â“'}</motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player1?.choice ? (msg.gameData.player1.choice === 'rock' ? '✊' : msg.gameData.player1.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
                         <span className="text-sm font-bold text-white/50">VS</span>
-                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player2?.choice ? (msg.gameData.player2.choice === 'rock' ? 'âœŠ' : msg.gameData.player2.choice === 'paper' ? 'âœ‹' : 'âœŒï¸') : 'â“'}</motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>{msg.gameData.player2?.choice ? (msg.gameData.player2.choice === 'rock' ? '✊' : msg.gameData.player2.choice === 'paper' ? '✋' : '✌️') : '❓'}</motion.span>
                       </div>
                     )}
                     {msg.gameData?.winner && <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-center text-yellow-400 font-bold text-sm mt-2">{msg.gameData.winner === 'Tie' ? 'Tie!' : `${msg.gameData.winner} Wins!`}</motion.p>}
@@ -454,7 +454,7 @@ const MsgBubble = ({ msg, isMe, theme, onReact, onUnsend, onReply, showAvatar, p
   );
 };
 
-// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Component ────────────────────────────────────────────────────────────────
 const SecretChatRoom = ({ socket, roomData, onLeave }) => {
   const { user } = useSelector(state => state.auth);
   const { requestPermission } = usePermissions();
@@ -529,9 +529,9 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
       const text = lastMsg.content.toLowerCase();
       if (text.includes('?')) setSmartReplies(['Yes', 'No', 'Maybe', "I don't know"]);
       else if (text.includes('hi') || text.includes('hello')) setSmartReplies(['Hey!', 'Hi there!', "What's up?"]);
-      else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['ðŸ˜‚', 'Lmao', 'So funny']);
+      else if (text.includes('lol') || text.includes('haha')) setSmartReplies(['😂', 'Lmao', 'So funny']);
       else if (text.includes('bye')) setSmartReplies(['Goodbye!', 'See ya!', 'Take care']);
-      else setSmartReplies(['Okay', 'Cool', 'Got it', 'ðŸ‘']);
+      else setSmartReplies(['Okay', 'Cool', 'Got it', '👍']);
     } else {
       setSmartReplies([]);
     }
@@ -548,8 +548,8 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     let happy = 0, angry = 0;
     recentMsgs.forEach(m => {
       if (m.type === 'text') {
-        if (m.content.match(/ðŸ˜‚|â¤ï¸|ðŸ”¥|ðŸ˜|ðŸ¥°|wow/i)) happy++;
-        if (m.content.match(/ðŸ˜¡|ðŸ¤¬|ðŸ’€|hate|angry/i)) angry++;
+        if (m.content.match(/😂|❤️|🔥|😮|🥰|wow/i)) happy++;
+        if (m.content.match(/😡|🤬|💀|hate|angry/i)) angry++;
       }
     });
     if (happy > angry && happy > 1) setVibeColor('rgba(255, 105, 180, 0.15)');
@@ -677,12 +677,12 @@ const SecretChatRoom = ({ socket, roomData, onLeave }) => {
     let h = 0, a = 0;
     messages.forEach(m => {
       if (m.type === 'text') {
-        if (m.content.match(/ðŸ˜‚|â¤ï¸|ðŸ”¥|ðŸ˜|ðŸ¥°|wow/i)) h++;
-        if (m.content.match(/ðŸ˜¡|ðŸ¤¬|ðŸ’€|hate|angry/i)) a++;
+        if (m.content.match(/😂|❤️|🔥|😮|🥰|wow/i)) h++;
+        if (m.content.match(/😡|🤬|💀|hate|angry/i)) a++;
       }
     });
     
-    let vibe = h > a ? "Happy & Fun ðŸ˜„" : (a > h ? "Heated / Serious ðŸ˜¡" : "Neutral ðŸ˜");
+    let vibe = h > a ? "Happy & Fun 😄" : (a > h ? "Heated / Serious 😡" : "Neutral 😐");
     
     setAiSummary(`Chat Summary:\n- ${msgCount} messages sent.\n- Participants active: ${Array.from(users).join(', ')}.\n- Overall Vibe: ${vibe}.\n- Key topics: Random chat & Secrets.`);
     setShowSummary(true);

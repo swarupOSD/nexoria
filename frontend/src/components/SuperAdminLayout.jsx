@@ -111,7 +111,7 @@ const SuperAdminLayout = () => {
         { name: 'App Management', icon: <Activity className="w-4 h-4" />, path: '/superadmin/apps' },
         { name: 'YT Downloader', icon: <DownloadCloud className="w-4 h-4 text-emerald-400" />, path: '/superadmin/yt-downloader' },
         { name: 'Studio Categories', icon: <Database className="w-4 h-4" />, path: '/superadmin/categories' },
-        { name: 'Studio Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/categories' },
+        { name: 'Studio Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
         { name: 'App Requests', icon: <Activity className="w-4 h-4" />, path: '/superadmin/app-requests' },
         { name: 'User Requests', icon: <Activity className="w-4 h-4" />, path: '/superadmin/user-requests' },
         { name: 'Review Moderation', icon: <Activity className="w-4 h-4" />, path: '/superadmin/reviews' },
@@ -122,7 +122,7 @@ const SuperAdminLayout = () => {
       items: [
         { name: 'Games Management', icon: <Gamepad2 className="w-4 h-4" />, path: '/superadmin/games' },
         { name: 'Arena Games', icon: <Swords className="w-4 h-4 text-orange-400" />, path: '/superadmin/arena-games' },
-        { name: 'Arcade Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/categories' },
+        { name: 'Arcade Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
       ]
     },
     {

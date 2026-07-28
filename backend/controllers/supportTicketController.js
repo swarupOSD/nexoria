@@ -1,5 +1,6 @@
 import SupportTicket from '../models/SupportTicket.js';
 import { sendNotification } from '../utils/tracker.js';
+import { getIO } from '../config/socket.js';
 
 // @desc    Create a support ticket (user)
 // @route   POST /api/support-tickets
@@ -16,6 +17,13 @@ export const createTicket = async (req, res) => {
       userEmail: userEmail || req.user.email,
       priority: type === 'forgot_password' || type === 'account_locked' ? 'urgent' : 'medium',
     });
+
+    const populatedTicket = await SupportTicket.findById(ticket._id).populate('user', 'name email profileImage role');
+    try {
+      getIO().to('admin').emit('newSupportTicket', populatedTicket);
+    } catch (e) {
+      console.log('Socket emit failed for new ticket');
+    }
 
     res.status(201).json({ success: true, data: ticket });
   } catch (err) {

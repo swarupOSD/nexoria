@@ -13,6 +13,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 import path from 'path';
 import https from 'https';
+import { getIO } from '../config/socket.js';
 
 // ==========================================
 // ADMIN: ARTIST MANAGEMENT
@@ -549,6 +550,20 @@ export const logPlay = async (req, res) => {
         user: req.user._id,
         track: trackId
       });
+      // Also log to the analytics history model
+      const { default: NexoriaMusicHistory } = await import('../models/NexoriaMusicHistory.js');
+      await NexoriaMusicHistory.create({
+        user: req.user._id,
+        track: trackId,
+        playedAt: new Date(),
+        durationPlayed: 0
+      });
+    }
+
+    try {
+      getIO().to('admin').emit('musicAnalyticsUpdate');
+    } catch (e) {
+      console.log('Socket emit failed for music analytics');
     }
 
     res.status(200).json({ success: true, message: 'Play logged successfully' });

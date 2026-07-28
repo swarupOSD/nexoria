@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Gift, Copy, CheckCircle2, TrendingUp, Trophy, Star, Shield, Award, Users, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiSlice } from '../../features/api/apiSlice';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const RewardsTab = ({ user }) => {
   const [copied, setCopied] = useState(false);
@@ -16,7 +17,7 @@ const RewardsTab = ({ user }) => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await fetch('/api/users/me/activity', {
+        const res = await fetch(`${BACKEND_URL}/users/me/activity`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         const data = await res.json();
@@ -45,7 +46,7 @@ const RewardsTab = ({ user }) => {
     if (!couponCode) return toast.error('Please enter a coupon code');
     setRedeeming(true);
     try {
-      const res = await fetch('/api/coupons/redeem', {
+      const res = await fetch(`${BACKEND_URL}/coupons/redeem`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

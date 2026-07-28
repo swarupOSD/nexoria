@@ -24,6 +24,7 @@ import BottomNavigation from './Layout/BottomNavigation';
 import FriendsDrawer from './FriendsDrawer';
 import PrivateChatWidget from './PrivateChatWidget';
 import { usePermissions } from '../contexts/PermissionContext';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme, isCyberpunk, toggleCyberpunk } = useTheme();
@@ -269,7 +270,7 @@ const Navbar = () => {
 
   const handleSurpriseMe = async () => {
     try {
-      const res = await fetch('/api/posts?limit=50');
+      const res = await fetch(`${BACKEND_URL}/posts?limit=50`);
       const data = await res.json();
       const apps = data?.data?.posts || [];
       if (apps.length > 0) {

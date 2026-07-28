@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Star, Trash2, CheckCircle, XCircle, MessageSquare, Loader2 , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
+import { BACKEND_URL } from '../../features/api/apiSlice';
 
 const ReviewModeration = () => {
   const [reviews, setReviews] = useState([]);
@@ -10,7 +11,7 @@ const ReviewModeration = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch('/api/reviews/admin/all', {
+      const res = await fetch(`${BACKEND_URL}/reviews/admin/all`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();
@@ -30,7 +31,7 @@ const ReviewModeration = () => {
 
   const handleModerate = async (id, isApproved) => {
     try {
-      const res = await fetch(`/api/reviews/${id}/moderate`, {
+      const res = await fetch(`${BACKEND_URL}/reviews/${id}/moderate`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ const ReviewModeration = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Permanently delete this review?')) return;
     try {
-      const res = await fetch(`/api/reviews/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/reviews/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Disc } from 'lucide-react';
+import { Play, Pause, Heart, MoreHorizontal, Clock, ArrowLeft, Disc, User } from 'lucide-react';
 import { useGetArtistDetailsQuery, useGetFavoritesQuery, useToggleFavoriteMutation } from '../../features/api/nexoriaMusicApiSlice';
 import toast from 'react-hot-toast';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';

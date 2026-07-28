@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Download, ChevronRight, Search, ArrowLeft, LayoutTemplate } from 'lucide-react';
+import { Film, User, Search, Play, Star, Clock, Calendar, ChevronRight, Filter, AlertCircle, Download, LayoutTemplate, ArrowLeft } from 'lucide-react';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import FallbackImage from '../components/FallbackImage';

@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import QRPaymentModal from '../components/QRPaymentModal';
 import SEO from '../components/SEO';
 import BackButton from '../components/BackButton';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const Premium = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -33,7 +34,7 @@ const Premium = () => {
       const formData = new FormData();
       formData.append('image', proofImage);
       
-      const uploadRes = await fetch('/api/upload/proof', {
+      const uploadRes = await fetch(`${BACKEND_URL}/upload/proof`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`

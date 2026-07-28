@@ -27,6 +27,7 @@ import { Flame } from 'lucide-react';
 import { triggerAuraStrike } from '../utils/auraStrike';
 import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 import { triggerSmartlinkWithCooldown } from '../utils/adManager';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const renderContentWithEmbeds = (htmlContent) => {
   if (!htmlContent) return '';
@@ -334,7 +335,7 @@ const SinglePost = () => {
       const formData = new FormData();
       formData.append('image', proofImage);
       
-      const uploadRes = await fetch('/api/upload/proof', {
+      const uploadRes = await fetch(`${BACKEND_URL}/upload/proof`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
