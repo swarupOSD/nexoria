@@ -42,6 +42,7 @@ const GlobalMusicPlayer = () => {
   const [isEqOpen, setIsEqOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const audioRef = useRef(null);
+  const lastAssignedSrc = useRef('');
 
   const playerUrl = currentSong?.audioUrl;
 
@@ -61,9 +62,10 @@ const GlobalMusicPlayer = () => {
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
     if (audioRef.current && currentSong) {
-      // IMPORTANT: Only set src if it doesn't match to avoid interrupting the mobile onEnded hack
-      if (audioRef.current.src !== currentSong.audioUrl) {
+      // IMPORTANT: Use a ref to track the raw URL because audioRef.current.src encodes characters (e.g. %20)
+      if (lastAssignedSrc.current !== currentSong.audioUrl) {
         audioRef.current.src = currentSong.audioUrl;
+        lastAssignedSrc.current = currentSong.audioUrl;
       }
       
       if (isPlaying) {
@@ -260,6 +262,8 @@ const GlobalMusicPlayer = () => {
     // This bypasses iOS/Android background autoplay restrictions.
     if (nextSongObj && audioRef.current) {
       audioRef.current.src = nextSongObj.audioUrl;
+      lastAssignedSrc.current = nextSongObj.audioUrl; // Track it so useEffect ignores it!
+      audioRef.current.load(); // Force iOS to process the new source immediately
       audioRef.current.play().catch(e => console.warn('Mobile auto-play hack blocked:', e));
     }
 
