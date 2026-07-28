@@ -256,12 +256,7 @@ export const createTrack = async (req, res) => {
 
 export const getTracksAdmin = async (req, res) => {
   try {
-    const tracks = await NexoriaTrack.find({
-      $or: [
-        { audioUrl: { $exists: true, $ne: null, $ne: "" } },
-        { telegramFileId: { $exists: true, $ne: null, $ne: "" } }
-      ]
-    })
+    const tracks = await NexoriaTrack.find()
       .populate('artist', 'name')
       .populate('album', 'title')
       .populate('genre', 'name')

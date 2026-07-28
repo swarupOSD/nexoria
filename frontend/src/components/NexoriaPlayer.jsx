@@ -123,6 +123,13 @@ const NexoriaPlayer = () => {
         audioRef.current.src = src;
         audioRef.current.load();
       }
+      
+      // Guard against double-playing which causes mobile browsers to block autoplay
+      if (window.justAutoplayed === currentTrack?._id) {
+        window.justAutoplayed = null;
+        return;
+      }
+      
       // Always attempt play immediately (no waiting for canplay event)
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) playPromise.catch(e => console.log('Track change play:', e));
@@ -380,6 +387,7 @@ const NexoriaPlayer = () => {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
         }
       }
+      window.justAutoplayed = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
     } else {
       if (repeatMode === 'all' && history.length > 0) {
@@ -400,6 +408,7 @@ const NexoriaPlayer = () => {
           audioRef.current.src = nextSrc;
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
+        window.justAutoplayed = nextTrack._id;
         dispatch(playNextTrack(nextIdx));
       } else {
         dispatch(playNextTrack());
