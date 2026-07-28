@@ -41,9 +41,9 @@ connectDB().then(() => {
 const app = express();
 app.set('trust proxy', 1);
 
-// Body parser - Hardened against DoS
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ limit: '2mb', extended: true }));
+// Body parser - Reverted to 50mb to support base64 image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 // Dev logging middleware
@@ -87,14 +87,10 @@ if (process.env.FRONTEND_URL) {
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS Policy: Origin not allowed by Max Security Rules.'));
-    }
+    // Dynamically accept all origins to support Vercel preview URLs
+    callback(null, true);
   },
-  credentials: true,
-  optionsSuccessStatus: 200
+  credentials: true
 }));
 
 // Apply global security guard for IP banning
