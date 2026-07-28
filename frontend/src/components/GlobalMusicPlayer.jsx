@@ -41,12 +41,16 @@ const GlobalMusicPlayer = () => {
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
   const [isEqOpen, setIsEqOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const audioRef = useRef(null);
-  const lastAssignedSrc = useRef('');
+  
+  // Dual-Audio Engine Refs
+  const audioRef1 = useRef(null);
+  const audioRef2 = useRef(null);
+  const [activeEngine, setActiveEngine] = useState(1); // 1 or 2
+  const activeEngineRef = useRef(1);
 
-  const playerUrl = currentSong?.audioUrl;
-
-  const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(audioRef, false);
+  // Keep a dummy audioRef for useWebAudio so it doesn't crash, even though it's disabled
+  const dummyAudioRef = useRef(null);
+  const { isReady: webAudioReady, updateEq, getAnalyser, resumeContext } = useWebAudio(dummyAudioRef, false);
 
   const [toggleFavorite] = useToggleFavoriteMutation();
   const [recordListenHistory] = useRecordListenHistoryMutation();
@@ -59,29 +63,37 @@ const GlobalMusicPlayer = () => {
 
   const isFavorite = favoritesRes?.data?.some(s => s._id === currentSong?._id);
 
+  // Track active engine in ref for synchronous access in event handlers
+  useEffect(() => {
+    activeEngineRef.current = activeEngine;
+  }, [activeEngine]);
+
+  const getActiveAudio = () => activeEngineRef.current === 1 ? audioRef1.current : audioRef2.current;
+  const getInactiveAudio = () => activeEngineRef.current === 1 ? audioRef2.current : audioRef1.current;
+
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
-    if (audioRef.current && currentSong) {
-      // IMPORTANT: Use a ref to track the raw URL because audioRef.current.src encodes characters (e.g. %20)
-      if (lastAssignedSrc.current !== currentSong.audioUrl) {
-        audioRef.current.src = currentSong.audioUrl;
-        lastAssignedSrc.current = currentSong.audioUrl;
+    const active = getActiveAudio();
+    if (active && currentSong) {
+      if (active.src !== currentSong.audioUrl) {
+        active.src = currentSong.audioUrl;
       }
       
       if (isPlaying) {
-        audioRef.current.play().then(() => {
-          resumeContext(); // Ensure Web Audio API is resumed
-        }).catch((err) => {
-          // Don't pause if the play request was interrupted by a new track loading
-          if (err.name !== 'AbortError') {
-            dispatch(setPlaying(false));
-          }
-        });
+        if (active.paused) {
+          active.play().then(() => {
+            // resumeContext();
+          }).catch((err) => {
+            if (err.name !== 'AbortError') {
+              dispatch(setPlaying(false));
+            }
+          });
+        }
       } else {
-        audioRef.current.pause();
+        active.pause();
       }
     }
-  }, [isPlaying, currentSong, dispatch, resumeContext]);
+  }, [isPlaying, currentSong, dispatch, activeEngine]);
 
   // MediaSession API Integration
   useEffect(() => {
@@ -102,12 +114,13 @@ const GlobalMusicPlayer = () => {
       
       // Seek functionality for OS controls
       navigator.mediaSession.setActionHandler('seekto', (details) => {
-        if (details.fastSeek && 'fastSeek' in (audioRef.current || {})) {
-          audioRef.current.fastSeek(details.seekTime);
+        const active = getActiveAudio();
+        if (details.fastSeek && 'fastSeek' in (active || {})) {
+          active.fastSeek(details.seekTime);
           return;
         }
-        if (audioRef.current) {
-          audioRef.current.currentTime = details.seekTime;
+        if (active) {
+          active.currentTime = details.seekTime;
         }
       });
     }
@@ -130,8 +143,9 @@ const GlobalMusicPlayer = () => {
             dispatch(playPrevious());
           } else {
             // Seek Back 10 seconds
+            const active = getActiveAudio();
             const backTime = Math.max(0, playedSeconds - 10);
-            if (audioRef.current) audioRef.current.currentTime = backTime;
+            if (active) active.currentTime = backTime;
           }
           break;
         case 'ArrowRight':
@@ -140,8 +154,9 @@ const GlobalMusicPlayer = () => {
             dispatch(playNext());
           } else {
             // Seek Forward 10 seconds
+            const active = getActiveAudio();
             const forwardTime = Math.min(duration, playedSeconds + 10);
-            if (audioRef.current) audioRef.current.currentTime = forwardTime;
+            if (active) active.currentTime = forwardTime;
           }
           break;
         default:
@@ -155,9 +170,8 @@ const GlobalMusicPlayer = () => {
 
   // Sync volume/mute on native audio
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume;
-    }
+    if (audioRef1.current) audioRef1.current.volume = isMuted ? 0 : volume;
+    if (audioRef2.current) audioRef2.current.volume = isMuted ? 0 : volume;
   }, [volume, isMuted]);
 
   if (!currentSong) return null;
@@ -191,21 +205,25 @@ const GlobalMusicPlayer = () => {
   const handleSeekMouseUp = (e) => {
     setIsSeeking(false);
     const newTime = parseFloat(e.target.value);
-    if (audioRef.current && duration > 0) {
-      audioRef.current.currentTime = newTime * duration;
+    const active = getActiveAudio();
+    if (active && duration > 0) {
+      active.currentTime = newTime * duration;
     }
   };
 
-  const onAudioTimeUpdate = () => {
-    if (audioRef.current && !isSeeking) {
-      setPlayedSeconds(audioRef.current.currentTime);
-      if (duration > 0) setPlayed(audioRef.current.currentTime / duration);
+  const onAudioTimeUpdate = (e) => {
+    // Only process time updates for the actively playing engine
+    if (e.target !== getActiveAudio()) return;
+    
+    if (!isSeeking) {
+      setPlayedSeconds(e.target.currentTime);
+      if (duration > 0) setPlayed(e.target.currentTime / duration);
     }
   };
 
-  const onAudioLoadedMetadata = () => {
-    if (audioRef.current) {
-      setDuration(audioRef.current.duration);
+  const onAudioLoadedMetadata = (e) => {
+    if (e.target === getActiveAudio()) {
+      setDuration(e.target.duration);
     }
   };
 
@@ -235,14 +253,38 @@ const GlobalMusicPlayer = () => {
     }
   };
 
-  const handleSongEnd = () => {
+  // PRELOAD LOGIC: Determine next song and silently load it into the inactive engine
+  useEffect(() => {
+    let nextSongUrl = null;
+    if (queue.length > 0) {
+      nextSongUrl = queue[0].audioUrl;
+    } else if (loopMode === 1 && currentSong) {
+      nextSongUrl = currentSong.audioUrl;
+    } else if (loopMode === 2 && currentSong) {
+      nextSongUrl = currentSong.audioUrl;
+    } else if (isRadioMode && radioSongsRes?.data) {
+      // It's hard to deterministically preload random smart radio without locking it in state,
+      // For now, gapless will just be less effective for Radio Mode on mobile, 
+      // but works 100% for Queues and Albums!
+    }
+
+    const inactive = getInactiveAudio();
+    if (inactive && nextSongUrl && inactive.src !== nextSongUrl) {
+      inactive.src = nextSongUrl;
+      inactive.load(); // Silently buffers in background!
+    }
+  }, [queue, currentSong, loopMode, isRadioMode, radioSongsRes, activeEngine]);
+
+  const handleSongEnd = (e) => {
+    // Prevent inactive engine from triggering song end
+    if (e.target !== getActiveAudio()) return;
+
     if (currentSong && playedSeconds > 10) {
       recordListenHistory({ id: currentSong._id, listenTime: Math.floor(playedSeconds) });
     }
     
     let nextSongObj = null;
 
-    // Determine the next song
     if (queue.length > 0) {
       nextSongObj = queue[0];
     } else if (isRadioMode && radioSongsRes?.data) {
@@ -257,20 +299,26 @@ const GlobalMusicPlayer = () => {
       nextSongObj = currentSong;
     }
 
-    // CRITICAL HACK FOR MOBILE BACKGROUND PLAYBACK:
-    // Change src and play synchronously inside the onEnded event stack.
-    // This bypasses iOS/Android background autoplay restrictions.
-    if (nextSongObj && audioRef.current) {
-      audioRef.current.src = nextSongObj.audioUrl;
-      lastAssignedSrc.current = nextSongObj.audioUrl; // Track it so useEffect ignores it!
-      audioRef.current.load(); // Force iOS to process the new source immediately
-      audioRef.current.play().catch(e => console.warn('Mobile auto-play hack blocked:', e));
-    }
+    if (nextSongObj) {
+      // DUAL AUDIO SEAMLESS HANDOFF
+      const inactive = getInactiveAudio();
+      const nextIndex = activeEngineRef.current === 1 ? 2 : 1;
+      
+      if (inactive) {
+        // Ensure the source is correct just in case preload missed it
+        if (inactive.src !== nextSongObj.audioUrl) {
+          inactive.src = nextSongObj.audioUrl;
+        }
+        
+        // INSTANT PLAYBACK! (Preloaded buffer is used)
+        inactive.play().catch(err => console.warn("Handoff play blocked:", err));
+        setActiveEngine(nextIndex);
+      }
 
-    // Now update Redux state
-    if (queue.length === 0 && isRadioMode && nextSongObj) {
-      dispatch(playSong(nextSongObj));
-      return;
+      if (queue.length === 0 && isRadioMode) {
+        dispatch(playSong(nextSongObj));
+        return;
+      }
     }
     
     dispatch(playNext());
@@ -308,28 +356,37 @@ const GlobalMusicPlayer = () => {
         
         <div className="max-w-6xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col sm:flex-row items-center gap-4 transition-all duration-300">
 
-        {/* NATIVE MP3 AUDIO */}
-        {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
+        {/* NATIVE MP3 AUDIO (DUAL ENGINE) */}
+        {/* ENGINE 1 */}
           <audio
-            ref={audioRef}
+            ref={audioRef1}
             crossOrigin="anonymous"
             onTimeUpdate={onAudioTimeUpdate}
             onLoadedMetadata={onAudioLoadedMetadata}
             onEnded={handleSongEnd}
-            onCanPlay={() => {
-              // onCanPlay fires after mount + src ready — audioRef.current is guaranteed set here
-              if (isPlaying && audioRef.current) {
-                audioRef.current.play().catch((err) => {
-                  if (err.name !== 'AbortError') dispatch(setPlaying(false));
-                });
+            onPlaying={(e) => { if (e.target === getActiveAudio()) dispatch(setPlaying(true)); }}
+            onError={(e) => {
+              if (e.target === getActiveAudio()) {
+                toast.error('Failed to play audio');
+                dispatch(setPlaying(false));
               }
             }}
-            onPlaying={() => dispatch(setPlaying(true))}
-            onPause={() => { /* intentionally empty — pause controlled by useEffect only */ }}
-            onWaiting={() => { /* buffering */ }}
-            onError={() => {
-              toast.error('Failed to play audio');
-              dispatch(setPlaying(false));
+            style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+          />
+
+        {/* ENGINE 2 */}
+          <audio
+            ref={audioRef2}
+            crossOrigin="anonymous"
+            onTimeUpdate={onAudioTimeUpdate}
+            onLoadedMetadata={onAudioLoadedMetadata}
+            onEnded={handleSongEnd}
+            onPlaying={(e) => { if (e.target === getActiveAudio()) dispatch(setPlaying(true)); }}
+            onError={(e) => {
+              if (e.target === getActiveAudio()) {
+                toast.error('Failed to play audio');
+                dispatch(setPlaying(false));
+              }
             }}
             style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
           />
