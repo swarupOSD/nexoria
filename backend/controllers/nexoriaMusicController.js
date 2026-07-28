@@ -195,38 +195,56 @@ export const deleteAlbum = async (req, res) => {
 // ADMIN: TRACK MANAGEMENT
 // ==========================================
 
-// Background Cloudinary Upload Helper
+// Background Cloudinary Upload Helper with Fallback
 const uploadToCloudinaryInBackground = async (trackId, fileBuffer, fileObj, bodyObj) => {
   try {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
+    const { Readable } = await import('stream');
+    
+    const startUpload = (useFallback = false) => {
+      const options = {
         resource_type: 'video', // Cloudinary treats audio as video resource type
         folder: 'nexoria_music/tracks',
         public_id: `track_${trackId}`,
-      },
-      async (error, result) => {
-        if (error) {
-          logger.error(`Background Cloudinary Upload Failed for Track ${trackId}: ${error.message}`);
-          return;
-        }
-        
-        await NexoriaTrack.findByIdAndUpdate(trackId, {
-          audioUrl: result.secure_url,
-          duration: Math.round(result.duration || bodyObj.duration || 0),
-          fileSizeBytes: result.bytes || 0
-        });
-        logger.info(`Background Cloudinary Upload Success for Track: ${trackId}`);
-      }
-    );
+      };
 
-    const { Readable } = await import('stream');
-    const readable = new Readable({
-      read() {
-        this.push(fileBuffer);
-        this.push(null);
+      if (useFallback && process.env.CLOUDINARY_CLOUD_NAME_2) {
+        options.cloud_name = process.env.CLOUDINARY_CLOUD_NAME_2;
+        options.api_key = process.env.CLOUDINARY_API_KEY_2;
+        options.api_secret = process.env.CLOUDINARY_API_SECRET_2;
       }
-    });
-    readable.pipe(uploadStream);
+
+      const uploadStream = cloudinary.uploader.upload_stream(
+        options,
+        async (error, result) => {
+          if (error) {
+            if (!useFallback && process.env.CLOUDINARY_CLOUD_NAME_2) {
+              logger.warn(`Cloudinary Primary Account Failed (${error.message}). Falling back to Secondary Account...`);
+              startUpload(true); // Retry with fallback
+            } else {
+              logger.error(`Cloudinary Upload Failed completely for Track ${trackId}: ${error.message}`);
+            }
+            return;
+          }
+          
+          await NexoriaTrack.findByIdAndUpdate(trackId, {
+            audioUrl: result.secure_url,
+            duration: Math.round(result.duration || bodyObj.duration || 0),
+            fileSizeBytes: result.bytes || 0
+          });
+          logger.info(`Cloudinary Upload Success for Track: ${trackId} (Fallback: ${useFallback})`);
+        }
+      );
+
+      const readable = new Readable({
+        read() {
+          this.push(fileBuffer);
+          this.push(null);
+        }
+      });
+      readable.pipe(uploadStream);
+    };
+
+    startUpload(false); // Start with primary account
 
   } catch (error) {
     logger.error(`Background Cloudinary Upload Error for Track ${trackId}: ${error.message}`);
