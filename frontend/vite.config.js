@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    sourcemap: false, // Prevents source code from being inspected in production
+  },
   plugins: [
     react(),
     VitePWA({

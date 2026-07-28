@@ -41,9 +41,9 @@ connectDB().then(() => {
 const app = express();
 app.set('trust proxy', 1);
 
-// Body parser
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Body parser - Hardened against DoS
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
 app.use(cookieParser());
 
 // Dev logging middleware
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Security Middlewares
+// Security Middlewares - Max Hardening
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -64,6 +64,7 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true }, // Force HTTPS
 }));
 app.use(mongoSanitize());
 app.use((req, res, next) => {
@@ -85,8 +86,15 @@ if (process.env.FRONTEND_URL) {
 }
 
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS Policy: Origin not allowed by Max Security Rules.'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 // Apply global security guard for IP banning
@@ -94,7 +102,7 @@ app.use(securityGuard);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // Increased to 500 so you can easily test logins without getting blocked
+  max: 10, // Max Security: 10 attempts per 15 minutes
   message: { success: false, message: 'Too many authentication attempts. Your IP has been temporarily blocked for 15 minutes to prevent hacking.' },
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl, type: 'Auth Brute Force Attempt' } });
@@ -104,7 +112,7 @@ const authLimiter = rateLimit({
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000, // Increased to support multiple parallel Homepage queries
+  max: 300, // Max Security: 300 requests per 15 minutes
   message: { success: false, message: 'Too many requests from this IP, please try again after 15 minutes.' },
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl } });
@@ -114,7 +122,7 @@ const apiLimiter = rateLimit({
 
 const adminLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 500,
+  max: 100, // Max Security: 100 requests per 15 minutes
   message: { success: false, message: 'Too many admin requests from this IP, please try again after 15 minutes.' },
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'RATE_LIMIT_VIOLATION', req, details: { route: req.originalUrl } });
@@ -124,7 +132,7 @@ const adminLimiter = rateLimit({
 
 const spamLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // Max 10 requests per minute for comments/ratings/messages
+  max: 5, // Max Security: 5 requests per minute for comments/ratings/messages
   message: { success: false, message: 'Stop spamming! You are doing this too fast. Wait a minute.' },
   handler: (req, res, next, options) => {
     logSecurityEvent({ eventType: 'SPAM_VIOLATION', req, details: { route: req.originalUrl } });

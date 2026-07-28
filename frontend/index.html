@@ -12,6 +12,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One</title>
     <meta name="description" content="Nexoria unites movies, K-Dramas, anime, mobile & kids games, music, editing tools and premium apps in one futuristic platform. Explore now." />
+    
+    <!-- Max Security: Anti-Inspection & Anti-Tampering Scripts -->
+    <script>
+      // Disable Right Click
+      document.addEventListener('contextmenu', event => event.preventDefault());
+      
+      // Disable Keyboard Shortcuts
+      document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false; // F12
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source)
+        if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; // Ctrl+S (Save Page)
+        if(e.ctrlKey && e.keyCode == 'P'.charCodeAt(0)) return false; // Ctrl+P (Print Page)
+      }
+      
+      // Advanced DevTools detection (debugger trap)
+      setInterval(function() {
+        var before = new Date().getTime();
+        debugger;
+        var after = new Date().getTime();
+        if (after - before > 100) {
+           document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:20vh'>Security Violation: Developer Tools Detected</h1>";
+        }
+      }, 2000);
+    </script>
+    <style>
+      /* Prevent Text Selection and Image Dragging Globally */
+      body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      img {
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+      }
+    </style>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
