@@ -56,7 +56,7 @@ const NexoriaGenresManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this genre?')) {
+    if (await window.appConfirm('Are you sure you want to delete this genre?')) {
       try {
         await deleteGenre(id).unwrap();
         toast.success('Genre deleted');

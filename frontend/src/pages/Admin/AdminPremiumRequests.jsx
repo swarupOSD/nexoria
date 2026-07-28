@@ -16,14 +16,14 @@ const AdminPremiumRequests = () => {
   const payments = paymentsRes?.data || [];
 
   const handleApprove = async (id) => {
-    if (window.confirm('Approve this payment and activate premium?')) {
+    if (await window.appConfirm('Approve this payment and activate premium?')) {
       await approvePayment(id);
       refetch();
     }
   };
 
   const handleReject = async (id) => {
-    if (window.confirm('Reject this payment?')) {
+    if (await window.appConfirm('Reject this payment?')) {
       await rejectPayment(id);
       refetch();
     }

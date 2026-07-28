@@ -40,7 +40,7 @@ const AdminModeration = () => {
 
   // Handlers for Posts
   const handleApprovePost = async (id) => {
-    if (window.confirm('Approve and publish this post?')) {
+    if (await window.appConfirm('Approve and publish this post?')) {
       await approvePost(id);
       refetchPosts();
     }
@@ -55,7 +55,7 @@ const AdminModeration = () => {
   };
 
   const handleUnderDevelopment = async (id) => {
-    if (window.confirm('Mark this post as Under Development?')) {
+    if (await window.appConfirm('Mark this post as Under Development?')) {
       await markUnderDevelopment(id);
       refetchPosts();
     }
@@ -70,7 +70,7 @@ const AdminModeration = () => {
   };
 
   const handleDeletePost = async (id) => {
-    if (window.confirm('Delete this post permanently?')) {
+    if (await window.appConfirm('Delete this post permanently?')) {
       await deletePost(id).unwrap();
       refetchPosts();
     }
@@ -88,7 +88,7 @@ const AdminModeration = () => {
   };
 
   const handleDeleteReport = async (id) => {
-    if (window.confirm('Delete this report?')) {
+    if (await window.appConfirm('Delete this report?')) {
       await deleteReport(id).unwrap();
       refetchReports();
     }

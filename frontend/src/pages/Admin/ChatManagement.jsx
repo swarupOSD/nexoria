@@ -30,7 +30,7 @@ const ChatManagement = () => {
   const totalPages = convsRes?.pages || 1;
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you absolutely sure you want to delete this conversation? This will permanently delete all messages in it.')) return;
+    if (!await window.appConfirm('Are you absolutely sure you want to delete this conversation? This will permanently delete all messages in it.')) return;
     try {
       await deleteConversation(id).unwrap();
       toast.success('Conversation deleted successfully!');
@@ -43,7 +43,7 @@ const ChatManagement = () => {
 
   const handleRestrict = async (userId, currentRestriction) => {
     const action = !currentRestriction;
-    if (!window.confirm(action 
+    if (!await window.appConfirm(action 
       ? 'Restrict this user from sending/receiving direct messages?' 
       : 'Remove direct message restriction for this user?'
     )) return;

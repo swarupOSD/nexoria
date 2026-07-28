@@ -13,7 +13,7 @@ import {
   useUpdateNexoriaTrackLyricsMutation,
   useGetTrackLyricsQuery
 } from '../../../features/api/nexoriaMusicApiSlice';
-import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud, Mic2 } from 'lucide-react';
+import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud, Mic2, Flame } from 'lucide-react';
 import toast from 'react-hot-toast';
 import NexoriaBulkUploader from './NexoriaBulkUploader';
 import NexoriaLyricsStudio from './NexoriaLyricsStudio';
@@ -170,7 +170,7 @@ const NexoriaTracksManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this track?')) {
+    if (await window.appConfirm('Are you sure you want to delete this track?')) {
       try {
         await deleteTrack(id).unwrap();
         toast.success('Track deleted');
@@ -252,8 +252,8 @@ const NexoriaTracksManager = () => {
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded overflow-hidden bg-zinc-800 flex-shrink-0 relative">
                     {track.algorithmicBoost > 0 && (
-                      <div className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1 rounded-bl-sm z-10" title={`Boost Score: ${track.algorithmicBoost}`}>
-                        🔥 {track.algorithmicBoost}
+                      <div className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1 rounded-bl-sm z-10 flex items-center gap-0.5" title={`Boost Score: ${track.algorithmicBoost}`}>
+                        <Flame className="w-3 h-3 text-yellow-300" /> {track.algorithmicBoost}
                       </div>
                     )}
                     {track.coverImage || track.album?.coverImage || track.artist?.image ? (

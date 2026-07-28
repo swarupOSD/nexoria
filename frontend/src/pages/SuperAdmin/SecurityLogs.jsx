@@ -161,7 +161,7 @@ const SecurityLogs = () => {
           <div className="flex gap-4 items-center w-full sm:w-auto">
             <button
               onClick={async () => {
-                if (window.confirm('Are you sure you want to clear all security logs?')) {
+                if (await window.appConfirm('Are you sure you want to clear all security logs?')) {
                   try {
                     await clearLogs().unwrap();
                     toast.success('Logs cleared successfully');

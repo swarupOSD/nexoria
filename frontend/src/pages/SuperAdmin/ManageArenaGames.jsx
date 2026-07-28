@@ -137,7 +137,7 @@ const ManageArenaGames = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this Arena Game?')) {
+    if (await window.appConfirm('Are you sure you want to delete this Arena Game?')) {
       try {
         await deleteGame(id).unwrap();
         toast.success('Game deleted successfully');

@@ -63,7 +63,7 @@ const NexoriaArtistsManager = () => {
   };
 
   const handleDelete = async (artist) => {
-    if (!window.confirm(`Delete "${artist.name}"? This cannot be undone.`)) return;
+    if (!await window.appConfirm(`Delete "${artist.name}"? This cannot be undone.`)) return;
     try {
       await deleteArtist(artist._id).unwrap();
       toast.success('Artist removed');

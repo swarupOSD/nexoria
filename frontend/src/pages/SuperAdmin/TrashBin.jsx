@@ -31,7 +31,7 @@ const TrashBin = () => {
   };
 
   const handlePermanentDelete = async (id, name, type) => {
-    if(window.confirm(`Are you sure you want to permanently delete ${name}? This action CANNOT be undone.`)) {
+    if(await window.appConfirm(`Are you sure you want to permanently delete ${name}? This action CANNOT be undone.`)) {
       toast.loading(`Deleting ${name}...`, { id: 'delete' });
       try {
         await deleteItem({ type, id }).unwrap();
@@ -44,7 +44,7 @@ const TrashBin = () => {
 
   const handleEmptyTrash = async () => {
     if(!trashData?.data || trashData.data.length === 0) return toast.error('Trash is already empty.');
-    if(window.confirm('Are you absolutely sure you want to empty the trash bin? All items will be permanently erased.')) {
+    if(await window.appConfirm('Are you absolutely sure you want to empty the trash bin? All items will be permanently erased.')) {
       toast.loading('Emptying trash...', { id: 'empty' });
       try {
         await emptyTrash().unwrap();

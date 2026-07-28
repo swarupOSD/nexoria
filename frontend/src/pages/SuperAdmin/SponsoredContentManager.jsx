@@ -84,7 +84,7 @@ const SponsoredContentManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this content slot?')) return;
+    if (!await window.appConfirm('Delete this content slot?')) return;
     try {
       await deleteItem(id).unwrap();
       toast.success('Deleted');

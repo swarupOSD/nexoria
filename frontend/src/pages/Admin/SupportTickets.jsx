@@ -76,7 +76,7 @@ const SupportTicketAdmin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this ticket?')) return;
+    if (!await window.appConfirm('Delete this ticket?')) return;
     try {
       await deleteTicket(id).unwrap();
       toast.success('Ticket deleted!');

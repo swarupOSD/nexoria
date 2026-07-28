@@ -178,7 +178,7 @@ const AdminPosts = () => {
                       <button 
                         title="Delete App"
                         onClick={async () => {
-                          if (window.confirm('Are you sure you want to delete this app?')) {
+                          if (await window.appConfirm('Are you sure you want to delete this app?')) {
                             try {
                               await deletePost(post._id).unwrap();
                               refetch();

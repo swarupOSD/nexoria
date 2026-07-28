@@ -34,7 +34,7 @@ const UserRequestsAdmin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this request?')) {
+    if (await window.appConfirm('Are you sure you want to delete this request?')) {
       try {
         await deleteRequest(id).unwrap();
         toast.success('Request deleted');

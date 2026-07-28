@@ -17,7 +17,7 @@ const PremiumRequests = () => {
   const requests = requestsRes?.data || [];
 
   const handleApprove = async (id) => {
-    if (!window.confirm('Are you sure you want to approve this premium request?')) return;
+    if (!await window.appConfirm('Are you sure you want to approve this premium request?')) return;
     try {
       await approveRequest(id).unwrap();
       toast.success('Request approved successfully!');

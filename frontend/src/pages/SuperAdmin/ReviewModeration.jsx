@@ -50,7 +50,7 @@ const ReviewModeration = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Permanently delete this review?')) return;
+    if (!await window.appConfirm('Permanently delete this review?')) return;
     try {
       const res = await fetch(`${BACKEND_URL}/reviews/${id}`, {
         method: 'DELETE',

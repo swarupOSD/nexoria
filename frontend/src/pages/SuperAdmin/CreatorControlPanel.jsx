@@ -85,7 +85,7 @@ const CreatorControlPanel = () => {
     const selected = Object.keys(wipeCollections).filter(k => wipeCollections[k]);
     if (selected.length === 0) return toast.error('Select at least one collection');
     
-    if (window.confirm(`Are you absolutely sure you want to wipe: ${selected.join(', ')}? This cannot be undone!`)) {
+    if (await window.appConfirm(`Are you absolutely sure you want to wipe: ${selected.join(', ')}? This cannot be undone!`)) {
       try {
         await wipeDatabase(selected).unwrap();
         toast.success('Selected collections wiped permanently!');

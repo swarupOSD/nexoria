@@ -25,7 +25,7 @@ const AdminRatings = () => {
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm('Delete this rating?')) {
+    if(await window.appConfirm('Delete this rating?')) {
       try {
         await deleteRating(id).unwrap();
       } catch(err) {

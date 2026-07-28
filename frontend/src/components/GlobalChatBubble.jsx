@@ -189,8 +189,8 @@ const GlobalChatBubble = () => {
     socket.emit('deleteGlobalMessage', id);
   };
 
-  const handleSuspend = (userId) => {
-    if (window.confirm("Are you sure you want to suspend this user?")) {
+  const handleSuspend = async (userId) => {
+    if (await window.appConfirm("Are you sure you want to suspend this user?")) {
       socket.emit('suspendGlobalUser', userId);
     }
   };

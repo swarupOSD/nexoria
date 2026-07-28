@@ -25,7 +25,7 @@ export default function MovieReportsAdmin({ type = 'Movie' }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Permanently delete this report?')) return;
+    if (!await window.appConfirm('Permanently delete this report?')) return;
     try {
       await deleteReport(id).unwrap();
       toast.success('Report deleted');

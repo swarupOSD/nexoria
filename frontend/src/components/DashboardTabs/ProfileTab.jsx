@@ -153,7 +153,7 @@ const ProfileTab = ({ user, token, refetchUser }) => {
   };
 
   const handleDisable2FA = async () => {
-    if (!window.confirm('Are you sure you want to disable 2FA? This will reduce your account security.')) return;
+    if (!await window.appConfirm('Are you sure you want to disable 2FA? This will reduce your account security.')) return;
     try {
       await disable2FA().unwrap();
       toast.success('Two-Factor Authentication disabled');

@@ -38,7 +38,7 @@ const AdminReports = () => {
   });
 
   const handleResolve = async (id) => {
-    if (window.confirm('Mark this report as resolved?')) {
+    if (await window.appConfirm('Mark this report as resolved?')) {
       try {
         await resolveReport(id).unwrap();
         refetch();
@@ -49,7 +49,7 @@ const AdminReports = () => {
   };
 
   const handleReject = async (id) => {
-    if (window.confirm('Reject this report?')) {
+    if (await window.appConfirm('Reject this report?')) {
       try {
         await rejectReport(id).unwrap();
         refetch();
@@ -60,7 +60,7 @@ const AdminReports = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this report record?')) {
+    if (await window.appConfirm('Are you sure you want to delete this report record?')) {
       try {
         await deleteReport(id).unwrap();
         refetch();

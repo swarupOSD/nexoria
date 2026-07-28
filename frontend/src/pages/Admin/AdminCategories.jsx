@@ -94,7 +94,7 @@ const AdminCategories = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    if (await window.appConfirm('Are you sure you want to delete this category?')) {
       try {
         await deleteCategory(id).unwrap();
         toast.success('Category deleted');

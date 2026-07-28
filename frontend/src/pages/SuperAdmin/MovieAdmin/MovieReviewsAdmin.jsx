@@ -25,7 +25,7 @@ export default function MovieReviewsAdmin({ type = 'Movie' }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Permanently delete this review?')) return;
+    if (!await window.appConfirm('Permanently delete this review?')) return;
     try {
       await deleteReview(id).unwrap();
       toast.success('Deleted successfully');

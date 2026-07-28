@@ -25,7 +25,7 @@ const AdminComments = () => {
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm('Delete this comment?')) {
+    if(await window.appConfirm('Delete this comment?')) {
       try {
         await deleteComment(id).unwrap();
       } catch (err) {

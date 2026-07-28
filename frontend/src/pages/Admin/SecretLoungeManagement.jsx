@@ -39,7 +39,7 @@ const SecretLoungeManagement = () => {
   );
 
   const handleDelete = async (teamCode) => {
-    if (window.confirm(`Are you sure you want to terminate Room ${teamCode}? This will kick out all active users.`)) {
+    if (await window.appConfirm(`Are you sure you want to terminate Room ${teamCode}? This will kick out all active users.`)) {
       try {
         await deleteRoom(teamCode).unwrap();
         toast.success(`Room ${teamCode} destroyed successfully.`);

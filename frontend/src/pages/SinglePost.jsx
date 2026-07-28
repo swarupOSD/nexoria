@@ -246,7 +246,7 @@ const SinglePost = () => {
   };
 
   const handleDeleteReview = async (reviewId) => {
-    if (window.confirm('Are you sure you want to delete your review?')) {
+    if (await window.appConfirm('Are you sure you want to delete your review?')) {
       try {
         await deleteReview(reviewId).unwrap();
         toast.success('Review deleted');

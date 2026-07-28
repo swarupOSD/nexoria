@@ -26,7 +26,7 @@ const AdminContactMessages = () => {
   };
 
   const handleResolve = async (id) => {
-    if (window.confirm('Mark this message as resolved?')) {
+    if (await window.appConfirm('Mark this message as resolved?')) {
       try {
         await resolveMessage(id).unwrap();
       } catch (err) {
@@ -36,7 +36,7 @@ const AdminContactMessages = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
+    if (await window.appConfirm('Are you sure you want to delete this message?')) {
       try {
         await deleteMessage(id).unwrap();
       } catch (err) {

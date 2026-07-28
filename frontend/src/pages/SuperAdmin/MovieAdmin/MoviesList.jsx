@@ -12,8 +12,8 @@ import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import BackButton from '../../../components/BackButton';
-import { 
 import { BACKEND_URL } from '../../../features/api/apiSlice';
+import { 
   Plus, Edit2, Trash2, Search, Filter, Loader2, X, Eye, EyeOff,
   Image as ImageIcon, CheckCircle, Video, Tag, Clock, Globe, Download
 , LayoutTemplate } from 'lucide-react';
@@ -124,7 +124,7 @@ const MovieManagement = ({ type = 'Movie' }) => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this movie?')) {
+    if (await window.appConfirm('Are you sure you want to delete this movie?')) {
       try {
         await deleteMovie(id).unwrap();
         toast.success('Movie deleted successfully');

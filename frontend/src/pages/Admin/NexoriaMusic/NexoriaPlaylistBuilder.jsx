@@ -86,7 +86,7 @@ const NexoriaPlaylistBuilder = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this playlist?')) {
+    if (await window.appConfirm('Are you sure you want to delete this playlist?')) {
       try {
         await deletePlaylist(id).unwrap();
         toast.success('Playlist deleted');

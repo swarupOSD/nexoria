@@ -115,7 +115,7 @@ const AdminUsers = () => {
 
   const handleBulkAction = async (action) => {
     if (selectedUsersIds.length === 0) return alert('Select users first');
-    if (!window.confirm(`Are you sure you want to ${action} ${selectedUsersIds.length} users?`)) return;
+    if (!await window.appConfirm(`Are you sure you want to ${action} ${selectedUsersIds.length} users?`)) return;
 
     for (const id of selectedUsersIds) {
       try {
@@ -200,9 +200,9 @@ const AdminUsers = () => {
   const handleQuickAction = async (action, user) => {
     try {
       if (action === 'unban') {
-        if(window.confirm('Unban this user?')) { await unbanUser(user._id); refetch(); }
+        if(await window.appConfirm('Unban this user?')) { await unbanUser(user._id); refetch(); }
       } else if (action === 'restore') {
-        if(window.confirm('Restore this user from suspension?')) { await restoreUser(user._id); refetch(); }
+        if(await window.appConfirm('Restore this user from suspension?')) { await restoreUser(user._id); refetch(); }
       }
     } catch (error) {}
   };

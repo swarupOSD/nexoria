@@ -37,6 +37,7 @@ const NexoriaPlayer = () => {
   const [sleepTimerModalOpen, setSleepTimerModalOpen] = useState(false);
   const [sleepTimer, setSleepTimer] = useState(null); // null, 'track', or number (minutes)
   const sleepTimerRef = useRef(null);
+  const justAutoplayedRef = useRef(null);
   const [audioContextSetup, setAudioContextSetup] = useState(false);
   const [shareModalData, setShareModalData] = useState({ isOpen: false, track: null });
 
@@ -125,8 +126,8 @@ const NexoriaPlayer = () => {
       }
       
       // Guard against double-playing which causes mobile browsers to block autoplay
-      if (window.justAutoplayed === currentTrack?._id) {
-        window.justAutoplayed = null;
+      if (justAutoplayedRef.current === currentTrack?._id) {
+        justAutoplayedRef.current = null;
         return;
       }
       
@@ -387,7 +388,7 @@ const NexoriaPlayer = () => {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
         }
       }
-      window.justAutoplayed = nextTrack._id;
+      justAutoplayedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
     } else {
       if (repeatMode === 'all' && history.length > 0) {
@@ -408,7 +409,7 @@ const NexoriaPlayer = () => {
           audioRef.current.src = nextSrc;
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
-        window.justAutoplayed = nextTrack._id;
+        justAutoplayedRef.current = nextTrack._id;
         dispatch(playNextTrack(nextIdx));
       } else {
         dispatch(playNextTrack());

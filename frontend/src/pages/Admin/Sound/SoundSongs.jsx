@@ -24,7 +24,7 @@ const SoundSongs = () => {
   const songs = data?.data || [];
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this song?')) {
+    if (await window.appConfirm('Are you sure you want to delete this song?')) {
       try {
         await deleteSong(id).unwrap();
         toast.success('Song deleted successfully');

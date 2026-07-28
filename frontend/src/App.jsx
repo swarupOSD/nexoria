@@ -175,6 +175,7 @@ const AdminEditGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/EditGame')
 const ManageArenaGames = lazy(() => import('./pages/SuperAdmin/ManageArenaGames'));
 
 import ErrorBoundary from './components/ErrorBoundary';
+import GlobalConfirmModal from './components/GlobalConfirmModal';
 
 // Loader component for suspense fallback
 const PageLoader = () => (
@@ -508,6 +509,7 @@ function App() {
         </Suspense>
         </ErrorBoundary>
       <AdBlockDetector />
+      <GlobalConfirmModal />
     </KidsModeGuard>
       </Router>
     </PermissionProvider>

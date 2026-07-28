@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit, Layers, Loader2, Image as ImageIcon, X, Link as LinkIcon , LayoutTemplate } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/BackButton';
-import { 
 import { BACKEND_URL } from '../../features/api/apiSlice';
+import { 
   useGetAdminHeroDisplaysQuery, 
   useCreateHeroDisplayMutation, 
   useUpdateHeroDisplayMutation, 
@@ -96,7 +96,7 @@ const HeroDisplayManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this hero display?')) return;
+    if (!await window.appConfirm('Delete this hero display?')) return;
     try {
       await deleteHeroDisplay(id).unwrap();
       toast.success('Deleted');

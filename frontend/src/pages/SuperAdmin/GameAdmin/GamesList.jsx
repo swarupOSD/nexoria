@@ -12,7 +12,7 @@ const GamesList = () => {
   const games = res?.data || [];
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this game?')) {
+    if (await window.appConfirm('Are you sure you want to delete this game?')) {
       try {
         await deleteGame(id).unwrap();
         toast.success('Game deleted successfully');

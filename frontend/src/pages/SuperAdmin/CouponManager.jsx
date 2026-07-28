@@ -66,7 +66,7 @@ const CouponManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this coupon?')) return;
+    if (!await window.appConfirm('Delete this coupon?')) return;
     try {
       const res = await fetch(`${BACKEND_URL}/coupons/${id}`, {
         method: 'DELETE',

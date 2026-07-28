@@ -379,7 +379,7 @@ const Messages = () => {
   };
 
   const handleReact = (messageId, emoji) => socket.emit('reactToMessage', { messageId, emoji });
-  const handleUnsend = (id) => { if (window.confirm('Unsend this message?')) socket.emit('unsendMessage', { messageId: id }); };
+  const handleUnsend = async (id) => { if (await window.appConfirm('Unsend this message?')) socket.emit('unsendMessage', { messageId: id }); };
   const handleTheme = (theme) => {
     setActiveTheme(theme);
     if (activeChat) socket.emit('setConversationTheme', { receiverId: activeChat._id, theme });

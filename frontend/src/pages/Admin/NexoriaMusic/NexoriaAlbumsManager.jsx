@@ -69,7 +69,7 @@ const NexoriaAlbumsManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this album?')) {
+    if (await window.appConfirm('Are you sure you want to delete this album?')) {
       try {
         await deleteAlbum(id).unwrap();
         toast.success('Album deleted');

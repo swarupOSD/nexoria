@@ -92,7 +92,7 @@ const SystemNoticesManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this notice?')) return;
+    if (!await window.appConfirm('Delete this notice?')) return;
     try {
       const res = await fetch(`${BACKEND_URL}/system-notices/${id}`, {
         method: 'DELETE',

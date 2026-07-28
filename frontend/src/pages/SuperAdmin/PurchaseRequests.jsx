@@ -18,7 +18,7 @@ const PurchaseRequests = () => {
   const requests = requestsRes?.data || [];
 
   const handleApprove = async (id) => {
-    if (!window.confirm('Are you sure you want to approve this app purchase?')) return;
+    if (!await window.appConfirm('Are you sure you want to approve this app purchase?')) return;
     try {
       await approveRequest(id).unwrap();
       toast.success('Purchase approved successfully!');

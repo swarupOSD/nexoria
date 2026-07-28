@@ -50,8 +50,8 @@ const MovieSeriesManager = ({ type = 'Web Series' }) => {
     setNewSeason({ seasonNumber: updatedSeasons.length + 1, poster: '', description: '' });
   };
 
-  const deleteSeason = (index) => {
-    if(!window.confirm('Delete this season and all its episodes?')) return;
+  const deleteSeason = async (index) => {
+    if(!await window.appConfirm('Delete this season and all its episodes?')) return;
     const updatedSeasons = selectedSeries.seasons.filter((_, i) => i !== index);
     setSelectedSeries({ ...selectedSeries, seasons: updatedSeasons });
     setActiveSeasonIndex(Math.max(0, index - 1));
@@ -68,8 +68,8 @@ const MovieSeriesManager = ({ type = 'Web Series' }) => {
     setNewEpisode({ episodeNumber: updatedSeasons[activeSeasonIndex].episodes.length + 1, title: '', thumbnail: '', runtime: '', videoUrl: '', downloadLinks: [] });
   };
 
-  const deleteEpisode = (epIndex) => {
-    if(!window.confirm('Delete this episode?')) return;
+  const deleteEpisode = async (epIndex) => {
+    if(!await window.appConfirm('Delete this episode?')) return;
     const updatedSeasons = [...selectedSeries.seasons];
     updatedSeasons[activeSeasonIndex].episodes = updatedSeasons[activeSeasonIndex].episodes.filter((_, i) => i !== epIndex);
     setSelectedSeries({ ...selectedSeries, seasons: updatedSeasons });

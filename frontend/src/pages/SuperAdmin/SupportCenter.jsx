@@ -175,7 +175,7 @@ const SupportCenter = ({ isEmbedded = false }) => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this ticket completely?')) {
+    if (await window.appConfirm('Are you sure you want to delete this ticket completely?')) {
       try {
         await deleteMessage(id).unwrap();
         toast.success('Ticket deleted');

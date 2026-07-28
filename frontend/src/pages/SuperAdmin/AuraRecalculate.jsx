@@ -10,7 +10,7 @@ const AuraRecalculate = () => {
   const [resultMessage, setResultMessage] = useState('');
 
   const handleRecalculate = async () => {
-    if (window.confirm("Are you sure you want to recalculate all Aura scores? This will override current scores for all posts and users based on their latest activity data.")) {
+    if (await window.appConfirm("Are you sure you want to recalculate all Aura scores? This will override current scores for all posts and users based on their latest activity data.")) {
       try {
         const res = await recalculateAura().unwrap();
         toast.success('Aura Scores Recalculated!');

@@ -59,7 +59,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
-      connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
+      connectSrc: ["'self'", "*"],
     },
   },
   crossOriginEmbedderPolicy: false,

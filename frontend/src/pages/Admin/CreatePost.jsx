@@ -381,8 +381,8 @@ const CreatePost = () => {
     setVersions(newVersions);
   };
   const removeVersion = (index) => setVersions(versions.filter((_, i) => i !== index));
-  const rollbackVersion = (index) => {
-    if (window.confirm('Rollback to this version? This will update the main app version and changelog.')) {
+  const rollbackVersion = async (index) => {
+    if (await window.appConfirm('Rollback to this version? This will update the main app version and changelog.')) {
       const v = versions[index];
       setFormData({
         ...formData,
