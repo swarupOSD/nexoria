@@ -1,3 +1,4 @@
+import { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -79,7 +80,6 @@ const NexoriaMusicLyrics = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicL
 const NexoriaMusicQueue = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicQueue'));
 const NexoriaMusicUserProfile = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicUserProfile'));
 
-import { useEffect, Suspense, lazy } from 'react';
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
 import usePushNotifications from './hooks/usePushNotifications';
 

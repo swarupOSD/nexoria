@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import BackButton from '../components/BackButton';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const Support = () => {
   const { user } = useSelector(state => state.auth);
@@ -29,7 +30,8 @@ const Support = () => {
   // Socket listener for real-time ticket updates
   useEffect(() => {
     if (user) {
-      const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+      const socketBase = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+      const socket = io(socketBase);
       
       socket.emit('setup', user);
       

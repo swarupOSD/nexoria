@@ -272,11 +272,10 @@ export const updateTrack = async (req, res) => {
     const track = await NexoriaTrack.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!track) return res.status(404).json({ success: false, message: 'Track not found' });
     
-    // If a new file is attached during update, trigger upload and wait
+    // If a new file is attached during update, trigger upload in background (do NOT await)
     if (req.file) {
-      await uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
-      const updatedTrack = await NexoriaTrack.findById(track._id);
-      return res.status(200).json({ success: true, data: updatedTrack });
+      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      return res.status(200).json({ success: true, data: track, message: 'Track updated. Audio is being uploaded to Telegram in the background.' });
     }
     
     res.status(200).json({ success: true, data: track });

@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
 import { usePermissions } from '../contexts/PermissionContext';
 import PatternLock from '../components/PatternLock';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const VoiceLounge = () => {
   const { user } = useSelector(state => state.auth);
@@ -186,7 +187,8 @@ const VoiceLounge = () => {
     };
 
     const connectToSocket = () => {
-      socketRef.current = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      const socketBase = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+      socketRef.current = io(socketBase, {
         withCredentials: true
       });
 

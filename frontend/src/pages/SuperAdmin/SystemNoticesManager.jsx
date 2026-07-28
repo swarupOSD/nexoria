@@ -109,12 +109,10 @@ const SystemNoticesManager = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
+          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
             <Megaphone className="w-5 h-5 text-amber-500" />
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <BackButton fallbackRoute="/superadmin" showText={false} />
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <LayoutTemplate className="w-6 h-6 text-primary" />
@@ -122,8 +120,6 @@ const SystemNoticesManager = () => {
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Broadcast global notices and system messages to all users.</p>
           </div>
-        </div>
-      </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}

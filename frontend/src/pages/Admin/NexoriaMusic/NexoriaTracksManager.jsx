@@ -269,6 +269,9 @@ const NexoriaTracksManager = () => {
                     <span className="text-[#b3b3b3] text-sm truncate hover:underline cursor-pointer">
                       {track.artist?.name || 'Unknown Artist'}
                     </span>
+                    {!track.telegramFileId && !track.audioUrl && (
+                      <span className="text-[10px] text-yellow-400/80 font-semibold animate-pulse">⏳ Processing...</span>
+                    )}
                   </div>
                 </div>
 

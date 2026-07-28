@@ -6,6 +6,7 @@ import { useGetMovieBySlugQuery } from '../features/movie/movieApiSlice';
 import { Helmet } from 'react-helmet-async';
 import { Users, MessageSquare, Send, Play, Pause, AlertCircle, ChevronLeft, Video, Copy } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { BACKEND_URL } from '../features/api/apiSlice';
 
 const WatchParty = () => {
   const { slug } = useParams(); // Using slug as roomId for simplicity here
@@ -28,7 +29,8 @@ const WatchParty = () => {
   // Initialize socket
   useEffect(() => {
     if (user && movie) {
-      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      const socketBase = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+      const newSocket = io(socketBase, {
         withCredentials: true
       });
 
