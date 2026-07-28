@@ -75,8 +75,9 @@ const GlobalMusicPlayer = () => {
   useEffect(() => {
     const active = getActiveAudio();
     if (active && currentSong) {
-      if (active.src !== currentSong.audioUrl) {
+      if (active.dataset.lastSrc !== currentSong.audioUrl) {
         active.src = currentSong.audioUrl;
+        active.dataset.lastSrc = currentSong.audioUrl;
       }
       
       if (isPlaying) {
@@ -269,8 +270,9 @@ const GlobalMusicPlayer = () => {
     }
 
     const inactive = getInactiveAudio();
-    if (inactive && nextSongUrl && inactive.src !== nextSongUrl) {
+    if (inactive && nextSongUrl && inactive.dataset.lastSrc !== nextSongUrl) {
       inactive.src = nextSongUrl;
+      inactive.dataset.lastSrc = nextSongUrl;
       inactive.load(); // Silently buffers in background!
     }
   }, [queue, currentSong, loopMode, isRadioMode, radioSongsRes, activeEngine]);
@@ -306,8 +308,9 @@ const GlobalMusicPlayer = () => {
       
       if (inactive) {
         // Ensure the source is correct just in case preload missed it
-        if (inactive.src !== nextSongObj.audioUrl) {
+        if (inactive.dataset.lastSrc !== nextSongObj.audioUrl) {
           inactive.src = nextSongObj.audioUrl;
+          inactive.dataset.lastSrc = nextSongObj.audioUrl;
         }
         
         // INSTANT PLAYBACK! (Preloaded buffer is used)
