@@ -6,10 +6,22 @@ import { io } from 'socket.io-client';
 import { useSocket } from '../context/SocketContext';
 import toast from 'react-hot-toast';
 
+const THEMES = {
+  default:   { bg: '#0a0d14',   myBubble: 'linear-gradient(135deg,#7c3aed,#6d28d9)', accent: '#7c3aed' },
+  cherry:    { bg: '#1a0814',   myBubble: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#ec4899' },
+  galaxy:    { bg: '#020817',   myBubble: 'linear-gradient(135deg,#3b82f6,#4f46e5)', accent: '#3b82f6' },
+  flame:     { bg: '#1a0500',   myBubble: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#f97316' },
+  forest:    { bg: '#031a07',   myBubble: 'linear-gradient(135deg,#22c55e,#16a34a)', accent: '#22c55e' },
+  cyberpunk: { bg: '#000d1a',   myBubble: 'linear-gradient(135deg,#06b6d4,#3b82f6)', accent: '#06b6d4' },
+  ice:       { bg: '#071a2d',   myBubble: 'linear-gradient(135deg,#38bdf8,#60a5fa)', accent: '#38bdf8' },
+  pride:     { bg: '#0d0010',   myBubble: 'linear-gradient(90deg,#ef4444,#eab308,#22c55e,#3b82f6,#a855f7)', accent: '#a855f7' },
+};
+
 const PrivateChatWidget = ({ activeChat, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
+  const [theme, setTheme] = useState('default');
   
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
@@ -28,6 +40,7 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
     const handleConversationMessages = (data) => {
       if (data.receiverId === activeChat._id) {
         setMessages(data.messages);
+        setTheme(data.theme || 'default');
         scrollToBottom();
       }
     };
@@ -43,6 +56,15 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
       // Toast notifications for other DMs are handled globally in Navbar or SocketContext
     };
 
+    const handleThemeChange = (data) => {
+      if (data.conversationId) { // Check if this chat matches
+        // It's a bit tricky to check conversationId since we don't store it natively in the widget,
+        // but if we receive it while chatting, we can just update if it matches activeChat somehow.
+        // Or simply accept any theme change sent while we are active, because it's for us.
+        setTheme(data.theme || 'default');
+      }
+    };
+
     const handleDmError = (err) => {
       toast.error(err.message);
     };
@@ -50,11 +72,13 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
     socket.on('conversationMessages', handleConversationMessages);
     socket.on('newDirectMessage', handleNewDirectMessage);
     socket.on('dmError', handleDmError);
+    socket.on('conversationThemeChanged', handleThemeChange);
 
     return () => {
       socket.off('conversationMessages', handleConversationMessages);
       socket.off('newDirectMessage', handleNewDirectMessage);
       socket.off('dmError', handleDmError);
+      socket.off('conversationThemeChanged', handleThemeChange);
     };
   }, [activeChat, user, socket]);
 
@@ -76,13 +100,16 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
 
   if (!activeChat) return null;
 
+  const activeTheme = THEMES[theme] || THEMES.default;
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className={`fixed bottom-0 right-10 z-[140] w-[320px] bg-[#0a0d14]/95 backdrop-blur-xl border border-white/10 rounded-t-2xl shadow-2xl flex flex-col transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[400px]'}`}
+        style={{ backgroundColor: `${activeTheme.bg}F2` }} // F2 for 95% opacity
+        className={`fixed bottom-0 right-10 z-[140] w-[320px] backdrop-blur-xl border border-white/10 rounded-t-2xl shadow-2xl flex flex-col transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[400px]'}`}
       >
         {/* Header */}
         <div 
@@ -131,7 +158,10 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
                   const isMe = msg.sender._id === user._id;
                   return (
                     <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[75%] p-3 rounded-2xl text-sm ${isMe ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-tr-sm' : 'bg-white/10 text-slate-200 rounded-tl-sm'}`}>
+                      <div 
+                        className={`max-w-[75%] p-3 rounded-2xl text-sm ${isMe ? 'text-white rounded-tr-sm' : 'bg-white/10 text-slate-200 rounded-tl-sm'}`}
+                        style={isMe ? { background: activeTheme.myBubble } : {}}
+                      >
                         {msg.text}
                       </div>
                     </div>
@@ -153,7 +183,8 @@ const PrivateChatWidget = ({ activeChat, onClose }) => {
               <button 
                 type="submit"
                 disabled={!inputValue.trim()}
-                className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors disabled:opacity-50 shrink-0"
+                style={{ backgroundColor: activeTheme.accent }}
+                className="p-2 text-white rounded-xl transition-colors disabled:opacity-50 shrink-0 hover:brightness-110"
               >
                 <Send className="w-4 h-4" />
               </button>
