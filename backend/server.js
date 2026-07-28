@@ -201,7 +201,13 @@ app.use('/api', (req, res, next) => {
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.setHeader('Surrogate-Control', 'no-store');
+  req.requestTime = new Date().toISOString();
   next();
+});
+
+// Ping route to keep server awake
+app.get('/api/ping', (req, res) => {
+  res.status(200).json({ success: true, message: 'Server is awake' });
 });
 
 // Apply Maintenance Mode block (bypassed for owner inside middleware)

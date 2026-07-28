@@ -14,6 +14,7 @@ import FormData from 'form-data';
 import path from 'path';
 import https from 'https';
 import { getIO } from '../config/socket.js';
+import cloudinary from '../config/cloudinary.js';
 
 // ==========================================
 // ADMIN: ARTIST MANAGEMENT
@@ -194,46 +195,41 @@ export const deleteAlbum = async (req, res) => {
 // ADMIN: TRACK MANAGEMENT
 // ==========================================
 
-// Background Telegram Upload Helper
-const uploadToTelegramInBackground = async (trackId, fileBuffer, fileObj, bodyObj) => {
+// Background Cloudinary Upload Helper
+const uploadToCloudinaryInBackground = async (trackId, fileBuffer, fileObj, bodyObj) => {
   try {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const channelId = process.env.TELEGRAM_CHANNEL_ID;
-    if (!botToken || !channelId) return;
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'video', // Cloudinary treats audio as video resource type
+        folder: 'nexoria_music/tracks',
+        public_id: `track_${trackId}`,
+      },
+      async (error, result) => {
+        if (error) {
+          logger.error(`Background Cloudinary Upload Failed for Track ${trackId}: ${error.message}`);
+          return;
+        }
+        
+        await NexoriaTrack.findByIdAndUpdate(trackId, {
+          audioUrl: result.secure_url,
+          duration: Math.round(result.duration || bodyObj.duration || 0),
+          fileSizeBytes: result.bytes || 0
+        });
+        logger.info(`Background Cloudinary Upload Success for Track: ${trackId}`);
+      }
+    );
 
-    const formData = new FormData();
-    formData.append('chat_id', channelId);
-    
-    const isStandardAudio = fileObj.mimetype.includes('mpeg') || fileObj.mimetype.includes('mp3') || fileObj.mimetype.includes('m4a');
-    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
-    const fileField = isStandardAudio ? 'audio' : 'document';
-    
-    formData.append(fileField, fileBuffer, {
-      filename: fileObj.originalname,
-      contentType: fileObj.mimetype,
+    const { Readable } = await import('stream');
+    const readable = new Readable({
+      read() {
+        this.push(fileBuffer);
+        this.push(null);
+      }
     });
+    readable.pipe(uploadStream);
 
-    if (endpoint === 'sendAudio') {
-      if (bodyObj.title) formData.append('title', bodyObj.title);
-      if (bodyObj.artistName) formData.append('performer', bodyObj.artistName);
-    }
-
-    const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
-      headers: { ...formData.getHeaders(), 'Content-Length': formData.getLengthSync() },
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity
-    });
-
-    const resultObj = response.data.result.audio || response.data.result.document || response.data.result.voice;
-    if (resultObj && resultObj.file_id) {
-      await NexoriaTrack.findByIdAndUpdate(trackId, {
-        telegramFileId: resultObj.file_id,
-        duration: Math.round(resultObj.duration || bodyObj.duration || 0)
-      });
-      logger.info(`Background Telegram Upload Success for Track: ${trackId}`);
-    }
   } catch (error) {
-    logger.error(`Background Telegram Upload Failed for Track ${trackId}: ${error.response?.data?.description || error.message}`);
+    logger.error(`Background Cloudinary Upload Error for Track ${trackId}: ${error.message}`);
   }
 };
 
@@ -244,7 +240,7 @@ export const createTrack = async (req, res) => {
     
     // If a file is attached, trigger upload in background and return immediately
     if (req.file) {
-      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
+      uploadToCloudinaryInBackground(track._id, req.file.buffer, req.file, req.body);
       return res.status(201).json({ success: true, data: track });
     }
 
@@ -274,8 +270,8 @@ export const updateTrack = async (req, res) => {
     
     // If a new file is attached during update, trigger upload in background (do NOT await)
     if (req.file) {
-      uploadToTelegramInBackground(track._id, req.file.buffer, req.file, req.body);
-      return res.status(200).json({ success: true, data: track, message: 'Track updated. Audio is being uploaded to Telegram in the background.' });
+      uploadToCloudinaryInBackground(track._id, req.file.buffer, req.file, req.body);
+      return res.status(200).json({ success: true, data: track, message: 'Track updated. Audio is being uploaded to Cloudinary in the background.' });
     }
     
     res.status(200).json({ success: true, data: track });
