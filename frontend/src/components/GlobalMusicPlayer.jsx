@@ -61,6 +61,11 @@ const GlobalMusicPlayer = () => {
   // Sync native HTML5 audio play/pause with Redux state
   useEffect(() => {
     if (audioRef.current && currentSong) {
+      // IMPORTANT: Only set src if it doesn't match to avoid interrupting the mobile onEnded hack
+      if (audioRef.current.src !== currentSong.audioUrl) {
+        audioRef.current.src = currentSong.audioUrl;
+      }
+      
       if (isPlaying) {
         audioRef.current.play().then(() => {
           resumeContext(); // Ensure Web Audio API is resumed
@@ -303,7 +308,6 @@ const GlobalMusicPlayer = () => {
         {/* CRITICAL: Must NOT use display:none — it blocks onCanPlay, onTimeUpdate, onLoadedMetadata */}
           <audio
             ref={audioRef}
-            src={playerUrl}
             crossOrigin="anonymous"
             onTimeUpdate={onAudioTimeUpdate}
             onLoadedMetadata={onAudioLoadedMetadata}
