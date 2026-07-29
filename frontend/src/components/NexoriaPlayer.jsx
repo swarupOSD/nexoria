@@ -459,6 +459,14 @@ const NexoriaPlayer = () => {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
         }
       }
+      if ('mediaSession' in navigator && nextTrack) {
+        navigator.mediaSession.metadata = new window.MediaMetadata({
+          title: nextTrack.title || 'Unknown Title',
+          artist: nextTrack.artist?.name || 'Unknown Artist',
+          album: nextTrack.album?.title || 'Unknown Album',
+          artwork: [{ src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+        });
+      }
       justAutoplayedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
     } else {
@@ -487,6 +495,14 @@ const NexoriaPlayer = () => {
             
           audioRef.current.src = nextSrc;
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
+        }
+        if ('mediaSession' in navigator && nextTrack) {
+          navigator.mediaSession.metadata = new window.MediaMetadata({
+            title: nextTrack.title || 'Unknown Title',
+            artist: nextTrack.artist?.name || 'Unknown Artist',
+            album: nextTrack.album?.title || 'Unknown Album',
+            artwork: [{ src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+          });
         }
         justAutoplayedRef.current = nextTrack._id;
         dispatch(playNextTrack(nextIdx));
