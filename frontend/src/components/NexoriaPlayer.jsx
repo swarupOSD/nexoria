@@ -552,13 +552,18 @@ const NexoriaPlayer = () => {
   }, [handleEnded]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audio1 = audioRef1.current;
+    const audio2 = audioRef2.current;
     const onNativeEnded = () => {
       if (handleEndedRef.current) handleEndedRef.current();
     };
-    audio.addEventListener('ended', onNativeEnded);
-    return () => audio.removeEventListener('ended', onNativeEnded);
+    if (audio1) audio1.addEventListener('ended', onNativeEnded);
+    if (audio2) audio2.addEventListener('ended', onNativeEnded);
+    
+    return () => {
+      if (audio1) audio1.removeEventListener('ended', onNativeEnded);
+      if (audio2) audio2.removeEventListener('ended', onNativeEnded);
+    };
   }, []);
 
   const handleSetSleepTimer = (minutes) => {
