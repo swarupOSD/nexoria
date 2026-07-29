@@ -552,17 +552,31 @@ const NexoriaPlayer = () => {
   }, [handleEnded]);
 
   useEffect(() => {
-    const audio1 = audioRef1.current;
-    const audio2 = audioRef2.current;
-    const onNativeEnded = () => {
-      if (handleEndedRef.current) handleEndedRef.current();
+    const unlockBothAudioEngines = () => {
+      if (!window.__nexoriaDualAudioUnlocked) {
+        window.__nexoriaDualAudioUnlocked = true;
+        
+        const audio1 = audioRef1.current;
+        const audio2 = audioRef2.current;
+        
+        if (audio1 && audio1.paused) {
+          const p = audio1.play();
+          if (p !== undefined) p.then(() => audio1.pause()).catch(() => {});
+        }
+        if (audio2 && audio2.paused) {
+          const p = audio2.play();
+          if (p !== undefined) p.then(() => audio2.pause()).catch(() => {});
+        }
+      }
     };
-    if (audio1) audio1.addEventListener('ended', onNativeEnded);
-    if (audio2) audio2.addEventListener('ended', onNativeEnded);
+    
+    // Unlock on first interaction
+    document.addEventListener('click', unlockBothAudioEngines, { once: true });
+    document.addEventListener('touchstart', unlockBothAudioEngines, { once: true });
     
     return () => {
-      if (audio1) audio1.removeEventListener('ended', onNativeEnded);
-      if (audio2) audio2.removeEventListener('ended', onNativeEnded);
+      document.removeEventListener('click', unlockBothAudioEngines);
+      document.removeEventListener('touchstart', unlockBothAudioEngines);
     };
   }, []);
 
@@ -623,6 +637,7 @@ const NexoriaPlayer = () => {
         id="nexoria-global-audio-1"
         ref={audioRef1}
         autoPlay={activeEngine === 1 ? isPlaying : false}
+        onEnded={handleEnded}
         playsInline
         crossOrigin="anonymous"
         preload="auto"
@@ -640,6 +655,7 @@ const NexoriaPlayer = () => {
         id="nexoria-global-audio-2"
         ref={audioRef2}
         autoPlay={activeEngine === 2 ? isPlaying : false}
+        onEnded={handleEnded}
         playsInline
         crossOrigin="anonymous"
         preload="auto"
