@@ -303,6 +303,11 @@ const Messages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const activeChatRef = useRef(null);
+  useEffect(() => {
+    activeChatRef.current = activeChat;
+  }, [activeChat]);
+
   useEffect(() => {
     if (!user || !token) return;
     const base = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
@@ -315,6 +320,7 @@ const Messages = () => {
       if (theme) setActiveTheme(theme);
       setTimeout(scrollToBottom, 100);
     });
+
     socket.on('newDirectMessage', msg => {
       setMessages(prev => prev.find(m => m._id === msg._id) ? prev : [...prev, msg]);
       scrollToBottom();

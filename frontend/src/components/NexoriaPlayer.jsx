@@ -254,6 +254,14 @@ const NexoriaPlayer = () => {
               audioRef.current.src = prevSrc;
               audioRef.current.play().catch(e => console.log(e));
             }
+            if ('mediaSession' in navigator && prevTrack) {
+              navigator.mediaSession.metadata = new window.MediaMetadata({
+                title: prevTrack.title || 'Unknown Title',
+                artist: prevTrack.artist?.name || 'Unknown Artist',
+                album: prevTrack.album?.title || 'Unknown Album',
+                artwork: [{ src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+              });
+            }
           }
           dispatch(playPrevTrack());
         }
@@ -314,6 +322,14 @@ const NexoriaPlayer = () => {
               const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
               audioRef.current.src = prevSrc;
               audioRef.current.play().catch(err => console.log(err));
+            }
+            if ('mediaSession' in navigator && prevTrack) {
+              navigator.mediaSession.metadata = new window.MediaMetadata({
+                title: prevTrack.title || 'Unknown Title',
+                artist: prevTrack.artist?.name || 'Unknown Artist',
+                album: prevTrack.album?.title || 'Unknown Album',
+                artwork: [{ src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+              });
             }
           }
           dispatch(playPrevTrack());

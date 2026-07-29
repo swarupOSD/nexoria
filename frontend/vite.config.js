@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   build: {
     sourcemap: false, // Prevents source code from being inspected in production
+    chunkSizeWarningLimit: 3000,
   },
   plugins: [
     react(),
@@ -81,8 +82,5 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  },
-  build: {
-    chunkSizeWarningLimit: 3000
   }
 })
