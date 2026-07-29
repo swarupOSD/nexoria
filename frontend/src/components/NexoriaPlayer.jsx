@@ -28,7 +28,20 @@ const NexoriaPlayer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const audioRef1 = useRef(null);
+  const audioRef2 = useRef(null);
+  const [activeEngine, setActiveEngine] = useState(1);
+  const activeEngineRef = useRef(1);
+
+  // Proxy ref to avoid rewriting all audioRef.current calls
   const audioRef = useRef(null);
+
+  useEffect(() => {
+    activeEngineRef.current = activeEngine;
+    audioRef.current = activeEngine === 1 ? audioRef1.current : audioRef2.current;
+  }, [activeEngine]);
+
   const [isExpanded, setIsExpanded] = useState(false);
   
   const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0 });
@@ -100,7 +113,7 @@ const NexoriaPlayer = () => {
   // Determine active audio source on track change
   // Expose audioRef globally so pages can call imperative play without dispatch delay
   useEffect(() => {
-    window.__nexoriaAudioRef = audioRef;
+    window.__nexoriaAudioRef = audioRef1; // Fallback
   }, []);
 
   useEffect(() => {
@@ -227,8 +240,16 @@ const NexoriaPlayer = () => {
         } else {
           if (history.length > 0) {
             const prevTrack = history[history.length - 1];
-            if (audioRef.current) {
-              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+            
+      // --- DUAL AUDIO SWAP ---
+      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
+      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
+      setActiveEngine(nextEngine);
+      audioRef.current = inactiveRef.current; // Force proxy update immediately
+      // -----------------------
+      
+      if (audioRef.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
               const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
               audioRef.current.src = prevSrc;
               audioRef.current.play().catch(e => console.log(e));
@@ -280,8 +301,16 @@ const NexoriaPlayer = () => {
           e.preventDefault();
           if (history.length > 0) {
             const prevTrack = history[history.length - 1];
-            if (audioRef.current) {
-              const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+            
+      // --- DUAL AUDIO SWAP ---
+      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
+      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
+      setActiveEngine(nextEngine);
+      audioRef.current = inactiveRef.current; // Force proxy update immediately
+      // -----------------------
+      
+      if (audioRef.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
               const prevSrc = prevTrack.telegramFileId ? `${baseUrl}/api/nexoria-music/stream/${prevTrack.telegramFileId}` : prevTrack.audioUrl || "";
               audioRef.current.src = prevSrc;
               audioRef.current.play().catch(err => console.log(err));
@@ -299,6 +328,40 @@ const NexoriaPlayer = () => {
   }, [currentTrack, isPlaying, history, dispatch]);
 
   // Audio element event handlers
+  
+  // --- DUAL AUDIO PRELOAD LOGIC ---
+  useEffect(() => {
+    let nextTrackObj = null;
+    if (queue.length > 0) {
+      let nextIndex = 0;
+      if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length); 
+      nextTrackObj = queue[nextIndex];
+    } else if (repeatMode === 'all' && history.length > 0) {
+      let nextIdx = 0;
+      if (shuffleMode) nextIdx = Math.floor(Math.random() * history.length);
+      nextTrackObj = history[nextIdx];
+    }
+
+    if (nextTrackObj) {
+      const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+      let nextSrc = nextTrackObj.telegramFileId 
+        ? `${baseUrl}/api/nexoria-music/stream/${nextTrackObj.telegramFileId}`
+        : nextTrackObj.audioUrl || "";
+        
+      if (blobUrlsRef.current[nextTrackObj._id]) {
+        nextSrc = blobUrlsRef.current[nextTrackObj._id];
+      }
+
+      const inactiveAudio = activeEngineRef.current === 1 ? audioRef2.current : audioRef1.current;
+      if (inactiveAudio && nextSrc && inactiveAudio.dataset.lastSrc !== nextSrc) {
+        inactiveAudio.src = nextSrc;
+        inactiveAudio.dataset.lastSrc = nextSrc;
+        inactiveAudio.load(); // Silently buffer!
+      }
+    }
+  }, [queue, history, shuffleMode, repeatMode, currentTrack, activeEngine]);
+  // --------------------------------
+
   const maxTimeRef = useRef(0);
   const lastTrackIdRef = useRef(null);
 
@@ -372,6 +435,14 @@ const NexoriaPlayer = () => {
       const nextTrack = queue[nextIndex];
       
       // Synchronously set src and play to bypass iOS/mobile restrictions
+      
+      // --- DUAL AUDIO SWAP ---
+      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
+      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
+      setActiveEngine(nextEngine);
+      audioRef.current = inactiveRef.current; // Force proxy update immediately
+      // -----------------------
+      
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
         let nextSrc = nextTrack.telegramFileId 
@@ -396,8 +467,16 @@ const NexoriaPlayer = () => {
         if (shuffleMode) nextIdx = Math.floor(Math.random() * history.length);
         const nextTrack = history[nextIdx];
         
-        if (audioRef.current) {
-          const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
+        
+      // --- DUAL AUDIO SWAP ---
+      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
+      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
+      setActiveEngine(nextEngine);
+      audioRef.current = inactiveRef.current; // Force proxy update immediately
+      // -----------------------
+      
+      if (audioRef.current) {
+        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
           let nextSrc = nextTrack.telegramFileId 
             ? `${baseUrl}/api/nexoria-music/stream/${nextTrack.telegramFileId}`
             : nextTrack.audioUrl || "";
@@ -501,30 +580,41 @@ const NexoriaPlayer = () => {
   return (
     <>
       {/* Hidden Audio Element */}
+      
+      {/* Hidden Audio Element 1 */}
       <audio
-        id="nexoria-global-audio"
-        ref={audioRef}
-        autoPlay={isPlaying}
+        id="nexoria-global-audio-1"
+        ref={audioRef1}
+        autoPlay={activeEngine === 1 ? isPlaying : false}
         playsInline
         crossOrigin="anonymous"
         preload="auto"
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleTimeUpdate}
+        onTimeUpdate={(e) => activeEngineRef.current === 1 && handleTimeUpdate(e)}
+        onLoadedMetadata={(e) => activeEngineRef.current === 1 && handleTimeUpdate(e)}
         onCanPlay={() => {
-          if (isPlaying && audioRef.current && audioRef.current.paused) {
-            audioRef.current.play().catch(e => console.log('Playback error:', e));
-          }
-        }}
-        onError={(e) => {
-          console.error("Audio Element Error:", e.target.error);
-          if (e.target.error) {
-             const errorCodes = { 1: "ABORTED", 2: "NETWORK", 3: "DECODE", 4: "SRC_NOT_SUPPORTED" };
-             if (e.target.error.code === 2) {
-               console.warn("Network error during playback. Letting browser natively buffer.");
-             }
+          if (activeEngineRef.current === 1 && isPlaying && audioRef1.current && audioRef1.current.paused) {
+            audioRef1.current.play().catch(e => console.log('Playback error 1:', e));
           }
         }}
       />
+      
+      {/* Hidden Audio Element 2 (For Preloading) */}
+      <audio
+        id="nexoria-global-audio-2"
+        ref={audioRef2}
+        autoPlay={activeEngine === 2 ? isPlaying : false}
+        playsInline
+        crossOrigin="anonymous"
+        preload="auto"
+        onTimeUpdate={(e) => activeEngineRef.current === 2 && handleTimeUpdate(e)}
+        onLoadedMetadata={(e) => activeEngineRef.current === 2 && handleTimeUpdate(e)}
+        onCanPlay={() => {
+          if (activeEngineRef.current === 2 && isPlaying && audioRef2.current && audioRef2.current.paused) {
+            audioRef2.current.play().catch(e => console.log('Playback error 2:', e));
+          }
+        }}
+      />
+
 
       <AnimatePresence>
         {currentTrack && (
