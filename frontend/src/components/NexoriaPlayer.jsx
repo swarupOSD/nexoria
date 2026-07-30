@@ -305,7 +305,9 @@ const NexoriaPlayer = () => {
                 title: prevTrack.title || 'Unknown Title',
                 artist: prevTrack.artist?.name || 'Unknown Artist',
                 album: prevTrack.album?.title || 'Unknown Album',
-                artwork: [{ src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+                artwork: (prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image) ? [
+                  { src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image, sizes: '512x512', type: 'image/jpeg' }
+                ] : []
               });
             }
           }
@@ -421,7 +423,9 @@ const NexoriaPlayer = () => {
           title: nextTrack.title || 'Unknown Title',
           artist: nextTrack.artist?.name || 'Unknown Artist',
           album: nextTrack.album?.title || 'Unknown Album',
-          artwork: [{ src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+          artwork: (nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image) ? [
+            { src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image, sizes: '512x512', type: 'image/jpeg' }
+          ] : []
         });
       }
       justAutoplayedRef.current = nextTrack._id;
@@ -454,7 +458,9 @@ const NexoriaPlayer = () => {
             title: nextTrack.title || 'Unknown Title',
             artist: nextTrack.artist?.name || 'Unknown Artist',
             album: nextTrack.album?.title || 'Unknown Album',
-            artwork: [{ src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+            artwork: (nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image) ? [
+              { src: nextTrack.coverImage || nextTrack.album?.coverImage || nextTrack.artist?.image, sizes: '512x512', type: 'image/jpeg' }
+            ] : []
           });
         }
         justAutoplayedRef.current = nextTrack._id;
