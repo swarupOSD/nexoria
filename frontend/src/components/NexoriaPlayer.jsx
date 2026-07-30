@@ -38,31 +38,47 @@ function getTrackArtwork(track) {
   return track.coverImage || track.album?.coverImage || track.artist?.image || '';
 }
 
-// ─── Helper: update MediaSession metadata safely ─────────────────────────────
-function updateMediaSessionMetadata(track) {
+// ─── Helper: detect image MIME type from URL ─────────────────────────────────
+function getImageMimeType(url) {
+  if (!url) return 'image/jpeg';
+  const lower = url.toLowerCase();
+  if (lower.includes('.png') || lower.includes('png')) return 'image/png';
+  if (lower.includes('.webp') || lower.includes('webp')) return 'image/webp';
+  if (lower.includes('.gif')) return 'image/gif';
+  return 'image/jpeg'; // default
+}
+
+// ─── Singleton: set MediaSession metadata + playbackState atomically ──────────
+// This is the ONE place we write to MediaSession. Called from everywhere.
+function activateMediaSession(track) {
   if (!('mediaSession' in navigator) || !track) return;
   try {
     const artworkUrl = getTrackArtwork(track);
+    const mimeType = getImageMimeType(artworkUrl);
     navigator.mediaSession.metadata = new window.MediaMetadata({
       title: track.title || 'Unknown Title',
       artist: track.artist?.name || 'Unknown Artist',
       album: track.album?.title || '',
       artwork: artworkUrl
         ? [
-            { src: artworkUrl, sizes: '96x96',   type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '128x128',  type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '192x192',  type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '256x256',  type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '384x384',  type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '512x512',  type: 'image/jpeg' },
+            { src: artworkUrl, sizes: '96x96',   type: mimeType },
+            { src: artworkUrl, sizes: '128x128',  type: mimeType },
+            { src: artworkUrl, sizes: '192x192',  type: mimeType },
+            { src: artworkUrl, sizes: '256x256',  type: mimeType },
+            { src: artworkUrl, sizes: '384x384',  type: mimeType },
+            { src: artworkUrl, sizes: '512x512',  type: mimeType },
           ]
         : [],
     });
+    // Set playbackState to playing — this is what makes Android show the notification
+    navigator.mediaSession.playbackState = 'playing';
   } catch (e) {
-    // Silently catch - MediaSession is a nice-to-have, not critical
-    console.warn('MediaSession metadata error:', e);
+    console.warn('MediaSession error:', e);
   }
 }
+
+// Keep old name as alias for backward compat
+const updateMediaSessionMetadata = activateMediaSession;
 
 const NexoriaPlayer = () => {
   const dispatch = useDispatch();
@@ -284,7 +300,10 @@ const NexoriaPlayer = () => {
     return () => { cancelled = true; };
   }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Sync isPlaying state to audio element + MediaSession playbackState ──────
+  // ─── Sync isPlaying state to audio element ────────────────────────────────
+  // NOTE: We do NOT update mediaSession.playbackState here.
+  // Instead, we use the audio element's onPlay/onPause events (see audio JSX)
+  // which fire reliably even when the OS or another app controls playback.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -292,10 +311,8 @@ const NexoriaPlayer = () => {
       if (audio.paused) {
         audio.play().catch(e => console.warn('Play sync error:', e));
       }
-      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
     } else {
       if (!audio.paused) audio.pause();
-      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
     }
   }, [isPlaying]);
 
@@ -387,9 +404,11 @@ const NexoriaPlayer = () => {
   }, [dispatch]);  
 
   // ─── Update MediaSession metadata whenever track changes ──────────────────
+  // This is the MASTER effect - it fires on every track change and sets BOTH
+  // metadata and playbackState atomically so the notification appears instantly.
   useEffect(() => {
-    if (currentTrack) updateMediaSessionMetadata(currentTrack);
-  }, [currentTrack?._id]);  
+    if (currentTrack) activateMediaSession(currentTrack);
+  }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Pre-fetch recommendations proactively ────────────────────────────────
   useEffect(() => {
@@ -586,6 +605,24 @@ const NexoriaPlayer = () => {
         onEnded={handleEnded}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleTimeUpdate}
+        onPlay={() => {
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+        }}
+        onPause={() => {
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+        }}
+        onLoadedData={() => {
+          const audio = audioRef.current;
+          if (audio && 'setPositionState' in navigator.mediaSession && audio.duration > 0) {
+            try {
+              navigator.mediaSession.setPositionState({
+                duration: audio.duration,
+                playbackRate: audio.playbackRate,
+                position: audio.currentTime,
+              });
+            } catch (e) { /* ignore */ }
+          }
+        }}
         onCanPlay={() => {
           if (stateRef.current?.isPlaying && audioRef.current?.paused) {
             audioRef.current.play().catch(() => {});
