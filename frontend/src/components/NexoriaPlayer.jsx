@@ -29,18 +29,7 @@ const NexoriaPlayer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const audioRef1 = useRef(null);
-  const audioRef2 = useRef(null);
-  const [activeEngine, setActiveEngine] = useState(1);
-  const activeEngineRef = useRef(1);
-
-  // Proxy ref to avoid rewriting all audioRef.current calls
   const audioRef = useRef(null);
-
-  useEffect(() => {
-    activeEngineRef.current = activeEngine;
-    audioRef.current = activeEngine === 1 ? audioRef1.current : audioRef2.current;
-  }, [activeEngine]);
 
   const [isExpanded, setIsExpanded] = useState(false);
   
@@ -113,7 +102,7 @@ const NexoriaPlayer = () => {
   // Determine active audio source on track change
   // Expose audioRef globally so pages can call imperative play without dispatch delay
   useEffect(() => {
-    window.__nexoriaAudioRef = audioRef1; // Fallback
+    window.__nexoriaAudioRef = audioRef;
   }, []);
 
   useEffect(() => {
@@ -240,13 +229,6 @@ const NexoriaPlayer = () => {
         } else {
           if (history.length > 0) {
             const prevTrack = history[history.length - 1];
-            
-      // --- DUAL AUDIO SWAP ---
-      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
-      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
-      setActiveEngine(nextEngine);
-      audioRef.current = inactiveRef.current; // Force proxy update immediately
-      // -----------------------
       
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
@@ -309,13 +291,6 @@ const NexoriaPlayer = () => {
           e.preventDefault();
           if (history.length > 0) {
             const prevTrack = history[history.length - 1];
-            
-      // --- DUAL AUDIO SWAP ---
-      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
-      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
-      setActiveEngine(nextEngine);
-      audioRef.current = inactiveRef.current; // Force proxy update immediately
-      // -----------------------
       
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
@@ -344,39 +319,6 @@ const NexoriaPlayer = () => {
   }, [currentTrack, isPlaying, history, dispatch]);
 
   // Audio element event handlers
-  
-  // --- DUAL AUDIO PRELOAD LOGIC ---
-  useEffect(() => {
-    let nextTrackObj = null;
-    if (queue.length > 0) {
-      let nextIndex = 0;
-      if (shuffleMode) nextIndex = Math.floor(Math.random() * queue.length); 
-      nextTrackObj = queue[nextIndex];
-    } else if (repeatMode === 'all' && history.length > 0) {
-      let nextIdx = 0;
-      if (shuffleMode) nextIdx = Math.floor(Math.random() * history.length);
-      nextTrackObj = history[nextIdx];
-    }
-
-    if (nextTrackObj) {
-      const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-      let nextSrc = nextTrackObj.telegramFileId 
-        ? `${baseUrl}/api/nexoria-music/stream/${nextTrackObj.telegramFileId}`
-        : nextTrackObj.audioUrl || "";
-        
-      if (blobUrlsRef.current[nextTrackObj._id]) {
-        nextSrc = blobUrlsRef.current[nextTrackObj._id];
-      }
-
-      const inactiveAudio = activeEngineRef.current === 1 ? audioRef2.current : audioRef1.current;
-      if (inactiveAudio && nextSrc && inactiveAudio.dataset.lastSrc !== nextSrc) {
-        inactiveAudio.src = nextSrc;
-        inactiveAudio.dataset.lastSrc = nextSrc;
-        inactiveAudio.load(); // Silently buffer!
-      }
-    }
-  }, [queue, history, shuffleMode, repeatMode, currentTrack, activeEngine]);
-  // --------------------------------
 
   const maxTimeRef = useRef(0);
   const lastTrackIdRef = useRef(null);
@@ -452,13 +394,6 @@ const NexoriaPlayer = () => {
       
       // Synchronously set src and play to bypass iOS/mobile restrictions
       
-      // --- DUAL AUDIO SWAP ---
-      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
-      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
-      setActiveEngine(nextEngine);
-      audioRef.current = inactiveRef.current; // Force proxy update immediately
-      // -----------------------
-      
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
         let nextSrc = nextTrack.telegramFileId 
@@ -469,7 +404,11 @@ const NexoriaPlayer = () => {
           nextSrc = blobUrlsRef.current[nextTrack._id];
         }
           
-        audioRef.current.src = nextSrc;
+        const currentSrc = audioRef.current.src;
+        const srcChanged = currentSrc !== nextSrc && !currentSrc.endsWith(encodeURIComponent(nextSrc.split('/').pop()));
+        if (srcChanged) {
+          audioRef.current.src = nextSrc;
+        }
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(e => console.error("Autoplay next failed:", e));
@@ -490,14 +429,6 @@ const NexoriaPlayer = () => {
         let nextIdx = 0;
         if (shuffleMode) nextIdx = Math.floor(Math.random() * history.length);
         const nextTrack = history[nextIdx];
-        
-        
-      // --- DUAL AUDIO SWAP ---
-      const nextEngine = activeEngineRef.current === 1 ? 2 : 1;
-      const inactiveRef = nextEngine === 1 ? audioRef1 : audioRef2;
-      setActiveEngine(nextEngine);
-      audioRef.current = inactiveRef.current; // Force proxy update immediately
-      // -----------------------
       
       if (audioRef.current) {
         const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
@@ -509,7 +440,11 @@ const NexoriaPlayer = () => {
             nextSrc = blobUrlsRef.current[nextTrack._id];
           }
             
-          audioRef.current.src = nextSrc;
+          const currentSrc = audioRef.current.src;
+          const srcChanged = currentSrc !== nextSrc && !currentSrc.endsWith(encodeURIComponent(nextSrc.split('/').pop()));
+          if (srcChanged) {
+            audioRef.current.src = nextSrc;
+          }
           audioRef.current.play().catch(e => console.error("Autoplay next failed:", e));
         }
         if ('mediaSession' in navigator && nextTrack) {
@@ -550,35 +485,6 @@ const NexoriaPlayer = () => {
   useEffect(() => {
     handleEndedRef.current = handleEnded;
   }, [handleEnded]);
-
-  useEffect(() => {
-    const unlockBothAudioEngines = () => {
-      if (!window.__nexoriaDualAudioUnlocked) {
-        window.__nexoriaDualAudioUnlocked = true;
-        
-        const audio1 = audioRef1.current;
-        const audio2 = audioRef2.current;
-        
-        if (audio1 && audio1.paused) {
-          const p = audio1.play();
-          if (p !== undefined) p.then(() => audio1.pause()).catch(() => {});
-        }
-        if (audio2 && audio2.paused) {
-          const p = audio2.play();
-          if (p !== undefined) p.then(() => audio2.pause()).catch(() => {});
-        }
-      }
-    };
-    
-    // Unlock on first interaction
-    document.addEventListener('click', unlockBothAudioEngines, { once: true });
-    document.addEventListener('touchstart', unlockBothAudioEngines, { once: true });
-    
-    return () => {
-      document.removeEventListener('click', unlockBothAudioEngines);
-      document.removeEventListener('touchstart', unlockBothAudioEngines);
-    };
-  }, []);
 
   const handleSetSleepTimer = (minutes) => {
     setSleepTimer(minutes ? { minutes, startTime: Date.now() } : null);
@@ -641,8 +547,8 @@ const NexoriaPlayer = () => {
         playsInline
         crossOrigin="anonymous"
         preload="auto"
-        onTimeUpdate={(e) => activeEngineRef.current === 1 && handleTimeUpdate(e)}
-        onLoadedMetadata={(e) => activeEngineRef.current === 1 && handleTimeUpdate(e)}
+        onTimeUpdate={(e) => handleTimeUpdate(e)}
+        onLoadedMetadata={(e) => handleTimeUpdate(e)}
         onCanPlay={() => {
           if (activeEngineRef.current === 1 && isPlaying && audioRef1.current && audioRef1.current.paused) {
             audioRef1.current.play().catch(e => console.log('Playback error 1:', e));
@@ -659,8 +565,8 @@ const NexoriaPlayer = () => {
         playsInline
         crossOrigin="anonymous"
         preload="auto"
-        onTimeUpdate={(e) => activeEngineRef.current === 2 && handleTimeUpdate(e)}
-        onLoadedMetadata={(e) => activeEngineRef.current === 2 && handleTimeUpdate(e)}
+        onTimeUpdate={(e) => handleTimeUpdate(e)}
+        onLoadedMetadata={(e) => handleTimeUpdate(e)}
         onCanPlay={() => {
           if (activeEngineRef.current === 2 && isPlaying && audioRef2.current && audioRef2.current.paused) {
             audioRef2.current.play().catch(e => console.log('Playback error 2:', e));
