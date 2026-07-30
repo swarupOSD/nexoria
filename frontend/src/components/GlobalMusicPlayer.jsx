@@ -18,6 +18,7 @@ import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import LyricsModal from './LyricsModal';
 import AudioVisualizer from './AudioVisualizer';
+import { MediaSession } from '@capgo/capacitor-media-session';
 import AddToPlaylistModal from './AddToPlaylistModal';
 import EqualizerModal from './EqualizerModal';
 import ShareCardModal from './ShareCardModal';
@@ -98,33 +99,43 @@ const GlobalMusicPlayer = () => {
 
   // MediaSession API Integration
   useEffect(() => {
-    if ('mediaSession' in navigator && currentSong) {
-      navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: currentSong.title,
-        artist: currentSong.artist,
-        album: currentSong.album || 'Nexoria Sound',
-        artwork: [
-          { src: currentSong.image, sizes: '512x512', type: 'image/jpeg' }
-        ]
-      });
+    if (!currentSong) return;
 
-      navigator.mediaSession.setActionHandler('play', () => dispatch(setPlaying(true)));
-      navigator.mediaSession.setActionHandler('pause', () => dispatch(setPlaying(false)));
-      navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(playPrevious()));
-      navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(playNext()));
-      
-      // Seek functionality for OS controls
-      navigator.mediaSession.setActionHandler('seekto', (details) => {
-        const active = getActiveAudio();
-        if (details.fastSeek && 'fastSeek' in (active || {})) {
-          active.fastSeek(details.seekTime);
-          return;
+    const setupMediaSession = async () => {
+      const title = currentSong.title;
+      const artist = currentSong.artist;
+      const album = currentSong.album || 'Nexoria Sound';
+      const artwork = currentSong.image ? [{ src: currentSong.image, sizes: '512x512', type: 'image/jpeg' }] : [];
+
+      if (window.Capacitor?.isNative) {
+        try {
+          await MediaSession.setMetadata({ title, artist, album, artwork });
+          
+          await MediaSession.setActionHandler({ action: 'play' }, () => dispatch(setPlaying(true)));
+          await MediaSession.setActionHandler({ action: 'pause' }, () => dispatch(setPlaying(false)));
+          await MediaSession.setActionHandler({ action: 'previoustrack' }, () => dispatch(playPrevious()));
+          await MediaSession.setActionHandler({ action: 'nexttrack' }, () => dispatch(playNext()));
+        } catch (e) {
+          console.warn('Capacitor MediaSession Error:', e);
         }
-        if (active) {
-          active.currentTime = details.seekTime;
-        }
-      });
-    }
+      } else if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new window.MediaMetadata({ title, artist, album, artwork });
+
+        navigator.mediaSession.setActionHandler('play', () => dispatch(setPlaying(true)));
+        navigator.mediaSession.setActionHandler('pause', () => dispatch(setPlaying(false)));
+        navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(playPrevious()));
+        navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(playNext()));
+        
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          const active = getActiveAudio();
+          if (!active) return;
+          if (details.fastSeek && 'fastSeek' in active) active.fastSeek(details.seekTime ?? 0);
+          else active.currentTime = details.seekTime ?? 0;
+        });
+      }
+    };
+
+    setupMediaSession();
   }, [currentSong, dispatch]);
 
   // Global Keyboard Shortcuts

@@ -48,30 +48,42 @@ function getImageMimeType(url) {
   return 'image/jpeg'; // default
 }
 
+import { MediaSession } from '@capgo/capacitor-media-session';
+
 // ─── Singleton: set MediaSession metadata + playbackState atomically ──────────
 // This is the ONE place we write to MediaSession. Called from everywhere.
-function activateMediaSession(track) {
-  if (!('mediaSession' in navigator) || !track) return;
+async function activateMediaSession(track) {
+  if (!track) return;
   try {
     const artworkUrl = getTrackArtwork(track);
     const mimeType = getImageMimeType(artworkUrl);
-    navigator.mediaSession.metadata = new window.MediaMetadata({
-      title: track.title || 'Unknown Title',
-      artist: track.artist?.name || 'Unknown Artist',
-      album: track.album?.title || '',
-      artwork: artworkUrl
-        ? [
-            { src: artworkUrl, sizes: '96x96',   type: mimeType },
-            { src: artworkUrl, sizes: '128x128',  type: mimeType },
-            { src: artworkUrl, sizes: '192x192',  type: mimeType },
-            { src: artworkUrl, sizes: '256x256',  type: mimeType },
-            { src: artworkUrl, sizes: '384x384',  type: mimeType },
-            { src: artworkUrl, sizes: '512x512',  type: mimeType },
-          ]
-        : [],
-    });
-    // Set playbackState to playing — this is what makes Android show the notification
-    navigator.mediaSession.playbackState = 'playing';
+    
+    if (window.Capacitor?.isNative) {
+      await MediaSession.setMetadata({
+        title: track.title || 'Unknown Title',
+        artist: track.artist?.name || 'Unknown Artist',
+        album: track.album?.title || '',
+        artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: mimeType }] : []
+      });
+      await MediaSession.setPlaybackState({ playbackState: 'playing' });
+    } else if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: track.title || 'Unknown Title',
+        artist: track.artist?.name || 'Unknown Artist',
+        album: track.album?.title || '',
+        artwork: artworkUrl
+          ? [
+              { src: artworkUrl, sizes: '96x96',   type: mimeType },
+              { src: artworkUrl, sizes: '128x128',  type: mimeType },
+              { src: artworkUrl, sizes: '192x192',  type: mimeType },
+              { src: artworkUrl, sizes: '256x256',  type: mimeType },
+              { src: artworkUrl, sizes: '384x384',  type: mimeType },
+              { src: artworkUrl, sizes: '512x512',  type: mimeType },
+            ]
+          : [],
+      });
+      navigator.mediaSession.playbackState = 'playing';
+    }
   } catch (e) {
     console.warn('MediaSession error:', e);
   }
@@ -324,70 +336,86 @@ const NexoriaPlayer = () => {
 
   // ─── MediaSession API setup (re-runs on track change to claim session) ────
   useEffect(() => {
-    if (!('mediaSession' in navigator) || !currentTrack) return;
+    if (!currentTrack) return;
 
-    navigator.mediaSession.setActionHandler('play', () => {
-      dispatch(setPlaying(true));
-      audioRef.current?.play().catch(e => console.warn(e));
-    });
-
-    navigator.mediaSession.setActionHandler('pause', () => {
-      dispatch(setPlaying(false));
-      audioRef.current?.pause();
-    });
-
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-      handleSkipForwardRef.current();
-    });
-
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-      const { history, currentTrack } = stateRef.current;
-      const audio = audioRef.current;
-      if (history.length > 0) {
-        const prevTrack = history[history.length - 1];
-        if (audio) {
-          const src = blobUrlsRef.current[prevTrack._id] || getTrackSrc(prevTrack);
-          if (src) {
-            audio.src = src; // no .load() - prevents crackling
-            audio.play().catch(e => console.warn(e));
+    const setupActionHandlers = async () => {
+      const playHandler = () => {
+        dispatch(setPlaying(true));
+        audioRef.current?.play().catch(e => console.warn(e));
+      };
+      
+      const pauseHandler = () => {
+        dispatch(setPlaying(false));
+        audioRef.current?.pause();
+      };
+      
+      const nextHandler = () => {
+        handleSkipForwardRef.current();
+      };
+      
+      const prevHandler = () => {
+        const { history } = stateRef.current;
+        const audio = audioRef.current;
+        if (history.length > 0) {
+          const prevTrack = history[history.length - 1];
+          if (audio) {
+            const src = blobUrlsRef.current[prevTrack._id] || getTrackSrc(prevTrack);
+            if (src) {
+              audio.src = src; // no .load() - prevents crackling
+              audio.play().catch(e => console.warn(e));
+            }
           }
+          dispatch(playPrevTrack());
+        } else if (audio) {
+          audio.currentTime = 0;
         }
-        dispatch(playPrevTrack());
-      } else if (audio) {
-        audio.currentTime = 0;
-      }
-    });
+      };
 
-    navigator.mediaSession.setActionHandler('seekto', (details) => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      const seekTime = details.seekTime ?? 0;
-      if (details.fastSeek && 'fastSeek' in audio) {
-        audio.fastSeek(seekTime);
-      } else {
-        audio.currentTime = seekTime;
-      }
-      if ('setPositionState' in navigator.mediaSession) {
+      if (window.Capacitor?.isNative) {
         try {
-          navigator.mediaSession.setPositionState({
-            duration: audio.duration || 0,
-            playbackRate: audio.playbackRate,
-            position: seekTime,
-          });
-        } catch (e) { /* ignore */ }
+          await MediaSession.setActionHandler({ action: 'play' }, playHandler);
+          await MediaSession.setActionHandler({ action: 'pause' }, pauseHandler);
+          await MediaSession.setActionHandler({ action: 'nexttrack' }, nextHandler);
+          await MediaSession.setActionHandler({ action: 'previoustrack' }, prevHandler);
+        } catch (e) {
+          console.warn('Capacitor MediaSession Action Error:', e);
+        }
+      } else if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', playHandler);
+        navigator.mediaSession.setActionHandler('pause', pauseHandler);
+        navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
+        navigator.mediaSession.setActionHandler('previoustrack', prevHandler);
+        
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          const audio = audioRef.current;
+          if (!audio) return;
+          const seekTime = details.seekTime ?? 0;
+          if (details.fastSeek && 'fastSeek' in audio) audio.fastSeek(seekTime);
+          else audio.currentTime = seekTime;
+          
+          if ('setPositionState' in navigator.mediaSession) {
+            try {
+              navigator.mediaSession.setPositionState({
+                duration: audio.duration || 0,
+                playbackRate: audio.playbackRate,
+                position: seekTime,
+              });
+            } catch (e) { /* ignore */ }
+          }
+        });
+        
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+          if (audioRef.current) audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - (details.seekOffset || 10));
+        });
+        
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+          if (audioRef.current) audioRef.current.currentTime = Math.min(audioRef.current.duration || Infinity, audioRef.current.currentTime + (details.seekOffset || 10));
+        });
       }
-    });
-
-    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-      const audio = audioRef.current;
-      if (audio) audio.currentTime = Math.max(0, audio.currentTime - (details.seekOffset || 10));
-    });
-
-    navigator.mediaSession.setActionHandler('seekforward', (details) => {
-      const audio = audioRef.current;
-      if (audio) audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + (details.seekOffset || 10));
-    });
-  }, [dispatch, currentTrack?._id]);  
+    };
+    
+    setupActionHandlers();
+  }, [currentTrack?._id, dispatch]);
 
   // ─── Update MediaSession metadata whenever track changes ──────────────────
   // This is the MASTER effect - it fires on every track change and sets BOTH
@@ -594,21 +622,31 @@ const NexoriaPlayer = () => {
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleTimeUpdate}
         onPlay={() => {
-          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+          if (window.Capacitor?.isNative) MediaSession.setPlaybackState({ playbackState: 'playing' }).catch(() => {});
+          else if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
         }}
         onPause={() => {
-          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+          if (window.Capacitor?.isNative) MediaSession.setPlaybackState({ playbackState: 'paused' }).catch(() => {});
+          else if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
         }}
         onLoadedData={() => {
           const audio = audioRef.current;
-          if (audio && 'setPositionState' in navigator.mediaSession && audio.duration > 0) {
-            try {
-              navigator.mediaSession.setPositionState({
+          if (audio && audio.duration > 0) {
+            if (window.Capacitor?.isNative) {
+              MediaSession.setPositionState({
                 duration: audio.duration,
                 playbackRate: audio.playbackRate,
                 position: audio.currentTime,
-              });
-            } catch (e) { /* ignore */ }
+              }).catch(() => {});
+            } else if ('setPositionState' in navigator.mediaSession) {
+              try {
+                navigator.mediaSession.setPositionState({
+                  duration: audio.duration,
+                  playbackRate: audio.playbackRate,
+                  position: audio.currentTime,
+                });
+              } catch (e) { /* ignore */ }
+            }
           }
         }}
         onCanPlay={() => {
