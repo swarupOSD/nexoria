@@ -82,16 +82,25 @@ const BulkImport = () => {
     const uniqueUrls = urls.filter(url => !existingUrls.includes(url));
     if (uniqueUrls.length === 0) return toast.error("These links are already in the queue!");
 
-    const newTasks = uniqueUrls.map((url, index) => ({
-      id: Date.now() + index + 1000,
-      type: 'link',
-      url,
-      searchName: url,
-      status: 'pending',
-      appName: url,
-      icon: '',
-      message: 'Ready to import link'
-    }));
+    const newTasks = uniqueUrls.map((line, index) => {
+      let url = line;
+      let appName = line;
+      if (line.includes('|')) {
+        const parts = line.split('|');
+        url = parts[0].trim();
+        appName = parts[1].trim();
+      }
+      return {
+        id: Date.now() + index + 1000,
+        type: 'link',
+        url,
+        searchName: appName,
+        status: 'pending',
+        appName: appName,
+        icon: '',
+        message: 'Ready to import link'
+      };
+    });
 
     setImportTasks(prev => [...prev, ...newTasks]);
     setLinksText('');
@@ -123,8 +132,8 @@ const BulkImport = () => {
       
       try {
         // Step 1: Scrape Details (Backend scraper handles both URLs and search terms if we configure it)
-        // Note: For files, we send the cleanName. For links, we send the URL.
-        const scrapeRes = await scrapePlayStore({ url: task.searchName }).unwrap();
+        // Note: For files, we send the cleanName. For links, we send the URL along with searchTerm.
+        const scrapeRes = await scrapePlayStore({ url: task.url, searchTerm: task.searchName }).unwrap();
         
         const appName = scrapeRes.title || task.searchName;
         const icon = scrapeRes.icon || '';
@@ -221,7 +230,7 @@ const BulkImport = () => {
               value={linksText}
               onChange={(e) => setLinksText(e.target.value)}
               disabled={isProcessing}
-              placeholder="https://devuploads.com/...&#10;https://play.google.com/..."
+              placeholder="https://devuploads.com/... | App Name&#10;https://play.google.com/..."
               className="w-full h-32 bg-[#181818] border border-white/5 hover:border-white/20 transition-colors rounded-xl p-4 text-sm font-mono text-white focus:outline-none focus:border-[#1ed760] focus:ring-1 focus:ring-[#1ed760] disabled:opacity-50 resize-none custom-scrollbar"
             />
             <button

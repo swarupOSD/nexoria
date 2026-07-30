@@ -7,7 +7,7 @@ import * as cheerio from 'cheerio';
 // @route   POST /api/scraper/playstore
 // @access  Private/Admin
 export const scrapePlayStore = asyncHandler(async (req, res) => {
-  const { url } = req.body;
+  const { url, searchTerm } = req.body;
 
   if (!url) {
     res.status(400);
@@ -101,34 +101,53 @@ export const scrapePlayStore = asyncHandler(async (req, res) => {
       });
     } else if (url.includes('devuploads.com') || url.includes('terabox.com') || url.includes('mediafire.com')) {
       // Smart universal scraper for file hosts
-      const { data } = await axios.get(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' },
-        timeout: 10000
-      });
-      const $ = cheerio.load(data);
+      let appName = searchTerm || '';
       
-      let filename = $('title').text() || $('h1').text() || '';
-      filename = filename.replace(/Download/i, '').replace(/Free/i, '').trim();
-      
-      // Clean filename to extract app name
-      let appName = filename
-        .replace(/\.apk|\.xapk|\.zip|\.rar/i, '')
-        .replace(/_|-|\./g, ' ')
-        .replace(/v\d+\.\d+(\.\d+)?/i, '')
-        .replace(/\d+\.\d+(\.\d+)?/i, '')
-        .replace(/mod|premium|pro|unlocked|hack|crack/ig, '')
-        .trim();
+      // Only scrape DevUploads if we don't have an appName (i.e. searchTerm is just a URL or empty)
+      if (!appName || appName.startsWith('http')) {
+        try {
+          // DevUploads often delays/blocks standard User-Agents; omitting it fetches instantly.
+          const { data } = await axios.get(url, {
+            timeout: 15000
+          });
+          const $ = cheerio.load(data);
+          
+          let filename = $('input[name="title"]').attr('value') || $('title').text() || $('h1').text() || '';
+          filename = filename.replace(/Download/i, '').replace(/Free/i, '').trim();
+          
+          // DevUploads DMCA obfuscated filename bypass
+          if (filename.includes('___')) {
+            filename = '';
+          }
+          
+          if (filename) {
+            appName = filename
+              .replace(/\.apk|\.xapk|\.zip|\.rar/i, '')
+              .replace(/_|-|\./g, ' ')
+              .replace(/v\d+\.\d+(\.\d+)?/i, '')
+              .replace(/\d+\.\d+(\.\d+)?/i, '')
+              .replace(/mod|premium|pro|unlocked|hack|crack/ig, '')
+              .trim();
+          }
+        } catch (e) {
+          console.warn('Failed to scrape filehost for name:', e.message);
+        }
+      }
         
-      if (!appName) appName = filename.substring(0, 15);
+      if (!appName || appName.startsWith('http') || appName.length < 2) {
+        appName = 'Unknown App';
+      }
       
       let playStoreData = null;
-      try {
-        const searchResults = await gplay.search({ term: appName, num: 1 });
-        if (searchResults && searchResults.length > 0) {
-          playStoreData = await gplay.app({ appId: searchResults[0].appId });
+      if (appName !== 'Unknown App') {
+        try {
+          const searchResults = await gplay.search({ term: appName, num: 1 });
+          if (searchResults && searchResults.length > 0) {
+            playStoreData = await gplay.app({ appId: searchResults[0].appId });
+          }
+        } catch (e) {
+          console.error("Play Store search failed for:", appName);
         }
-      } catch (e) {
-        console.error("Play Store search failed for:", appName);
       }
       
       if (playStoreData) {
