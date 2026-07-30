@@ -170,6 +170,7 @@ const NexoriaPlayer = () => {
       }
 
       updateMediaSessionMetadata(nextTrack);
+      alreadyStartedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
 
     } else if (repeatMode === 'all' && history.length > 0) {
@@ -186,6 +187,7 @@ const NexoriaPlayer = () => {
       }
 
       updateMediaSessionMetadata(nextTrack);
+      alreadyStartedRef.current = nextTrack._id;
       // playNextTrack with empty queue will re-seed from history in the reducer
       dispatch(playNextTrack(nextIndex));
 
@@ -207,6 +209,7 @@ const NexoriaPlayer = () => {
               }
             }
             updateMediaSessionMetadata(nextTrack);
+            alreadyStartedRef.current = nextTrack._id;
             dispatch(playTrack(nextTrack));
           }
         }
@@ -224,14 +227,26 @@ const NexoriaPlayer = () => {
   }, [handleSkipForward]);
 
   // ─── On track change: set audio src and attempt play ──────────────────────
+  // alreadyStartedRef stores the trackId that handleSkipForward already started playing
+  // so the useEffect doesn't double-load it
+  const alreadyStartedRef = useRef(null);
+
   useEffect(() => {
     if (!currentTrack) {
       if (audioRef.current) audioRef.current.src = '';
       return;
     }
 
-    let cancelled = false;
     const audio = audioRef.current;
+    let cancelled = false;
+
+    // If handleSkipForward already set src and called play() for this exact track, skip re-loading
+    if (alreadyStartedRef.current === currentTrack._id && audio && !audio.paused) {
+      alreadyStartedRef.current = null;
+      updateMediaSessionMetadata(currentTrack);
+      return;
+    }
+    alreadyStartedRef.current = null;
 
     const playSrc = (src) => {
       if (cancelled || !audio) return;
@@ -263,7 +278,7 @@ const NexoriaPlayer = () => {
     updateMediaSessionMetadata(currentTrack);
 
     return () => { cancelled = true; };
-  }, [currentTrack?._id]);  
+  }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps 
 
   // ─── Sync isPlaying state to audio element ────────────────────────────────
   useEffect(() => {
