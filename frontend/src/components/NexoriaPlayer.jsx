@@ -265,9 +265,11 @@ const NexoriaPlayer = () => {
     // If handleSkipForward already set src + called play() for this track, skip re-loading.
     // Do NOT check !audio.paused - play() is async so paused may still be true at this point.
     if (alreadyStartedRef.current === currentTrack._id) {
+      // eslint-disable-next-line react-hooks/immutability
       alreadyStartedRef.current = null;
       return;
     }
+    // eslint-disable-next-line react-hooks/immutability
     alreadyStartedRef.current = null;
 
     // Set src WITHOUT calling audio.load() — browser loads automatically, calling load() causes
