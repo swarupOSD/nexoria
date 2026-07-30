@@ -538,11 +538,11 @@ const NexoriaPlayer = () => {
     <>
       {/* Hidden Audio Element */}
       
-      {/* Hidden Audio Element 1 */}
+      {/* Hidden Audio Element */}
       <audio
-        id="nexoria-global-audio-1"
-        ref={audioRef1}
-        autoPlay={activeEngine === 1 ? isPlaying : false}
+        id="nexoria-global-audio"
+        ref={audioRef}
+        autoPlay={isPlaying}
         onEnded={handleEnded}
         playsInline
         crossOrigin="anonymous"
@@ -550,31 +550,11 @@ const NexoriaPlayer = () => {
         onTimeUpdate={(e) => handleTimeUpdate(e)}
         onLoadedMetadata={(e) => handleTimeUpdate(e)}
         onCanPlay={() => {
-          if (activeEngineRef.current === 1 && isPlaying && audioRef1.current && audioRef1.current.paused) {
-            audioRef1.current.play().catch(e => console.log('Playback error 1:', e));
+          if (isPlaying && audioRef.current && audioRef.current.paused) {
+            audioRef.current.play().catch(e => console.log('Playback error:', e));
           }
         }}
       />
-      
-      {/* Hidden Audio Element 2 (For Preloading) */}
-      <audio
-        id="nexoria-global-audio-2"
-        ref={audioRef2}
-        autoPlay={activeEngine === 2 ? isPlaying : false}
-        onEnded={handleEnded}
-        playsInline
-        crossOrigin="anonymous"
-        preload="auto"
-        onTimeUpdate={(e) => handleTimeUpdate(e)}
-        onLoadedMetadata={(e) => handleTimeUpdate(e)}
-        onCanPlay={() => {
-          if (activeEngineRef.current === 2 && isPlaying && audioRef2.current && audioRef2.current.paused) {
-            audioRef2.current.play().catch(e => console.log('Playback error 2:', e));
-          }
-        }}
-      />
-
-
       <AnimatePresence>
         {currentTrack && (
           <>
