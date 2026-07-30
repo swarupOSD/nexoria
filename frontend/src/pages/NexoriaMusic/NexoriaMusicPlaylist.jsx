@@ -66,7 +66,7 @@ const NexoriaMusicPlaylist = () => {
           ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
           : track.audioUrl || '';
         if (src) {
-          // eslint-disable-next-line
+           
           window.__nexoriaAudioRef.current.src = src;
           window.__nexoriaAudioRef.current.play().catch(() => {});
         }
