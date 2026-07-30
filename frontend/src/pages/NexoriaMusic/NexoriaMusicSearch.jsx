@@ -3,7 +3,7 @@ import { Search as SearchIcon, Play, Pause, Heart, X, ArrowLeft } from 'lucide-r
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { BACKEND_URL } from '../../features/api/apiSlice';
-import { useSearchNexoriaMusicQuery } from '../../features/api/nexoriaMusicApiSlice';
+import { useSearchSaavnPublicQuery, useLazyGetSaavnSongDetailsQuery } from '../../features/api/musicApiSlice';
 import { playTrack, togglePlayPause, setQueue, toggleLikeTrack } from '../../features/music/nexoriaMusicSlice';
 import toast from 'react-hot-toast';
 
@@ -46,28 +46,53 @@ const NexoriaMusicSearch = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: searchRes, isLoading, isFetching } = useSearchNexoriaMusicQuery(debouncedTerm);
-  const results = searchRes?.data || { tracks: [], albums: [], artists: [] };
-  const hasResults = results.tracks.length > 0 || results.albums.length > 0 || results.artists.length > 0;
+  const { data: searchRes, isLoading, isFetching } = useSearchSaavnPublicQuery(debouncedTerm, { skip: !debouncedTerm });
+  const [getSongDetails] = useLazyGetSaavnSongDetailsQuery();
+  const results = searchRes?.data || [];
+  const hasResults = results.length > 0;
+  
+  // Map JioSaavn results to NexoriaTrack format
+  const mappedTracks = results.map(song => ({
+    _id: song.saavnId,
+    saavnId: song.saavnId,
+    title: song.title,
+    artist: { name: song.artist },
+    coverImage: song.image,
+    duration: 0 // Will be updated on play
+  }));
 
-  const handlePlay = (track, trackList) => {
+  const handlePlay = async (track, trackList) => {
     if (currentTrack?._id === track._id) {
       dispatch(togglePlayPause());
     } else {
-      // Immediately set audio src for zero-delay play
+      // Synchronously unlock audio for iOS Safari background playback
       if (window.__nexoriaAudioRef?.current) {
-        const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-        const src = track.telegramFileId
-          ? `${baseUrl}/api/nexoria-music/stream/${track.telegramFileId}`
-          : track.audioUrl || '';
-        if (src) {
-          // eslint-disable-next-line
-          window.__nexoriaAudioRef.current.src = src;
-          window.__nexoriaAudioRef.current.play().catch(() => {});
-        }
+        window.__nexoriaAudioRef.current.play().catch(() => {});
       }
-      dispatch(setQueue(trackList || []));
-      dispatch(playTrack(track));
+      
+      try {
+        toast.loading('Fetching high-quality stream...', { id: 'saavn-fetch' });
+        // Fetch 320kbps decrypted stream URL
+        const res = await getSongDetails(track.saavnId).unwrap();
+        toast.dismiss('saavn-fetch');
+        
+        const fullTrack = {
+          _id: res.data.saavnId,
+          saavnId: res.data.saavnId,
+          title: res.data.title,
+          artist: { name: res.data.artist },
+          coverImage: res.data.image,
+          audioUrl: res.data.audioUrl,
+          duration: res.data.duration
+        };
+        
+        // Update the queue list to have full metadata if needed, but for now just pass the mapped list
+        dispatch(setQueue(trackList || []));
+        dispatch(playTrack(fullTrack));
+      } catch (err) {
+        toast.dismiss('saavn-fetch');
+        toast.error('Failed to load stream');
+      }
     }
   };
 
@@ -215,7 +240,7 @@ const NexoriaMusicSearch = () => {
                         <div 
                           key={track._id} 
                           className="flex items-center gap-4 p-2 rounded-md hover:bg-white/10 group transition-colors cursor-pointer"
-                          onClick={() => handlePlay(track, results.tracks)}
+                          onClick={() => handlePlay(track, mappedTracks)}
                         >
                           <div className="relative w-10 h-10 bg-[#4338CA] shrink-0">
                             {track.coverImage || track.album?.coverImage || track.artist?.image ? (
