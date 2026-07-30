@@ -159,17 +159,17 @@ const NexoriaPlayer = () => {
       const nextIndex = shuffleMode ? Math.floor(Math.random() * queue.length) : 0;
       const nextTrack = queue[nextIndex];
 
-      // Set audio src synchronously (required for iOS autoplay policy)
+      // Set src WITHOUT calling load() - browser buffers automatically, load() causes crackling
       if (audio) {
         const src = blobUrlsRef.current[nextTrack._id] || getTrackSrc(nextTrack);
         if (src) {
           audio.src = src;
-          audio.load();
           audio.play().catch(e => console.warn('Skip forward play error:', e));
         }
       }
 
       updateMediaSessionMetadata(nextTrack);
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       alreadyStartedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
 
@@ -181,14 +181,13 @@ const NexoriaPlayer = () => {
         const src = blobUrlsRef.current[nextTrack._id] || getTrackSrc(nextTrack);
         if (src) {
           audio.src = src;
-          audio.load();
           audio.play().catch(e => console.warn('Repeat-all play error:', e));
         }
       }
 
       updateMediaSessionMetadata(nextTrack);
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       alreadyStartedRef.current = nextTrack._id;
-      // playNextTrack with empty queue will re-seed from history in the reducer
       dispatch(playNextTrack(nextIndex));
 
     } else if (autoplayEnabled) {
@@ -204,11 +203,11 @@ const NexoriaPlayer = () => {
               const src = getTrackSrc(nextTrack);
               if (src) {
                 audio.src = src;
-                audio.load();
                 audio.play().catch(e => console.warn('Autoplay reco error:', e));
               }
             }
             updateMediaSessionMetadata(nextTrack);
+            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
             alreadyStartedRef.current = nextTrack._id;
             dispatch(playTrack(nextTrack));
           }
@@ -216,6 +215,7 @@ const NexoriaPlayer = () => {
       }).catch(e => console.warn('Recommendations failed:', e));
     } else {
       // Nothing to play
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
       dispatch(setPlaying(false));
     }
   }, [dispatch, getRecommendations]);
@@ -240,19 +240,22 @@ const NexoriaPlayer = () => {
     const audio = audioRef.current;
     let cancelled = false;
 
-    // If handleSkipForward already set src and called play() for this exact track, skip re-loading
-    if (alreadyStartedRef.current === currentTrack._id && audio && !audio.paused) {
+    // If handleSkipForward already set src + called play() for this track, skip re-loading.
+    // Do NOT check !audio.paused - play() is async so paused may still be true at this point.
+    if (alreadyStartedRef.current === currentTrack._id) {
       alreadyStartedRef.current = null;
       updateMediaSessionMetadata(currentTrack);
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       return;
     }
     alreadyStartedRef.current = null;
 
+    // Set src WITHOUT calling audio.load() — browser loads automatically, calling load() causes
+    // the audio buffer to be discarded causing that 'crackling' sound at the start of songs.
     const playSrc = (src) => {
       if (cancelled || !audio) return;
       if (audio.src !== src) {
-        audio.src = src;
-        audio.load();
+        audio.src = src; // browser starts buffering automatically, no need for .load()
       }
       audio.play().catch(e => console.warn('Track change play:', e));
     };
@@ -276,11 +279,12 @@ const NexoriaPlayer = () => {
 
     // Update lock-screen metadata immediately when track changes
     updateMediaSessionMetadata(currentTrack);
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
 
     return () => { cancelled = true; };
-  }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps 
+  }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Sync isPlaying state to audio element ────────────────────────────────
+  // ─── Sync isPlaying state to audio element + MediaSession playbackState ──────
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -288,8 +292,10 @@ const NexoriaPlayer = () => {
       if (audio.paused) {
         audio.play().catch(e => console.warn('Play sync error:', e));
       }
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
     } else {
       if (!audio.paused) audio.pause();
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
     }
   }, [isPlaying]);
 
@@ -337,12 +343,12 @@ const NexoriaPlayer = () => {
         if (audio) {
           const src = blobUrlsRef.current[prevTrack._id] || getTrackSrc(prevTrack);
           if (src) {
-            audio.src = src;
-            audio.load();
+            audio.src = src; // no .load() - prevents crackling
             audio.play().catch(e => console.warn(e));
           }
         }
         updateMediaSessionMetadata(prevTrack);
+        navigator.mediaSession.playbackState = 'playing';
         dispatch(playPrevTrack());
       } else if (audio) {
         audio.currentTime = 0;
