@@ -1,5 +1,7 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { App as CapacitorApp } from '@capacitor/app';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -218,13 +220,41 @@ function App() {
   // Initialize Push Notifications
   usePushNotifications();
 
-  // Try to remove splash screen early if possible
+  // Initialize Capacitor Native Plugins
   useEffect(() => {
-    try {
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
-        window.Capacitor.Plugins.SplashScreen.hide();
+    const initCapacitor = async () => {
+      try {
+        if (window.Capacitor?.isNative) {
+          // Hide splash screen
+          if (window.Capacitor.Plugins?.SplashScreen) {
+            window.Capacitor.Plugins.SplashScreen.hide();
+          }
+          
+          // Configure Status Bar
+          await StatusBar.setStyle({ style: Style.Dark });
+          await StatusBar.setBackgroundColor({ color: '#0f172a' });
+
+          // Register hardware back button
+          CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+            if (canGoBack) {
+              window.history.back();
+            } else {
+              // We are on the root page (Home), exit app or show confirm
+              CapacitorApp.exitApp();
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Capacitor initialization failed:', e);
       }
-    } catch(e) {}
+    };
+    initCapacitor();
+
+    return () => {
+      if (window.Capacitor?.isNative) {
+        CapacitorApp.removeAllListeners();
+      }
+    };
   }, []);
 
   useEffect(() => {

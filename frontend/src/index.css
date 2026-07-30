@@ -4,6 +4,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Native App Mobile Resets */
+html, body {
+  -webkit-touch-callout: none; /* Disable iOS long press menu */
+  -webkit-user-select: none; /* Disable text selection */
+  user-select: none; 
+  -webkit-tap-highlight-color: transparent; /* Disable blue tap highlight */
+  overscroll-behavior: none; /* Disable rubber-band scrolling */
+  touch-action: pan-x pan-y; /* Prevent zooming */
+  padding-top: env(safe-area-inset-top); /* Notch support */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Allow text selection in specific inputs */
+input, textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
 :root {
   --color-primary: #00D4FF; /* Electric Blue */
   --color-secondary: #1B1140; /* Deep Indigo */
