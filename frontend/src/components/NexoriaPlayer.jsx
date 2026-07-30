@@ -74,7 +74,6 @@ const NexoriaPlayer = () => {
   }, [currentTrack?._id]);
 
   const blobUrlsRef = useRef({});
-  const saavnUrlsRef = useRef({});
 
   // Pre-resolve blob URLs for current track and next few tracks in queue
   useEffect(() => {
@@ -98,30 +97,7 @@ const NexoriaPlayer = () => {
       }
     };
     resolveBlobs();
-    
-    // PRE-RESOLVE JIOSAAVN URLS
-    const resolveSaavnUrls = async () => {
-      const tracksToResolve = [];
-      if (queue.length > 0) tracksToResolve.push(...queue.slice(0, 3));
-      if (history.length > 0) tracksToResolve.push(history[history.length - 1]);
-      
-      for (const track of tracksToResolve) {
-        if (track.saavnId && !track.audioUrl && !saavnUrlsRef.current[track._id]) {
-          try {
-            const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-            const res = await fetch(`${baseUrl}/api/music/saavn/song/${track.saavnId}`);
-            const data = await res.json();
-            if (data.success && data.data.audioUrl) {
-              saavnUrlsRef.current[track._id] = data.data.audioUrl;
-            }
-          } catch(e) {
-            console.log('Failed to pre-resolve Saavn URL', e);
-          }
-        }
-      }
-    };
-    resolveSaavnUrls();
-  }, [currentTrack?._id, queue, history, downloadedTracks]);
+  }, [currentTrack?._id, queue, downloadedTracks]);
 
   // Determine active audio source on track change
   // Expose audioRef globally so pages can call imperative play without dispatch delay
@@ -132,13 +108,9 @@ const NexoriaPlayer = () => {
   useEffect(() => {
     let isMounted = true;
     const baseUrl = BACKEND_URL.endsWith('/api') ? BACKEND_URL.slice(0, -4) : BACKEND_URL;
-    let networkSrc = currentTrack?.telegramFileId 
+    const networkSrc = currentTrack?.telegramFileId 
       ? `${baseUrl}/api/nexoria-music/stream/${currentTrack.telegramFileId}`
       : currentTrack?.audioUrl || "";
-      
-    if (currentTrack?.saavnId && saavnUrlsRef.current[currentTrack._id]) {
-      networkSrc = saavnUrlsRef.current[currentTrack._id];
-    }
       
     if (!networkSrc) {
       if (audioRef.current) audioRef.current.src = "";
@@ -430,8 +402,6 @@ const NexoriaPlayer = () => {
           
         if (blobUrlsRef.current[nextTrack._id]) {
           nextSrc = blobUrlsRef.current[nextTrack._id];
-        } else if (nextTrack.saavnId && saavnUrlsRef.current[nextTrack._id]) {
-          nextSrc = saavnUrlsRef.current[nextTrack._id];
         }
           
         const currentSrc = audioRef.current.src;
