@@ -210,9 +210,9 @@ const NexoriaPlayer = () => {
         title: currentTrack.title || 'Unknown Title',
         artist: currentTrack.artist?.name || 'Unknown Artist',
         album: currentTrack.album?.title || 'Unknown Album',
-        artwork: [
-          { src: currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }
-        ]
+        artwork: (currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image) ? [
+          { src: currentTrack.coverImage || currentTrack.album?.coverImage || currentTrack.artist?.image, sizes: '512x512', type: 'image/jpeg' }
+        ] : []
       });
 
       navigator.mediaSession.setActionHandler('play', () => {
@@ -241,7 +241,9 @@ const NexoriaPlayer = () => {
                 title: prevTrack.title || 'Unknown Title',
                 artist: prevTrack.artist?.name || 'Unknown Artist',
                 album: prevTrack.album?.title || 'Unknown Album',
-                artwork: [{ src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image || '', sizes: '512x512', type: 'image/jpeg' }]
+                artwork: (prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image) ? [
+                  { src: prevTrack.coverImage || prevTrack.album?.coverImage || prevTrack.artist?.image, sizes: '512x512', type: 'image/jpeg' }
+                ] : []
               });
             }
           }
