@@ -270,10 +270,10 @@ const CreatePost = () => {
         expectedReleaseDate: post.expectedReleaseDate ? new Date(post.expectedReleaseDate).toISOString().split('T')[0] : '',
         developmentProgress: post.developmentProgress || 0,
       });
-      setGalleryImages(post.galleryImages || []);
-      setVersions(post.versions || []);
-      setDownloadLinks(post.downloadLinks || []);
-      setModFeatures(post.modFeatures || []);
+      setModFeatures(post.modFeatures ? [...post.modFeatures] : []);
+      setGalleryImages(post.galleryImages ? [...post.galleryImages] : []);
+      setDownloadLinks(post.downloadLinks ? post.downloadLinks.map(link => ({ ...link })) : []);
+      setVersions(post.versions ? post.versions.map(v => ({ ...v })) : []);
       if (post.content) {
         let processedContent = post.content;
         const txt = document.createElement('textarea');
@@ -329,7 +329,7 @@ const CreatePost = () => {
   };
   const updateDownloadLink = (index, field, value) => {
     const newLinks = [...downloadLinks];
-    newLinks[index][field] = value;
+    newLinks[index] = { ...newLinks[index], [field]: value };
     setDownloadLinks(newLinks);
   };
   const removeDownloadLink = (index) => {
@@ -377,7 +377,7 @@ const CreatePost = () => {
   const addVersion = () => setVersions([{ version: '', changelog: '', date: new Date().toISOString().split('T')[0], isLatest: false }, ...versions]);
   const updateVersion = (index, field, value) => {
     const newVersions = [...versions];
-    newVersions[index][field] = value;
+    newVersions[index] = { ...newVersions[index], [field]: value };
     setVersions(newVersions);
   };
   const removeVersion = (index) => setVersions(versions.filter((_, i) => i !== index));
