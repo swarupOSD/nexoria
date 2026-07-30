@@ -492,8 +492,7 @@ const NexoriaPlayer = () => {
 
   // ─── Track ended → go to next ────────────────────────────────────────────
   const handleEnded = useCallback(() => {
-    const { repeatMode, sleepTimer } = { repeatMode: stateRef.current?.repeatMode, sleepTimer };
-    
+    // Use local sleepTimer state (this is fine - sleepTimer is a dependency)
     if (sleepTimer === 'track') {
       dispatch(setPlaying(false));
       setSleepTimer(null);
