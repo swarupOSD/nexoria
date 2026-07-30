@@ -184,8 +184,6 @@ const NexoriaPlayer = () => {
         }
       }
 
-      updateMediaSessionMetadata(nextTrack);
-      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       alreadyStartedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
 
@@ -201,8 +199,6 @@ const NexoriaPlayer = () => {
         }
       }
 
-      updateMediaSessionMetadata(nextTrack);
-      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       alreadyStartedRef.current = nextTrack._id;
       dispatch(playNextTrack(nextIndex));
 
@@ -222,8 +218,6 @@ const NexoriaPlayer = () => {
                 audio.play().catch(e => console.warn('Autoplay reco error:', e));
               }
             }
-            updateMediaSessionMetadata(nextTrack);
-            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
             alreadyStartedRef.current = nextTrack._id;
             dispatch(playTrack(nextTrack));
           }
@@ -260,8 +254,6 @@ const NexoriaPlayer = () => {
     // Do NOT check !audio.paused - play() is async so paused may still be true at this point.
     if (alreadyStartedRef.current === currentTrack._id) {
       alreadyStartedRef.current = null;
-      updateMediaSessionMetadata(currentTrack);
-      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       return;
     }
     alreadyStartedRef.current = null;
@@ -292,10 +284,6 @@ const NexoriaPlayer = () => {
       const networkSrc = getTrackSrc(currentTrack);
       if (networkSrc) playSrc(networkSrc);
     }
-
-    // Update lock-screen metadata immediately when track changes
-    updateMediaSessionMetadata(currentTrack);
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
 
     return () => { cancelled = true; };
   }, [currentTrack?._id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -334,9 +322,9 @@ const NexoriaPlayer = () => {
     return () => document.removeEventListener('visibilitychange', handle);
   }, []);
 
-  // ─── MediaSession API setup (runs once, uses refs for callbacks) ──────────
+  // ─── MediaSession API setup (re-runs on track change to claim session) ────
   useEffect(() => {
-    if (!('mediaSession' in navigator)) return;
+    if (!('mediaSession' in navigator) || !currentTrack) return;
 
     navigator.mediaSession.setActionHandler('play', () => {
       dispatch(setPlaying(true));
@@ -364,8 +352,6 @@ const NexoriaPlayer = () => {
             audio.play().catch(e => console.warn(e));
           }
         }
-        updateMediaSessionMetadata(prevTrack);
-        navigator.mediaSession.playbackState = 'playing';
         dispatch(playPrevTrack());
       } else if (audio) {
         audio.currentTime = 0;
@@ -401,7 +387,7 @@ const NexoriaPlayer = () => {
       const audio = audioRef.current;
       if (audio) audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + (details.seekOffset || 10));
     });
-  }, [dispatch]);  
+  }, [dispatch, currentTrack?._id]);  
 
   // ─── Update MediaSession metadata whenever track changes ──────────────────
   // This is the MASTER effect - it fires on every track change and sets BOTH
@@ -454,7 +440,6 @@ const NexoriaPlayer = () => {
               const src = blobUrlsRef.current[prevTrack._id] || getTrackSrc(prevTrack);
               if (src) { audio.src = src; audio.play().catch(() => {}); }
             }
-            updateMediaSessionMetadata(prevTrack);
           }
           dispatch(playPrevTrack());
           break;
@@ -513,14 +498,17 @@ const NexoriaPlayer = () => {
       const remaining = tDuration - cTime;
       const targetVol = isMuted ? 0 : volume;
       if (remaining <= crossfadeDuration && remaining > 0) {
-        audio.volume = Math.max(0, targetVol * (remaining / crossfadeDuration));
+        const v = Math.max(0, targetVol * (remaining / crossfadeDuration));
+        if (Math.abs(audio.volume - v) > 0.01) audio.volume = v;
       } else if (cTime < crossfadeDuration) {
-        audio.volume = Math.min(targetVol, targetVol * (cTime / crossfadeDuration));
+        const v = Math.min(targetVol, targetVol * (cTime / crossfadeDuration));
+        if (Math.abs(audio.volume - v) > 0.01) audio.volume = v;
       } else {
-        audio.volume = targetVol;
+        if (audio.volume !== targetVol) audio.volume = targetVol;
       }
     } else {
-      audio.volume = isMuted ? 0 : volume;
+      const targetVol = isMuted ? 0 : volume;
+      if (audio.volume !== targetVol) audio.volume = targetVol;
     }
 
     // Log play after 10 seconds
