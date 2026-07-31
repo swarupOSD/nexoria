@@ -64,9 +64,11 @@ async function activateMediaSession(track) {
         artist: track.artist?.name || 'Unknown Artist',
         album: track.album?.title || '',
         artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: mimeType }] : []
-      });
-      await MediaSession.setPlaybackState({ playbackState: 'playing' });
-    } else if ('mediaSession' in navigator) {
+      }).catch(e => console.warn('Native metadata error', e));
+      await MediaSession.setPlaybackState({ playbackState: 'playing' }).catch(e => console.warn('Native playbackState error', e));
+    } 
+    
+    if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: track.title || 'Unknown Title',
         artist: track.artist?.name || 'Unknown Artist',
@@ -382,7 +384,9 @@ const NexoriaPlayer = () => {
         } catch (e) {
           console.warn('Capacitor MediaSession Action Error:', e);
         }
-      } else if ('mediaSession' in navigator) {
+      } 
+      
+      if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', playHandler);
         navigator.mediaSession.setActionHandler('pause', pauseHandler);
         navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
@@ -625,11 +629,11 @@ const NexoriaPlayer = () => {
         onLoadedMetadata={handleTimeUpdate}
         onPlay={() => {
           if (window.Capacitor?.isNative) MediaSession.setPlaybackState({ playbackState: 'playing' }).catch(() => {});
-          else if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
         }}
         onPause={() => {
           if (window.Capacitor?.isNative) MediaSession.setPlaybackState({ playbackState: 'paused' }).catch(() => {});
-          else if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+          if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
         }}
         onLoadedData={() => {
           const audio = audioRef.current;
@@ -640,7 +644,8 @@ const NexoriaPlayer = () => {
                 playbackRate: audio.playbackRate,
                 position: audio.currentTime,
               }).catch(() => {});
-            } else if ('setPositionState' in navigator.mediaSession) {
+            } 
+            if ('setPositionState' in navigator.mediaSession) {
               try {
                 navigator.mediaSession.setPositionState({
                   duration: audio.duration,

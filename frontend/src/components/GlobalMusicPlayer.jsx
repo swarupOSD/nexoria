@@ -118,7 +118,9 @@ const GlobalMusicPlayer = () => {
         } catch (e) {
           console.warn('Capacitor MediaSession Error:', e);
         }
-      } else if ('mediaSession' in navigator) {
+      } 
+      
+      if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new window.MediaMetadata({ title, artist, album, artwork });
 
         navigator.mediaSession.setActionHandler('play', () => dispatch(setPlaying(true)));
