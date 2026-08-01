@@ -21,6 +21,7 @@ import {
   searchMusic,
   uploadTrackAudio,
   importYoutubeTrack,
+  uploadYoutubeCookies,
   streamTrack,
   logPlay,
   getRecentlyPlayed,
@@ -151,6 +152,9 @@ router.route('/admin/tracks/upload')
 
 router.route('/admin/tracks/import-yt')
   .post(protect, authorize('admin', 'superadmin'), importYoutubeTrack);
+
+router.route('/admin/tracks/upload-cookies')
+  .post(protect, authorize('admin', 'superadmin'), upload.single('cookies'), uploadYoutubeCookies);
 
 router.route('/admin/tracks')
   .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), createTrack)

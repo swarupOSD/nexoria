@@ -459,8 +459,24 @@ export const uploadTrackAudio = async (req, res) => {
 };
 
 // ==========================================
-// TELEGRAM CDN: YT IMPORT
+// TELEGRAM CDN: YT IMPORT & COOKIES
 // ==========================================
+
+export const uploadYoutubeCookies = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No cookies file uploaded' });
+    }
+    const cookiesContent = req.file.buffer.toString('utf-8');
+    const destPath = path.join(process.cwd(), 'youtube-cookies.txt');
+    fs.writeFileSync(destPath, cookiesContent, 'utf-8');
+    
+    res.status(200).json({ success: true, message: 'YouTube Cookies updated successfully. Datacenter block is now bypassed!' });
+  } catch (error) {
+    logger.error(`Upload Cookies Error: ${error.message}`);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 export const importYoutubeTrack = async (req, res) => {
   const { youtubeUrl, artist, album, genre, trackType, isPremium, algorithmicBoost } = req.body;
@@ -486,8 +502,11 @@ export const importYoutubeTrack = async (req, res) => {
   setImmediate(async () => {
     let tempFilePath = null;
     try {
+      const cookiesPath = path.join(process.cwd(), 'youtube-cookies.txt');
+      const baseOpts = fs.existsSync(cookiesPath) ? { cookies: cookiesPath, noWarnings: true } : { noWarnings: true };
+
       // 1. Get Video Info
-      const info = await youtubedl(youtubeUrl, { dumpJson: true, skipDownload: true });
+      const info = await youtubedl(youtubeUrl, { ...baseOpts, dumpJson: true, skipDownload: true });
       const title = info.title || 'Unknown Track';
       const durationSeconds = parseInt(info.duration) || 0;
       const coverImage = info.thumbnail || '';
@@ -496,9 +515,9 @@ export const importYoutubeTrack = async (req, res) => {
       tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.webm`);
       
       await youtubedl(youtubeUrl, {
+        ...baseOpts,
         format: 'bestaudio',
-        output: tempFilePath,
-        noWarnings: true
+        output: tempFilePath
       });
 
       // 3. Upload to Telegram

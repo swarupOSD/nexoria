@@ -11,6 +11,7 @@ import {
   useGetNexoriaGenresQuery,
   useUploadNexoriaTrackAudioMutation,
   useImportYoutubeTrackMutation,
+  useUploadYoutubeCookiesMutation,
   useUpdateNexoriaTrackLyricsMutation,
   useGetTrackLyricsQuery
 } from '../../../features/api/nexoriaMusicApiSlice';
@@ -37,6 +38,7 @@ const NexoriaTracksManager = () => {
   const [deleteTrack] = useDeleteNexoriaTrackMutation();
   const [updateTrackLyrics] = useUpdateNexoriaTrackLyricsMutation();
   const [importYoutube, { isLoading: isImporting }] = useImportYoutubeTrackMutation();
+  const [uploadCookies] = useUploadYoutubeCookiesMutation();
   
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
@@ -96,6 +98,22 @@ const NexoriaTracksManager = () => {
   const closeModal = () => {
     setModalMode(null);
     setEditTarget(null);
+  };
+
+  const handleCookieUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const cookieData = new FormData();
+    cookieData.append('cookies', file);
+    try {
+      toast.loading('Uploading YouTube cookies...', { id: 'yt-cookies' });
+      await uploadCookies(cookieData).unwrap();
+      toast.success('YouTube cookies uploaded successfully! Datacenter block bypassed.', { id: 'yt-cookies' });
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.data?.message || 'Failed to upload cookies', { id: 'yt-cookies' });
+    }
+    e.target.value = '';
   };
 
   const handleSubmit = async (e) => {
@@ -455,10 +473,16 @@ const NexoriaTracksManager = () => {
 
                 {modalMode === 'create' && (
                   <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-2xl border-dashed">
-                    <label className="block text-xs font-bold text-red-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Play className="w-4 h-4" /> 1-Click Import from YouTube
-                    </label>
-                    <p className="text-xs text-red-500/70 mb-3">Paste a YouTube URL and we will automatically download, extract metadata, and upload it to your server.</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-2">
+                        <Play className="w-4 h-4" /> 1-Click Import from YouTube
+                      </label>
+                      <label className="cursor-pointer text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded border border-red-500/20 hover:bg-red-500/20 transition-all flex items-center gap-1">
+                        <UploadCloud className="w-3 h-3" /> Set Cookies (If Blocked)
+                        <input type="file" accept=".txt" className="hidden" onChange={handleCookieUpload} />
+                      </label>
+                    </div>
+                    <p className="text-[10px] text-red-500/70 mb-3 leading-tight">Paste a YouTube URL. If it fails due to Datacenter IP blocking, upload a YouTube <span className="font-mono text-red-400">cookies.txt</span> file first (Get via 'Get cookies.txt LOCALLY' extension).</p>
                     <input 
                       type="url" 
                       value={formData.youtubeUrl || ''}

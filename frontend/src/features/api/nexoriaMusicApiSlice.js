@@ -117,6 +117,13 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['NexoriaTrack'],
     }),
+    uploadYoutubeCookies: builder.mutation({
+      query: (formData) => ({
+        url: '/nexoria-music/admin/tracks/upload-cookies',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
     updateNexoriaTrack: builder.mutation({
       query: ({ id, data }) => ({
         url: `/nexoria-music/admin/tracks/${id}`,
@@ -316,6 +323,7 @@ export const {
   useGetNexoriaTracksQuery,
   useCreateNexoriaTrackMutation,
   useImportYoutubeTrackMutation,
+  useUploadYoutubeCookiesMutation,
   useUpdateNexoriaTrackMutation,
   useDeleteNexoriaTrackMutation,
   useUpdateNexoriaTrackLyricsMutation,
