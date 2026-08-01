@@ -13,12 +13,14 @@ import {
   useImportYoutubeTrackMutation,
   useUploadYoutubeCookiesMutation,
   useUpdateNexoriaTrackLyricsMutation,
-  useGetTrackLyricsQuery
+  useGetTrackLyricsQuery,
+  nexoriaMusicApiSlice
 } from '../../../features/api/nexoriaMusicApiSlice';
 import { Plus, Trash2, XCircle, Music, Play, Edit2, FileText, UploadCloud, Mic2, Flame } from 'lucide-react';
 import toast from 'react-hot-toast';
 import NexoriaBulkUploader from './NexoriaBulkUploader';
 import NexoriaLyricsStudio from './NexoriaLyricsStudio';
+import { useSocket } from '../../../context/SocketContext';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
@@ -28,7 +30,29 @@ const emptyForm = {
 
 const NexoriaTracksManager = () => {
   const dispatch = useDispatch();
+  const socket = useSocket();
   const { data: response, isLoading } = useGetNexoriaTracksQuery();
+
+  React.useEffect(() => {
+    if (!socket) return;
+    
+    const handleTrackImportSuccess = () => {
+      dispatch(nexoriaMusicApiSlice.util.invalidateTags(['NexoriaTrack']));
+      toast.success('Background track import completed! List updated.', { id: 'yt-import-socket' });
+    };
+
+    const handleTrackImportError = (data) => {
+      toast.error(`Background import failed: ${data?.message || 'Unknown error'}`, { id: 'yt-import-socket' });
+    };
+
+    socket.on('trackImportSuccess', handleTrackImportSuccess);
+    socket.on('trackImportError', handleTrackImportError);
+
+    return () => {
+      socket.off('trackImportSuccess', handleTrackImportSuccess);
+      socket.off('trackImportError', handleTrackImportError);
+    };
+  }, [socket, dispatch]);
   const { data: artistsRes } = useGetNexoriaArtistsQuery();
   const { data: albumsRes } = useGetNexoriaAlbumsQuery();
   const { data: genresRes } = useGetNexoriaGenresQuery();

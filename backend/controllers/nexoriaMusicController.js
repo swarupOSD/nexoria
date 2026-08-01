@@ -563,11 +563,22 @@ export const importYoutubeTrack = async (req, res) => {
         fs.unlinkSync(tempFilePath);
       }
       
+      try {
+        getIO().emit('trackImportSuccess');
+      } catch (err) {
+        console.error('Socket emit error (success):', err);
+      }
+      
     } catch (error) {
       if (tempFilePath && fs.existsSync(tempFilePath)) {
         fs.unlinkSync(tempFilePath);
       }
       console.error(`[Background] Import YT Track Error: ${error.message}`);
+      try {
+        getIO().emit('trackImportError', { message: error.message });
+      } catch (err) {
+        console.error('Socket emit error (failure):', err);
+      }
     }
   });
 };
