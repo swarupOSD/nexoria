@@ -8,11 +8,6 @@ export default defineConfig({
     sourcemap: false, // Prevents source code from being inspected in production
     chunkSizeWarningLimit: 3000,
   },
-  server: {
-    watch: {
-      ignored: ['**/yt-dlp.exe']
-    }
-  },
   plugins: [
     react(),
     VitePWA({
@@ -81,6 +76,9 @@ export default defineConfig({
     globals: true
   },
   server: {
+    watch: {
+      ignored: ['**/yt-dlp.exe']
+    },
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:5000',
