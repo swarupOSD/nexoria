@@ -15,7 +15,7 @@ import path from 'path';
 import https from 'https';
 import { getIO } from '../config/socket.js';
 import cloudinary from '../config/cloudinary.js';
-import ytdl from '@distube/ytdl-core';
+import play from 'play-dl';
 import fs from 'fs';
 import os from 'os';
 
@@ -479,10 +479,10 @@ export const importYoutubeTrack = async (req, res) => {
     }
 
     // 1. Get Video Info
-    const info = await ytdl.getInfo(youtubeUrl);
-    const videoDetails = info.videoDetails;
+    const info = await play.video_info(youtubeUrl);
+    const videoDetails = info.video_details;
     const title = videoDetails.title;
-    const durationSeconds = parseInt(videoDetails.lengthSeconds) || 0;
+    const durationSeconds = videoDetails.durationInSec || 0;
     const coverImage = videoDetails.thumbnails.length > 0 
       ? videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url 
       : '';
@@ -491,10 +491,11 @@ export const importYoutubeTrack = async (req, res) => {
     tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.mp3`);
     const writeStream = fs.createWriteStream(tempFilePath);
     
+    const stream = await play.stream(youtubeUrl, { discordPlayerCompatibility: true });
+    
     await new Promise((resolve, reject) => {
-      const audioStream = ytdl(youtubeUrl, { filter: 'audioonly', quality: 'highestaudio' });
-      audioStream.pipe(writeStream);
-      audioStream.on('error', reject);
+      stream.stream.pipe(writeStream);
+      stream.stream.on('error', reject);
       writeStream.on('finish', resolve);
       writeStream.on('error', reject);
     });

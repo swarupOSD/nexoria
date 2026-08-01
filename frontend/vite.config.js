@@ -8,6 +8,11 @@ export default defineConfig({
     sourcemap: false, // Prevents source code from being inspected in production
     chunkSizeWarningLimit: 3000,
   },
+  server: {
+    watch: {
+      ignored: ['**/yt-dlp.exe']
+    }
+  },
   plugins: [
     react(),
     VitePWA({
