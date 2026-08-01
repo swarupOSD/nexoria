@@ -463,94 +463,94 @@ export const uploadTrackAudio = async (req, res) => {
 // ==========================================
 
 export const importYoutubeTrack = async (req, res) => {
-  let tempFilePath = null;
-  try {
-    const { youtubeUrl, artist, album, genre, trackType, isPremium, algorithmicBoost } = req.body;
+  const { youtubeUrl, artist, album, genre, trackType, isPremium, algorithmicBoost } = req.body;
 
-    if (!youtubeUrl) {
-      return res.status(400).json({ success: false, message: 'YouTube URL is required' });
-    }
-
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const channelId = process.env.TELEGRAM_CHANNEL_ID;
-
-    if (!botToken || !channelId) {
-      return res.status(500).json({ success: false, message: 'Telegram Bot Token or Channel ID not configured on the server.' });
-    }
-
-    // 1. Get Video Info
-    const info = await youtubedl(youtubeUrl, { dumpJson: true, skipDownload: true });
-    const title = info.title || 'Unknown Track';
-    const durationSeconds = parseInt(info.duration) || 0;
-    const coverImage = info.thumbnail || '';
-
-    // 2. Download audio stream to temp file
-    tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.webm`);
-    
-    await youtubedl(youtubeUrl, {
-      format: 'bestaudio',
-      output: tempFilePath,
-      noWarnings: true
-    });
-
-    // 3. Upload to Telegram
-    const formData = new FormData();
-    formData.append('chat_id', channelId);
-    formData.append('audio', fs.createReadStream(tempFilePath), {
-      filename: `${title}.mp3`,
-      contentType: 'audio/mpeg'
-    });
-    
-    // Attempt to set artist for Telegram metadata if artist ID provided
-    // In a real scenario you'd fetch the artist name from DB, but Telegram accepts any string
-    formData.append('title', title);
-    
-    const response = await axios.post(`https://api.telegram.org/bot${botToken}/sendAudio`, formData, {
-      headers: { ...formData.getHeaders() },
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity
-    });
-
-    const resultObj = response.data.result.audio;
-    if (!resultObj) {
-      throw new Error('Telegram API did not return a valid audio identifier.');
-    }
-
-    const telegramFileId = resultObj.file_id;
-
-    // 4. Create Track in DB
-    const newTrack = await NexoriaTrack.create({
-      title,
-      artist: artist || null,
-      album: album || null,
-      genre: genre || null,
-      duration: durationSeconds,
-      coverImage,
-      trackType: trackType || 'song',
-      isPremium: isPremium || false,
-      telegramFileId: telegramFileId,
-      algorithmicBoost: algorithmicBoost || 0,
-      addedBy: req.user._id
-    });
-
-    // Cleanup temp file
-    if (tempFilePath && fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-    }
-
-    res.status(201).json({
-      success: true,
-      message: 'Successfully imported from YouTube',
-      data: newTrack
-    });
-
-  } catch (error) {
-    if (tempFilePath && fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-    }
-    logger.error(`Import YT Track Error: ${error.message}`);
-    res.status(500).json({ success: false, message: `Failed to import: ${error.message}` });
+  if (!youtubeUrl) {
+    return res.status(400).json({ success: false, message: 'YouTube URL is required' });
   }
+
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const channelId = process.env.TELEGRAM_CHANNEL_ID;
+
+  if (!botToken || !channelId) {
+    return res.status(500).json({ success: false, message: 'Telegram Bot Token or Channel ID not configured on the server.' });
+  }
+
+  // RETURN IMMEDIATELY (Follows AGENTS.md rule for Render timeouts)
+  res.status(202).json({
+    success: true,
+    message: 'YouTube import started in the background. It will appear in the library soon.'
+  });
+
+  // RUN BACKGROUND TASK
+  setImmediate(async () => {
+    let tempFilePath = null;
+    try {
+      // 1. Get Video Info
+      const info = await youtubedl(youtubeUrl, { dumpJson: true, skipDownload: true });
+      const title = info.title || 'Unknown Track';
+      const durationSeconds = parseInt(info.duration) || 0;
+      const coverImage = info.thumbnail || '';
+
+      // 2. Download audio stream to temp file
+      tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.webm`);
+      
+      await youtubedl(youtubeUrl, {
+        format: 'bestaudio',
+        output: tempFilePath,
+        noWarnings: true
+      });
+
+      // 3. Upload to Telegram
+      const formData = new FormData();
+      formData.append('chat_id', channelId);
+      formData.append('audio', fs.createReadStream(tempFilePath), {
+        filename: `${title}.mp3`,
+        contentType: 'audio/mpeg'
+      });
+      
+      formData.append('title', title);
+      
+      const response = await axios.post(`https://api.telegram.org/bot${botToken}/sendAudio`, formData, {
+        headers: { ...formData.getHeaders() },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      });
+
+      const resultObj = response.data.result.audio;
+      if (!resultObj) {
+        throw new Error('Telegram API did not return a valid audio identifier.');
+      }
+
+      const telegramFileId = resultObj.file_id;
+
+      // 4. Create Track in DB
+      await NexoriaTrack.create({
+        title,
+        artist: artist || null,
+        album: album || null,
+        genre: genre || null,
+        duration: durationSeconds,
+        coverImage,
+        trackType: trackType || 'song',
+        isPremium: isPremium || false,
+        telegramFileId: telegramFileId,
+        algorithmicBoost: algorithmicBoost || 0,
+        addedBy: req.user ? req.user._id : null
+      });
+
+      // Cleanup temp file
+      if (tempFilePath && fs.existsSync(tempFilePath)) {
+        fs.unlinkSync(tempFilePath);
+      }
+      
+    } catch (error) {
+      if (tempFilePath && fs.existsSync(tempFilePath)) {
+        fs.unlinkSync(tempFilePath);
+      }
+      console.error(`[Background] Import YT Track Error: ${error.message}`);
+    }
+  });
 };
 
 export const streamTrack = async (req, res) => {
