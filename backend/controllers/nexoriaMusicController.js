@@ -15,7 +15,7 @@ import path from 'path';
 import https from 'https';
 import { getIO } from '../config/socket.js';
 import cloudinary from '../config/cloudinary.js';
-import play from 'play-dl';
+import youtubedl from 'youtube-dl-exec';
 import fs from 'fs';
 import os from 'os';
 
@@ -479,25 +479,18 @@ export const importYoutubeTrack = async (req, res) => {
     }
 
     // 1. Get Video Info
-    const info = await play.video_info(youtubeUrl);
-    const videoDetails = info.video_details;
-    const title = videoDetails.title;
-    const durationSeconds = videoDetails.durationInSec || 0;
-    const coverImage = videoDetails.thumbnails.length > 0 
-      ? videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url 
-      : '';
+    const info = await youtubedl(youtubeUrl, { dumpJson: true, skipDownload: true });
+    const title = info.title || 'Unknown Track';
+    const durationSeconds = parseInt(info.duration) || 0;
+    const coverImage = info.thumbnail || '';
 
     // 2. Download audio stream to temp file
-    tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.mp3`);
-    const writeStream = fs.createWriteStream(tempFilePath);
+    tempFilePath = path.join(os.tmpdir(), `yt_${Date.now()}.webm`);
     
-    const stream = await play.stream(youtubeUrl, { discordPlayerCompatibility: true });
-    
-    await new Promise((resolve, reject) => {
-      stream.stream.pipe(writeStream);
-      stream.stream.on('error', reject);
-      writeStream.on('finish', resolve);
-      writeStream.on('error', reject);
+    await youtubedl(youtubeUrl, {
+      format: 'bestaudio',
+      output: tempFilePath,
+      noWarnings: true
     });
 
     // 3. Upload to Telegram
