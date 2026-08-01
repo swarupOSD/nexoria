@@ -20,6 +20,7 @@ import {
   updateTrackLyrics,
   searchMusic,
   uploadTrackAudio,
+  importYoutubeTrack,
   streamTrack,
   logPlay,
   getRecentlyPlayed,
@@ -147,6 +148,9 @@ router.route('/admin/albums/:id')
 // TRACKS
 router.route('/admin/tracks/upload')
   .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), uploadTrackAudio);
+
+router.route('/admin/tracks/import-yt')
+  .post(protect, authorize('admin', 'superadmin'), importYoutubeTrack);
 
 router.route('/admin/tracks')
   .post(protect, authorize('admin', 'superadmin'), upload.single('audio'), createTrack)

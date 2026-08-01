@@ -10,6 +10,7 @@ import {
   useGetNexoriaAlbumsQuery,
   useGetNexoriaGenresQuery,
   useUploadNexoriaTrackAudioMutation,
+  useImportYoutubeTrackMutation,
   useUpdateNexoriaTrackLyricsMutation,
   useGetTrackLyricsQuery
 } from '../../../features/api/nexoriaMusicApiSlice';
@@ -20,7 +21,7 @@ import NexoriaLyricsStudio from './NexoriaLyricsStudio';
 
 const emptyForm = { 
   title: '', artist: '', album: '', genre: '', trackType: 'song',
-  duration: 0, audioUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null,
+  duration: 0, audioUrl: '', youtubeUrl: '', coverImage: '', isPremium: false, audioFile: null, telegramFileId: null,
   lyricsRaw: '', algorithmicBoost: 0
 };
 
@@ -35,6 +36,7 @@ const NexoriaTracksManager = () => {
   const [updateTrack, { isLoading: isUpdating }] = useUpdateNexoriaTrackMutation();
   const [deleteTrack] = useDeleteNexoriaTrackMutation();
   const [updateTrackLyrics] = useUpdateNexoriaTrackLyricsMutation();
+  const [importYoutube, { isLoading: isImporting }] = useImportYoutubeTrackMutation();
   
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
@@ -99,7 +101,30 @@ const NexoriaTracksManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.artist) return toast.error('Please select an artist');
-    if (!formData.audioFile && !formData.audioUrl && modalMode === 'create') return toast.error('Please upload an audio file or provide a URL');
+    
+    if (formData.youtubeUrl && modalMode === 'create') {
+      try {
+        const importData = {
+          youtubeUrl: formData.youtubeUrl,
+          artist: formData.artist,
+          album: formData.album || undefined,
+          genre: formData.genre || undefined,
+          trackType: formData.trackType,
+          isPremium: formData.isPremium,
+          algorithmicBoost: formData.algorithmicBoost || 0
+        };
+        toast.loading('Downloading and importing from YouTube. This may take a minute...', { id: 'yt-import' });
+        await importYoutube(importData).unwrap();
+        toast.success('Track imported from YouTube successfully!', { id: 'yt-import' });
+        closeModal();
+      } catch (error) {
+        console.error(error);
+        toast.error(error?.data?.message || 'Failed to import track', { id: 'yt-import' });
+      }
+      return;
+    }
+
+    if (!formData.audioFile && !formData.audioUrl && modalMode === 'create') return toast.error('Please upload an audio file, provide a URL, or YouTube URL');
     if (formData.audioFile && formData.audioFile.size > 50 * 1024 * 1024) {
       return toast.error('File size must be under 50MB for Telegram CDN');
     }
@@ -428,6 +453,22 @@ const NexoriaTracksManager = () => {
                   />
                 </div>
 
+                {modalMode === 'create' && (
+                  <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-2xl border-dashed">
+                    <label className="block text-xs font-bold text-red-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <Play className="w-4 h-4" /> 1-Click Import from YouTube
+                    </label>
+                    <p className="text-xs text-red-500/70 mb-3">Paste a YouTube URL and we will automatically download, extract metadata, and upload it to your server.</p>
+                    <input 
+                      type="url" 
+                      value={formData.youtubeUrl || ''}
+                      onChange={(e) => setFormData({...formData, youtubeUrl: e.target.value})}
+                      placeholder="https://youtube.com/watch?v=..."
+                      className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-red-500 transition-all text-sm"
+                    />
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">OR External Audio URL</label>
                   <input 
@@ -477,16 +518,16 @@ const NexoriaTracksManager = () => {
                 <div className="flex justify-end gap-4 mt-4 md:mt-8">
                 <button 
                   type="submit" 
-                  disabled={isCreating || isUpdating}
+                  disabled={isCreating || isUpdating || isImporting}
                   className="w-full py-4 mt-2 bg-[#1ed760] hover:bg-[#1fdf64] disabled:opacity-50 text-black font-black rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
                 >
-                  {(isCreating || isUpdating) ? (
+                  {(isCreating || isUpdating || isImporting) ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Saving Track...
+                      {isImporting ? 'Downloading & Importing...' : 'Saving Track...'}
                     </>
                   ) : (
-                    modalMode === 'edit' ? '✅ Update Track' : '🎵 Upload & Save Track'
+                    modalMode === 'edit' ? '✅ Update Track' : (formData.youtubeUrl ? '⚡ Import from YouTube' : '🎵 Upload & Save Track')
                   )}
                 </button>
                 </div>
