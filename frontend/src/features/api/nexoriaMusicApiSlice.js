@@ -303,6 +303,31 @@ export const nexoriaMusicApiSlice = apiSlice.injectEndpoints({
     getUserProfile: builder.query({
       query: (id) => `/nexoria-music/users/${id}`,
     }),
+
+    // PODCASTS / CREATOR UPLOAD
+    uploadPodcastAudio: builder.mutation({
+      query: (formData) => ({
+        url: '/nexoria-music/podcasts/upload',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
+    createPodcast: builder.mutation({
+      query: (data) => ({
+        url: '/nexoria-music/podcasts',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['NexoriaPodcast', 'NexoriaMusicTracks', 'NexoriaTrack'],
+    }),
+    getAllPodcasts: builder.query({
+      query: () => '/nexoria-music/podcasts',
+      providesTags: ['NexoriaPodcast'],
+    }),
+    getUserPodcasts: builder.query({
+      query: () => '/nexoria-music/podcasts/my',
+      providesTags: ['NexoriaPodcast'],
+    }),
   }),
 });
 
@@ -356,5 +381,9 @@ export const {
   useGetArtistDetailsQuery,
   useGetAlbumDetailsQuery,
   useGetTrackLyricsQuery,
-  useGetUserProfileQuery
+  useGetUserProfileQuery,
+  useUploadPodcastAudioMutation,
+  useCreatePodcastMutation,
+  useGetAllPodcastsQuery,
+  useGetUserPodcastsQuery
 } = nexoriaMusicApiSlice;

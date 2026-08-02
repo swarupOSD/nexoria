@@ -67,7 +67,10 @@ import PrivateRoute from './components/PrivateRoute';
 import SystemBroadcastManager from './components/SystemBroadcastManager';
 import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
 import Games from './pages/Games';
+import MoviePurchaseRequest from './pages/MovieBox/MoviePurchaseRequest';
 import VIPLounge from './pages/VIPLounge';
+import VoiceLounge from './pages/VoiceLounge';
+import CreatorStudio from './pages/NexoriaMusic/CreatorStudio';
 import NexoriaArena from './pages/NexoriaArena';
 const NexoriaMusicHome = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicHome'));
 const NexoriaMusicSearch = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicSearch'));
@@ -314,6 +317,8 @@ function App() {
                   <Route path="/sound" element={<NexoriaSound />} />
                   <Route path="/sound/search" element={<GlobalMusicSearch />} />
                   <Route path="/sound/queue" element={<SoundQueue />} />
+                  <Route path="/sound/creator-studio" element={<CreatorStudio />} />
+                  <Route path="/creator-studio" element={<CreatorStudio />} />
 
                   <Route path="/category/:slug" element={<CategoryPage />} />
                   <Route path="categories" element={<AllCategories />} />

@@ -50,7 +50,11 @@ import {
   getAdminPlaylists,
   createAdminPlaylist,
   updateAdminPlaylist,
-  deleteAdminPlaylist
+  deleteAdminPlaylist,
+  uploadPodcastAudio,
+  createPodcast,
+  getAllPodcasts,
+  getUserPodcasts
 } from '../controllers/nexoriaMusicController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 
@@ -166,5 +170,18 @@ router.route('/admin/tracks/:id')
 
 router.route('/admin/tracks/:trackId/lyrics')
   .put(protect, authorize('admin', 'superadmin'), updateTrackLyrics);
+
+// ==========================================
+// PODCAST / CREATOR UPLOAD ROUTES
+// ==========================================
+router.route('/podcasts/upload')
+  .post(protect, upload.single('audio'), uploadPodcastAudio);
+
+router.route('/podcasts')
+  .post(protect, createPodcast)
+  .get(getAllPodcasts);
+
+router.route('/podcasts/my')
+  .get(protect, getUserPodcasts);
 
 export default router;

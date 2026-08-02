@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Settings, Bell, Clock, MoreHorizontal, ArrowLeft, Music } from 'lucide-react';
+import { Play, Pause, Settings, Bell, Clock, MoreHorizontal, ArrowLeft, Music, Mic } from 'lucide-react';
 import { 
   useGetNexoriaArtistsQuery, 
   useGetNexoriaTracksQuery, 
@@ -221,6 +221,17 @@ const NexoriaMusicHome = () => {
               {chip}
             </button>
           ))}
+
+          {/* Creator Studio Link */}
+          <div className="ml-auto pl-2 flex items-center">
+            <button
+              onClick={() => navigate('/sound/creator-studio')}
+              className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-300 hover:bg-purple-500/30 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)] active:scale-95"
+            >
+              <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              Creator Studio
+            </button>
+          </div>
         </div>
         
         {/* 6-Grid (Recently Played) */}

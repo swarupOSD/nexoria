@@ -1754,3 +1754,138 @@ export const getLyricsConsumer = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error fetching lyrics' });
   }
 };
+
+// ==========================================
+// PODCAST / CREATOR UPLOAD CONTROLLERS
+// ==========================================
+
+export const uploadPodcastAudio = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No audio file uploaded' });
+    }
+
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const channelId = process.env.TELEGRAM_CHANNEL_ID;
+
+    if (!botToken || !channelId) {
+      return res.status(500).json({ success: false, message: 'Telegram Bot Token or Channel ID not configured on the server.' });
+    }
+
+    const formData = new FormData();
+    formData.append('chat_id', channelId);
+    
+    const isStandardAudio = req.file.mimetype.includes('mpeg') || req.file.mimetype.includes('mp3') || req.file.mimetype.includes('m4a');
+    const endpoint = isStandardAudio ? 'sendAudio' : 'sendDocument';
+    const fileField = isStandardAudio ? 'audio' : 'document';
+    
+    formData.append(fileField, req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    });
+
+    const { title } = req.body;
+    if (endpoint === 'sendAudio') {
+      if (title) formData.append('title', title);
+      formData.append('performer', req.user.name || 'Unknown Creator');
+    }
+
+    const response = await axios.post(`https://api.telegram.org/bot${botToken}/${endpoint}`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'Content-Length': formData.getLengthSync()
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    const resultObj = response.data.result.audio || response.data.result.document || response.data.result.voice;
+    
+    if (!resultObj) {
+      throw new Error('Telegram API did not return a valid file identifier.');
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Podcast audio uploaded successfully to Telegram',
+      fileId: resultObj.file_id,
+      fileSize: resultObj.file_size
+    });
+  } catch (error) {
+    logger.error('Error uploading podcast audio to Telegram:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to upload podcast audio. ' + (error.response?.data?.description || error.message)
+    });
+  }
+};
+
+export const createPodcast = async (req, res) => {
+  try {
+    const { title, genre, coverImage, telegramFileId, fileSizeBytes, duration } = req.body;
+
+    if (!title || !telegramFileId) {
+      return res.status(400).json({ success: false, message: 'Title and Telegram File ID are required' });
+    }
+
+    // 1. Auto-create or find NexoriaArtist for the user
+    let artist = await NexoriaArtist.findOne({ addedBy: req.user._id, name: req.user.name });
+    
+    if (!artist) {
+      artist = await NexoriaArtist.create({
+        name: req.user.name,
+        bio: `Podcast creator on Nexoria.`,
+        image: req.user.profilePic || '',
+        addedBy: req.user._id
+      });
+    }
+
+    // 2. Create the track
+    const podcast = await NexoriaTrack.create({
+      title,
+      artist: artist._id,
+      genre: genre || null,
+      coverImage: coverImage || artist.image || '',
+      telegramFileId,
+      fileSizeBytes: fileSizeBytes || 0,
+      duration: duration || 0,
+      trackType: 'podcast',
+      addedBy: req.user._id
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Podcast created successfully',
+      data: podcast
+    });
+  } catch (error) {
+    logger.error('Error creating podcast:', error);
+    res.status(500).json({ success: false, message: 'Server error creating podcast' });
+  }
+};
+
+export const getAllPodcasts = async (req, res) => {
+  try {
+    const podcasts = await NexoriaTrack.find({ trackType: 'podcast' })
+      .populate('artist', 'name image isVerified')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: podcasts });
+  } catch (error) {
+    logger.error('Error fetching podcasts:', error);
+    res.status(500).json({ success: false, message: 'Server error fetching podcasts' });
+  }
+};
+
+export const getUserPodcasts = async (req, res) => {
+  try {
+    const podcasts = await NexoriaTrack.find({ trackType: 'podcast', addedBy: req.user._id })
+      .populate('artist', 'name image isVerified')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: podcasts });
+  } catch (error) {
+    logger.error('Error fetching user podcasts:', error);
+    res.status(500).json({ success: false, message: 'Server error fetching user podcasts' });
+  }
+};
