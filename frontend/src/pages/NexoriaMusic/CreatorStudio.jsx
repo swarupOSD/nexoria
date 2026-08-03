@@ -6,7 +6,7 @@ import {
 } from '../../features/api/nexoriaMusicApiSlice';
 import { Upload, Mic, Image as ImageIcon, Play, Loader2, Plus, Info } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setGlobalTrack, setIsGlobalPlaying } from '../../features/music/musicSlice';
+import { playSong, setPlaying } from '../../features/music/musicSlice';
 import toast from 'react-hot-toast';
 
 const CreatorStudio = () => {
@@ -76,8 +76,8 @@ const CreatorStudio = () => {
   };
 
   const playPodcast = (podcast) => {
-    dispatch(setGlobalTrack(podcast));
-    dispatch(setIsGlobalPlaying(true));
+    dispatch(playSong(podcast));
+    dispatch(setPlaying(true));
   };
 
   return (

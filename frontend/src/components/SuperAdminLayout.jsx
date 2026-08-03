@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import BroadcastModal from './BroadcastModal';
 import NotificationBell from './Layout/NotificationBell';
+import CyberpunkParticles from './CyberpunkParticles';
 
 const SuperAdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -200,8 +201,8 @@ const SuperAdminLayout = () => {
   ];
 
   const renderSidebarContent = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-[#080312]/95 backdrop-blur-xl text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-white/5 w-64 flex-shrink-0 shadow-2xl z-50">
-      <div className="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
+    <div className="flex flex-col h-full bg-white/70 dark:bg-[#080312]/60 backdrop-blur-xl text-slate-700 dark:text-slate-300 border-r border-slate-200/50 dark:border-white/10 w-64 flex-shrink-0 shadow-2xl z-50">
+      <div className="p-6 flex items-center gap-3 border-b border-slate-100/50 dark:border-white/10 bg-slate-50/50 dark:bg-transparent">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 ring-2 ring-white/10">
           <Command className="w-5 h-5" />
         </div>
@@ -300,7 +301,7 @@ const SuperAdminLayout = () => {
         ))}
       </div>
 
-      <div className="p-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
+      <div className="p-4 border-t border-slate-100/50 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
         <div className="flex items-center gap-3 mb-4 px-2">
           <div className="relative">
             <img src={activeUser?.profileImage || '/default-avatar.png'} alt="Profile" className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 object-cover ring-2 ring-indigo-500/30" />
@@ -320,6 +321,7 @@ const SuperAdminLayout = () => {
 
   return (
     <div className="flex h-[100dvh] bg-white dark:bg-[#080312] text-slate-800 dark:text-slate-200 font-sans overflow-hidden relative">
+      <CyberpunkParticles />
       
       {/* Gen-Z Mesh Gradient Glowing Background (Dark Mode Only) */}
       <div className="hidden dark:block fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none mix-blend-screen z-0" />
@@ -359,10 +361,10 @@ const SuperAdminLayout = () => {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full min-w-0">
+      <main className="flex-1 flex flex-col h-full min-w-0 relative z-10">
         
         {/* Top Navbar */}
-        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#080312]/60 backdrop-blur-xl flex items-center justify-between px-4 lg:px-8 shrink-0 shadow-sm relative z-50">
+        <header className="h-16 border-b border-slate-200 dark:border-white/10 bg-white/70 dark:bg-[#080312]/40 backdrop-blur-2xl flex items-center justify-between px-4 lg:px-8 shrink-0 shadow-sm relative z-50">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
               <Menu className="w-6 h-6" />
@@ -440,7 +442,7 @@ const SuperAdminLayout = () => {
         </header>
 
         {/* Scrollable Page Content */}
-        <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-transparent relative">
+        <div className="flex-1 overflow-y-auto bg-slate-50/30 dark:bg-transparent relative z-0">
           <div className="p-4 md:p-8 max-w-[1600px] mx-auto">
             <Outlet />
           </div>

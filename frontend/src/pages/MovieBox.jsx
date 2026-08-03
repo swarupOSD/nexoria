@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Star, ChevronLeft, ChevronRight, Download, Lock } from 'lucide-react';
+import Tilt from 'react-parallax-tilt';
 
 const MovieBox = () => {
   const { data: movieSettingsRes } = useGetMovieSettingsQuery();
@@ -65,9 +66,10 @@ const MovieBox = () => {
         {/* Horizontal scroll container */}
         <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-6 px-4 sm:px-8 snap-x">
           {movies.map(movie => (
-            <Link key={movie._id} to={`/moviebox/movie/${movie.slug}`} className="min-w-[160px] md:min-w-[200px] shrink-0 snap-start group/card relative transition-all duration-300 hover:-translate-y-2">
-              <div className="aspect-[2/3] rounded-[2rem] overflow-hidden bg-black/20 mb-3 relative border border-white/5 shadow-lg group-hover/card:shadow-[0_10px_30px_rgba(59,130,246,0.3)] group-hover/card:border-blue-500/30 transition-all duration-500">
-                <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" loading="lazy" />
+            <Tilt key={movie._id} tiltMaxAngleX={12} tiltMaxAngleY={12} glareEnable={true} glareMaxOpacity={0.3} glareBorderRadius="2rem" scale={1.05} transitionSpeed={400} className="min-w-[160px] md:min-w-[200px] shrink-0 snap-start perspective-1000 cursor-pointer">
+              <Link to={`/moviebox/movie/${movie.slug}`} className="group/card relative block w-full h-full" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="aspect-[2/3] rounded-[2rem] overflow-hidden bg-black/20 mb-3 relative border border-white/5 shadow-lg group-hover/card:shadow-[0_15px_40px_rgba(168,85,247,0.3)] group-hover/card:border-purple-500/40 transition-all duration-500 backdrop-blur-sm" style={{ transform: 'translateZ(20px)' }}>
+                  <img src={movie.posterImage || movieSettings.movieBoxBanner} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover/card:opacity-100 transition-opacity duration-500" />
                 
                 {/* Glossy overlay effect */}
@@ -106,10 +108,11 @@ const MovieBox = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-              <h3 className="text-[15px] font-black text-white line-clamp-1 group-hover/card:text-blue-400 transition-colors tracking-tight">{movie.title}</h3>
-              <p className="text-xs text-white/50 line-clamp-1 font-medium">{movie.genre?.join(', ') || 'Uncategorized'}</p>
-            </Link>
+                </div>
+                <h3 className="text-[15px] font-black text-white line-clamp-1 group-hover/card:text-purple-400 transition-colors tracking-tight mt-2" style={{ transform: 'translateZ(10px)' }}>{movie.title}</h3>
+                <p className="text-xs text-white/50 line-clamp-1 font-medium" style={{ transform: 'translateZ(5px)' }}>{movie.genre?.join(', ') || 'Uncategorized'}</p>
+              </Link>
+            </Tilt>
           ))}
         </div>
       </div>

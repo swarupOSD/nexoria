@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Tilt from 'react-parallax-tilt';
 import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award, Gamepad2, Film, Music, Smartphone, User, Rocket, Gem, LayoutTemplate, PlayCircle } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
@@ -11,6 +12,7 @@ import SEO from '../components/SEO';
 import Leaderboard from '../components/Leaderboard';
 import AdPlacement from '../components/AdPlacement';
 import { AuraBadge } from '../components/AuraScore';
+import Hero3DObject from '../components/Hero3DObject';
 import ForYouCarousel from '../components/ForYouCarousel';
 
 const RetryComponent = ({ onRetry, message = "Failed to load content" }) => (
@@ -28,12 +30,8 @@ const AppCard = React.memo(({ app }) => {
   const isPremium = app.isPremium || app.premiumOnly;
   
   return (
-    <motion.div 
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="snap-start shrink-0 w-[130px] md:w-[180px] group cursor-pointer"
-    >
-      <Link to={`/post/${app.slug}`} className="block relative">
+    <Tilt tiltMaxAngleX={15} tiltMaxAngleY={15} glareEnable={true} glareMaxOpacity={0.4} glareBorderRadius="2.5rem" scale={1.05} transitionSpeed={400} className="snap-start shrink-0 w-[130px] md:w-[180px] group cursor-pointer perspective-1000">
+      <Link to={`/post/${app.slug}`} className="block relative" style={{ transformStyle: 'preserve-3d' }}>
         {/* Glow behind card */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-purple-500/20 rounded-3xl md:rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
         
@@ -67,7 +65,7 @@ const AppCard = React.memo(({ app }) => {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </Tilt>
   );
 });
 
@@ -205,6 +203,9 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-[#030303] via-transparent to-[#030303]"></div>
         </motion.div>
 
+        {/* 3D Animated Object */}
+        <Hero3DObject />
+        
         {/* Dynamic Background Grid & Orbs */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0"></div>
         <motion.div 

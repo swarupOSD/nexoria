@@ -287,8 +287,9 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'cyber-glass neon-border py-2 sm:py-3' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5'}`}>
-        <div className="container mx-auto px-4 flex items-center justify-between">
+      <div className={`fixed top-0 w-full z-50 transition-all duration-500 flex justify-center ${scrolled ? 'pt-4 px-4 pointer-events-none' : ''}`}>
+        <nav className={`transition-all duration-500 pointer-events-auto w-full ${scrolled ? 'max-w-6xl bg-white/40 dark:bg-[#0F172A]/60 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-full shadow-2xl py-2 px-6' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5 px-4 container mx-auto'}`}>
+          <div className="flex items-center justify-between w-full">
           
           {/* Logo */}
           <div className="flex items-center gap-8">
@@ -873,7 +874,8 @@ const Navbar = () => {
           mode={isKidsMode ? 'disable' : 'enable'}
           onSuccess={() => dispatch(toggleKidsMode())}
         />
-      </nav>
+        </nav>
+      </div>
 
       {user && (
         <>

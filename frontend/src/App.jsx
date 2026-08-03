@@ -67,7 +67,7 @@ import PrivateRoute from './components/PrivateRoute';
 import SystemBroadcastManager from './components/SystemBroadcastManager';
 import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
 import Games from './pages/Games';
-import MoviePurchaseRequest from './pages/MovieBox/MoviePurchaseRequest';
+
 import VIPLounge from './pages/VIPLounge';
 import CreatorStudio from './pages/NexoriaMusic/CreatorStudio';
 import NexoriaArena from './pages/NexoriaArena';
