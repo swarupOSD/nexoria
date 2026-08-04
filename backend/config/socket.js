@@ -9,6 +9,8 @@ import { registerPrivateChatHandlers } from '../sockets/privateChat.js';
 import { registerDirectMessageHandlers } from '../sockets/directMessage.js';
 import { registerVoiceRoomHandlers } from '../sockets/voiceRoom.js';
 import { registerNexoriaMusicSyncHandlers } from '../sockets/nexoriaMusicSync.js';
+import GameManager from '../src/game/GameManager.js';
+import setupLudoHandlers from '../src/sockets/handlers.js';
 
 let io;
 
@@ -39,6 +41,8 @@ const parseUserAgent = (uaString) => {
 };
 
 export const initSocket = (server) => {
+  const gameManager = new GameManager(); // Will set io after creation
+
   io = new Server(server, {
     maxHttpBufferSize: 1e8, // 100MB limit for image uploads in Secret Lounge
     cors: {
@@ -49,6 +53,8 @@ export const initSocket = (server) => {
       credentials: true
     }
   });
+
+  gameManager.io = io; // Inject io instance
 
   io.use(async (socket, next) => {
     try {
@@ -119,6 +125,7 @@ export const initSocket = (server) => {
     registerDirectMessageHandlers(io, socket);
     registerVoiceRoomHandlers(io, socket);
     registerNexoriaMusicSyncHandlers(io, socket);
+    setupLudoHandlers(io, socket, gameManager);
 
     broadcastOnlineStats();
 

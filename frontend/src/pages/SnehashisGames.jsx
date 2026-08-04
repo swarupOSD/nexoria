@@ -9,7 +9,7 @@ const games = [
     title: 'Ludo Pro Max',
     description: 'A masterpiece 3D Ludo game with real-time multiplayer, AI opponents, stunning animations, and immersive sound effects.',
     image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffaed?q=80&w=800&auto=format&fit=crop',
-    status: 'Coming Soon',
+    status: 'Play Now',
     color: 'from-purple-500 to-indigo-600',
     shadow: 'shadow-purple-500/20'
   },
@@ -132,10 +132,19 @@ const SnehashisGames = () => {
                   {game.description}
                 </p>
 
-                <button className={`w-full py-4 rounded-xl bg-gradient-to-r ${game.color} text-white font-bold text-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all ${game.shadow} shadow-lg active:scale-[0.98]`}>
-                  {game.status === 'Coming Soon' ? 'Join Waitlist' : 'Play Now'}
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                {game.status === 'Play Now' ? (
+                  <Link 
+                    to={game.id === 'ludo-pro' ? `/snehashis-games/ludo-pro/${Math.random().toString(36).substring(7)}` : '#'}
+                    className={`w-full py-4 rounded-xl bg-gradient-to-r ${game.color} text-white font-bold text-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all ${game.shadow} shadow-lg active:scale-[0.98]`}
+                  >
+                    Play Now
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                ) : (
+                  <button className={`w-full py-4 rounded-xl bg-gradient-to-r ${game.color} text-white font-bold text-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all ${game.shadow} shadow-lg active:scale-[0.98] opacity-70 cursor-not-allowed`}>
+                    Join Waitlist
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}
