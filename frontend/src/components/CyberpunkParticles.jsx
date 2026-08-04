@@ -60,14 +60,9 @@ const ParticleField = () => {
 };
 
 const CyberpunkParticles = () => {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  
-  // On mobile, we avoid WebGL to save battery, but we can fallback to CSS later if needed.
-  if (isMobile) return null;
-
   return (
     <div 
-      className="fixed inset-0 pointer-events-none z-[-1] hidden md:block"
+      className="fixed inset-0 pointer-events-none z-[-1]"
       style={{
         background: 'radial-gradient(circle at center, #0F172A 0%, #020617 100%)' // Deep space gradient
       }}

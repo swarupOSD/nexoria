@@ -53,7 +53,7 @@ const AbstractShape = () => {
 
 const Hero3DObject = () => {
   return (
-    <div className="absolute right-[5%] top-1/2 -translate-y-1/2 w-[800px] h-[800px] z-10 opacity-90 cursor-grab active:cursor-grabbing">
+    <div className="absolute right-[-20%] md:right-[5%] top-[10%] md:top-1/2 md:-translate-y-1/2 w-[300px] h-[300px] md:w-[800px] md:h-[800px] z-0 md:z-10 opacity-60 md:opacity-90 cursor-grab active:cursor-grabbing">
       <Canvas camera={{ position: [0, 0, 7], fov: 45 }} gl={{ alpha: true }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 5]} intensity={2} color="#F43F5E" />

@@ -84,7 +84,10 @@ const Home = () => {
       <AdPlacement location="Header" />
 
       {/* 📱 ULTRA-COMPACT MOBILE HERO (VISIBLE ONLY ON PHONES) */}
-      <div className="md:hidden pt-20 px-4 pb-6 space-y-6">
+      <div className="md:hidden pt-20 px-4 pb-6 space-y-6 relative overflow-hidden">
+        {/* 3D Animated Object for Mobile */}
+        <Hero3DObject />
+        
         {/* Welcome Text */}
         <div className="flex flex-col">
           <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
