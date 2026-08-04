@@ -71,6 +71,7 @@ import Games from './pages/Games';
 import VIPLounge from './pages/VIPLounge';
 import CreatorStudio from './pages/NexoriaMusic/CreatorStudio';
 import NexoriaArena from './pages/NexoriaArena';
+import SnehashisGames from './pages/SnehashisGames';
 const NexoriaMusicHome = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicHome'));
 const NexoriaMusicSearch = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicSearch'));
 const NexoriaMusicLibrary = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLibrary'));
@@ -385,6 +386,7 @@ function App() {
             </Route>
             
             <Route path="nexoria-arena" element={<NexoriaArena />} />
+            <Route path="/snehashis-games" element={<SnehashisGames />} />
             <Route path="/aura" element={<AuraLeaderboard />} />
             <Route path="/aura/battle" element={<AuraBattle />} />
 
