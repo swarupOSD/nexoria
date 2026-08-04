@@ -3,7 +3,7 @@ import { setCredentials, logout } from '../auth/authSlice';
 
 export const BACKEND_URL = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL}/api` 
-  : (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://nexoria-backend-mt5e.onrender.com/api');
+  : (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://nexoria-jku5.onrender.com/api');
 
 const prepareHeaders = (headers, { getState }) => {
   const token = getState().auth.token;
