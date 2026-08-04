@@ -51,8 +51,34 @@ const SuperAdminLayout = () => {
     }
   };
 
-  const handleClearCache = () => {
-    toast.success('System cache cleared successfully!');
+  const handleClearCache = async () => {
+    const toastId = toast.loading('Clearing system cache & Service Workers...');
+    try {
+      // 1. Unregister all Service Workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let registration of registrations) {
+          await registration.unregister();
+        }
+      }
+      
+      // 2. Clear Cache API Storage (PWA Caches)
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      
+      toast.success('Cache cleared! Reloading to fetch fresh assets...', { id: toastId });
+      
+      // 3. Force reload to bypass cache
+      setTimeout(() => {
+        window.location.reload(true);
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+      toast.error('Failed to clear cache fully.', { id: toastId });
+    }
   };
 
   const activeUser = user || data?.user;
