@@ -390,11 +390,9 @@ function App() {
             <Route path="nexoria-arena" element={<NexoriaArena />} />
             {/* Snehashis Custom Games */}
             <Route path="/snehashis-games" element={<SnehashisGames />} />
-            <Route path="/snehashis-games/ludo-pro/:roomId" element={
-              <ProtectedRoute>
-                <LudoWrapper />
-              </ProtectedRoute>
-            } />
+            <Route element={<PrivateRoute />}>
+              <Route path="/snehashis-games/ludo-pro/:roomId" element={<LudoWrapper />} />
+            </Route>
 
             {/* TV Live Routes */}
             <Route path="/aura" element={<AuraLeaderboard />} />
