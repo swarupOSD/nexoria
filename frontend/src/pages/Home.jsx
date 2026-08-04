@@ -40,12 +40,12 @@ const AppCard = React.memo(({ app }) => {
             {/* Glossy overlay effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none rounded-3xl md:rounded-[2.5rem]" />
             
-            <div className="absolute inset-2 md:inset-4 bg-black/40 rounded-2xl md:rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border border-white/5 z-10">
-              <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-500 relative" />
+            <div className="absolute inset-2 md:inset-4 bg-black/40 rounded-2xl md:rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border border-white/5 z-10" style={{ transform: 'translateZ(20px)' }}>
+              <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-500 relative" style={{ transform: 'translateZ(50px)' }} />
             </div>
             
             {isPremium && (
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-bl-xl md:rounded-bl-[1.5rem] rounded-tr-3xl md:rounded-tr-[2.5rem] shadow-lg uppercase tracking-widest z-30 border-b border-l border-white/20 backdrop-blur-md">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-bl-xl md:rounded-bl-[1.5rem] rounded-tr-3xl md:rounded-tr-[2.5rem] shadow-lg uppercase tracking-widest z-30 border-b border-l border-white/20 backdrop-blur-md" style={{ transform: 'translateZ(30px)' }}>
                 PRO
               </div>
             )}
@@ -56,7 +56,7 @@ const AppCard = React.memo(({ app }) => {
             )}
           </div>
           
-          <div className="space-y-1 md:space-y-2 px-1 md:px-2">
+          <div className="space-y-1 md:space-y-2 px-1 md:px-2" style={{ transform: 'translateZ(30px)' }}>
             <h3 className="font-black text-white text-[13px] md:text-[16px] line-clamp-1 group-hover:text-blue-400 transition-colors duration-300 tracking-tight leading-tight">{app.title}</h3>
             <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs font-bold text-white/50">
               <span className="flex items-center gap-1 md:gap-1.5 bg-black/40 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-white/5"><Star className="w-3 h-3 md:w-3.5 md:h-3.5 fill-amber-400 text-amber-400" /> {app.averageRating || '4.5'}</span>
@@ -79,7 +79,7 @@ const Home = () => {
   const { data: editorChoiceRes, refetch: refetchEd } = useGetPostsQuery({ editorChoice: true, limit: 12 });
 
   return (
-    <div className="font-jakarta bg-[#030303] min-h-screen text-white pb-24 md:pb-20 selection:bg-blue-500/30">
+    <div className="font-jakarta bg-transparent min-h-screen text-white pb-24 md:pb-20 selection:bg-blue-500/30 relative">
       <SEO title="Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One" />
       <AdPlacement location="Header" />
 
@@ -190,7 +190,7 @@ const Home = () => {
       </div>
 
       {/* 💻 HUGE DESKTOP HERO (VISIBLE ONLY ON DESKTOP) */}
-      <div className="hidden md:flex relative overflow-hidden bg-[#030303] min-h-[85vh] items-center justify-center">
+      <div className="hidden md:flex relative overflow-hidden bg-transparent min-h-[85vh] items-center justify-center">
         {/* Cinematic Animated Background Images */}
         <motion.div 
           initial={{ opacity: 0 }}
