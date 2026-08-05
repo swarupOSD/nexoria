@@ -16,7 +16,7 @@ const AgeVerificationModal = ({ onVerified }) => {
     } else {
       if (onVerified) onVerified();
     }
-  }, [onVerified]);
+  }, []);
 
   const handleVerify = (isAdult) => {
     if (isAdult) {
