@@ -38,6 +38,8 @@ import GlobalMusicSearch from './pages/GlobalMusicSearch';
 import AuraLeaderboard from './pages/AuraLeaderboard';
 import AuraBattle from './pages/AuraBattle';
 import AuraSurgeBanner from './components/AuraSurgeBanner';
+import EthicalHacking from './pages/EthicalHacking';
+import EthicalHackingManager from './pages/Admin/EthicalHackingManager';
 
 // Admin Sound
 import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
@@ -408,6 +410,7 @@ function App() {
               <Route path="posts/bulk-import" element={<BulkImport />} />
               <Route path="posts/edit/:id" element={<CreatePost />} />
               <Route path="categories" element={<AdminCategories />} />
+              <Route path="ethical-hacking" element={<EthicalHackingManager />} />
               <Route path="comments" element={<AdminComments />} />
               <Route path="ratings" element={<AdminRatings />} />
               <Route path="moderation" element={<AdminModeration />} />

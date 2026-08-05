@@ -5,7 +5,7 @@ import {
   Settings, LogOut, ShieldAlert, User, Moon, Sun, ArrowLeft,
   Menu, X, Star, Download, Bell, Activity, AlertOctagon, Mail,
   ChevronRight, Command, LayoutTemplate, Gamepad2, Music, ShoppingCart, Ghost,
-  Ticket, BarChart3, MessageCircle
+  Ticket, BarChart3, MessageCircle, Terminal
 } from 'lucide-react';
 import NotificationBell from './Layout/NotificationBell';
 import { useTheme } from '../context/ThemeContext';
@@ -83,6 +83,7 @@ const AdminLayout = () => {
       items: [
         { name: 'Posts', icon: <FileText className="w-4 h-4" />, path: '/admin/posts' },
         { name: 'Categories', icon: <Folder className="w-4 h-4" />, path: '/admin/categories' },
+        { name: 'Ethical Hacking', icon: <Terminal className="w-4 h-4 text-emerald-500" />, path: '/admin/ethical-hacking' },
         { name: 'Downloads', icon: <Download className="w-4 h-4" />, path: '/admin/downloads' },
         { name: 'YT Downloader', icon: <Download className="w-4 h-4" />, path: '/admin/yt-downloader' },
         { name: 'App Requests', icon: <FileText className="w-4 h-4" />, path: '/admin/app-requests' },

@@ -146,6 +146,7 @@ const speedLimiter = slowDown({
 app.use('/api', speedLimiter);
 
 import authRoutes from './routes/authRoutes.js';
+import hackingRoutes from './routes/hackingRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import ratingRoutes from './routes/ratingRoutes.js';
@@ -239,6 +240,7 @@ app.use('/api/downloads', downloadRoutes);
 app.use('/api/reports', spamLimiter, reportRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/v1/hacking', hackingRoutes);
 app.use('/api/app-requests', appRequestRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/system-notices', announcementRoutes);
