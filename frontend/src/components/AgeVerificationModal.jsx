@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldExclamationIcon } from '@heroicons/react/24/outline';
+import { ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AgeVerificationModal = ({ onVerified }) => {
@@ -57,7 +57,7 @@ const AgeVerificationModal = ({ onVerified }) => {
               <div className="flex justify-center mb-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
-                  <ShieldExclamationIcon className="w-16 h-16 text-red-500 relative z-10" />
+                  <ShieldAlert className="w-16 h-16 text-red-500 relative z-10" />
                 </div>
               </div>
 
