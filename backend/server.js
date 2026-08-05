@@ -206,8 +206,18 @@ app.use('/api', (req, res, next) => {
 });
 
 // Ping route to keep server awake
-app.get('/api/ping', (req, res) => {
-  res.status(200).json({ success: true, message: 'Server is awake' });
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Backend is working fine.'
+  });
+});
+
+app.get('/api/ludo-status', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Ludo backend is successfully deployed and running!'
+  });
 });
 
 // Apply Maintenance Mode block (bypassed for owner inside middleware)
