@@ -343,6 +343,7 @@ function App() {
                   <Route path="activity" element={<UserActivity />} />
                   <Route path="secret-lounge" element={<SecretLounge />} />
                   <Route path="messages" element={<Messages />} />
+                  <Route path="ethical-hacking" element={<EthicalHacking />} />
                 </Route>
               </Route>
 
@@ -386,7 +387,6 @@ function App() {
                 <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
                 <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
                 <Route path="fm-download" element={<Navigate to="/sound" replace />} />
-                <Route path="ethical-hacking" element={<EthicalHacking />} />
               </Route>
             </Route>
             
