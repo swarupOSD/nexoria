@@ -460,6 +460,7 @@ function App() {
               <Route path="ads" element={<SponsoredContent />} />
               <Route path="sponsored-content" element={<SponsoredContent />} />
               <Route path="database" element={<DatabaseManagement />} />
+              <Route path="ethical-hacking" element={<EthicalHackingManager />} />
               <Route path="analytics" element={<SuperAnalytics />} />
               <Route path="module-analytics" element={<ModuleAnalytics />} />
               <Route path="security-logs" element={<SecurityLogs />} />

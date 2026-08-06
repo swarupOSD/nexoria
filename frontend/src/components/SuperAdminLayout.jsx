@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Shield, Key, Settings, 
   MonitorPlay, Database, Activity, FileWarning, 
   LogOut, ShieldAlert, Moon, Sun, Menu, X, Bell, Gamepad2,
-  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, MessageSquare, DownloadCloud, BarChart3, Ticket, Ghost
+  ChevronRight, ChevronDown, Command, LayoutTemplate, Crown, ShoppingCart, Music, PlusCircle, ListVideo, Flame, Swords, Trophy, MessageCircle, MessageSquare, DownloadCloud, BarChart3, Ticket, Ghost, Terminal
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -137,6 +137,7 @@ const SuperAdminLayout = () => {
       items: [
         { name: 'App Management', icon: <Activity className="w-4 h-4" />, path: '/superadmin/apps' },
         { name: 'YT Downloader', icon: <DownloadCloud className="w-4 h-4 text-emerald-400" />, path: '/superadmin/yt-downloader' },
+        { name: 'Ethical Hacking', icon: <Terminal className="w-4 h-4 text-emerald-500" />, path: '/superadmin/ethical-hacking' },
         { name: 'Studio Categories', icon: <Database className="w-4 h-4" />, path: '/superadmin/categories' },
         { name: 'Studio Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
         { name: 'App Requests', icon: <Activity className="w-4 h-4" />, path: '/superadmin/app-requests' },
