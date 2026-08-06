@@ -32,6 +32,11 @@ const hackingToolSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0
+  },
+  actionUrl: {
+    type: String,
+    required: false,
+    default: ''
   }
 }, {
   timestamps: true

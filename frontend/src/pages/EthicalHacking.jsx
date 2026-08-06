@@ -16,7 +16,7 @@ const EthicalHacking = () => {
   const features = toolsData?.data || [];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-300 font-sans selection:bg-emerald-500/30 pb-20">
+    <div className="min-h-screen bg-[#020617] text-[#F8FAFC] font-['Fira_Sans'] selection:bg-emerald-500/30 pb-20">
       <AgeVerificationModal onVerified={() => setIsVerified(true)} />
       
       {/* Background Effects */}
@@ -35,13 +35,13 @@ const EthicalHacking = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-emerald-400 text-xs font-mono tracking-wider">SYSTEM SECURE</span>
+            <span className="text-emerald-400 text-xs font-['Fira_Code'] tracking-wider">SYSTEM SECURE</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight font-mono">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight font-['Fira_Code']">
             Ethical <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">Hacking</span>
           </h1>
-          <p className="text-gray-400 max-w-2xl text-lg leading-relaxed">
+          <p className="text-slate-400 max-w-2xl text-lg leading-relaxed font-['Fira_Sans']">
             Welcome to the terminal. Explore advanced cybersecurity concepts, master penetration testing, and learn how to defend critical infrastructure.
           </p>
         </div>
@@ -54,23 +54,26 @@ const EthicalHacking = () => {
             const feature = features[0];
             const IconComponent = iconMap[feature.icon] || Terminal;
             return (
-              <div className={`lg:col-span-2 group relative overflow-hidden rounded-3xl bg-[#0f0f0f] border border-gray-800 hover:${feature.border} transition-colors duration-500 p-8`}>
+              <div className={`lg:col-span-2 group relative overflow-hidden rounded-3xl bg-[#0F172A] border border-white/5 hover:${feature.border} transition-colors duration-500 p-8 shadow-2xl`}>
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
                 
                 <div className="relative z-10 h-full flex flex-col justify-between">
                   <div>
-                    <div className={`w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center mb-6 border border-gray-800 group-hover:${feature.border} transition-colors duration-300`}>
+                    <div className={`w-12 h-12 bg-[#020617] rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:${feature.border} transition-colors duration-300`}>
                       <IconComponent className={`w-6 h-6 ${feature.color.includes('emerald') ? 'text-emerald-400' : feature.color.includes('purple') ? 'text-purple-400' : feature.color.includes('blue') ? 'text-blue-400' : 'text-red-400'}`} />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-                    <p className="text-gray-400 max-w-md">
+                    <h3 className="text-3xl font-['Fira_Code'] font-bold text-white mb-3">{feature.title}</h3>
+                    <p className="text-slate-400 max-w-md font-['Fira_Sans'] text-lg">
                       {feature.description}
                     </p>
               </div>
               
               <div className="mt-8">
-                <button className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold rounded-xl transition-colors duration-200 text-sm">
-                  Initialize Environment
+                <button 
+                  onClick={() => feature.actionUrl && window.open(feature.actionUrl, '_blank')}
+                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-[#020617] font-['Fira_Code'] font-bold rounded-xl transition-colors duration-200 text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)] active:scale-95"
+                >
+                  INITIALIZE_ENVIRONMENT
                 </button>
               </div>
             </div>
@@ -97,18 +100,23 @@ const EthicalHacking = () => {
             return (
             <div 
               key={index}
-              className={`group relative overflow-hidden rounded-3xl bg-[#0f0f0f] border border-gray-800 hover:${feature.border} transition-colors duration-500 p-8`}
+              onClick={() => feature.actionUrl && window.open(feature.actionUrl, '_blank')}
+              className={`group relative overflow-hidden rounded-3xl bg-[#0F172A] border border-white/5 hover:${feature.border} transition-all duration-500 p-8 cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/5`}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
               
-              <div className="relative z-10">
-                <div className={`w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center mb-6 border border-gray-800 group-hover:${feature.border} transition-colors duration-300`}>
+              <div className="relative z-10 h-full flex flex-col">
+                <div className={`w-12 h-12 bg-[#020617] rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:${feature.border} transition-colors duration-300`}>
                   <IconComponent className={`w-6 h-6 ${feature.color.includes('emerald') ? 'text-emerald-400' : feature.color.includes('purple') ? 'text-purple-400' : feature.color.includes('blue') ? 'text-blue-400' : 'text-red-400'}`} />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <h3 className="text-xl font-['Fira_Code'] font-bold text-white mb-3">{feature.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed font-['Fira_Sans'] mb-6 flex-1">
                   {feature.description}
                 </p>
+                <div className="flex items-center gap-2 mt-auto text-xs font-['Fira_Code'] font-bold text-emerald-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span>Launch_Target</span>
+                  <Terminal className="w-3 h-3" />
+                </div>
               </div>
             </div>
             );

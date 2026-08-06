@@ -30,6 +30,7 @@ const EthicalHackingManager = () => {
   const [border, setBorder] = useState('border-emerald-500/30');
   const [isActive, setIsActive] = useState(true);
   const [order, setOrder] = useState(0);
+  const [actionUrl, setActionUrl] = useState('');
 
   const { data: toolsData, isLoading, refetch } = useGetAdminHackingToolsQuery();
   const [createTool, { isLoading: isCreating }] = useCreateHackingToolMutation();
@@ -54,6 +55,7 @@ const EthicalHackingManager = () => {
     setBorder(tool ? tool.border : 'border-emerald-500/30');
     setIsActive(tool ? tool.isActive : true);
     setOrder(tool ? tool.order : tools.length * 10);
+    setActionUrl(tool ? tool.actionUrl || '' : '');
     setIsModalOpen(true);
   };
 
@@ -65,7 +67,7 @@ const EthicalHackingManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const toolData = { title, description, icon, color, border, isActive, order: Number(order) };
+      const toolData = { title, description, icon, color, border, isActive, order: Number(order), actionUrl };
       
       if (editingTool) {
         await updateTool({ id: editingTool._id, ...toolData }).unwrap();
@@ -318,6 +320,11 @@ const EthicalHackingManager = () => {
                           <label className="block text-xs font-['Fira_Code'] uppercase tracking-wider text-slate-400">Sequence_Order</label>
                           <input type="number" value={order} onChange={e => setOrder(e.target.value)} className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 outline-none font-['Fira_Code'] text-sm" />
                         </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-['Fira_Code'] uppercase tracking-wider text-slate-400">Action_URL / Target</label>
+                        <input type="url" value={actionUrl} onChange={e => setActionUrl(e.target.value)} className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 outline-none transition-all font-['Fira_Sans']" placeholder="https://example.com" />
                       </div>
 
                       <div className="space-y-1.5">
