@@ -240,7 +240,7 @@ app.use('/api/downloads', downloadRoutes);
 app.use('/api/reports', spamLimiter, reportRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/v1/hacking', hackingRoutes);
+app.use('/api/hacking', hackingRoutes);
 app.use('/api/app-requests', appRequestRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/system-notices', announcementRoutes);
