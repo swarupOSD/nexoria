@@ -182,8 +182,27 @@ const Home = () => {
         </div>
       </div>
 
-
-
+      {/* 💻 SIMPLE PROFESSIONAL DESKTOP HERO */}
+      <div className="hidden md:flex flex-col items-center justify-center min-h-[50vh] bg-transparent border-b border-white/5 relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none"></div>
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10 flex flex-col items-center">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white drop-shadow-lg">
+            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Nexoria</span>
+          </h1>
+          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+            Everything you need in one unified platform. Movies, Games, Music, and Premium Apps.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            <Link to="/moviebox" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] transition-all active:scale-95 flex items-center justify-center gap-2">
+              <Compass className="w-5 h-5" /> Explore Universe
+            </Link>
+            <Link to="/premium" className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
+              <Gem className="w-5 h-5 text-cyan-400" /> Go Premium
+            </Link>
+          </div>
+        </div>
+      </div>
+      
       <div className="px-4 md:px-6 py-6 md:py-20 space-y-10 md:space-y-24 max-w-[1400px] mx-auto">
         <ForYouCarousel />
         
