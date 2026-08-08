@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import { useSocket } from '../context/SocketContext';
 import { syncMusicState } from '../features/music/nexoriaMusicSlice';
 import { useGetPlaylistsQuery, useCreatePlaylistMutation, useAddTrackToPlaylistMutation, useGetFavoritesQuery } from '../features/api/nexoriaMusicApiSlice';
-import NexoriaFriendActivity from './NexoriaFriendActivity';
 import NexoriaMusicCreatePlaylistModal from './NexoriaMusicCreatePlaylistModal';
 
 const NexoriaMusicLayout = () => {
@@ -346,14 +345,6 @@ const NexoriaMusicLayout = () => {
                     </div>
                   )}
                 </button>
-                <button 
-                  onClick={() => navigate('/secret-lounge')}
-                  className="w-8 h-8 rounded-full bg-black/60 border border-green-500/50 flex items-center justify-center hover:scale-105 hover:border-green-400 hover:bg-green-950/80 transition-all shadow-md relative group"
-                  title="Private Chatting"
-                >
-                  <ShieldAlert className="w-4 h-4 text-green-500" />
-                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-black"></span>
-                </button>
               </div>
             )}
           </div>
@@ -370,7 +361,7 @@ const NexoriaMusicLayout = () => {
       {/* Right Sidebar (Friend Activity) */}
       {showFriendActivity && (
         <div className="hidden lg:flex flex-col w-[280px] z-10 shrink-0 h-full">
-          <NexoriaFriendActivity />
+    
         </div>
       )}
 

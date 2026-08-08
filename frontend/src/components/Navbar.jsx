@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, Menu, Moon, Sun, X, ChevronDown, ChevronRight, User as UserIcon, Users, MessageSquare,
   LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud, Ghost
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud, Ghost, Terminal
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,8 +21,6 @@ import { toast } from 'react-hot-toast';
 import CustomSearchBar from './CustomSearchBar';
 import ParentalGateModal from './ParentalGateModal';
 import BottomNavigation from './Layout/BottomNavigation';
-import FriendsDrawer from './FriendsDrawer';
-import PrivateChatWidget from './PrivateChatWidget';
 import { usePermissions } from '../contexts/PermissionContext';
 import { BACKEND_URL } from '../features/api/apiSlice';
 
@@ -32,16 +30,8 @@ const Navbar = () => {
   const [isParentalModalOpen, setIsParentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   
-  const [isFriendsDrawerOpen, setIsFriendsDrawerOpen] = useState(false);
-  const [activeChatUser, setActiveChatUser] = useState(null);
 
-  useEffect(() => {
-    const handleOpenChat = (e) => {
-      setActiveChatUser(e.detail);
-    };
-    window.addEventListener('openPrivateChat', handleOpenChat);
-    return () => window.removeEventListener('openPrivateChat', handleOpenChat);
-  }, []);
+
   
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -377,6 +367,9 @@ const Navbar = () => {
                 <Link to="/snehashis-games" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Gamepad2 className="w-4 h-4 text-sky-500" /> Snehashis Games
                 </Link>
+                <Link to="/ethical-hacking" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-all mt-1">
+                  <Terminal className="w-4 h-4" /> Ethical Hacking
+                </Link>
                 <Link to="/aura" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Flame className="w-4 h-4 text-amber-500" /> Aura Leaderboard
                 </Link>
@@ -386,15 +379,6 @@ const Navbar = () => {
                 <div className="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
                 <Link to="/premium" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
                   <Star className="w-4 h-4" /> Premium
-                </Link>
-                <Link to="/vip-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Crown className="w-4 h-4" /> VIP Lounge
-                </Link>
-                <Link to="/voice-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Mic className="w-4 h-4" /> Voice Lounge
-                </Link>
-                <Link to="/secret-lounge" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-teal-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Ghost className="w-4 h-4" /> Private Chatting
                 </Link>
               </div>
             </DropdownMenu>
@@ -790,6 +774,9 @@ const Navbar = () => {
                     <Link to="/snehashis-games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
                       <Gamepad2 className="w-5 h-5 text-sky-500" /> Snehashis Games
                     </Link>
+                    <Link to="/ethical-hacking" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-800/50 rounded-xl active:scale-[0.98] font-bold text-sm text-emerald-700 dark:text-emerald-400 transition-colors mt-2">
+                      <Terminal className="w-5 h-5" /> Ethical Hacking
+                    </Link>
                     <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-xl active:scale-[0.98] font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
                       🔥 Aura Leaderboard
                     </Link>
@@ -801,15 +788,6 @@ const Navbar = () => {
                     </Link>
                     <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
                       <Star className="w-5 h-5" /> Premium 💎
-                    </Link>
-                    <Link to="/vip-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-amber-400/10 to-orange-500/10 hover:from-amber-400/20 hover:to-orange-500/20 border border-amber-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
-                      <Crown className="w-5 h-5" /> VIP Lounge 👑
-                    </Link>
-                    <Link to="/voice-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-purple-400/10 to-pink-500/10 hover:from-purple-400/20 hover:to-pink-500/20 border border-purple-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-purple-600 dark:text-purple-400 transition-colors">
-                      <Mic className="w-5 h-5" /> Voice Lounge 🎤
-                    </Link>
-                    <Link to="/secret-lounge" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-teal-400/10 to-emerald-500/10 hover:from-teal-400/20 hover:to-emerald-500/20 border border-teal-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-teal-600 dark:text-teal-400 transition-colors">
-                      <Ghost className="w-5 h-5" /> Private Chatting 👻
                     </Link>
                   </div>
 

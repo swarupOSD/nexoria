@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import NotificationBell from './Layout/NotificationBell';
 import { useTheme } from '../context/ThemeContext';
-import CyberpunkParticles from './CyberpunkParticles';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation, useGetMeQuery } from '../features/auth/authApiSlice';
 import { logout as clearCredentials, setCredentials } from '../features/auth/authSlice';
@@ -207,7 +207,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-white dark:bg-[#080312] text-slate-800 dark:text-slate-200 font-sans overflow-hidden relative">
-      <CyberpunkParticles />
+
       
       {/* Gen-Z Mesh Gradient Glowing Background (Dark Mode Only) */}
       <div className="hidden dark:block fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none mix-blend-screen z-0" />

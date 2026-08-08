@@ -22,31 +22,39 @@ input, textarea {
   user-select: auto;
 }
 
+body {
+  @apply bg-slate-50 text-slate-900 transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-slate-900 text-slate-50;
+}
+
 :root {
-  --color-primary: #00D4FF; /* Electric Blue */
-  --color-secondary: #1B1140; /* Deep Indigo */
-  --color-accent: #7B2FF7; /* Violet */
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-danger: #F43F5E;
-  --color-primary-alpha: rgba(0, 212, 255, 0.15);
-  --color-accent-alpha: rgba(123, 47, 247, 0.15);
+  --color-primary: #3b82f6; /* Blue 500 */
+  --color-secondary: #64748b; /* Slate 500 */
+  --color-accent: #0ea5e9; /* Sky 500 */
+  --color-success: #10b981; /* Emerald 500 */
+  --color-warning: #f59e0b; /* Amber 500 */
+  --color-danger: #ef4444; /* Red 500 */
+  --color-primary-alpha: rgba(59, 130, 246, 0.1);
+  --color-accent-alpha: rgba(14, 165, 233, 0.1);
 }
 
 :root[data-theme="royal-purple"] {
-  --color-primary: #7C3AED;
-  --color-secondary: #8B5CF6;
-  --color-accent: #A855F7;
-  --color-primary-alpha: rgba(124, 58, 237, 0.15);
-  --color-accent-alpha: rgba(168, 85, 247, 0.15);
+  --color-primary: #6366f1; /* Indigo 500 */
+  --color-secondary: #475569; /* Slate 600 */
+  --color-accent: #8b5cf6; /* Violet 500 */
+  --color-primary-alpha: rgba(99, 102, 241, 0.1);
+  --color-accent-alpha: rgba(139, 92, 246, 0.1);
 }
 
 :root[data-theme="midnight-blue"] {
-  --color-primary: #3B82F6;
-  --color-secondary: #2563EB;
-  --color-accent: #60A5FA;
-  --color-primary-alpha: rgba(59, 130, 246, 0.15);
-  --color-accent-alpha: rgba(96, 165, 250, 0.15);
+  --color-primary: #0f172a; /* Slate 900 */
+  --color-secondary: #334155; /* Slate 700 */
+  --color-accent: #3b82f6; /* Blue 500 */
+  --color-primary-alpha: rgba(15, 23, 42, 0.1);
+  --color-accent-alpha: rgba(59, 130, 246, 0.1);
 }
 
 :root[data-theme="pure-white"] {

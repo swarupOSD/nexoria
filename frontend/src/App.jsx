@@ -31,7 +31,6 @@ import AllCategories from './pages/AllCategories';
 import Premium from './pages/Premium';
 import NexoriaPlayer from './components/NexoriaPlayer';
 import GlobalMusicPlayer from './components/GlobalMusicPlayer';
-import GlobalChatBubble from './components/GlobalChatBubble';
 import NexoriaSound from './pages/NexoriaSound';
 import SoundQueue from './pages/SoundQueue';
 import GlobalMusicSearch from './pages/GlobalMusicSearch';
@@ -61,7 +60,6 @@ import MovieBrowse from './pages/MovieBrowse';
 import NexoriaMusicLayout from './components/NexoriaMusicLayout';
 
 // New Components
-import CyberpunkParticles from './components/CyberpunkParticles';
 import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
 import { PermissionProvider } from './contexts/PermissionContext';
@@ -70,7 +68,6 @@ import SystemBroadcastManager from './components/SystemBroadcastManager';
 import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
 import Games from './pages/Games';
 
-import VIPLounge from './pages/VIPLounge';
 import CreatorStudio from './pages/NexoriaMusic/CreatorStudio';
 import NexoriaArena from './pages/NexoriaArena';
 import SnehashisGames from './pages/SnehashisGames';
@@ -105,9 +102,6 @@ const AdminDownloads = lazy(() => import('./pages/Admin/AdminDownloads'));
 const CreatePost = lazy(() => import('./pages/Admin/CreatePost'));
 const BulkImport = lazy(() => import('./pages/Admin/BulkImport'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
-const SecretLounge = lazy(() => import('./pages/SecretLounge'));
-const VoiceLounge = lazy(() => import('./pages/VoiceLounge'));
-const Messages = lazy(() => import('./pages/Messages'));
 const AdminYTDownloader = lazy(() => import('./pages/Admin/AdminYTDownloader'));
 
 const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
@@ -124,14 +118,10 @@ const NexoriaMusicDashboard = lazy(() => import('./pages/Admin/NexoriaMusic/Nexo
 const NexoriaArtistsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaArtistsManager'));
 const NexoriaAlbumsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaAlbumsManager'));
 const NexoriaTracksManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaTracksManager'));
-const NexoriaGenresManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaGenresManager'));
-const NexoriaPlaylistBuilder = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaPlaylistBuilder'));
-const ChatManagement = lazy(() => import('./pages/Admin/ChatManagement'));
-const SecretLoungeManagement = lazy(() => import('./pages/Admin/SecretLoungeManagement'));
+
 const AdminSupportTickets = lazy(() => import('./pages/Admin/SupportTickets'));
 const OnlineUsersBoard = lazy(() => import('./pages/Admin/OnlineUsersBoard'));
 const AdminMusicAnalytics = lazy(() => import('./pages/Admin/MusicListeningAnalytics'));
-const AdminPrivateChatAnalytics = lazy(() => import('./pages/Admin/PrivateChatAnalytics'));
 
 // Super Admin UI (Lazy Loaded)
 const SuperAdminLayout = lazy(() => import('./components/SuperAdminLayout'));
@@ -182,6 +172,7 @@ const AdminGamesList = lazy(() => import('./pages/SuperAdmin/GameAdmin/GamesList
 const AdminAddGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/AddGame'));
 const AdminEditGame = lazy(() => import('./pages/SuperAdmin/GameAdmin/EditGame'));
 const ManageArenaGames = lazy(() => import('./pages/SuperAdmin/ManageArenaGames'));
+
 
 import ErrorBoundary from './components/ErrorBoundary';
 import GlobalConfirmModal from './components/GlobalConfirmModal';
@@ -285,8 +276,8 @@ function App() {
       <KidsModeGuard>
         <GlobalMusicPlayer />
         <NexoriaPlayer />
-        <GlobalChatBubble />
-        <CyberpunkParticles />
+
+
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -332,17 +323,12 @@ function App() {
                   <Route path="download/:slug" element={<DownloadFlow />} />
                   <Route path="premium" element={<Premium />} />
                   <Route path="video-downloader" element={<VideoDownloader />} />
-          {/* VIP Lounge */}
-          <Route path="/vip-lounge" element={<VIPLounge />} />
-          <Route path="/voice-lounge" element={<VoiceLounge />} />
                   
                   {/* User Dashboard Routes */}
                   <Route path="dashboard" element={<UserDashboard />} />
                   <Route path="change-password" element={<ChangePassword />} />
                   <Route path="notifications" element={<Notifications />} />
                   <Route path="activity" element={<UserActivity />} />
-                  <Route path="secret-lounge" element={<SecretLounge />} />
-                  <Route path="messages" element={<Messages />} />
                   <Route path="ethical-hacking" element={<EthicalHacking />} />
                 </Route>
               </Route>
@@ -365,10 +351,7 @@ function App() {
               </Route>
             </Route>
 
-            {/* Secret Lounge - Standalone (accessible from Nexoria Music) */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/secret-lounge" element={<SecretLounge />} />
-            </Route>
+
 
             {/* MovieBox Public Routes */}
             <Route element={<PrivateRoute />}>
@@ -430,8 +413,6 @@ function App() {
               <Route path="nexoria-music/artists" element={<NexoriaArtistsManager />} />
               <Route path="nexoria-music/albums" element={<NexoriaAlbumsManager />} />
               <Route path="nexoria-music/tracks" element={<NexoriaTracksManager />} />
-              <Route path="nexoria-music/genres" element={<NexoriaGenresManager />} />
-              <Route path="nexoria-music/playlist-builder" element={<NexoriaPlaylistBuilder />} />
               
               <Route path="games" element={<AdminGamesList />} />
               <Route path="games/add" element={<AdminAddGame />} />
@@ -441,12 +422,8 @@ function App() {
               <Route path="push-campaigns" element={<PushCampaigns />} />
               <Route path="coupons" element={<CouponManager />} />
               <Route path="app-requests" element={<AppRequestModeration />} />
-              <Route path="nexoria-music-playlist" element={<NexoriaPlaylistBuilder />} />
-              <Route path="chat-management" element={<ChatManagement />} />
-              <Route path="secret-lounge-management" element={<SecretLoungeManagement />} />
               <Route path="support-tickets" element={<AdminSupportTickets />} />
               <Route path="music-analytics" element={<AdminMusicAnalytics />} />
-              <Route path="private-chat-analytics" element={<AdminPrivateChatAnalytics />} />
             </Route>
 
               {/* Super Admin Protected Routes */}
@@ -545,13 +522,7 @@ function App() {
               {/* Games Admin Routes */}
               <Route path="games" element={<AdminGamesList />} />
               <Route path="games/add" element={<AdminAddGame />} />
-              <Route path="games/edit/:id" element={<AdminEditGame />} />
-              <Route path="arena-games" element={<ManageArenaGames />} />
-              <Route path="chat-management" element={<ChatManagement />} />
-              <Route path="secret-lounge-management" element={<SecretLoungeManagement />} />
-              <Route path="support-tickets" element={<AdminSupportTickets />} />
-              <Route path="music-analytics" element={<AdminMusicAnalytics />} />
-              <Route path="private-chat-analytics" element={<AdminPrivateChatAnalytics />} />
+
               <Route path="online-users" element={<OnlineUsersBoard />} />
             </Route>
           </Routes>

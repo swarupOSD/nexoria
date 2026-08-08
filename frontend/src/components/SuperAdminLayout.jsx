@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import BroadcastModal from './BroadcastModal';
 import NotificationBell from './Layout/NotificationBell';
-import CyberpunkParticles from './CyberpunkParticles';
+
 
 const SuperAdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -218,10 +218,10 @@ const SuperAdminLayout = () => {
         { name: 'Site Settings', icon: <Settings className="w-4 h-4" />, path: '/superadmin/settings' },
         { name: 'Hero Displays', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/hero-displays' },
         { name: 'Footer Management', icon: <LayoutTemplate className="w-4 h-4" />, path: '/superadmin/footer-management' },
-        { name: 'Chat Management', icon: <MessageSquare className="w-4 h-4" />, path: '/superadmin/chat-management' },
+
         ...(activeUser?.role === 'owner' ? [
-          { name: 'Private Chatting', icon: <Ghost className="w-4 h-4" />, path: '/superadmin/secret-lounge-management' },
-          { name: '📊 Chat Analytics', icon: <MessageCircle className="w-4 h-4 text-indigo-400" />, path: '/superadmin/private-chat-analytics' },
+
+
         ] : []),
       ]
     }
@@ -348,7 +348,7 @@ const SuperAdminLayout = () => {
 
   return (
     <div className="flex h-[100dvh] bg-white dark:bg-[#080312] text-slate-800 dark:text-slate-200 font-sans overflow-hidden relative">
-      <CyberpunkParticles />
+
       
       {/* Gen-Z Mesh Gradient Glowing Background (Dark Mode Only) */}
       <div className="hidden dark:block fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none mix-blend-screen z-0" />

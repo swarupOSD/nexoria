@@ -41,8 +41,8 @@ export default {
         body: ['Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glow': '0 0 15px var(--color-primary-alpha)',
-        'glow-lg': '0 0 25px var(--color-accent-alpha)',
+        'glow': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'glow-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       },
       animation: {
         shimmer: 'shimmer 2s infinite linear',

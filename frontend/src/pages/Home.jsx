@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Tilt from 'react-parallax-tilt';
 import { Compass, RefreshCw, AlertCircle, ChevronRight, Star, Download, Flame, Sparkles, Award, Gamepad2, Film, Music, Smartphone, User, Rocket, Gem, LayoutTemplate, PlayCircle } from 'lucide-react';
 import { useGetCategoriesQuery } from '../features/category/categoryApiSlice';
 import { useGetPostsQuery } from '../features/post/postApiSlice';
@@ -12,7 +11,6 @@ import SEO from '../components/SEO';
 import Leaderboard from '../components/Leaderboard';
 import AdPlacement from '../components/AdPlacement';
 import { AuraBadge } from '../components/AuraScore';
-import Hero3DObject from '../components/Hero3DObject';
 import ForYouCarousel from '../components/ForYouCarousel';
 
 const RetryComponent = ({ onRetry, message = "Failed to load content" }) => (
@@ -30,22 +28,16 @@ const AppCard = React.memo(({ app }) => {
   const isPremium = app.isPremium || app.premiumOnly;
   
   return (
-    <Tilt tiltMaxAngleX={15} tiltMaxAngleY={15} glareEnable={true} glareMaxOpacity={0.4} glareBorderRadius="2.5rem" scale={1.05} transitionSpeed={400} className="snap-start shrink-0 w-[130px] md:w-[180px] group cursor-pointer perspective-1000">
-      <Link to={`/post/${app.slug}`} className="block relative" style={{ transformStyle: 'preserve-3d' }}>
-        {/* Glow behind card */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-purple-500/20 rounded-3xl md:rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-        
+    <div className="snap-start shrink-0 w-[130px] md:w-[180px] group cursor-pointer">
+      <Link to={`/post/${app.slug}`} className="block relative">
         <div className="relative z-10 flex flex-col gap-3 md:gap-4">
-          <div className="aspect-square w-full rounded-3xl md:rounded-[2.5rem] overflow-hidden relative bg-white/5 border border-white/10 shadow-lg group-hover:shadow-[0_20px_40px_rgba(59,130,246,0.3)] group-hover:border-blue-500/50 transition-all duration-300 backdrop-blur-xl">
-            {/* Glossy overlay effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none rounded-3xl md:rounded-[2.5rem]" />
-            
-            <div className="absolute inset-2 md:inset-4 bg-black/40 rounded-2xl md:rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border border-white/5 z-10" style={{ transform: 'translateZ(20px)' }}>
-              <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-500 relative" style={{ transform: 'translateZ(50px)' }} />
+          <div className="aspect-square w-full rounded-2xl md:rounded-3xl overflow-hidden relative bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 shadow-sm group-hover:shadow-md transition-all duration-300">
+            <div className="absolute inset-2 md:inset-4 rounded-xl md:rounded-2xl overflow-hidden flex items-center justify-center bg-slate-50 dark:bg-slate-900 z-10">
+              <FallbackImage src={app.appLogo} fallbackType="logo" alt={app.title} className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-300" />
             </div>
             
             {isPremium && (
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-bl-xl md:rounded-bl-[1.5rem] rounded-tr-3xl md:rounded-tr-[2.5rem] shadow-lg uppercase tracking-widest z-30 border-b border-l border-white/20 backdrop-blur-md" style={{ transform: 'translateZ(30px)' }}>
+              <div className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] md:text-[10px] font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-bl-xl shadow-sm uppercase tracking-widest z-30">
                 PRO
               </div>
             )}
@@ -56,16 +48,16 @@ const AppCard = React.memo(({ app }) => {
             )}
           </div>
           
-          <div className="space-y-1 md:space-y-2 px-1 md:px-2" style={{ transform: 'translateZ(30px)' }}>
-            <h3 className="font-black text-white text-[13px] md:text-[16px] line-clamp-1 group-hover:text-blue-400 transition-colors duration-300 tracking-tight leading-tight">{app.title}</h3>
-            <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs font-bold text-white/50">
-              <span className="flex items-center gap-1 md:gap-1.5 bg-black/40 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-white/5"><Star className="w-3 h-3 md:w-3.5 md:h-3.5 fill-amber-400 text-amber-400" /> {app.averageRating || '4.5'}</span>
-              <span className="flex items-center gap-1 md:gap-1.5 bg-black/40 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-white/5"><Download className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-400" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
+          <div className="space-y-1 md:space-y-2 px-1">
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-[13px] md:text-[16px] line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">{app.title}</h3>
+            <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs font-medium text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1 md:gap-1.5"><Star className="w-3 h-3 md:w-3.5 md:h-3.5 fill-amber-400 text-amber-400" /> {app.averageRating || '4.5'}</span>
+              <span className="flex items-center gap-1 md:gap-1.5"><Download className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-500" /> {app.downloads > 1000 ? (app.downloads/1000).toFixed(1)+'k' : (app.downloads || 0)}</span>
             </div>
           </div>
         </div>
       </Link>
-    </Tilt>
+    </div>
   );
 });
 
@@ -79,22 +71,20 @@ const Home = () => {
   const { data: editorChoiceRes, refetch: refetchEd } = useGetPostsQuery({ editorChoice: true, limit: 12 });
 
   return (
-    <div className="font-jakarta bg-transparent min-h-screen text-white pb-24 md:pb-20 selection:bg-blue-500/30 relative">
+    <div className="font-sans bg-transparent min-h-screen text-slate-900 dark:text-slate-50 pb-24 md:pb-20 selection:bg-blue-500/30 relative">
       <SEO title="Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One" />
       <AdPlacement location="Header" />
 
       {/* 📱 ULTRA-COMPACT MOBILE HERO (VISIBLE ONLY ON PHONES) */}
       <div className="md:hidden pt-20 px-4 pb-6 space-y-6 relative overflow-hidden">
-        {/* 3D Animated Object for Mobile */}
-        <Hero3DObject />
         
         {/* Welcome Text */}
         <div className="flex flex-col">
-          <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+          <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-500 animate-pulse"></span>
             Welcome to Nexoria
           </span>
-          <h1 className="text-3xl font-black text-white leading-[1.1] tracking-tight">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 leading-[1.1] tracking-tight">
             The Ultimate <br/> Entertainment Hub
           </h1>
         </div>
@@ -207,7 +197,7 @@ const Home = () => {
         </motion.div>
 
         {/* 3D Animated Object */}
-        <Hero3DObject />
+
         
         {/* Dynamic Background Grid & Orbs */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0"></div>
