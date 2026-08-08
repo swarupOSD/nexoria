@@ -182,58 +182,7 @@ const Home = () => {
         </div>
       </div>
 
-          </motion.h1>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-4 text-sm md:text-[15px] font-bold text-white/70 max-w-3xl mb-12"
-          >
-            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><User className="w-4 h-4 text-purple-400" /> One Account</span>
-            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><Smartphone className="w-4 h-4 text-blue-400" /> One App</span>
-            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><Film className="w-4 h-4 text-rose-400" /> Every Story</span>
-            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><Gamepad2 className="w-4 h-4 text-emerald-400" /> Every Game</span>
-            <span className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-2xl hover:bg-white/10 transition-colors shadow-inner"><Music className="w-4 h-4 text-amber-400" /> Every Beat</span>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20, rotateX: 20 }}
-            animate={{ opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 perspective-1000"
-          >
-            <Link to="/moviebox" className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl font-black text-[15px] shadow-[0_15px_30px_rgba(59,130,246,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(59,130,246,0.5)] active:translate-y-1 overflow-hidden flex items-center gap-3 text-white border-t border-white/20">
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-              <span className="relative z-10 flex items-center gap-2"><Rocket className="w-5 h-5 group-hover:scale-110 transition-transform" /> Explore Universe <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
-            </Link>
-            
-            <Link to="/premium" className="group px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-3xl shadow-inner text-white rounded-2xl font-black text-[15px] transition-all hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] active:translate-y-1 flex items-center gap-3">
-              <Gem className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" /> Go Premium
-            </Link>
-          </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="mt-24 flex flex-wrap justify-center gap-8 md:gap-20 opacity-80"
-          >
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-4xl font-black text-white tracking-tight">50K+</span>
-              <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Active Users</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-4xl font-black text-white tracking-tight">10K+</span>
-              <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Movies & Apps</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-4xl font-black text-white tracking-tight">4.9/5</span>
-              <span className="text-xs font-bold text-white/50 uppercase tracking-wider flex items-center gap-1.5">User Rating <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" /></span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
 
       <div className="px-4 md:px-6 py-6 md:py-20 space-y-10 md:space-y-24 max-w-[1400px] mx-auto">
         <ForYouCarousel />
