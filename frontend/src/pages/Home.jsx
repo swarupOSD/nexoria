@@ -167,23 +167,75 @@ const Home = () => {
 
       </div>
 
-      {/* 💻 SIMPLE PROFESSIONAL DESKTOP HERO */}
-      <div className="hidden md:flex flex-col items-center justify-center min-h-[50vh] bg-transparent border-b border-white/5 relative overflow-hidden py-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none"></div>
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10 flex flex-col items-center">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white drop-shadow-lg">
-            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Nexoria</span>
+      {/* 💻 BEAUTIFUL DESKTOP HERO (Restored and Optimized) */}
+      <div className="hidden md:flex relative overflow-hidden bg-[#050505] min-h-[70vh] flex-col items-center justify-center border-b border-white/5">
+        
+        {/* Cinematic Static Background Images */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025&auto=format&fit=crop')] bg-cover bg-center mix-blend-screen opacity-40"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505]"></div>
+        </div>
+
+        {/* Static Background Grid & Orbs (No Heavy Animation) */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-purple-600/20 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
+        
+        {/* Static Emojis / Icons background */}
+        <div className="absolute top-[20%] left-[10%] text-4xl opacity-20 hidden md:block">🎮</div>
+        <div className="absolute top-[30%] right-[15%] text-5xl opacity-20 hidden md:block">🍿</div>
+        <div className="absolute bottom-[20%] left-[20%] text-4xl opacity-20 hidden md:block">🎧</div>
+        <div className="absolute bottom-[30%] right-[10%] text-5xl opacity-20 hidden md:block">🎬</div>
+
+        <div className="container mx-auto px-6 pt-24 pb-20 relative z-10 flex flex-col items-center text-center mt-6">
+          {/* Top Badge */}
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-10 shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:bg-white/10 transition-colors cursor-default">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span className="text-sm md:text-base font-bold tracking-widest uppercase text-slate-200">
+              Welcome to Nexoria Universe ✨
+            </span>
+          </div>
+          
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-blue-400 mb-8 tracking-tight leading-[1.1] max-w-6xl drop-shadow-2xl font-heading">
+            Everything You <span className="text-purple-400">Watch</span>, Play & <span className="text-blue-400">Create</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-            Everything you need in one unified platform. Movies, Games, Music, and Premium Apps.
+          
+          {/* Subtitle */}
+          <p className="text-xl md:text-3xl text-slate-300 font-medium max-w-4xl mb-12 leading-relaxed">
+            One account ⚡ One app 📱 Every story 🍿 Every game 🕹️ Every beat 🎵
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-            <Link to="/moviebox" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] transition-all active:scale-95 flex items-center justify-center gap-2">
-              <Compass className="w-5 h-5" /> Explore Universe
+          
+          {/* Call to Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <Link to="/moviebox" className="group relative px-8 py-5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl font-black text-lg md:text-xl shadow-[0_0_40px_rgba(168,85,247,0.4)] transition-all hover:scale-105 active:scale-95 overflow-hidden flex items-center gap-3 text-white">
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+              <span className="relative z-10 flex items-center gap-2">🚀 Explore Universe <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" /></span>
             </Link>
-            <Link to="/premium" className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
-              <Gem className="w-5 h-5 text-cyan-400" /> Go Premium
+            
+            <Link to="/premium" className="group px-8 py-5 bg-[#111] hover:bg-[#1a1a1a] border border-white/10 hover:border-purple-500/50 backdrop-blur-xl text-white rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-xl">
+              💎 Go Premium
             </Link>
+          </div>
+
+          {/* Stats / Trust Badges */}
+          <div className="mt-20 flex flex-wrap justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-3xl font-black text-white">50K+</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Users</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-3xl font-black text-white">10K+</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Movies & Apps</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-3xl font-black text-white">4.9/5</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">User Rating ⭐️</span>
+            </div>
           </div>
         </div>
       </div>
