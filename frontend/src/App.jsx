@@ -161,6 +161,16 @@ const ManageArenaGames = lazy(() => import('./pages/SuperAdmin/ManageArenaGames'
 
 import ErrorBoundary from './components/ErrorBoundary';
 import GlobalConfirmModal from './components/GlobalConfirmModal';
+import { PermissionProvider } from './contexts/PermissionContext';
+import PwaUpdatePrompt from './components/PwaUpdatePrompt';
+import SystemBroadcastManager from './components/SystemBroadcastManager';
+import AuraSurgeBanner from './components/AuraSurgeBanner';
+import { Toaster } from 'react-hot-toast';
+import KidsModeGuard from './components/KidsModeGuard';
+import GlobalMusicPlayer from './components/GlobalMusicPlayer';
+import NexoriaPlayer from './components/NexoriaPlayer';
+import PrivateRoute from './components/PrivateRoute';
+import AdBlockDetector from './components/AdBlockDetector';
 
 // Loader component for suspense fallback
 const PageLoader = () => (
