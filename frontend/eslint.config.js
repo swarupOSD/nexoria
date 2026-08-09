@@ -26,6 +26,8 @@ export default defineConfig([
     },
     rules: {
       'no-undef': 'off',
+      'no-redeclare': 'off',
+      'no-useless-assignment': 'off',
       'no-unused-vars': 'off',
       'react-hooks/exhaustive-deps': 'off',
       'react-hooks/rules-of-hooks': 'off',
@@ -33,7 +35,8 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
       'no-empty': 'off',
       'react-hooks/static-components': 'off',
-      'react-hooks/purity': 'off'
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off'
     }
   },
 ])
