@@ -1,16 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <script>
-      window.addEventListener('error', function(e) {
-        const msg = (e.error && e.error.stack) ? e.error.stack : e.message;
-        alert("REACT ERROR: " + msg);
-      });
-      window.addEventListener('unhandledrejection', function(e) {
-        const msg = (e.reason && e.reason.stack) ? e.reason.stack : String(e.reason);
-        alert("PROMISE ERROR: " + msg);
-      });
-    </script>
+
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png?v=2" />
     <link rel="apple-touch-icon" href="/icon-192x192.png?v=2" />
@@ -23,32 +14,7 @@
     <title>Nexoria – Movies, K-Dramas, Anime, Games, Music & Premium Apps | All In One</title>
     <meta name="description" content="Nexoria unites movies, K-Dramas, anime, mobile & kids games, music, editing tools and premium apps in one futuristic platform. Explore now." />
     
-    <!-- Max Security: Anti-Inspection & Anti-Tampering Scripts -->
-    <script>
-      // Disable Right Click
-      document.addEventListener('contextmenu', event => event.preventDefault());
-      
-      // Disable Keyboard Shortcuts
-      document.onkeydown = function(e) {
-        if(e.keyCode == 123) return false; // F12
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
-        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source)
-        if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; // Ctrl+S (Save Page)
-        if(e.ctrlKey && e.keyCode == 'P'.charCodeAt(0)) return false; // Ctrl+P (Print Page)
-      }
-      
-      // Advanced DevTools detection (debugger trap)
-      setInterval(function() {
-        var before = new Date().getTime();
-        debugger;
-        var after = new Date().getTime();
-        if (after - before > 100) {
-           document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:20vh'>Security Violation: Developer Tools Detected</h1>";
-        }
-      }, 2000);
-    </script>
+
     <style>
       /* Prevent Text Selection and Image Dragging Globally */
       body {
@@ -69,13 +35,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
+    <!-- TODO: Replace G-XXXXXXXXXX with your real Google Analytics ID -->
     <!-- Dark Mode Init -->
     <script>
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -88,13 +48,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <div id="google_translate_element" style="display:none;"></div>
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,bn,hi', autoDisplay: false}, 'google_translate_element');
-      }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

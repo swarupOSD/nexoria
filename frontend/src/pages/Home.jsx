@@ -165,21 +165,6 @@ const Home = () => {
           </Link>
         </div>
 
-        {/* Global Stats - Mobile Version */}
-        <div className="flex justify-between items-center bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
-          <div className="text-center flex-1 border-r border-white/10">
-            <p className="text-lg font-black text-white">50K+</p>
-            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Users</p>
-          </div>
-          <div className="text-center flex-1 border-r border-white/10">
-            <p className="text-lg font-black text-white">10K+</p>
-            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Items</p>
-          </div>
-          <div className="text-center flex-1">
-            <p className="text-lg font-black text-white flex justify-center items-center gap-1">4.9 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" /></p>
-            <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Rating</p>
-          </div>
-        </div>
       </div>
 
       {/* 💻 SIMPLE PROFESSIONAL DESKTOP HERO */}
