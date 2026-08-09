@@ -3,74 +3,58 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { App as CapacitorApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import Layout from './components/Layout';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import SinglePost from './pages/SinglePost';
-import DownloadFlow from './pages/DownloadFlow';
-import DownloadTimer from './pages/DownloadTimer';
-import FeatureRequests from './pages/FeatureRequests';
-import ChangePassword from './pages/ChangePassword';
-import Notifications from './pages/Notifications';
-import UserActivity from './pages/UserActivity';
-import VideoDownloader from './pages/VideoDownloader';
-import AdBlockDetector from './components/AdBlockDetector';
-import CategoryPage from './pages/CategoryPage';
-import SearchPage from './pages/SearchPage';
-import Support from './pages/Support';
-import Legal from './pages/Legal';
-import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import TermsOfService from './pages/legal/TermsOfService';
-import DmcaDisclaimer from './pages/legal/DmcaDisclaimer';
-import AboutUs from './pages/legal/AboutUs';
-import Sitemap from './pages/legal/Sitemap';
-import KidsModeGuard from './components/KidsModeGuard';
-import AllCategories from './pages/AllCategories';
-import Premium from './pages/Premium';
-import NexoriaPlayer from './components/NexoriaPlayer';
-import GlobalMusicPlayer from './components/GlobalMusicPlayer';
-import NexoriaSound from './pages/NexoriaSound';
-import SoundQueue from './pages/SoundQueue';
-import GlobalMusicSearch from './pages/GlobalMusicSearch';
-import AuraLeaderboard from './pages/AuraLeaderboard';
-import AuraBattle from './pages/AuraBattle';
-import AuraSurgeBanner from './components/AuraSurgeBanner';
+// Core pages — lazy loaded for bundle splitting
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const SinglePost = lazy(() => import('./pages/SinglePost'));
+const DownloadFlow = lazy(() => import('./pages/DownloadFlow'));
+const DownloadTimer = lazy(() => import('./pages/DownloadTimer'));
+const FeatureRequests = lazy(() => import('./pages/FeatureRequests'));
+const ChangePassword = lazy(() => import('./pages/ChangePassword'));
+const Notifications = lazy(() => import('./pages/Notifications'));
+const UserActivity = lazy(() => import('./pages/UserActivity'));
+const VideoDownloader = lazy(() => import('./pages/VideoDownloader'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const Support = lazy(() => import('./pages/Support'));
+const Legal = lazy(() => import('./pages/Legal'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService'));
+const DmcaDisclaimer = lazy(() => import('./pages/legal/DmcaDisclaimer'));
+const AboutUs = lazy(() => import('./pages/legal/AboutUs'));
+const Sitemap = lazy(() => import('./pages/legal/Sitemap'));
+const AllCategories = lazy(() => import('./pages/AllCategories'));
+const Premium = lazy(() => import('./pages/Premium'));
+const NexoriaSound = lazy(() => import('./pages/NexoriaSound'));
+const SoundQueue = lazy(() => import('./pages/SoundQueue'));
+const GlobalMusicSearch = lazy(() => import('./pages/GlobalMusicSearch'));
+const AuraLeaderboard = lazy(() => import('./pages/AuraLeaderboard'));
+const AuraBattle = lazy(() => import('./pages/AuraBattle'));
+const Games = lazy(() => import('./pages/Games'));
+const CreatorStudio = lazy(() => import('./pages/NexoriaMusic/CreatorStudio'));
+const NexoriaArena = lazy(() => import('./pages/NexoriaArena'));
+const SnehashisGames = lazy(() => import('./pages/SnehashisGames'));
+const LudoWrapper = lazy(() => import('./pages/LudoWrapper'));
 
+// MovieBox (lazy)
+const MovieBoxLayout = lazy(() => import('./components/MovieBoxLayout'));
+const MovieDetail = lazy(() => import('./pages/MovieDetail'));
+const MovieCategory = lazy(() => import('./pages/MovieCategory'));
+const MovieSearch = lazy(() => import('./pages/MovieSearch'));
+const MovieBrowse = lazy(() => import('./pages/MovieBrowse'));
 
-// Admin Sound
-import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
-import SoundSongs from './pages/Admin/Sound/SoundSongs';
-import SoundAddSong from './pages/Admin/Sound/SoundAddSong';
-import SoundPlaylists from './pages/Admin/Sound/SoundPlaylists';
-import SoundCategories from './pages/Admin/Sound/SoundCategories';
+// Nexoria Music Layout (lazy)
+const NexoriaMusicLayout = lazy(() => import('./components/NexoriaMusicLayout'));
 
-// MovieBox Routes (Regular Imports)
-import MovieBoxLayout from './components/MovieBoxLayout';
-import MovieBox from './pages/MovieBox';
-import MovieDetail from './pages/MovieDetail';
-import MovieCategory from './pages/MovieCategory';
-import MovieSearch from './pages/MovieSearch';
-import MovieBrowse from './pages/MovieBrowse';
-
-// Nexoria Music Layout
-import NexoriaMusicLayout from './components/NexoriaMusicLayout';
-
-// New Components
-import PwaUpdatePrompt from './components/PwaUpdatePrompt';
-import useKonamiCode from './hooks/useKonamiCode';
-import { Toaster } from 'react-hot-toast';
-import { PermissionProvider } from './contexts/PermissionContext';
-import PrivateRoute from './components/PrivateRoute';
-import SystemBroadcastManager from './components/SystemBroadcastManager';
-import UnderDevelopmentGuard from './components/UnderDevelopmentGuard';
-import Games from './pages/Games';
-
-import CreatorStudio from './pages/NexoriaMusic/CreatorStudio';
-import NexoriaArena from './pages/NexoriaArena';
-import SnehashisGames from './pages/SnehashisGames';
-import LudoWrapper from './pages/LudoWrapper';
+// Admin Sound (Lazy Loaded)
+const SoundDashboard = lazy(() => import('./pages/Admin/Sound/SoundDashboard'));
+const SoundSongs = lazy(() => import('./pages/Admin/Sound/SoundSongs'));
+const SoundAddSong = lazy(() => import('./pages/Admin/Sound/SoundAddSong'));
+const SoundPlaylists = lazy(() => import('./pages/Admin/Sound/SoundPlaylists'));
+const SoundCategories = lazy(() => import('./pages/Admin/Sound/SoundCategories'));
 
 const NexoriaMusicHome = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicHome'));
 const NexoriaMusicSearch = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicSearch'));
@@ -117,6 +101,8 @@ const NexoriaMusicDashboard = lazy(() => import('./pages/Admin/NexoriaMusic/Nexo
 const NexoriaArtistsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaArtistsManager'));
 const NexoriaAlbumsManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaAlbumsManager'));
 const NexoriaTracksManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaTracksManager'));
+const NexoriaGenresManager = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaGenresManager'));
+const NexoriaPlaylistBuilder = lazy(() => import('./pages/Admin/NexoriaMusic/NexoriaPlaylistBuilder'));
 
 const AdminSupportTickets = lazy(() => import('./pages/Admin/SupportTickets'));
 const OnlineUsersBoard = lazy(() => import('./pages/Admin/OnlineUsersBoard'));
@@ -210,9 +196,6 @@ const ComingSoonPage = ({ title, description, emoji }) => (
 function App() {
   const { data: settingsRes } = useGetSettingsQuery();
   const settings = settingsRes?.data || {};
-
-  // Initialize Easter Egg Hook
-  useKonamiCode();
 
   // Initialize Push Notifications
   usePushNotifications();

@@ -84,42 +84,10 @@ const Layout = () => {
   if (isMaintenanceMode && !isAdmin && !isAuthRoute) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0F172A] relative overflow-hidden text-white font-sans">
-        {/* Animated Stars Background */}
-        <div className="absolute inset-0 z-0">
-          {[...Array(50)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute bg-white rounded-full opacity-30"
-              style={{
-                width: Math.random() * 3 + 'px',
-                height: Math.random() * 3 + 'px',
-                top: Math.random() * 100 + '%',
-                left: Math.random() * 100 + '%',
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.2, 0.8, 0.2]
-              }}
-              transition={{
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Floating Astronaut/Planet Elements */}
-        <motion.div
-          animate={{ y: [-20, 20, -20], rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full bg-gradient-to-tr from-primary to-accent opacity-20 blur-2xl z-0"
-        />
-        <motion.div
-          animate={{ y: [20, -20, 20], rotate: [0, -10, 10, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full bg-gradient-to-tr from-secondary to-accent opacity-20 blur-3xl z-0"
-        />
+        {/* Static Gradient Background — no CPU-heavy animations */}
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.15),transparent_60%),radial-gradient(ellipse_at_bottom_left,rgba(168,85,247,0.1),transparent_60%)]" />
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-primary/10 blur-3xl pointer-events-none z-0" />
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none z-0" />
 
         <div className="relative z-10 text-center max-w-2xl px-6">
           <motion.div
@@ -127,13 +95,9 @@ const Layout = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            {/* Glowing Icon */}
+            {/* Logo */}
             <div className="mb-8 relative inline-block">
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-24 h-24 rounded-full border-t-2 border-l-2 border-primary border-opacity-50 absolute -inset-2"
-              />
+              <div className="w-24 h-24 rounded-full border-2 border-primary/40 absolute -inset-2" />
               <img src={settings.logo || '/logo.png'} alt="Logo" className="w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
             </div>
 
