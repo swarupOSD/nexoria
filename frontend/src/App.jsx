@@ -60,6 +60,7 @@ import MovieBrowse from './pages/MovieBrowse';
 import NexoriaMusicLayout from './components/NexoriaMusicLayout';
 
 // New Components
+import PwaUpdatePrompt from './components/PwaUpdatePrompt';
 import useKonamiCode from './hooks/useKonamiCode';
 import { Toaster } from 'react-hot-toast';
 import { PermissionProvider } from './contexts/PermissionContext';
@@ -270,6 +271,7 @@ function App() {
   return (
     <PermissionProvider>
       <Router>
+        <PwaUpdatePrompt />
         <SystemBroadcastManager />
         <AuraSurgeBanner />
       <Toaster position="top-right" />
