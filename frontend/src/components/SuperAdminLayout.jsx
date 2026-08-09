@@ -12,7 +12,7 @@ import { useLogoutMutation, useGetMeQuery } from '../features/auth/authApiSlice'
 import { logout as clearCredentials, setCredentials } from '../features/auth/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import BroadcastModal from './BroadcastModal';
+
 import NotificationBell from './Layout/NotificationBell';
 
 
@@ -26,7 +26,7 @@ const SuperAdminLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({ 'Movies': true });
   const [showQuickActions, setShowQuickActions] = useState(false);
-  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+
 
   const { data, isLoading, isFetching } = useGetMeQuery();
 
@@ -441,9 +441,9 @@ const SuperAdminLayout = () => {
                         <button onClick={() => { handleClearCache(); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                           <Activity className="w-4 h-4 text-emerald-500" /> Clear System Cache
                         </button>
-                        <button onClick={() => { setIsBroadcastModalOpen(true); setShowQuickActions(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
+                        <Link to="/superadmin/system-notices" onClick={() => setShowQuickActions(false)} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors">
                           <Bell className="w-4 h-4 text-indigo-500" /> Broadcast Notice
-                        </button>
+                        </Link>
                       </div>
                     </motion.div>
                   </>
@@ -476,7 +476,7 @@ const SuperAdminLayout = () => {
         </div>
       </main>
 
-      <BroadcastModal isOpen={isBroadcastModalOpen} onClose={() => setIsBroadcastModalOpen(false)} />
+
     </div>
   );
 };

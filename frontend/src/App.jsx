@@ -37,8 +37,7 @@ import GlobalMusicSearch from './pages/GlobalMusicSearch';
 import AuraLeaderboard from './pages/AuraLeaderboard';
 import AuraBattle from './pages/AuraBattle';
 import AuraSurgeBanner from './components/AuraSurgeBanner';
-import EthicalHacking from './pages/EthicalHacking';
-import EthicalHackingManager from './pages/Admin/EthicalHackingManager';
+
 
 // Admin Sound
 import SoundDashboard from './pages/Admin/Sound/SoundDashboard';
@@ -53,7 +52,6 @@ import MovieBox from './pages/MovieBox';
 import MovieDetail from './pages/MovieDetail';
 import MovieCategory from './pages/MovieCategory';
 import MovieSearch from './pages/MovieSearch';
-import WatchParty from './pages/WatchParty';
 import MovieBrowse from './pages/MovieBrowse';
 
 // Nexoria Music Layout
@@ -283,9 +281,6 @@ function App() {
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route element={<PrivateRoute />}>
-                <Route path="/moviebox/watch-party/:slug" element={<WatchParty />} />
-              </Route>
 
               <Route path="/" element={<Layout />}>
                 {/* Public Routes */}
@@ -331,7 +326,7 @@ function App() {
                   <Route path="change-password" element={<ChangePassword />} />
                   <Route path="notifications" element={<Notifications />} />
                   <Route path="activity" element={<UserActivity />} />
-                  <Route path="ethical-hacking" element={<EthicalHacking />} />
+
                 </Route>
               </Route>
 
@@ -396,7 +391,7 @@ function App() {
               <Route path="posts/bulk-import" element={<BulkImport />} />
               <Route path="posts/edit/:id" element={<CreatePost />} />
               <Route path="categories" element={<AdminCategories />} />
-              <Route path="ethical-hacking" element={<EthicalHackingManager />} />
+
               <Route path="comments" element={<AdminComments />} />
               <Route path="ratings" element={<AdminRatings />} />
               <Route path="moderation" element={<AdminModeration />} />
@@ -439,7 +434,7 @@ function App() {
               <Route path="ads" element={<SponsoredContent />} />
               <Route path="sponsored-content" element={<SponsoredContent />} />
               <Route path="database" element={<DatabaseManagement />} />
-              <Route path="ethical-hacking" element={<EthicalHackingManager />} />
+
               <Route path="analytics" element={<SuperAnalytics />} />
               <Route path="module-analytics" element={<ModuleAnalytics />} />
               <Route path="security-logs" element={<SecurityLogs />} />

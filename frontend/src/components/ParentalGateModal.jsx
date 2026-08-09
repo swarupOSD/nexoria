@@ -1,74 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { X, Lock, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PatternLock from './PatternLock';
+
 
 const ParentalGateModal = ({ isOpen, onClose, mode, onSuccess }) => {
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [feedbackMsg, setFeedbackMsg] = useState('');
-  const [setupPattern, setSetupPattern] = useState(null);
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [step, setStep] = useState(1);
 
   useEffect(() => {
     if (isOpen) {
-      setError(false);
-      setSuccess(false);
-      setFeedbackMsg('');
-      setSetupPattern(null);
+      setPin('');
+      setConfirmPin('');
+      setStep(1);
     }
   }, [isOpen, mode]);
 
-  const handlePatternComplete = (pattern) => {
-    if (pattern === 'TOO_SHORT' || pattern.length < 4) {
-      setError(true);
-      setFeedbackMsg('Pattern must connect at least 4 dots');
-      setTimeout(() => setError(false), 1000);
-      return;
-    }
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (mode === 'enable') {
-      if (!setupPattern) {
-        // Step 1: Save first pattern and ask to confirm
-        setSetupPattern(pattern);
-        setSuccess(true);
-        setFeedbackMsg('Draw pattern again to confirm');
-        setTimeout(() => setSuccess(false), 1000);
+      if (step === 1) {
+        if (pin.length < 4) return;
+        setStep(2);
       } else {
-        // Step 2: Confirm
-        if (pattern === setupPattern) {
-          localStorage.setItem('kidsPattern', pattern);
-          setSuccess(true);
-          setFeedbackMsg('Pattern Saved!');
-          
-          setTimeout(() => {
-            onSuccess();
-            onClose();
-          }, 800);
-        } else {
-          setError(true);
-          setFeedbackMsg('Patterns do not match. Try again.');
-          setSetupPattern(null);
-          setTimeout(() => setError(false), 1000);
-        }
+        if (pin !== confirmPin) { setPin(''); setConfirmPin(''); setStep(1); return; }
+        localStorage.setItem('kidsPin', pin);
+        onSuccess(); onClose();
       }
     } else {
-      // Disable Mode: Verify pattern
-      const savedPattern = localStorage.getItem('kidsPattern');
-      
-      // If no pattern was ever set, let them pass if they draw any valid pattern
-      // or we just check if it matches
-      if (savedPattern && pattern !== savedPattern) {
-        setError(true);
-        setFeedbackMsg('Incorrect pattern');
-        setTimeout(() => setError(false), 1000);
-      } else {
-        setSuccess(true);
-        setFeedbackMsg('Pattern Accepted!');
-        setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 800);
-      }
+      const saved = localStorage.getItem('kidsPin');
+      if (!saved || saved === pin) { onSuccess(); onClose(); }
+      else { setPin(''); }
     }
   };
 
@@ -94,49 +56,27 @@ const ParentalGateModal = ({ isOpen, onClose, mode, onSuccess }) => {
           </div>
 
           <div className="p-6 w-full flex flex-col items-center">
-            
             <p className="text-slate-300 text-sm text-center mb-6 px-4">
-              {mode === 'enable' 
-                ? 'Draw an unlock pattern to secure Adult Mode. You will need this pattern to switch back.'
-                : 'Draw your parental pattern to unlock Adult Mode.'
+              {mode === 'enable'
+                ? (step === 1 ? 'Set a 4-digit PIN to secure Adult Mode.' : 'Confirm your PIN.')
+                : 'Enter your PIN to unlock Adult Mode.'
               }
             </p>
-            
-            <div className="h-[300px] w-full flex items-center justify-center">
-              <PatternLock 
-                size={260} 
-                onComplete={handlePatternComplete} 
-                error={error}
-                success={success}
+            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center gap-4">
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={6}
+                value={step === 2 ? confirmPin : pin}
+                onChange={(e) => step === 2 ? setConfirmPin(e.target.value.replace(/\D/g,'')) : setPin(e.target.value.replace(/\D/g,''))}
+                placeholder="Enter PIN"
+                className="w-48 text-center text-2xl tracking-[0.5em] font-bold bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors"
+                autoFocus
               />
-            </div>
-
-            <div className="mt-6 h-6 flex items-center justify-center w-full">
-              <AnimatePresence mode="wait">
-                {feedbackMsg ? (
-                  <motion.p
-                    key={feedbackMsg}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className={`text-sm font-bold ${error ? 'text-red-400' : success ? 'text-emerald-400' : 'text-slate-400'}`}
-                  >
-                    {feedbackMsg}
-                  </motion.p>
-                ) : (
-                  <motion.p
-                    key="default"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs text-slate-500 uppercase tracking-widest font-semibold"
-                  >
-                    {mode === 'enable' && setupPattern ? 'Confirm your pattern' : 'Draw your pattern'}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </div>
-            
+              <button type="submit" className="w-full max-w-xs py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl hover:opacity-90 transition-opacity active:scale-95">
+                {mode === 'enable' ? (step === 1 ? 'Next' : 'Confirm') : 'Unlock'}
+              </button>
+            </form>
           </div>
         </motion.div>
       </div>

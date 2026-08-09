@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useGetUserMusicAnalyticsQuery } from '../../features/api/musicApiSlice';
 import { Headphones, Play, Heart, Clock, Loader2, Music } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { playSong } from '../../features/music/musicSlice';
-import WrappedModal from '../WrappedModal';
+
 
 const MusicAnalyticsTab = () => {
   const { data, isLoading } = useGetUserMusicAnalyticsQuery();
   const dispatch = useDispatch();
-  const [isWrappedOpen, setIsWrappedOpen] = useState(false);
+
 
   if (isLoading) {
     return (
@@ -49,11 +49,7 @@ const MusicAnalyticsTab = () => {
         </div>
       </div>
 
-      <WrappedModal 
-        isOpen={isWrappedOpen} 
-        onClose={() => setIsWrappedOpen(false)} 
-        data={analytics} 
-      />
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         {/* Top Played */}

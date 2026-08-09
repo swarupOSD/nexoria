@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Search, Menu, Moon, Sun, X, ChevronDown, ChevronRight, User as UserIcon, Users, MessageSquare,
-  LogOut, Key, ShieldAlert, Mic, MicOff, History, TrendingUp, XCircle, Music,
-  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, MonitorPlay, Gamepad2, Dices, Crown, Flame, DownloadCloud, Ghost, Terminal
+import {
+  Search, Menu, Moon, Sun, X, ChevronDown, ChevronRight, User as UserIcon,
+  LogOut, ShieldAlert, History, TrendingUp, XCircle, Music,
+  Compass, Smartphone, Star, ArrowUpRight, LayoutGrid, Gamepad2, Dices, Flame, DownloadCloud
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +21,6 @@ import { toast } from 'react-hot-toast';
 import CustomSearchBar from './CustomSearchBar';
 import ParentalGateModal from './ParentalGateModal';
 import BottomNavigation from './Layout/BottomNavigation';
-import { usePermissions } from '../contexts/PermissionContext';
 import { BACKEND_URL } from '../features/api/apiSlice';
 
 const Navbar = () => {
@@ -29,250 +28,97 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isParentalModalOpen, setIsParentalModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchSuggest, setShowSearchSuggest] = useState(false);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const searchRef = useRef(null);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const { user, isKidsMode } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutApiCall] = useLogoutMutation();
+  const { data: searchRes, isFetching: isSearching } = useSearchPostsQuery(searchQuery, { skip: searchQuery.length < 2 });
+  const searchSuggestions = searchRes?.data || [];
+  const { data: trendingRes } = useGetPostsQuery({ isTrending: true, limit: 4 });
+  const trendingSearches = trendingRes?.data || [];
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const categories = categoriesData?.data || [];
+  const { data: settingsRes } = useGetSettingsQuery();
+  const settings = settingsRes?.data || {};
 
-
-  
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e) => {
-      e.preventDefault();
-      window.deferredPrompt = e;
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    // Check if it was caught globally before React mounted
-    if (window.deferredPrompt) {
-      setDeferredPrompt(window.deferredPrompt);
-    }
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    const h = (e) => { e.preventDefault(); window.deferredPrompt = e; setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', h);
+    if (window.deferredPrompt) setDeferredPrompt(window.deferredPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', h);
+  }, []);
+  useEffect(() => {
+    const s = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', s, { passive: true });
+    return () => window.removeEventListener('scroll', s);
+  }, []);
+  useEffect(() => { setIsMobileMenuOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') setIsMobileMenuOpen(false); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, []);
+  useEffect(() => {
+    if (isMobileMenuOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = 'auto';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [isMobileMenuOpen]);
+  useEffect(() => { setSearchHistory(JSON.parse(localStorage.getItem('searchHistory') || '[]')); }, []);
+  useEffect(() => {
+    const h = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSearchSuggest(false); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
   }, []);
 
   const handleInstallApp = async () => {
-    // Determine if the user is on Android
-    const isAndroid = /Android/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      // Direct APK download for Android users via nightly.link (no GitHub login needed)
-      toast.success('Downloading Nexoria Android App...');
-      // nightly.link provides the latest GitHub Actions APK without login
+    if (/Android/i.test(navigator.userAgent)) {
+      toast.success('Downloading...');
       window.open('https://nightly.link/swarupOSD/nexoria/workflows/build-android.yml/main/Nexoria-App-Debug.zip', '_blank');
-      setTimeout(() => {
-        toast('📦 A ZIP file will download. Open it and install the APK inside!', { duration: 6000, icon: '📱' });
-      }, 2000);
       return;
     }
-
     const prompt = window.deferredPrompt || deferredPrompt;
     if (prompt) {
       prompt.prompt();
       const { outcome } = await prompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-        window.deferredPrompt = null;
-      }
+      if (outcome === 'accepted') { setDeferredPrompt(null); window.deferredPrompt = null; }
     } else {
-      toast('You can also install the app by clicking the icon in your browser address bar!', { icon: '💡' });
+      toast('Install via your browser address bar!', { icon: 'info' });
     }
   };
-  
-  // Search State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchSuggest, setShowSearchSuggest] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [searchHistory, setSearchHistory] = useState([]);
-  const searchRef = useRef(null);
-
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-
-  const { user, isKidsMode } = useSelector((state) => state.auth);
-  const { requestPermission } = usePermissions();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [logoutApiCall] = useLogoutMutation();
-
-  const { data: searchRes, isFetching: isSearching } = useSearchPostsQuery(searchQuery, { skip: searchQuery.length < 2 });
-  const searchSuggestions = searchRes?.data || [];
-
-  const { data: trendingRes } = useGetPostsQuery({ isTrending: true, limit: 4 });
-  const trendingSearches = trendingRes?.data || [];
-
-  const { data: categoriesData } = useGetCategoriesQuery();
-  const categories = categoriesData?.data || [];
-
-  const { data: settingsRes } = useGetSettingsQuery();
-  const settings = settingsRes?.data || {};
-
-  // Scroll effect
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Mobile menu behaviors: ESC key, route change, body scroll lock
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const handleEsc = (e) => { if (e.key === 'Escape') setIsMobileMenuOpen(false); };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
-
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => { document.body.style.overflow = 'auto'; };
-  }, [isMobileMenuOpen]);
-
-  // Load search history
-  useEffect(() => {
-    const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
-    setSearchHistory(history);
-  }, []);
-
-  // Click outside search
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setShowSearchSuggest(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const handleLogout = async () => {
-    try {
-      await logoutApiCall().unwrap();
-    } catch (err) {} 
-    finally {
-      dispatch(logout());
-      navigate('/');
-    }
+    try { await logoutApiCall().unwrap(); } catch (e) {}
+    finally { dispatch(logout()); navigate('/'); }
   };
-
   const executeSearch = (query) => {
     if (!query.trim()) return;
-    
-    // Save history
-    let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
-    history = [query, ...history.filter(h => h !== query)].slice(0, 5);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
-    setSearchHistory(history);
-    
+    let h = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    h = [query, ...h.filter(x => x !== query)].slice(0, 5);
+    localStorage.setItem('searchHistory', JSON.stringify(h));
+    setSearchHistory(h);
     setSearchQuery('');
     setShowSearchSuggest(false);
-    navigate(`/search?q=${encodeURIComponent(query)}`);
+    navigate('/search?q=' + encodeURIComponent(query));
   };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    executeSearch(searchQuery);
-  };
-
+  const handleSearchSubmit = (e) => { e.preventDefault(); executeSearch(searchQuery); };
   const removeHistoryItem = (e, item) => {
     e.stopPropagation();
-    const newHistory = searchHistory.filter(h => h !== item);
-    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-    setSearchHistory(newHistory);
+    const h = searchHistory.filter(x => x !== item);
+    localStorage.setItem('searchHistory', JSON.stringify(h));
+    setSearchHistory(h);
   };
-
-  const [voiceLang, setVoiceLang] = useState('en-US');
-
-  // Web Speech API
-  const startVoiceSearch = async () => {
-    try {
-      const granted = await requestPermission('microphone');
-      if (!granted) {
-        toast.error('Microphone permission denied.');
-        return;
-      }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop());
-    } catch (err) {
-      toast.error('Microphone access blocked. Please click 🔒 in URL bar to allow.');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast.error('Voice search is not supported in your browser.');
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = voiceLang;
-
-      recognition.onstart = () => {
-        setIsListening(true);
-        setShowSearchSuggest(true);
-      };
-
-      recognition.onresult = (event) => {
-        let interimTranscript = '';
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          } else {
-            interimTranscript += event.results[i][0].transcript;
-          }
-        }
-        
-        const currentTranscript = finalTranscript || interimTranscript;
-        if (currentTranscript) {
-          setSearchQuery(currentTranscript);
-        }
-
-        if (finalTranscript) {
-          setIsListening(false);
-          recognition.stop();
-          setTimeout(() => {
-            executeSearch(finalTranscript);
-          }, 800);
-        }
-      };
-
-      recognition.onerror = (event) => {
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognition.start();
-    } catch (e) {
-      toast.error('Could not start voice recognition.');
-      setIsListening(false);
-    }
-  };
-
   const handleSurpriseMe = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/posts?limit=50`);
-      const data = await res.json();
-      const apps = data?.data?.posts || [];
-      if (apps.length > 0) {
-        const randomApp = apps[Math.floor(Math.random() * apps.length)];
-        navigate(`/post/${randomApp.slug}`);
-        toast.success('Surprise! 🎲');
-      } else {
-        toast.error('No apps available to surprise you right now!');
-      }
-    } catch (err) {
-      toast.error('Could not fetch apps for surprise.');
-    }
+      const r = await fetch(BACKEND_URL + '/posts?limit=50');
+      const d = await r.json();
+      const a = d?.data?.posts || [];
+      if (a.length) { navigate('/post/' + a[Math.floor(Math.random() * a.length)].slug); toast.success('Surprise!'); }
+    } catch (e) {}
   };
 
   return (
@@ -280,601 +126,280 @@ const Navbar = () => {
       <div className={`fixed top-0 w-full z-50 transition-all duration-500 flex justify-center ${scrolled ? 'pt-4 px-4 pointer-events-none' : ''}`}>
         <nav className={`transition-all duration-500 pointer-events-auto w-full ${scrolled ? 'max-w-6xl bg-white/40 dark:bg-[#0F172A]/60 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-full shadow-2xl py-2 px-6' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5 px-4 container mx-auto'}`}>
           <div className="flex items-center justify-between w-full">
-          
-          {/* Logo */}
-          <div className="flex items-center gap-8">
+
+            {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
-              <div className="relative shadow-[0_0_20px_rgba(168,85,247,0.3)] rounded-full">
+              <div className="shadow-[0_0_20px_rgba(168,85,247,0.3)] rounded-full">
                 <Logo src={settings.logo} />
               </div>
-              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent tracking-tight drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent tracking-tight">
                 {settings?.siteName || 'Nexoria'}
               </span>
             </Link>
-          </div>
 
-          {/* Desktop Links & Advanced Search */}
-          <div className="hidden lg:flex items-center gap-3 xl:gap-5 flex-1 justify-center px-2 xl:px-4 whitespace-nowrap">
-            <Link to="/" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/' ? 'text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]'}`}>
-              Home
-            </Link>
-            
-            <Link to="/apps" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/apps' ? 'text-indigo-500 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500 hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]'}`}>
-              Apps
-            </Link>
-            
-            <Link to="/moviebox/games" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/moviebox/games' ? 'text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500 hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]'}`}>
-              Games
-            </Link>
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-3 xl:gap-5 flex-1 justify-center px-4 whitespace-nowrap">
+              <Link to="/" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>Home</Link>
+              <Link to="/apps" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>Apps</Link>
+              <Link to="/moviebox/games" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname.startsWith('/moviebox') ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>Games</Link>
 
-            {/* Categories Dropdown */}
-            <DropdownMenu 
-              align="left" 
-              width="w-[500px]"
-              closeOnClickInside={true}
-              trigger={
-                <button className={`flex items-center gap-1 text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname.startsWith('/category') ? 'text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'text-slate-700 dark:text-slate-300 hover:text-primary hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]'}`}>
+              <DropdownMenu align="left" width="w-[480px]" closeOnClickInside={true} trigger={
+                <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
                   <LayoutGrid className="w-4 h-4" /> Categories <ChevronDown className="w-3 h-3" />
                 </button>
-              }
-            >
-              <div className="grid grid-cols-3 gap-3 p-4 glass shadow-2xl rounded-3xl">
-                {categories.slice(0, 9).map(cat => (
-                  <Link key={cat._id} to={`/category/${cat.slug}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
-                      {cat.image && cat.image !== 'default-category.jpg' ? (
-                        <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
-                      ) : (
-                        cat.name.charAt(0)
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm text-slate-900 dark:text-white">{cat.name}</p>
-                      <p className="text-[10px] text-slate-500">{cat.appCount || 0} Apps</p>
-                    </div>
-                  </Link>
-                ))}
-                <Link to="/category/apps" className="col-span-3 text-center py-2 text-primary font-bold hover:underline text-sm">
-                  View All Categories
-                </Link>
-              </div>
-            </DropdownMenu>
+              }>
+                <div className="grid grid-cols-3 gap-2 p-3">
+                  {categories.slice(0, 9).map(cat => (
+                    <Link key={cat._id} to={`/category/${cat.slug}`} className="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary overflow-hidden">
+                        {cat.image && cat.image !== 'default-category.jpg' ? <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" /> : cat.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{cat.name}</p>
+                        <p className="text-[10px] text-slate-500">{cat.appCount || 0} Apps</p>
+                      </div>
+                    </Link>
+                  ))}
+                  <Link to="/categories" className="col-span-3 text-center py-1.5 text-primary font-bold text-sm hover:underline">View All</Link>
+                </div>
+              </DropdownMenu>
 
-            {/* Explore More Dropdown */}
-            <DropdownMenu
-              align="left"
-              width="w-[220px]"
-              closeOnClickInside={true}
-              trigger={
+              <DropdownMenu align="left" width="w-[200px]" closeOnClickInside={true} trigger={
                 <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
                   <Compass className="w-4 h-4" /> Explore <ChevronDown className="w-3 h-3" />
                 </button>
-              }
-            >
-              <div className="flex flex-col p-2">
-                <Link to="/requests" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Compass className="w-4 h-4 text-indigo-500" /> Requests
-                </Link>
-                <Link to="/sound" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Music className="w-4 h-4 text-purple-500" /> Classic Sound
-                </Link>
-                <Link to="/nexoria-music" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Music className="w-4 h-4 text-pink-500" /> Nexoria Music
-                </Link>
-                <Link to="/nexoria-arena" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Gamepad2 className="w-4 h-4 text-red-500" /> Arena
-                </Link>
-                <Link to="/snehashis-games" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Gamepad2 className="w-4 h-4 text-sky-500" /> Snehashis Games
-                </Link>
-                <Link to="/ethical-hacking" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-all mt-1">
-                  <Terminal className="w-4 h-4" /> Ethical Hacking
-                </Link>
-                <Link to="/aura" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Flame className="w-4 h-4 text-amber-500" /> Aura Leaderboard
-                </Link>
-                <Link to="/video-downloader" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <DownloadCloud className="w-4 h-4 text-emerald-500" /> YT Downloader
-                </Link>
-                <div className="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
-                <Link to="/premium" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Star className="w-4 h-4" /> Premium
-                </Link>
-              </div>
-            </DropdownMenu>
-
-            {/* Advanced Search Bar */}
-            <div className="relative w-full max-w-[200px] xl:max-w-xs transition-all duration-300 focus-within:max-w-[250px] xl:focus-within:max-w-sm" ref={searchRef}>
-              <form onSubmit={handleSearchSubmit} className="relative flex items-center justify-center">
-                <CustomSearchBar 
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setShowSearchSuggest(true);
-                  }}
-                  onFocus={() => setShowSearchSuggest(true)}
-                  placeholder="Search..."
-                />
-                <div className="relative ml-2 flex items-center gap-1 bg-white dark:bg-[#1A1A1A] p-1 rounded-lg backdrop-blur-md shadow-sm border border-slate-200/50 dark:border-white/10 z-10">
-                  <select 
-                    value={voiceLang}
-                    onChange={(e) => setVoiceLang(e.target.value)}
-                    className="bg-transparent text-xs font-bold text-slate-500 dark:text-slate-400 focus:outline-none cursor-pointer hover:text-primary transition-colors appearance-none pr-1"
-                  >
-                    <option value="en-US">ENG</option>
-                    <option value="bn-BD">BAN</option>
-                    <option value="hi-IN">HIN</option>
-                  </select>
-                  <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1"></div>
-                  <button 
-                    type="button" 
-                    onClick={isListening ? null : startVoiceSearch}
-                    className={`p-1.5 rounded-full transition-colors ${isListening ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/30' : 'text-slate-500 hover:text-primary hover:bg-primary/10'}`}
-                  >
-                    {isListening ? <Mic className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  </button>
+              }>
+                <div className="flex flex-col p-2 gap-0.5">
+                  <Link to="/requests" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Compass className="w-4 h-4 text-indigo-500" /> Requests</Link>
+                  <Link to="/sound" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Music className="w-4 h-4 text-purple-500" /> Classic Sound</Link>
+                  <Link to="/nexoria-music" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Music className="w-4 h-4 text-pink-500" /> Nexoria Music</Link>
+                  <Link to="/nexoria-arena" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Gamepad2 className="w-4 h-4 text-red-500" /> Arena</Link>
+                  <Link to="/aura" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Flame className="w-4 h-4 text-amber-500" /> Aura</Link>
+                  <Link to="/video-downloader" className="flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><DownloadCloud className="w-4 h-4 text-emerald-500" /> YT Downloader</Link>
+                  <div className="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+                  <Link to="/premium" className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Star className="w-4 h-4" /> Premium</Link>
                 </div>
-              </form>
-
-              {/* Search Suggestions Dropdown */}
-              <AnimatePresence>
-                {showSearchSuggest && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl active:scale-[0.98] shadow-2xl overflow-hidden overflow-y-auto max-h-[400px]"
-                  >
-                    {isListening && (
-                      <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 bg-red-50 dark:bg-red-900/20">
-                        <Mic className="w-6 h-6 text-red-500 mx-auto mb-2 animate-bounce" />
-                        <p className="text-sm font-bold text-red-600 dark:text-red-400">Listening... Speak now</p>
-                      </div>
-                    )}
-
-                    {searchQuery.length >= 2 ? (
-                      <div className="p-2">
-                        <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2">Results</h4>
-                        {isSearching ? (
-                           <div className="p-4 text-center"><div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div></div>
-                        ) : searchSuggestions.length > 0 ? (
-                          searchSuggestions.map(app => (
-                            <div key={app._id} onClick={() => executeSearch(app.title)} className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors group">
-                              <img src={app.appLogo} alt={app.title} className="w-10 h-10 rounded-lg shadow-sm" />
-                              <div className="flex-1">
-                                <h5 className="text-sm font-bold group-hover:text-primary truncate">{app.title}</h5>
-                                <p className="text-[10px] text-slate-500">{app.categoryObj?.name}</p>
-                              </div>
-                              <ArrowUpRight className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-4 text-center text-sm text-slate-500">No results found</div>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        {/* Search History */}
-                        {searchHistory.length > 0 && (
-                          <div className="p-2 border-b border-slate-100 dark:border-slate-800">
-                            <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2 flex items-center gap-2"><History className="w-3 h-3"/> Recent Searches</h4>
-                            {searchHistory.map((item, i) => (
-                              <div key={i} className="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer group" onClick={() => executeSearch(item)}>
-                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{item}</span>
-                                <button onClick={(e) => removeHistoryItem(e, item)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><XCircle className="w-4 h-4"/></button>
-                              </div>
-                            ))}
-                            <Link to="/profile" className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                              <UserIcon className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Profile</span>
-                            </Link>
-
-                            {(deferredPrompt || /Android/i.test(navigator.userAgent)) && (
-                              <button onClick={handleInstallApp} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors w-full text-left">
-                                <Smartphone className="w-4 h-4 text-primary" />
-                                <span className="text-sm font-bold text-primary">Install App</span>
-                              </button>
-                            )}
-
-                            <button onClick={handleLogout} className="flex items-center gap-2 p-2 w-full text-left hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-red-500"><XCircle className="w-4 h-4"/></button>
-                          </div>
-                        )}
-                        {/* Trending Searches */}
-                        <div className="p-2">
-                          <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2 flex items-center gap-2"><TrendingUp className="w-3 h-3"/> Trending Now</h4>
-                          <div className="flex flex-wrap gap-2 px-3 pb-2">
-                            {trendingSearches.map(app => (
-                              <span key={app._id} onClick={() => executeSearch(app.title)} className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white text-xs font-medium rounded-full cursor-pointer transition-colors border border-slate-200 dark:border-slate-700">
-                                {app.title}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Right Side Tools */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
-            {/* Adult/Kids Mode Toggle (Compact) */}
-            <button
-              onClick={() => setIsParentalModalOpen(true)}
-              className="hidden xl:flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-0.5 shadow-inner border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer group"
-              title="Change Content Mode"
-            >
-              <div className={`px-2 py-1 rounded-full flex items-center text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
-                🔞
-              </div>
-              <div className={`px-2 py-1 rounded-full flex items-center text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}>
-                🧸
-              </div>
-            </button>
-
-            {/* Extra toggles hidden on small desktops to save space */}
-            <div className="hidden xl:flex items-center gap-1">
-              <button onClick={toggleCyberpunk} className={`p-2 rounded-full transition-all duration-300 ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400 shadow-[0_0_15px_rgba(255,0,255,0.5)]' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`} title="Toggle Cyberpunk Mode">
-                <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5" />
-              </button>
-
-              <button onClick={handleSurpriseMe} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors hover:rotate-180 duration-500" title="Surprise Me!">
-                <Dices className="w-4 h-4 xl:w-5 xl:h-5 text-indigo-500" />
-              </button>
-            </div>
-
-            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
-              {isDarkMode ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
-            </button>
-            
-            {user && (
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full" title="Reward Points">
-                  <span className="text-amber-500 text-sm">🪙</span>
-                  <span className="font-bold text-amber-600 dark:text-amber-500 text-sm">{user.rewardPoints || 0}</span>
-                </div>
-                {user.currentStreak > 0 && (
-                  <div className="flex items-center gap-1 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1.5 rounded-full" title="Daily Streak">
-                    <span className="text-orange-500 text-sm">🔥</span>
-                    <span className="font-bold text-orange-600 dark:text-orange-500 text-sm">{user.currentStreak}</span>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {user && (
-              <>
-                <Link 
-                  to="/messages"
-                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
-                  title="Direct Messages"
-                >
-                  <MessageSquare className="w-5 h-5" />
-                </Link>
-                <button 
-                  onClick={() => setIsFriendsDrawerOpen(true)}
-                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
-                  title="Friends & Requests"
-                >
-                  <Users className="w-5 h-5" />
-                </button>
-                <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
-              </>
-            )}
-
-            {user ? (
-              <DropdownMenu 
-                align="right"
-                width="w-64"
-                trigger={
-                  <button className="flex items-center gap-2 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 pl-2 pr-4 py-1.5 rounded-full transition-all shadow-sm">
-                    <div className={`shrink-0 rounded-full ${
-                        user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_10px_orange]' :
-                        user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_15px_cyan]' :
-                        user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_10px_fuchsia]' :
-                        user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_10px_yellow]' : ''
-                    }`}>
-                      <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 object-cover" />
-                    </div>
-                    <span 
-                      className="text-sm font-bold truncate max-w-[100px]"
-                      style={user.chatNameColor ? { color: user.chatNameColor, textShadow: `0 0 8px ${user.chatNameColor}60` } : {}}
-                    >
-                      {user.chatNameColor ? user.name.split(' ')[0] : <span className="text-slate-700 dark:text-slate-200">{user.name.split(' ')[0]}</span>}
-                    </span>
-                  </button>
-                }
-              >
-                <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 mb-2">
-                  <div className={`mx-auto w-16 h-16 rounded-full mb-2 ${
-                      user.profileBorder === 'fire' ? 'ring-4 ring-orange-500 shadow-[0_0_15px_orange]' :
-                      user.profileBorder === 'neon' ? 'ring-4 ring-cyan-400 shadow-[0_0_20px_cyan]' :
-                      user.profileBorder === 'holographic' ? 'ring-4 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
-                      user.profileBorder === 'gold' ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary'
-                  }`}>
-                    <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-full h-full rounded-full object-cover" alt="Profile" />
-                  </div>
-                  <p className="font-bold text-slate-900 dark:text-white">{user.name}</p>
-                  <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{user.role}</p>
-                </div>
-                <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
-                  <UserIcon className="w-4 h-4 text-primary" /> Profile Dashboard
-                </Link>
-                <Link to="/messages" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
-                  <MessageSquare className="w-4 h-4 text-purple-500" /> Messages
-                </Link>
-                {['admin', 'superadmin', 'owner'].includes(user.role) && (
-                  <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1">
-                    <ShieldAlert className="w-4 h-4 text-accent" /> Admin Panel
-                  </Link>
-                )}
-                <button onClick={handleInstallApp} className="w-[calc(100%-16px)] flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors mx-2 mb-1 text-left">
-                  <Smartphone className="w-4 h-4 text-primary" /> Install App
-                </button>
-                <button onClick={handleLogout} className="w-[calc(100%-16px)] flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors mx-2 mb-2">
-                  <LogOut className="w-4 h-4" /> Logout
-                </button>
               </DropdownMenu>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors">Log in</Link>
-                <Link to="/register" className="px-5 py-2.5 text-sm font-semibold bg-black hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-black rounded-full transition-all shadow-lg active:scale-95">Sign Up</Link>
+
+              {/* Search */}
+              <div className="relative w-full max-w-[200px] xl:max-w-xs focus-within:max-w-[260px] transition-all duration-300" ref={searchRef}>
+                <form onSubmit={handleSearchSubmit}>
+                  <CustomSearchBar
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setShowSearchSuggest(true); }}
+                    onFocus={() => setShowSearchSuggest(true)}
+                    placeholder="Search..."
+                  />
+                </form>
+                <AnimatePresence>
+                  {showSearchSuggest && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-y-auto max-h-96"
+                    >
+                      {searchQuery.length >= 2 ? (
+                        <div className="p-2">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2">Results</h4>
+                          {isSearching ? (
+                            <div className="p-4 text-center"><div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div></div>
+                          ) : searchSuggestions.length > 0 ? searchSuggestions.map(a => (
+                            <div key={a._id} onClick={() => executeSearch(a.title)} className="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl cursor-pointer group">
+                              <img src={a.appLogo} alt={a.title} className="w-10 h-10 rounded-lg" />
+                              <div className="flex-1">
+                                <p className="text-sm font-bold group-hover:text-primary truncate">{a.title}</p>
+                                <p className="text-[10px] text-slate-500">{a.categoryObj?.name}</p>
+                              </div>
+                              <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100" />
+                            </div>
+                          )) : <p className="p-4 text-center text-sm text-slate-500">No results</p>}
+                        </div>
+                      ) : (
+                        <>
+                          {searchHistory.length > 0 && (
+                            <div className="p-2 border-b border-slate-100 dark:border-slate-800">
+                              <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2 flex items-center gap-2"><History className="w-3 h-3" />Recent</h4>
+                              {searchHistory.map((item, i) => (
+                                <div key={i} className="flex items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer group" onClick={() => executeSearch(item)}>
+                                  <span className="text-sm">{item}</span>
+                                  <button onClick={(e) => removeHistoryItem(e, item)} className="opacity-0 group-hover:opacity-100 text-red-400"><XCircle className="w-4 h-4" /></button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <div className="p-2">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase px-3 py-2 flex items-center gap-2"><TrendingUp className="w-3 h-3" />Trending</h4>
+                            <div className="flex flex-wrap gap-2 px-3 pb-2">
+                              {trendingSearches.map(a => (
+                                <span key={a._id} onClick={() => executeSearch(a.title)} className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-primary hover:text-white text-xs font-medium rounded-full cursor-pointer transition-colors">{a.title}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            )}
+            </div>
+
+            {/* Desktop Right Actions */}
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3">
+              <button onClick={() => setIsParentalModalOpen(true)} className="hidden xl:flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-0.5 border border-slate-300 dark:border-slate-700 cursor-pointer" title="Content Mode">
+                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white' : 'text-slate-500'}`}>18+</div>
+                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white' : 'text-slate-500'}`}>Kids</div>
+              </button>
+              <button onClick={toggleCyberpunk} className={`hidden xl:flex p-2 rounded-full transition-all ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`} title="Cyberpunk"><Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5" /></button>
+              <button onClick={handleSurpriseMe} className="hidden xl:flex p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:rotate-180 transition-all duration-500" title="Surprise Me"><Dices className="w-4 h-4 xl:w-5 xl:h-5 text-indigo-500" /></button>
+              <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+                {isDarkMode ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
+              </button>
+              {user && <NotificationBell iconClassName="text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" />}
+              {user ? (
+                <DropdownMenu align="right" width="w-64" trigger={
+                  <button className="flex items-center gap-2 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 pl-2 pr-4 py-1.5 rounded-full transition-all shadow-sm">
+                    <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+                    <span className="text-sm font-bold truncate max-w-[100px] text-slate-700 dark:text-slate-200">{user.name.split(' ')[0]}</span>
+                  </button>
+                }>
+                  <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 mb-2">
+                    <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-16 h-16 rounded-full object-cover mx-auto mb-2 border-2 border-primary" alt="Profile" />
+                    <p className="font-bold text-slate-900 dark:text-white">{user.name}</p>
+                    <p className="text-xs text-slate-500 uppercase font-bold">{user.role}</p>
+                  </div>
+                  <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl mx-2 mb-1"><UserIcon className="w-4 h-4 text-primary" /> My Dashboard</Link>
+                  {['admin', 'superadmin', 'owner'].includes(user.role) && (
+                    <Link to={user.role !== 'admin' ? '/superadmin' : '/admin'} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl mx-2 mb-1"><ShieldAlert className="w-4 h-4 text-accent" /> Admin Panel</Link>
+                  )}
+                  <button onClick={handleInstallApp} className="w-[calc(100%-16px)] flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl mx-2 mb-1 text-left"><Smartphone className="w-4 h-4 text-primary" /> Install App</button>
+                  <button onClick={handleLogout} className="w-[calc(100%-16px)] flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl mx-2 mb-2"><LogOut className="w-4 h-4" /> Logout</button>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link to="/login" className="px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors">Log in</Link>
+                  <Link to="/register" className="px-5 py-2.5 text-sm font-semibold bg-black dark:bg-white text-white dark:text-black rounded-full shadow-lg active:scale-95 hover:bg-slate-800 dark:hover:bg-slate-200 transition-all">Sign Up</Link>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Right */}
+            <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
+              <button onClick={() => setIsMobileMenuOpen(true)} className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`}><Search className="w-5 h-5" /></button>
+              {user && <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'} />}
+              {user && (
+                <Link to="/dashboard" className="hidden sm:block ml-1">
+                  <FallbackImage src={user.profileImage} fallbackType="avatar" className={`w-8 h-8 rounded-full border-2 object-cover ${scrolled ? 'border-primary' : 'border-white'}`} alt="avatar" />
+                </Link>
+              )}
+              <button className={`p-2 ml-1 transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
 
-          {/* Mobile Right Icons & Menu */}
-          <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
-            <button onClick={() => setIsMobileMenuOpen(true)} className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}>
-              <Search className="w-5 h-5" />
-            </button>
-            {user && (
+          {/* Mobile Drawer */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
               <>
-                <Link 
-                  to="/messages"
-                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMobileMenuOpen(false)} className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] lg:hidden" />
+                <motion.div
+                  initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  className="fixed top-0 bottom-0 left-0 h-[100dvh] w-[85%] max-w-[320px] bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10 z-[101] lg:hidden flex flex-col shadow-2xl"
                 >
-                  <MessageSquare className="w-5 h-5" />
-                </Link>
-                <button 
-                  onClick={() => setIsFriendsDrawerOpen(true)}
-                  className={`p-2 rounded-full transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'}`}
-                >
-                  <Users className="w-5 h-5" />
-                </button>
-                <NotificationBell iconClassName={scrolled ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white hover:bg-white/20'} />
+                  {/* Drawer Header */}
+                  <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-2">
+                        <Logo src={settings?.logo} />
+                        <span className="font-heading text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">{settings?.siteName || 'Nexoria'}</span>
+                      </div>
+                      <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 bg-slate-200/50 dark:bg-slate-700/50 rounded-full text-slate-500"><X className="w-5 h-5" /></button>
+                    </div>
+                    {user ? (
+                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between bg-white/50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center gap-3">
+                          <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-12 h-12 rounded-xl object-cover" alt="Profile" />
+                          <div>
+                            <p className="font-bold text-base text-slate-900 dark:text-white line-clamp-1">{user.name}</p>
+                            <p className="text-[10px] text-primary font-bold uppercase">{user.role}</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                      </Link>
+                    ) : (
+                      <div className="flex gap-3">
+                        <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 py-2.5 bg-white dark:bg-slate-800 rounded-xl font-bold text-center text-sm border border-slate-200 dark:border-slate-700">Login</Link>
+                        <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-center text-sm">Sign Up</Link>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Drawer Links */}
+                  <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden space-y-1.5">
+                    <form onSubmit={handleSearchSubmit} className="mb-3">
+                      <CustomSearchBar value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search..." />
+                    </form>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase px-2 pb-1">Navigation</h4>
+                    {user && <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><UserIcon className="w-5 h-5 text-emerald-500" /> My Dashboard</Link>}
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Compass className="w-5 h-5 text-primary" /> Home</Link>
+                    <Link to="/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Smartphone className="w-5 h-5 text-indigo-500" /> Apps</Link>
+                    <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><LayoutGrid className="w-5 h-5 text-blue-500" /> Categories</Link>
+                    <Link to="/moviebox/games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Gamepad2 className="w-5 h-5 text-blue-500" /> Games</Link>
+                    <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Music className="w-5 h-5 text-purple-500" /> Classic Sound</Link>
+                    <Link to="/nexoria-music" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Music className="w-5 h-5 text-pink-500" /> Nexoria Music</Link>
+                    <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Gamepad2 className="w-5 h-5 text-red-500" /> Arena</Link>
+                    <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-xl font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors"><Flame className="w-5 h-5" /> Aura Leaderboard</Link>
+                    <Link to="/video-downloader" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><DownloadCloud className="w-5 h-5 text-emerald-500" /> YT Downloader</Link>
+                    <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 rounded-xl font-bold text-sm transition-colors"><Compass className="w-5 h-5 text-indigo-500" /> Requests</Link>
+                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-800/30 rounded-xl font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors"><Star className="w-5 h-5" /> Premium</Link>
+                    {user && (
+                      <div className="pt-3 border-t border-slate-200/50 dark:border-slate-700/50 mt-2 space-y-1.5">
+                        <h4 className="text-xs font-bold text-slate-400 uppercase px-2">Settings</h4>
+                        <div className="flex items-center justify-between px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                          <span className="font-bold text-sm">Content Mode</span>
+                          <button onClick={() => { setIsMobileMenuOpen(false); setIsParentalModalOpen(true); }} className="flex items-center bg-slate-200 dark:bg-slate-900 rounded-full p-1 border border-slate-300 dark:border-slate-700">
+                            <div className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${!isKidsMode ? 'bg-rose-500 text-white' : 'text-slate-500'}`}>ADULT</div>
+                            <div className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${isKidsMode ? 'bg-emerald-500 text-white' : 'text-slate-500'}`}>KIDS</div>
+                          </button>
+                        </div>
+                        {['admin', 'superadmin', 'owner'].includes(user.role) && (
+                          <Link to={user.role !== 'admin' ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl font-semibold text-sm transition-colors">
+                            <ShieldAlert className="w-5 h-5 text-slate-400" /> Admin Panel
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Drawer Footer */}
+                  <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0 flex flex-col gap-3">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-sm text-slate-600 dark:text-slate-300">Theme</span>
+                      <div className="flex gap-2">
+                        <button onClick={toggleCyberpunk} className={`p-2 shadow-sm rounded-full active:scale-95 ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}><Gamepad2 className="w-5 h-5" /></button>
+                        <button onClick={toggleTheme} className="p-2 bg-white dark:bg-slate-700 shadow-sm rounded-full text-slate-600 dark:text-slate-300 active:scale-95">{isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}</button>
+                      </div>
+                    </div>
+                    {user && (
+                      <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full flex items-center justify-center gap-2 py-3.5 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
               </>
             )}
-            {user && (
-              <Link to="/dashboard" className="hidden sm:block ml-1">
-                <FallbackImage src={user.profileImage} fallbackType="avatar" className={`w-8 h-8 rounded-full border-2 object-cover ${scrolled ? 'border-primary' : 'border-white'}`} alt="avatar" />
-              </Link>
-            )}
-            <button className={`p-2 ml-1 transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
+          </AnimatePresence>
 
-        {/* Premium Mobile Drawer */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] lg:hidden"
-              />
-              
-              {/* Drawer */}
-              <motion.div 
-                initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed top-0 bottom-0 left-0 h-[100dvh] w-[85%] max-w-[320px] bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10 z-[101] lg:hidden flex flex-col shadow-2xl"
-              >
-                {/* Drawer Header & Profile */}
-                <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                      <Logo src={settings?.logo} />
-                      <span className="font-heading text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent tracking-tight">
-                        {settings?.siteName || 'Nexoria'}
-                      </span>
-                    </div>
-                    <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 bg-slate-200/50 dark:bg-slate-700/50 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                  
-                  {user ? (
-                    <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between group active:scale-[0.98] transition-transform bg-white/50 dark:bg-slate-800/50 p-2 rounded-xl active:scale-[0.98] border border-slate-200 dark:border-slate-700">
-                      <div className="flex items-center gap-3">
-                        <div className={`shrink-0 rounded-xl ${
-                            user.profileBorder === 'fire' ? 'ring-2 ring-orange-500 shadow-[0_0_15px_orange]' :
-                            user.profileBorder === 'neon' ? 'ring-2 ring-cyan-400 shadow-[0_0_20px_cyan]' :
-                            user.profileBorder === 'holographic' ? 'ring-2 ring-fuchsia-500 shadow-[0_0_15px_fuchsia]' :
-                            user.profileBorder === 'gold' ? 'ring-2 ring-yellow-400 shadow-[0_0_15px_yellow]' : 'border-2 border-primary/50'
-                        }`}>
-                          <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-12 h-12 rounded-xl object-cover shadow-sm" alt="Profile" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-base text-slate-900 dark:text-white line-clamp-1">{user.name}</p>
-                          <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{user.role}</p>
-                        </div>
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                        <ChevronRight className="w-4 h-4" />
-                      </div>
-                    </Link>
-                  ) : (
-                    <div className="flex flex-col gap-3">
-                      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Join our community</p>
-                      <div className="flex gap-3">
-                        <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 py-2.5 bg-white dark:bg-slate-800 rounded-xl font-bold text-center text-sm shadow-sm border border-slate-200 dark:border-slate-700">Login</Link>
-                        <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-center text-sm shadow-lg shadow-primary/30">Sign Up</Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Drawer Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 [&::-webkit-scrollbar]:hidden">
-                  <form onSubmit={handleSearchSubmit} className="relative flex justify-center mt-2">
-                    <CustomSearchBar 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search apps, games..."
-                    />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-20">
-                      <select 
-                        value={voiceLang}
-                        onChange={(e) => setVoiceLang(e.target.value)}
-                        className="bg-transparent text-[10px] font-bold text-slate-500 dark:text-slate-400 focus:outline-none cursor-pointer appearance-none"
-                      >
-                        <option value="en-US">EN</option>
-                        <option value="bn-BD">BN</option>
-                        <option value="hi-IN">HI</option>
-                      </select>
-                      <button type="button" onClick={startVoiceSearch} className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-primary transition-colors">
-                        <Mic className="w-4 h-4"/>
-                      </button>
-                    </div>
-                  </form>
-
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Navigation</h4>
-                    {user && (
-                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                        <UserIcon className="w-5 h-5 text-emerald-500" /> My Dashboard
-                      </Link>
-                    )}
-                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Compass className="w-5 h-5 text-primary" /> Home
-                    </Link>
-                    <Link to="/apps" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Smartphone className="w-5 h-5 text-indigo-500" /> Apps
-                    </Link>
-                    <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <LayoutGrid className="w-5 h-5 text-blue-500" /> Categories
-                    </Link>
-                    <Link to="/moviebox/games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Gamepad2 className="w-5 h-5 text-blue-500" /> Games
-                    </Link>
-                    <Link to="/sound" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Music className="w-5 h-5 text-purple-500" /> Classic Sound
-                    </Link>
-                    <Link to="/nexoria-music" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Music className="w-5 h-5 text-pink-500" /> Nexoria Music
-                    </Link>
-                    <Link to="/nexoria-arena" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Gamepad2 className="w-5 h-5 text-red-500" /> Arena
-                    </Link>
-                    <Link to="/snehashis-games" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Gamepad2 className="w-5 h-5 text-sky-500" /> Snehashis Games
-                    </Link>
-                    <Link to="/ethical-hacking" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-800/50 rounded-xl active:scale-[0.98] font-bold text-sm text-emerald-700 dark:text-emerald-400 transition-colors mt-2">
-                      <Terminal className="w-5 h-5" /> Ethical Hacking
-                    </Link>
-                    <Link to="/aura" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 rounded-xl active:scale-[0.98] font-bold text-sm text-amber-600 dark:text-amber-400 transition-colors">
-                      🔥 Aura Leaderboard
-                    </Link>
-                    <Link to="/video-downloader" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <DownloadCloud className="w-5 h-5 text-emerald-500" /> YT Downloader
-                    </Link>
-                    <Link to="/requests" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl active:scale-[0.98] font-bold text-sm text-slate-700 dark:text-slate-200 transition-colors">
-                      <Compass className="w-5 h-5 text-indigo-500" /> Requests
-                    </Link>
-                    <Link to="/premium" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-r from-indigo-400/10 to-purple-500/10 hover:from-indigo-400/20 hover:to-purple-500/20 border border-indigo-400/20 rounded-xl active:scale-[0.98] font-bold text-sm text-indigo-600 dark:text-indigo-400 transition-colors">
-                      <Star className="w-5 h-5" /> Premium 💎
-                    </Link>
-                  </div>
-
-                  {user && (
-                    <div className="space-y-2 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Account & Settings</h4>
-                      
-                      <div className="flex items-center justify-between px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl active:scale-[0.98] mb-2">
-                        <span className="font-bold text-sm text-slate-700 dark:text-slate-200">Content Mode</span>
-                        <button
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            setIsParentalModalOpen(true);
-                          }}
-                          className="flex items-center bg-slate-200 dark:bg-slate-900 rounded-full p-1 shadow-inner border border-slate-300 dark:border-slate-700 transition-colors"
-                        >
-                          <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30' : 'text-slate-500 dark:text-slate-400'}`}>
-                            🔞 ADULT
-                          </div>
-                          <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'text-slate-500 dark:text-slate-400'}`}>
-                            🧸 KIDS
-                          </div>
-                        </button>
-                      </div>
-
-                      <Link to="/messages" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl active:scale-[0.98] font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
-                        <MessageSquare className="w-5 h-5 text-slate-400" /> Messages
-                      </Link>
-                      {['admin', 'superadmin', 'owner'].includes(user.role) && (
-                        <Link to={(user.role === 'superadmin' || user.role === 'owner') ? '/superadmin' : '/admin'} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl active:scale-[0.98] font-semibold text-sm text-slate-600 dark:text-slate-300 transition-colors">
-                          <ShieldAlert className="w-5 h-5 text-slate-400" /> Admin Panel
-                        </Link>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Drawer Footer */}
-                <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 shrink-0 mt-auto flex flex-col gap-4">
-                  <div className="flex justify-between items-center px-2">
-                    <span className="font-bold text-sm text-slate-600 dark:text-slate-300">Theme</span>
-                    <div className="flex gap-2">
-                      <button onClick={toggleCyberpunk} className={`p-2 shadow-sm rounded-full transition-transform active:scale-95 ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
-                        <Gamepad2 className="w-5 h-5" />
-                      </button>
-                      <button onClick={() => { setIsMobileMenuOpen(false); handleSurpriseMe(); }} className="p-2 shadow-sm rounded-full transition-transform active:scale-95 bg-white dark:bg-slate-700 text-indigo-500 dark:text-indigo-400">
-                        <Dices className="w-5 h-5" />
-                      </button>
-                      <button onClick={toggleTheme} className="p-2 bg-white dark:bg-slate-700 shadow-sm rounded-full text-slate-600 dark:text-slate-300 transition-transform active:scale-95">
-                        {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                      </button>
-                    </div>
-                  </div>
-                  {user && (
-                    <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full flex items-center justify-center gap-2 py-3.5 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl active:scale-[0.98] font-bold text-sm transition-colors hover:bg-red-100 dark:hover:bg-red-900/40">
-                      <LogOut className="w-4 h-4" /> Sign Out
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-
-        <ParentalGateModal
-          isOpen={isParentalModalOpen}
-          onClose={() => setIsParentalModalOpen(false)}
-          mode={isKidsMode ? 'disable' : 'enable'}
-          onSuccess={() => dispatch(toggleKidsMode())}
-        />
+          <ParentalGateModal
+            isOpen={isParentalModalOpen}
+            onClose={() => setIsParentalModalOpen(false)}
+            mode={isKidsMode ? 'disable' : 'enable'}
+            onSuccess={() => dispatch(toggleKidsMode())}
+          />
         </nav>
       </div>
-
-      {user && (
-        <>
-          <FriendsDrawer 
-            isOpen={isFriendsDrawerOpen} 
-            onClose={() => setIsFriendsDrawerOpen(false)} 
-            onOpenChat={(friendUser) => navigate('/messages?user=' + friendUser._id)} 
-          />
-        </>
-      )}
-
-      {/* Spacer to prevent content overlap */}
       <div className="h-24"></div>
-      
-      {/* Mobile Bottom Navigation */}
       <BottomNavigation onMenuClick={() => setIsMobileMenuOpen(true)} />
     </>
   );
