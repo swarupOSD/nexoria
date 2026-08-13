@@ -155,17 +155,17 @@ const NexoriaMusicPlaylist = () => {
 
   if (isLoading || isFetching) {
     return (
-      <div className="min-h-full bg-[#0F0F23] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#22C55E] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin shadow-[0_0_15px_rgba(210,187,255,0.5)]"></div>
       </div>
     );
   }
 
   if (!playlist) {
     return (
-      <div className="min-h-full bg-[#0F0F23] flex flex-col items-center justify-center text-white pb-32">
-        <h2 className="text-3xl font-bold mb-4">Playlist not found</h2>
-        <button onClick={() => navigate('/nexoria-music/library')} className="px-6 py-2 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-on-surface pb-32">
+        <h2 className="font-display-lg text-headline-sm font-bold mb-4">Playlist not found</h2>
+        <button onClick={() => navigate('/nexoria-music/library')} className="px-6 py-3 bg-primary text-on-primary font-bold rounded-full hover:scale-105 transition-transform active:scale-95 glow-primary uppercase tracking-wider text-sm">
           Go back to Library
         </button>
       </div>
@@ -173,206 +173,217 @@ const NexoriaMusicPlaylist = () => {
   }
 
   return (
-    <div className="min-h-full bg-[#0F0F23] text-white">
+    <div className="bg-background text-on-surface font-body-md min-h-screen relative pb-32">
       {/* Mobile Sticky Header */}
-      <div className="sm:hidden sticky top-0 z-50 bg-[#0F0F23]/80 backdrop-blur-xl border-b border-white/5 flex items-center px-4 h-14">
+      <div className="md:hidden sticky top-0 z-50 bg-background/90 backdrop-blur-3xl border-b border-outline-variant/30 flex items-center px-4 h-16 shadow-lg">
         <button 
           onClick={() => navigate(-1)}
-          className="w-8 h-8 flex items-center justify-center text-white active:scale-90 transition-transform"
+          className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-90 transition-transform bg-surface-container rounded-full"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5" />
         </button>
-        <span className="flex-1 text-center font-bold text-white text-sm truncate px-2">{playlist.title}</span>
-        <div className="w-8" /> {/* Spacer for centering */}
+        <span className="flex-1 text-center font-display-lg font-bold text-on-surface text-lg truncate px-2">{playlist.title}</span>
+        <div className="w-10" /> {/* Spacer for centering */}
       </div>
 
-      {/* Header Gradient */}
-      <div className="min-h-[350px] md:min-h-[300px] bg-gradient-to-b from-[#4A4A4A] to-[#0F0F23] flex items-end px-4 sm:px-6 pb-4 sm:pb-6 pt-6 sm:pt-16 relative z-0">
+      {/* Hero Section */}
+      <section className="relative w-full h-[450px] md:h-[500px] overflow-hidden mb-8">
+        <div className="absolute inset-0 bg-surface-container-high opacity-50 z-0">
+          {playlist.coverImage && (
+             <img src={playlist.coverImage} className="w-full h-full object-cover blur-3xl scale-110 opacity-60" alt="" />
+          )}
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent z-0"></div>
+        
         <button 
           onClick={() => navigate(-1)}
-          className="hidden sm:flex absolute top-4 sm:top-6 left-4 sm:left-6 w-10 h-10 bg-[#0F0F23]/40 hover:bg-[#0F0F23]/60 rounded-full items-center justify-center transition-colors"
+          className="hidden md:flex absolute top-6 left-6 w-12 h-12 bg-surface-container-high/50 hover:bg-surface-container-highest backdrop-blur-md rounded-full items-center justify-center transition-colors z-20 text-on-surface-variant hover:text-on-surface border border-outline-variant/30"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
         
-        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-end z-10 relative w-full">
-          <div className="w-48 h-48 sm:w-56 sm:h-56 bg-[#1E1B4B] shadow-2xl flex items-center justify-center rounded-sm overflow-hidden shrink-0 mx-auto md:mx-0">
+        <div className="absolute bottom-0 left-0 p-6 md:px-margin-desktop md:pb-12 w-full flex flex-col md:flex-row items-end gap-6 md:gap-8 max-w-[1440px] mx-auto z-10">
+          <div className="w-48 h-48 md:w-64 md:h-64 bg-surface-container-high shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center justify-center rounded-xl overflow-hidden shrink-0 mx-auto md:mx-0 border border-outline-variant/20 relative group">
             {playlist.coverImage ? (
-              <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover" />
+              <img src={playlist.coverImage} alt={playlist.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-[#b3b3b3]">
-                <Heart className="w-10 h-10 sm:w-16 sm:h-16 mb-2" />
-                <span className="font-medium text-xs sm:text-sm">Playlist</span>
+              <div className="w-full h-full flex flex-col items-center justify-center text-on-surface-variant">
+                <Heart className="w-16 h-16 mb-4" />
+                <span className="font-label-sm font-bold uppercase tracking-widest">Playlist</span>
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1 w-full text-center md:text-left mt-2 md:mt-0">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center justify-center md:justify-start gap-2">
+          <div className="flex flex-col flex-1 w-full text-center md:text-left">
+            <span className="font-label-sm text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-primary mb-2 flex items-center justify-center md:justify-start gap-2 glow-accent">
               {playlist.isCollaborative ? (
                 <>
-                  <Users className="w-4 h-4 text-[#22C55E]" />
-                  <span className="text-[#22C55E]">Collaborative Playlist</span>
+                  <Users className="w-4 h-4 text-primary" />
+                  Collaborative
                 </>
               ) : (
-                'Public Playlist'
+                'Playlist'
               )}
             </span>
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white pb-1 sm:pb-2 drop-shadow-md line-clamp-2 sm:line-clamp-3 w-full" title={playlist.title}>{playlist.title}</h1>
+            <h1 className="font-display-lg text-[40px] sm:text-[56px] md:text-[80px] lg:text-[96px] font-bold tracking-tighter text-on-surface pb-2 drop-shadow-lg leading-none glow-text line-clamp-2 md:line-clamp-3 w-full" title={playlist.title}>{playlist.title}</h1>
             {playlist.description && (
-              <p className="text-[#b3b3b3] text-xs sm:text-sm md:text-base mb-1 sm:mb-2 font-medium line-clamp-2 md:line-clamp-1">{playlist.description}</p>
+              <p className="font-body-md text-sm md:text-title-md text-on-surface-variant mb-4 font-medium line-clamp-2 md:line-clamp-1 max-w-2xl mx-auto md:mx-0">{playlist.description}</p>
             )}
-            <div className="flex items-center justify-center md:justify-start gap-2 text-xs sm:text-sm text-zinc-300 font-medium flex-wrap">
+            <div className="flex items-center justify-center md:justify-start gap-3 font-label-sm text-sm uppercase tracking-wider text-on-surface-variant flex-wrap font-bold">
               <span 
-                className="font-bold text-white hover:underline cursor-pointer"
+                className="text-on-surface hover:text-primary hover:underline cursor-pointer transition-colors"
                 onClick={() => {
                   if (playlist.creator?._id) navigate(`/nexoria-music/user/${playlist.creator._id}`);
                 }}
               >
-                {playlist.creator?.name || 'User'}
+                {playlist.creator?.name || 'Nexoria User'}
               </span>
-              <span className="w-1 h-1 bg-white rounded-full mx-1"></span>
+              <span className="w-1.5 h-1.5 bg-primary rounded-full glow-accent"></span>
               <span>{tracks.length} songs</span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Play Controls Action Row */}
-      <div className="px-6 py-6 flex items-center justify-between relative z-10 bg-[#0F0F23]/10 backdrop-blur-sm">
+      <div className="px-4 md:px-margin-desktop py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 max-w-[1440px] mx-auto mb-8 border-b border-outline-variant/20">
         <div className="flex items-center gap-6">
           <button 
             onClick={() => tracks.length > 0 && handlePlay(tracks[0], tracks)}
-            className="w-14 h-14 bg-[#22C55E] rounded-full flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-xl"
+            className="w-16 h-16 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(210,187,255,0.4)] hover:scale-105 active:scale-95 transition-all glow-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             disabled={tracks.length === 0}
           >
-            {isPlaying ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
+            {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" style={{ fontVariationSettings: "'FILL' 1" }} />}
           </button>
           
           <button 
             onClick={handleDownloadPlaylist}
             disabled={isDownloading || tracks.length === 0}
-            className="w-10 h-10 border border-white/30 rounded-full flex items-center justify-center text-white hover:border-white transition-colors"
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors border ${isPlaylistDownloaded ? 'border-primary text-primary hover:bg-primary/10 glow-accent' : 'border-outline-variant text-on-surface-variant hover:text-on-surface hover:border-on-surface'}`}
             title={isPlaylistDownloaded ? "Remove Downloads" : "Download Playlist"}
           >
             {isDownloading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-6 h-6 animate-spin" />
             ) : isPlaylistDownloaded ? (
-              <CheckCircle2 className="w-6 h-6 text-[#22C55E]" />
+              <CheckCircle2 className="w-6 h-6 fill-current" />
             ) : (
-              <Download className="w-5 h-5" />
+              <Download className="w-6 h-6" />
             )}
           </button>
         </div>
         
         {isOwner && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 self-end sm:self-auto">
             <button 
               onClick={handleToggleCollaborative}
               disabled={isToggling}
-              className={`flex items-center gap-2 font-medium transition-colors border px-4 py-1.5 rounded-full text-sm ${playlist.isCollaborative ? 'border-[#22C55E] text-[#22C55E] hover:bg-[#22C55E]/10' : 'border-[#94A3B8] text-[#94A3B8] hover:border-white hover:text-white'}`}
+              className={`flex items-center gap-2 font-label-sm font-bold uppercase tracking-wider transition-colors border px-6 py-3 rounded-full text-xs md:text-sm ${playlist.isCollaborative ? 'border-primary text-primary hover:bg-primary/10' : 'border-outline-variant text-on-surface-variant hover:border-on-surface hover:text-on-surface'}`}
             >
-              <Users className="w-4 h-4" />
-              <span>{playlist.isCollaborative ? 'Collaborative' : 'Make Collaborative'}</span>
+              <Users className="w-4 h-4 md:w-5 md:h-5" />
+              <span>{playlist.isCollaborative ? 'Collaborative' : 'Make Collab'}</span>
             </button>
             <button 
               onClick={handleDeletePlaylist}
               disabled={isDeleting}
-              className="flex items-center gap-2 text-[#94A3B8] hover:text-red-500 font-medium transition-colors"
+              className="flex items-center justify-center w-12 h-12 rounded-full border border-outline-variant text-on-surface-variant hover:border-error hover:text-error hover:bg-error/10 transition-colors"
+              title="Delete Playlist"
             >
               <Trash2 className="w-5 h-5" />
-              <span>Delete</span>
             </button>
           </div>
         )}
       </div>
 
-      <div className="px-2 sm:px-6 pb-20 relative z-10">
+      <div className="px-4 md:px-margin-desktop pb-20 relative z-10 max-w-[1440px] mx-auto">
         {tracks.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="inline-block p-6 rounded-full bg-white/5 mb-4">
-              <MoreHorizontal className="w-12 h-12 text-[#94A3B8]" />
+          <div className="text-center py-24 glass-card rounded-3xl border border-outline-variant/20 mx-4 md:mx-0">
+            <div className="inline-block p-6 rounded-full bg-surface-container-highest mb-6 shadow-inner">
+              <MoreHorizontal className="w-12 h-12 text-on-surface-variant" />
             </div>
-            <h3 className="text-xl font-bold mb-2">It's a bit empty here...</h3>
+            <h3 className="font-display-lg text-headline-sm font-bold mb-3 text-on-surface">It's a bit empty here...</h3>
             {isOwner ? (
               <>
-                <p className="text-[#94A3B8] font-medium">Find some songs to add to your playlist.</p>
+                <p className="font-body-md text-on-surface-variant font-medium">Find some songs to add to your playlist.</p>
                 <button 
-                  onClick={() => navigate('/nexoria-music/tracks')}
-                  className="mt-6 px-8 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
+                  onClick={() => navigate('/nexoria-music/search')}
+                  className="mt-8 px-8 py-4 bg-primary text-on-primary font-bold rounded-full hover:scale-105 active:scale-95 transition-transform uppercase tracking-widest text-sm glow-primary"
                 >
                   Find Songs
                 </button>
               </>
             ) : (
-              <p className="text-[#94A3B8] font-medium">The creator hasn't added any songs yet.</p>
+              <p className="font-body-md text-on-surface-variant font-medium">The creator hasn't added any songs yet.</p>
             )}
           </div>
         ) : (
-          <>
+          <div className="glass-card border border-outline-variant/20 rounded-2xl overflow-hidden bg-surface-container-low">
             {/* Table Header */}
-            <div className="grid grid-cols-[40px_1fr_60px] md:grid-cols-[40px_minmax(0,4fr)_minmax(0,2fr)_80px] gap-2 sm:gap-4 px-2 sm:px-4 py-2 text-xs text-[#94A3B8] border-b border-white/10 mb-1 sticky top-16 bg-[#0F0F23] z-10 uppercase tracking-widest font-medium">
+            <div className="grid grid-cols-[40px_1fr_40px] md:grid-cols-[40px_minmax(0,4fr)_minmax(0,2fr)_100px] gap-4 px-4 sm:px-6 py-4 font-label-sm text-xs text-on-surface-variant border-b border-outline-variant/20 sticky top-16 bg-surface-container-low/95 backdrop-blur-md z-10 uppercase tracking-widest font-bold">
               <div className="text-right">#</div>
               <div>Title</div>
               <div className="hidden md:block">Album</div>
-              <div className="flex justify-end pr-1"><Clock className="w-4 h-4" /></div>
+              <div className="flex justify-end pr-2"><Clock className="w-4 h-4" /></div>
             </div>
 
             {/* Tracks List */}
-            <div className="flex flex-col">
+            <div className="flex flex-col p-2">
               {tracks.map((track, idx) => {
                 const isActive = currentTrack?._id === track._id;
                 return (
                   <div 
                     key={track._id} 
-                    className="grid grid-cols-[40px_1fr_60px] md:grid-cols-[40px_minmax(0,4fr)_minmax(0,2fr)_80px] gap-2 sm:gap-4 px-2 sm:px-4 py-2 hover:bg-white/10 group transition-colors rounded-md items-center cursor-pointer active:scale-[0.98] transition-transform"
+                    className="grid grid-cols-[40px_1fr_40px] md:grid-cols-[40px_minmax(0,4fr)_minmax(0,2fr)_100px] gap-4 px-2 sm:px-4 py-3 hover:bg-surface-container group transition-colors rounded-xl items-center cursor-pointer border-none"
                     onClick={() => handlePlay(track, tracks)}
                     onContextMenu={(e) => handleContextMenu(e, track)}
                   >
                     <div className="flex items-center justify-end shrink-0">
-                      <span className={`text-sm group-hover:hidden ${isActive ? 'text-[#22C55E]' : 'text-[#94A3B8]'}`}>{idx + 1}</span>
+                      <span className={`font-label-sm font-bold text-sm group-hover:hidden ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}>{idx + 1}</span>
                       <span className="hidden group-hover:flex">
-                        {isActive && isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
+                        {isActive && isPlaying ? <Pause className="w-5 h-5 fill-current text-on-surface" /> : <Play className="w-5 h-5 fill-current text-on-surface" style={{ fontVariationSettings: "'FILL' 1" }} />}
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#4338CA] shrink-0 rounded shadow-md overflow-hidden">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-surface-container-high shrink-0 rounded-md shadow-md overflow-hidden relative">
                         {(track.coverImage || track.album?.coverImage || track.artist?.image) && (
                           <img src={track.coverImage || track.album?.coverImage || track.artist?.image} alt={track.title} className="w-full h-full object-cover" />
                         )}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity md:hidden">
+                            {isActive && isPlaying ? <Pause className="w-4 h-4 fill-current text-white" /> : <Play className="w-4 h-4 fill-current text-white" style={{ fontVariationSettings: "'FILL' 1" }} />}
+                        </div>
                       </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className={`truncate text-sm font-medium ${isActive ? 'text-[#22C55E]' : 'text-white'}`}>{track.title}</span>
+                      <div className="flex flex-col min-w-0 justify-center">
+                        <span className={`truncate font-body-md font-bold text-base ${isActive ? 'text-primary' : 'text-on-surface'}`}>{track.title}</span>
                         {track.artist ? (
-                          <Link to={`/nexoria-music/artist/${track.artist._id}`} className="text-[#94A3B8] hover:underline hover:text-white transition-colors truncate text-xs" onClick={(e) => e.stopPropagation()}>
+                          <Link to={`/nexoria-music/artist/${track.artist._id}`} className="text-on-surface-variant hover:underline hover:text-on-surface transition-colors truncate font-label-sm text-sm" onClick={(e) => e.stopPropagation()}>
                             {track.artist.name}
                           </Link>
                         ) : (
-                          <span className="text-[#94A3B8] truncate text-xs">Unknown Artist</span>
+                          <span className="text-on-surface-variant truncate font-label-sm text-sm">Unknown Artist</span>
                         )}
                       </div>
                     </div>
                     
-                    <div className="hidden md:block min-w-0">
+                    <div className="hidden md:block min-w-0 flex items-center">
                       {track.album ? (
-                        <Link to={`/nexoria-music/album/${track.album._id}`} className="text-[#94A3B8] hover:underline hover:text-white transition-colors truncate text-sm block" onClick={(e) => e.stopPropagation()}>
+                        <Link to={`/nexoria-music/album/${track.album._id}`} className="text-on-surface-variant hover:underline hover:text-on-surface transition-colors truncate font-label-sm text-sm" onClick={(e) => e.stopPropagation()}>
                           {track.album.title}
                         </Link>
                       ) : (
-                        <span className="text-[#94A3B8] truncate text-sm block">{track.title}</span>
+                        <span className="text-on-surface-variant truncate font-label-sm text-sm">{track.title}</span>
                       )}
                     </div>
                     
-                    <div className="flex items-center justify-end gap-1 sm:gap-2 text-[#94A3B8]">
+                    <div className="flex items-center justify-end gap-3 sm:gap-4 text-on-surface-variant pr-2">
                       {isOwner && !algorithmicPlaylist && (
-                        <button className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-500 p-1" onClick={(e) => handleRemoveTrack(e, track._id)} title="Remove from Playlist">
-                          <Trash2 className="w-4 h-4" />
+                        <button className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-error p-1 hidden sm:block" onClick={(e) => handleRemoveTrack(e, track._id)} title="Remove from Playlist">
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       )}
-                      <button className={`transition-opacity hover:text-white p-1 ${likedTracks?.includes(track._id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} onClick={(e) => { e.stopPropagation(); dispatch(toggleLikeTrack(track._id)); }}>
-                        <Heart className={`w-4 h-4 ${likedTracks?.includes(track._id) ? 'fill-[#22C55E] text-[#22C55E]' : ''}`} />
+                      <button className={`transition-opacity hover:scale-110 p-1 ${likedTracks?.includes(track._id) ? 'opacity-100 text-primary glow-accent' : 'opacity-0 group-hover:opacity-100 hover:text-on-surface'}`} onClick={(e) => { e.stopPropagation(); dispatch(toggleLikeTrack(track._id)); }}>
+                        <Heart className={`w-5 h-5 ${likedTracks?.includes(track._id) ? 'fill-primary' : ''}`} />
                       </button>
-                      <span className="text-xs tabular-nums w-8 sm:w-10 text-right">
+                      <span className="font-label-sm text-sm tabular-nums w-8 sm:w-10 text-right">
                         {track.duration ? `${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, '0')}` : ''}
                       </span>
                     </div>
@@ -380,7 +391,7 @@ const NexoriaMusicPlaylist = () => {
                 );
               })}
             </div>
-          </>
+          </div>
         )}
       </div>
       

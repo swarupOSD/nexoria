@@ -42,6 +42,8 @@ const LudoWrapper = lazy(() => import('./pages/LudoWrapper'));
 // MovieBox (lazy)
 const MovieBoxLayout = lazy(() => import('./components/MovieBoxLayout'));
 const TMDBMovieSection = lazy(() => import('./pages/TMDBMovieSection'));
+const TMDBMovieDetail = lazy(() => import('./pages/TMDBMovieDetail'));
+const TMDBMovieSearch = lazy(() => import('./pages/TMDBMovieSearch'));
 const MovieDetail = lazy(() => import('./pages/MovieDetail'));
 const MovieCategory = lazy(() => import('./pages/MovieCategory'));
 const MovieSearch = lazy(() => import('./pages/MovieSearch'));
@@ -171,6 +173,8 @@ import KidsModeGuard from './components/KidsModeGuard';
 import GlobalMusicPlayer from './components/GlobalMusicPlayer';
 import NexoriaPlayer from './components/NexoriaPlayer';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
+import SuperAdminRoute from './components/SuperAdminRoute';
 import AdBlockDetector from './components/AdBlockDetector';
 
 // Loader component for suspense fallback
@@ -241,6 +245,17 @@ function App() {
     };
     initCapacitor();
 
+    // Lightweight ping to reduce cold-start friction on Render
+    const pingBackend = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        await fetch(`${apiUrl}/health`);
+      } catch (err) {
+        console.warn('Backend ping failed:', err);
+      }
+    };
+    pingBackend();
+
     return () => {
       if (window.Capacitor?.isNative) {
         CapacitorApp.removeAllListeners();
@@ -306,7 +321,6 @@ function App() {
                   <Route path="/sound/creator-studio" element={<CreatorStudio />} />
                   <Route path="/creator-studio" element={<CreatorStudio />} />
 
-                  <Route path="/category/:slug" element={<CategoryPage />} />
                   <Route path="categories" element={<AllCategories />} />
                   <Route path="category/:slug" element={<CategoryPage />} />
                   <Route path="search" element={<SearchPage />} />
@@ -348,6 +362,8 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="moviebox" element={<MovieBoxLayout />}>
                 <Route index element={<TMDBMovieSection />} />
+                <Route path="tmdb/search" element={<TMDBMovieSearch />} />
+                <Route path="tmdb/:type/:id" element={<TMDBMovieDetail />} />
                 <Route path="movie/:slug" element={<MovieDetail />} />
                 <Route path="category/:slug" element={<MovieCategory />} />
                 <Route path="search" element={<MovieSearch />} />
@@ -377,7 +393,7 @@ function App() {
 
 
 
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
               <Route index element={<AdminDashboard />} />
               <Route path="posts" element={<AdminPosts />} />
               <Route path="posts/create" element={<CreatePost />} />
@@ -417,7 +433,7 @@ function App() {
             </Route>
 
               {/* Super Admin Protected Routes */}
-            <Route path="/superadmin" element={<SuperAdminLayout />}>
+            <Route path="/superadmin" element={<SuperAdminRoute><SuperAdminLayout /></SuperAdminRoute>}>
               <Route index element={<SuperDashboard />} />
               <Route path="users" element={<ManageUsers />} />
               <Route path="admins" element={<ManageAdmins />} />

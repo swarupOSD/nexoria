@@ -8,7 +8,7 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
 
 // ⚠️ Put this in your .env file: VITE_TMDB_API_KEY=your_api_key_here
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '8d6d91941230817f7807d643736e8a49'; // Added fallback key so it works immediately
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 
 // --- Image URL helpers ---
 export const tmdbImage = (path, size = 'w500') => {
@@ -20,18 +20,7 @@ export const tmdbBackdrop = (path) => tmdbImage(path, 'w1280');
 export const tmdbPoster = (path) => tmdbImage(path, 'w500');
 export const tmdbOriginal = (path) => tmdbImage(path, 'original');
 
-// --- Streaming URL (vidsrc.to — free, no hosting needed) ---
-export const getStreamUrl = (tmdbId, type = 'movie', season = null, episode = null) => {
-  if (type === 'tv' && season && episode) {
-    return `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`;
-  }
-  return `https://vidsrc.to/embed/${type}/${tmdbId}`;
-};
 
-// --- Alternate stream sources (fallback) ---
-export const getAltStreamUrl = (tmdbId, type = 'movie') => {
-  return `https://embed.su/embed/${type}/${tmdbId}`;
-};
 
 // --- Core fetch function ---
 const tmdbFetch = async (endpoint, params = {}) => {

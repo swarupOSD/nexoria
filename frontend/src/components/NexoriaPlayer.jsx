@@ -679,24 +679,26 @@ const NexoriaPlayer = () => {
                   initial={{ y: '100%', opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: '100%', opacity: 0 }}
-                  className="fixed bottom-[calc(65px+env(safe-area-inset-bottom,0px))] left-2 right-2 z-[90] bg-[#1E1B4B] border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer flex flex-col active:scale-[0.98] transition-transform"
                   onClick={() => setIsExpanded(true)}
+                  className="sm:hidden fixed bottom-[60px] left-0 right-0 h-16 bg-surface-container/60 backdrop-blur-3xl border-t border-outline-variant/30 flex flex-col z-[120] cursor-pointer shadow-[0_-10px_20px_rgba(0,0,0,0.2)]"
                 >
-                  <div className="flex items-center p-2 gap-3">
-                    <div className="w-10 h-10 rounded-md overflow-hidden bg-[#4338CA] shrink-0 shadow-inner">
-                      {getTrackArtwork(currentTrack) && (
-                        <img src={getTrackArtwork(currentTrack)} className="w-full h-full object-cover" alt="" />
-                      )}
+                  <div className="flex-1 flex justify-between items-center px-4">
+                    <div className="flex items-center gap-4 flex-1 pr-2">
+                      <div className="w-14 h-14 bg-surface-container rounded-md overflow-hidden shrink-0 shadow-md">
+                        {getTrackArtwork(currentTrack) && (
+                          <img src={getTrackArtwork(currentTrack)} className="w-full h-full object-cover" alt="" />
+                        )}
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span className="font-body-md font-semibold text-on-surface text-[15px] truncate">{currentTrack.title}</span>
+                        <span className="font-label-sm text-on-surface-variant text-xs truncate">
+                          {currentTrack.artist?.name || 'Unknown Artist'}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-semibold truncate">{currentTrack.title}</p>
-                      <p className="text-zinc-400 text-xs truncate">{currentTrack.artist?.name || 'Unknown Artist'}</p>
-                    </div>
-                    <div className="flex items-center gap-1 pr-1">
-                      <button
-                        className="p-3 active:scale-90 transition-transform"
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button 
                         onClick={(e) => { e.stopPropagation(); dispatch(toggleLikeTrack(currentTrack._id)); }}
-                        onPointerDown={(e) => e.stopPropagation()}
                       >
                         <Heart className={`w-6 h-6 ${likedTracks?.includes(currentTrack._id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-400'}`} />
                       </button>
@@ -880,7 +882,7 @@ const NexoriaPlayer = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="hidden sm:flex fixed bottom-0 left-0 right-0 z-[100] h-[90px] bg-[#0F0F23]/95 border-t border-white/10 items-center px-4 justify-between relative overflow-hidden"
+              className="hidden sm:flex fixed bottom-0 left-0 md:left-64 right-0 z-[100] h-24 bg-surface-container/60 backdrop-blur-3xl border-t border-white/10 items-center px-margin-desktop justify-between shadow-2xl overflow-hidden"
             >
               {/* Background Visualizer */}
               <div className="absolute inset-0 pointer-events-none z-[0] flex items-end opacity-20">
@@ -889,40 +891,40 @@ const NexoriaPlayer = () => {
 
               {/* Left: Track Info */}
               <div className="flex items-center gap-4 w-[30%] min-w-[180px] z-10">
-                <div className="w-14 h-14 bg-[#4338CA] rounded shadow-md overflow-hidden shrink-0">
+                <div className="w-16 h-16 bg-surface-container rounded-md shadow-md overflow-hidden shrink-0 border border-outline-variant/30">
                   {getTrackArtwork(currentTrack) && (
                     <img src={getTrackArtwork(currentTrack)} className="w-full h-full object-cover" alt="" />
                   )}
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                  <span className="text-[14px] font-semibold text-white truncate">{currentTrack.title}</span>
+                  <span className="font-body-md font-semibold text-on-surface truncate text-base">{currentTrack.title}</span>
                   {currentTrack.artist ? (
-                    <Link to={`/nexoria-music/artist/${currentTrack.artist._id}`} className="text-[12px] text-zinc-400 truncate hover:underline hover:text-white cursor-pointer">
+                    <Link to={`/nexoria-music/artist/${currentTrack.artist._id}`} className="font-label-sm text-xs text-on-surface-variant truncate hover:underline hover:text-primary cursor-pointer">
                       {currentTrack.artist.name}
                     </Link>
                   ) : (
-                    <span className="text-[12px] text-zinc-400 truncate">Unknown Artist</span>
+                    <span className="font-label-sm text-xs text-on-surface-variant truncate">Unknown Artist</span>
                   )}
                 </div>
                 <button onClick={() => dispatch(toggleLikeTrack(currentTrack._id))} className="ml-2 p-1">
-                  <Heart className={`w-[18px] h-[18px] ${likedTracks?.includes(currentTrack._id) ? 'fill-green-500 text-green-500' : 'text-zinc-400 hover:text-white'}`} />
+                  <Heart className={`w-5 h-5 ${likedTracks?.includes(currentTrack._id) ? 'fill-primary text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`} />
                 </button>
               </div>
 
               {/* Center: Controls + Scrubber */}
-              <div className="flex flex-col items-center justify-center max-w-[40%] flex-1 gap-1.5 z-10">
-                <div className="flex items-center gap-5">
-                  <button onClick={() => dispatch(toggleShuffle())} className={`transition-colors ${shuffleMode ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
-                    <Shuffle className="w-[18px] h-[18px]" />
+              <div className="flex flex-col items-center justify-center max-w-[40%] flex-1 gap-2 z-10">
+                <div className="flex items-center gap-6">
+                  <button onClick={() => dispatch(toggleShuffle())} className={`transition-colors ${shuffleMode ? 'text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`}>
+                    <Shuffle className="w-5 h-5" />
                   </button>
                   {currentTrack.trackType === 'podcast' ? (
-                    <button onClick={() => handleSkip15('backward')} className="text-zinc-400 hover:text-white transition-colors relative flex items-center justify-center">
-                      <RotateCcw className="w-[20px] h-[20px]" />
-                      <span className="absolute text-[7px] font-bold mt-0.5">15</span>
+                    <button onClick={() => handleSkip15('backward')} className="text-on-surface-variant hover:text-on-surface transition-colors relative flex items-center justify-center">
+                      <RotateCcw className="w-6 h-6" />
+                      <span className="absolute text-[8px] font-bold mt-0.5">15</span>
                     </button>
                   ) : (
-                    <button onClick={() => dispatch(playPrevTrack())} className="text-zinc-400 hover:text-white transition-colors">
-                      <SkipBack className="w-5 h-5 fill-current" />
+                    <button onClick={() => dispatch(playPrevTrack())} className="text-on-surface hover:text-primary transition-colors">
+                      <SkipBack className="w-6 h-6 fill-current" />
                     </button>
                   )}
                   <button
@@ -930,71 +932,68 @@ const NexoriaPlayer = () => {
                       if (!isPlaying && audioRef.current) audioRef.current.play().catch(() => {});
                       dispatch(togglePlayPause());
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 transition-transform shrink-0"
+                    className="w-10 h-10 flex items-center justify-center bg-transparent text-primary rounded-full hover:scale-110 transition-transform shrink-0 glow-primary"
                   >
-                    {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+                    {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" style={{ fontVariationSettings: "'FILL' 1" }} />}
                   </button>
                   {currentTrack.trackType === 'podcast' ? (
-                    <button onClick={() => handleSkip15('forward')} className="text-zinc-400 hover:text-white transition-colors relative flex items-center justify-center">
-                      <RotateCw className="w-[20px] h-[20px]" />
-                      <span className="absolute text-[7px] font-bold mt-0.5">15</span>
+                    <button onClick={() => handleSkip15('forward')} className="text-on-surface-variant hover:text-on-surface transition-colors relative flex items-center justify-center">
+                      <RotateCw className="w-6 h-6" />
+                      <span className="absolute text-[8px] font-bold mt-0.5">15</span>
                     </button>
                   ) : (
-                    <button onClick={() => handleSkipForwardRef.current()} className="text-zinc-400 hover:text-white transition-colors">
-                      <SkipForward className="w-5 h-5 fill-current" />
+                    <button onClick={() => handleSkipForwardRef.current()} className="text-on-surface hover:text-primary transition-colors">
+                      <SkipForward className="w-6 h-6 fill-current" />
                     </button>
                   )}
-                  <button onClick={() => dispatch(toggleRepeat())} className={`transition-colors ${repeatMode !== 'none' ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}>
-                    {repeatMode === 'one' ? <Repeat1 className="w-[18px] h-[18px]" /> : <Repeat className="w-[18px] h-[18px]" />}
+                  <button onClick={() => dispatch(toggleRepeat())} className={`transition-colors ${repeatMode !== 'none' ? 'text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`}>
+                    {repeatMode === 'one' ? <Repeat1 className="w-5 h-5" /> : <Repeat className="w-5 h-5" />}
                   </button>
-                  <button onClick={() => dispatch(toggleAutoplay())} className={`transition-colors ${autoplayEnabled ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`} title="Autoplay">
-                    <InfinityIcon className="w-[18px] h-[18px]" />
+                  <button onClick={() => dispatch(toggleAutoplay())} className={`transition-colors ${autoplayEnabled ? 'text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`} title="Autoplay">
+                    <InfinityIcon className="w-5 h-5" />
                   </button>
                 </div>
                 {/* Scrubber */}
-                <div className="w-full flex items-center gap-2 max-w-xl">
-                  <span className="text-[11px] text-zinc-400 w-10 text-right font-medium">{formatTime(currentTime)}</span>
-                  <div className="flex-1 h-1 bg-zinc-700 rounded-full cursor-pointer relative group" onClick={handleProgressClick}>
-                    <div className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}>
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md" />
+                <div className="w-full flex items-center gap-3 max-w-xl">
+                  <span className="font-label-sm text-[11px] text-on-surface-variant w-10 text-right">{formatTime(currentTime)}</span>
+                  <div className="flex-1 h-1.5 bg-surface-container-high rounded-full cursor-pointer relative group" onClick={handleProgressClick}>
+                    <div className="absolute top-0 left-0 h-full bg-on-surface group-hover:bg-primary rounded-full transition-colors" style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}>
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2 glow-accent" />
                     </div>
                   </div>
-                  <span className="text-[11px] text-zinc-400 w-10 font-medium">{formatTime(duration)}</span>
+                  <span className="font-label-sm text-[11px] text-on-surface-variant w-10">{formatTime(duration)}</span>
                 </div>
               </div>
 
               {/* Right: Volume & Extras */}
-              <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px] z-10">
-                <button onClick={() => setShareModalData({ isOpen: true, track: currentTrack })} className="p-1 transition-colors text-zinc-400 hover:text-white" title="Share">
-                  <Share2 className="w-[18px] h-[18px]" />
+              <div className="flex items-center justify-end gap-4 w-[30%] min-w-[180px] z-10">
+                <button onClick={() => setShareModalData({ isOpen: true, track: currentTrack })} className="p-1 transition-colors text-on-surface-variant hover:text-on-surface" title="Share">
+                  <Share2 className="w-5 h-5" />
                 </button>
-                <button onClick={() => navigate(`/nexoria-music/lyrics/${currentTrack._id}`)} className={`p-1 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`} title="Lyrics">
-                  <Mic2 className="w-[18px] h-[18px]" />
+                <button onClick={() => navigate(`/nexoria-music/lyrics/${currentTrack._id}`)} className={`p-1 transition-colors ${location.pathname.includes('/lyrics/') ? 'text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`} title="Lyrics">
+                  <Mic2 className="w-5 h-5" />
                 </button>
-                <button onClick={() => navigate('/nexoria-music/queue')} className={`p-1 transition-colors ${location.pathname.includes('/queue') ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`} title="Queue">
-                  <ListMusic className="w-[18px] h-[18px]" />
-                </button>
-                <button onClick={() => dispatch(clearPlayer())} className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Close Player">
-                  <X className="w-[18px] h-[18px]" />
+                <button onClick={() => navigate('/nexoria-music/queue')} className={`p-1 transition-colors ${location.pathname.includes('/queue') ? 'text-primary glow-accent' : 'text-on-surface-variant hover:text-on-surface'}`} title="Queue">
+                  <ListMusic className="w-5 h-5" />
                 </button>
                 <div className="flex items-center gap-2 group w-24">
-                  <button onClick={() => dispatch(toggleMute())} className="text-zinc-400 hover:text-white transition-colors">
-                    {isMuted || volume === 0 ? <VolumeX className="w-[18px] h-[18px]" /> : <Volume2 className="w-[18px] h-[18px]" />}
+                  <button onClick={() => dispatch(toggleMute())} className="text-on-surface-variant hover:text-on-surface transition-colors">
+                    {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
                   <div
-                    className="flex-1 h-1 bg-zinc-700 rounded-full cursor-pointer relative"
+                    className="flex-1 h-1.5 bg-surface-container-high rounded-full cursor-pointer relative"
                     onClick={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       dispatch(setVolume(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))));
                     }}
                   >
-                    <div className="absolute top-0 left-0 h-full bg-white group-hover:bg-green-500 rounded-full transition-colors" style={{ width: `${isMuted ? 0 : volume * 100}%` }}>
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2" />
+                    <div className="absolute top-0 left-0 h-full bg-on-surface group-hover:bg-primary rounded-full transition-colors" style={{ width: `${isMuted ? 0 : volume * 100}%` }}>
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transform translate-x-1/2 glow-accent" />
                     </div>
                   </div>
                 </div>
-                <button className="text-zinc-400 hover:text-white transition-colors">
-                  <Maximize2 className="w-[18px] h-[18px]" />
+                <button className="text-on-surface-variant hover:text-on-surface transition-colors ml-2" title="Full Screen">
+                  <Maximize2 className="w-5 h-5" />
                 </button>
               </div>
             </motion.div>

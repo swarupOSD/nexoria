@@ -261,12 +261,39 @@ body[data-theme="cyberpunk"] button:hover {
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
-  .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  .scrollbar-hide::-webkit-scrollbar {
+  .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Stitch Luxury Theme Utilities */
+  .ambient-glow {
+      position: absolute;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, var(--color-primary-alpha) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+  .border-fine {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .card-hover:hover {
+      transform: scale(1.02);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 30px var(--color-primary-alpha);
+  }
+  .text-gradient {
+      background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
   }
 
   /* Safe Area Insets for Mobile (iOS Notch/Home Indicator) */

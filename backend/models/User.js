@@ -172,10 +172,6 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    friends: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
     referralCount: {
       type: Number,
       default: 0,
@@ -265,7 +261,6 @@ userSchema.pre('save', async function (next) {
 
 // Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  console.log('matchPassword inputs:', { enteredPassword, typeOfEntered: typeof enteredPassword, thisPassword: this.password });
   return await bcrypt.compare(String(enteredPassword), this.password);
 };
 

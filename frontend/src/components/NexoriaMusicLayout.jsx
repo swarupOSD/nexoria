@@ -126,247 +126,148 @@ const NexoriaMusicLayout = () => {
   ];
 
   return (
-    <div className="flex h-dvh bg-[#0F0F23] text-white overflow-hidden font-poppins selection:bg-green-500 selection:text-white">
-      {/* Desktop Sidebar */}
-      <div className="hidden sm:flex flex-col w-64 bg-[#0F0F23] p-2 gap-2 h-full z-10">
-        
-        {/* Top Nav Block */}
-        <div className="bg-[#0F0F23] rounded-lg p-4 flex flex-col gap-5">
-          <div className="flex items-center gap-2 px-2 cursor-pointer" onClick={() => navigate('/')}>
-            <img src="/favicon.png" alt="Nexoria Music" className="w-8 h-8 rounded-lg shadow-sm" />
-            <span className="font-black text-xl tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent drop-shadow-sm">Nexoria Music</span>
-          </div>
-          
-          <nav className="flex flex-col gap-4">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center gap-4 px-2 font-semibold transition-colors duration-200 ${
-                    isActive ? 'text-white' : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  <Icon className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} />
-                  <span>{item.name}</span>
-                </NavLink>
-              );
-            })}
-          </nav>
+    <div className="bg-background text-on-surface font-body-md min-h-screen flex selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+      {/* Desktop Sidebar (Stitch) */}
+      <aside className="hidden md:flex flex-col py-8 px-6 bg-surface-container-low h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50">
+        <div className="mb-12 px-2 cursor-pointer" onClick={() => navigate('/')}>
+          <h2 className="font-display-lg text-headline-md text-primary tracking-tighter">Nexoria</h2>
+          <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">Music</p>
         </div>
 
-        {/* Library Block */}
-        <div className="bg-[#0F0F23] rounded-lg p-2 flex-1 flex flex-col min-h-0 overflow-hidden">
-          <div className="px-4 py-3 flex items-center gap-2 text-zinc-400 font-semibold hover:text-white transition-colors cursor-pointer" onClick={() => navigate('/nexoria-music/library')}>
-            <Library className="w-6 h-6" />
-            <span>Your Library</span>
-          </div>
-
-          {/* Chips Filter */}
-          <div className="px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
-            {libraryFilter !== 'All' && (
-              <button 
-                onClick={() => setLibraryFilter('All')}
-                className="w-8 h-8 rounded-full bg-[#1E1B4B] hover:bg-[#333333] flex items-center justify-center shrink-0 transition-colors"
+        <nav className="flex-1 flex flex-col gap-2 overflow-y-auto no-scrollbar pb-24">
+          {/* Main Links */}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
+            return (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-4 px-4 py-3 rounded-lg font-medium text-body-md transition-colors duration-150 ${
+                  isActive 
+                    ? 'text-primary font-bold border-r-2 border-primary bg-surface-bright/5 scale-95' 
+                    : 'text-on-surface-variant hover:bg-surface-bright/10 hover:text-primary'
+                }`}
               >
-                <Plus className="w-4 h-4 text-white rotate-45" />
-              </button>
-            )}
-            {['Playlists', 'Artists', 'Albums'].map(filter => (
-              (libraryFilter === 'All' || libraryFilter === filter) && (
-                <button
-                  key={filter}
-                  onClick={() => setLibraryFilter(filter)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
-                    libraryFilter === filter 
-                      ? 'bg-white text-black' 
-                      : 'bg-[#1E1B4B] text-white hover:bg-[#333333]'
-                  }`}
-                >
-                  {filter}
-                </button>
-              )
-            ))}
+                <Icon className="w-5 h-5" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}} />
+                {item.name}
+              </NavLink>
+            );
+          })}
+
+          <div className="mt-8 mb-4 px-4 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => navigate('/nexoria-music/library')}>
+            Library
           </div>
           
-          <div className="mt-2 px-2 flex flex-col gap-3 overflow-y-auto custom-scrollbar flex-1 pb-24">
+          {actionItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.name}
+                onClick={item.onClick}
+                className="flex items-center gap-4 px-4 py-3 rounded-lg text-on-surface-variant font-medium text-body-md hover:bg-surface-bright/10 hover:text-primary transition-colors duration-150 text-left w-full"
+              >
+                <Icon className="w-5 h-5" />
+                {item.name}
+              </button>
+            );
+          })}
+
+          {playlists.length > 0 && <div className="border-t border-outline-variant/30 my-4 mx-4"></div>}
+
+          {/* User Playlists */}
+          {playlists.map((pl) => (
+            <button
+              key={pl._id}
+              onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
+              onDragOver={(e) => { e.preventDefault(); setDragOverPlaylistId(pl._id); }}
+              onDragLeave={() => setDragOverPlaylistId(null)}
+              onDrop={(e) => handleDrop(e, pl._id)}
+              className={`flex items-center gap-4 px-4 py-2 rounded-lg transition-colors text-left w-full ${dragOverPlaylistId === pl._id ? 'bg-primary/20 border-l-4 border-primary' : 'hover:bg-surface-bright/10'}`}
+            >
+              <span className={`font-body-md text-sm truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'}`}>
+                {pl.title}
+              </span>
+            </button>
+          ))}
+        </nav>
+        
+        {/* User Profile Mini */}
+        {user && (
+          <div className="mt-auto flex items-center gap-4 pt-6 border-t border-outline-variant/30 cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <img 
+              className="w-10 h-10 rounded-full object-cover border border-outline-variant" 
+              src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
+              alt={user.name} 
+            />
+            <div className="flex flex-col min-w-0">
+              <span className="font-label-sm text-label-sm text-on-surface truncate">{user.name.split(' ')[0]}</span>
+              <span className="font-label-sm text-xs text-on-surface-variant opacity-70">Premium</span>
+            </div>
+          </div>
+        )}
+      </aside>
+
+      {/* Main Content Wrapper */}
+      <div className="flex-1 flex flex-col md:ml-64 w-full relative h-screen">
+        {/* Top App Bar (Mobile & Desktop) */}
+        <nav className="bg-background/80 backdrop-blur-xl docked full-width top-0 sticky z-40 bg-transparent flex justify-between items-center h-20 px-4 md:px-margin-desktop transition-colors border-b border-transparent md:border-outline-variant/10">
+          <div className="flex items-center gap-8">
+            <h1 className="md:hidden font-display-lg text-headline-md text-primary tracking-tighter cursor-pointer" onClick={() => navigate('/')}>Nexoria</h1>
             
-            {/* Playlists View */}
-            {(libraryFilter === 'All' || libraryFilter === 'Playlists') && (
-              <>
-                {actionItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button 
-                      key={item.name} 
-                      onClick={item.onClick}
-                      className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
-                    >
-                      <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity ${item.bg}`}>
-                        <Icon className="w-5 h-5 fill-current" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-[#94A3B8] group-hover:text-white transition-colors truncate">{item.name}</span>
-                        <span className="text-xs text-[#94A3B8]">Action</span>
-                      </div>
-                    </button>
-                  );
-                })}
-                
-                {playlists.length > 0 && <div className="border-t border-white/10 my-2 mx-2"></div>}
-                
-                {playlists.map((pl) => (
-                  <button
-                    key={pl._id}
-                    onClick={() => navigate(`/nexoria-music/playlist/${pl._id}`)}
-                    onDragOver={(e) => { e.preventDefault(); setDragOverPlaylistId(pl._id); }}
-                    onDragLeave={() => setDragOverPlaylistId(null)}
-                    onDrop={(e) => handleDrop(e, pl._id)}
-                    className={`flex items-center gap-4 p-2 rounded transition-colors group text-left ${dragOverPlaylistId === pl._id ? 'bg-white/20 border-l-4 border-green-500' : 'hover:bg-white/5'}`}
-                  >
-                    <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm opacity-70 group-hover:opacity-100 transition-opacity bg-[#4338CA]`}>
-                      {pl.coverImage ? (
-                        <img src={pl.coverImage} alt={pl.title} className="w-full h-full object-cover rounded-md" />
-                      ) : (
-                        <ListMusic className="w-5 h-5 text-white" />
-                      )}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/playlist/${pl._id}` ? 'text-[#22C55E]' : 'text-[#94A3B8] group-hover:text-white'}`}>{pl.title}</span>
-                      <span className="text-xs text-[#94A3B8] truncate">Playlist • {user?.name || 'You'}</span>
-                    </div>
-                  </button>
-                ))}
-              </>
-            )}
-
-            {/* Artists View */}
-            {(libraryFilter === 'All' || libraryFilter === 'Artists') && artists.map(artist => (
-              <button
-                key={artist._id}
-                onClick={() => navigate(`/nexoria-music/artist/${artist._id}`)}
-                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
-              >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm bg-[#4338CA] overflow-hidden`}>
-                  {artist.image ? (
-                    <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-5 h-5 text-white" />
-                  )}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/artist/${artist._id}` ? 'text-[#22C55E]' : 'text-white'}`}>{artist.name}</span>
-                  <span className="text-xs text-[#94A3B8] truncate">Artist</span>
-                </div>
+            {/* Desktop Center Links */}
+            <div className="hidden md:flex gap-6 mt-1">
+              <button onClick={() => navigate(-1)} className="text-on-surface-variant hover:text-primary transition-opacity mr-2">
+                <ArrowLeft className="w-5 h-5" />
               </button>
-            ))}
-
-            {/* Albums View */}
-            {(libraryFilter === 'All' || libraryFilter === 'Albums') && albums.map(album => (
-              <button
-                key={album._id}
-                onClick={() => navigate(`/nexoria-music/album/${album._id}`)}
-                className="flex items-center gap-4 p-2 rounded hover:bg-white/5 transition-colors group text-left"
-              >
-                <div className={`w-12 h-12 rounded-md flex items-center justify-center shrink-0 shadow-sm bg-[#4338CA] overflow-hidden`}>
-                  {album.coverImage ? (
-                    <img src={album.coverImage} alt={album.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <ListMusic className="w-5 h-5 text-white" />
-                  )}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className={`font-semibold transition-colors truncate ${location.pathname === `/nexoria-music/album/${album._id}` ? 'text-[#22C55E]' : 'text-white'}`}>{album.title}</span>
-                  <span className="text-xs text-[#94A3B8] truncate">Album • {album.artist?.name || 'Unknown'}</span>
-                </div>
+              <button onClick={() => navigate(1)} className="text-on-surface-variant hover:text-primary transition-opacity mr-4">
+                <ArrowRight className="w-5 h-5" />
               </button>
-            ))}
-
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#0F0F23] sm:m-2 sm:rounded-lg overflow-hidden relative">
-        
-        {/* Top Bar */}
-        <header 
-          className={`absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 sm:px-6 z-20 transition-colors duration-300 ${
-            isScrolled ? 'bg-[#0F0F23] shadow-md' : 'bg-transparent'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => navigate(-1)} 
-              className="w-8 h-8 rounded-full bg-[#0F0F23]/60 flex items-center justify-center hover:bg-[#0F0F23]/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => navigate(1)} 
-              className="hidden sm:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:bg-[#0F0F23]/80 transition-colors text-white/70 hover:text-white backdrop-blur-md"
-            >
-              <ArrowRight className="w-5 h-5" />
-            </button>
+              <a className="text-primary border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase transition-opacity font-medium" href="#">Discover</a>
+              <a className="text-on-surface-variant font-label-sm text-label-sm uppercase hover:text-primary transition-opacity font-medium" href="#">Live</a>
+              <a className="text-on-surface-variant font-label-sm text-label-sm uppercase hover:text-primary transition-opacity font-medium" href="#">Trending</a>
+            </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <button aria-label="notifications" className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center opacity-80" onClick={() => toast.success('No new notifications', { icon: '🔔' })}>
+              <Bell className="w-5 h-5" />
+            </button>
+            <button onClick={() => navigate('/dashboard')} aria-label="settings" className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center opacity-80 md:hidden">
+               <User className="w-5 h-5" />
+            </button>
+            
             {!user ? (
-              <>
-                <button onClick={() => navigate('/register')} className="text-[#94A3B8] hover:text-white font-bold text-sm sm:text-base px-2 hover:scale-105 transition-all">Sign up</button>
-                <button onClick={() => navigate('/login')} className="bg-white text-black font-bold px-8 py-3 rounded-full hover:scale-105 active:scale-95 transition-transform text-sm sm:text-base">Log in</button>
-              </>
+              <div className="hidden md:flex gap-2">
+                <button onClick={() => navigate('/register')} className="text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase px-4 py-2">Sign up</button>
+                <button onClick={() => navigate('/login')} className="bg-primary text-on-primary font-label-sm text-label-sm uppercase px-6 py-2 rounded-full font-bold">Log in</button>
+              </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <button onClick={() => toast.success('Premium is coming soon!', { icon: '✨' })} className="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:scale-105 transition-transform text-sm hidden sm:block">Explore Premium</button>
-                
-                <button onClick={() => toast.success('Desktop App coming soon!', { icon: '💻' })} className="hidden sm:flex items-center gap-1.5 text-white bg-[#0F0F23]/60 hover:scale-105 transition-transform font-bold text-sm px-3 py-1.5 rounded-full">
-                  <ArrowDownToLine className="w-4 h-4" /> Install App
-                </button>
-                
-                <button onClick={() => toast.success('No new notifications', { icon: '🔔' })} className="hidden sm:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:scale-105 transition-transform text-[#94A3B8] hover:text-white">
-                  <Bell className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => setShowFriendActivity(!showFriendActivity)} 
-                  className={`hidden lg:flex w-8 h-8 rounded-full bg-[#0F0F23]/60 items-center justify-center hover:scale-105 transition-transform ${showFriendActivity ? 'text-white' : 'text-[#94A3B8] hover:text-white'}`}
-                >
-                  <Users className="w-5 h-5" />
-                </button>
-
-                <button onClick={() => navigate('/dashboard')} className="w-8 h-8 ml-2 rounded-full bg-[#0F0F23]/60 border-4 border-[#0F0F23] flex items-center justify-center hover:scale-105 transition-transform overflow-hidden shadow-md">
-                  {user.profilePicture ? (
-                    <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-[#4338CA] flex items-center justify-center text-[#94A3B8]">
-                      <User className="w-5 h-5" />
-                    </div>
-                  )}
-                </button>
+              <div className="hidden md:flex items-center gap-4">
+                <div className="relative group cursor-pointer" onClick={() => navigate('/nexoria-music/search')}>
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4" />
+                  <input 
+                    className="bg-surface-container-low border border-outline-variant/30 text-on-surface rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 transition-colors w-64 placeholder-on-surface-variant/50 cursor-pointer" 
+                    placeholder="Search..." 
+                    type="text"
+                    readOnly
+                  />
+                </div>
               </div>
             )}
           </div>
-        </header>
+        </nav>
 
-        {/* Scrollable Content */}
-        <main id="music-main-content" className="flex-1 overflow-y-auto custom-scrollbar relative">
-          <Outlet />
-          {/* Bottom spacer for player */}
-          <div className="h-[150px] sm:h-[120px]"></div>
+        {/* Scrollable Content Area */}
+        <main id="music-main-content" className="flex-1 overflow-y-auto overflow-x-hidden relative">
+          <div className="min-h-full pb-32">
+            <Outlet />
+          </div>
         </main>
       </div>
 
-      {/* Right Sidebar (Friend Activity) */}
-      {showFriendActivity && (
-        <div className="hidden lg:flex flex-col w-[280px] z-10 shrink-0 h-full">
-    
-        </div>
-      )}
-
       {/* Mobile Bottom Navigation (Visible only on mobile) */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[60px] bg-[#0F0F23] border-t border-white/10 flex items-center justify-around z-[110] px-2 pb-safe">
+      <div className="md:hidden fixed bottom-24 left-0 right-0 h-16 bg-surface-container/90 backdrop-blur-3xl border-t border-outline-variant/30 flex items-center justify-around z-40 px-2 pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.2)] rounded-t-2xl">
         {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
@@ -375,16 +276,16 @@ const NexoriaMusicLayout = () => {
               key={item.name}
               to={item.path}
               className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${
-                isActive ? 'text-white' : 'text-zinc-400 hover:text-white'
+                isActive ? 'text-primary' : 'text-on-surface-variant hover:text-primary'
               }`}
             >
-              <Icon className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-medium tracking-wide whitespace-nowrap">{item.name}</span>
+              <Icon className="w-5 h-5" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}} />
+              <span className="font-label-sm text-[10px] tracking-wide whitespace-nowrap">{item.name}</span>
             </NavLink>
           );
         })}
       </div>
-
+      {/* extra div removed */}
       {/* Modals */}
       <NexoriaMusicCreatePlaylistModal 
         isOpen={isCreatePlaylistModalOpen} 

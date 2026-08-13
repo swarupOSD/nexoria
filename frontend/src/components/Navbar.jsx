@@ -123,25 +123,26 @@ const Navbar = () => {
 
   return (
     <>
-      <div className={`fixed top-0 w-full z-50 transition-all duration-500 flex justify-center ${scrolled ? 'pt-4 px-4 pointer-events-none' : ''}`}>
-        <nav className={`transition-all duration-500 pointer-events-auto w-full ${scrolled ? 'max-w-6xl bg-white/40 dark:bg-[#0F172A]/60 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-full shadow-2xl py-2 px-6' : 'bg-gradient-to-b from-black/50 to-transparent sm:bg-transparent py-3 sm:py-5 px-4 container mx-auto'}`}>
-          <div className="flex items-center justify-between w-full">
+      <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_0_40px_rgba(208,188,255,0.05)]">
+        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md max-w-container-max mx-auto">
 
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
-              <div className="shadow-[0_0_20px_rgba(168,85,247,0.3)] rounded-full">
-                <Logo src={settings.logo} />
-              </div>
-              <span className="font-heading text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent tracking-tight">
-                {settings?.siteName || 'Nexoria'}
-              </span>
-            </Link>
+          {/* Brand */}
+          <Link to="/" className="flex items-center gap-sm group hover:scale-105 transition-transform duration-300">
+            <div className="h-8 w-8 rounded-full overflow-hidden shadow-[0_0_15px_rgba(208,188,255,0.3)]">
+              <Logo src={settings.logo} />
+            </div>
+            <span className="font-display-sm tracking-tighter text-primary bg-clip-text hidden md:block" style={{ fontSize: '24px', lineHeight: '32px' }}>
+              {settings?.siteName || 'Nexoria'}
+            </span>
+          </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-3 xl:gap-5 flex-1 justify-center px-4 whitespace-nowrap">
-              <Link to="/" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/' ? 'text-primary' : 'text-slate-700 dark:text-slate-300 hover:text-primary'}`}>Home</Link>
-              <Link to="/apps" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname === '/apps' ? 'text-indigo-500' : 'text-slate-700 dark:text-slate-300 hover:text-indigo-500'}`}>Apps</Link>
-              <Link to="/moviebox/games" className={`text-sm font-bold transition-all hover:-translate-y-0.5 ${location.pathname.startsWith('/moviebox') ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300 hover:text-blue-500'}`}>Games</Link>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-lg whitespace-nowrap">
+            <Link to="/apps" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Apps</Link>
+            <Link to="/moviebox" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Movies</Link>
+            <Link to="/nexoria-music" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Music</Link>
+            <Link to="/moviebox/games" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Games</Link>
+            <Link to="/premium" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Premium</Link>
 
               <DropdownMenu align="left" width="w-[480px]" closeOnClickInside={true} trigger={
                 <button className="flex items-center gap-1 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">
@@ -242,24 +243,27 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop Right Actions */}
-            <div className="hidden lg:flex items-center gap-2 xl:gap-3">
-              <button onClick={() => setIsParentalModalOpen(true)} className="hidden xl:flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-0.5 border border-slate-300 dark:border-slate-700 cursor-pointer" title="Content Mode">
-                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white' : 'text-slate-500'}`}>18+</div>
-                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white' : 'text-slate-500'}`}>Kids</div>
+            <div className="hidden lg:flex items-center gap-md">
+              <button onClick={() => setIsParentalModalOpen(true)} className="hidden xl:flex items-center bg-surface-container-highest rounded-full p-0.5 border border-outline-variant/30 cursor-pointer" title="Content Mode">
+                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white' : 'text-on-surface-variant'}`}>18+</div>
+                <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white' : 'text-on-surface-variant'}`}>Kids</div>
               </button>
-              <button onClick={toggleCyberpunk} className={`hidden xl:flex p-2 rounded-full transition-all ${isCyberpunk ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`} title="Cyberpunk"><Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5" /></button>
-              <button onClick={handleSurpriseMe} className="hidden xl:flex p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:rotate-180 transition-all duration-500" title="Surprise Me"><Dices className="w-4 h-4 xl:w-5 xl:h-5 text-indigo-500" /></button>
-              <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+              <button onClick={toggleCyberpunk} className={`hidden xl:flex p-2 rounded-full transition-all ${isCyberpunk ? 'bg-primary/20 text-primary' : 'hover:bg-surface-container-highest text-on-surface-variant'}`} title="Cyberpunk"><Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5" /></button>
+              <button onClick={handleSurpriseMe} className="hidden xl:flex p-2 rounded-full hover:bg-surface-container-highest text-on-surface-variant hover:rotate-180 transition-all duration-500" title="Surprise Me"><Dices className="w-4 h-4 xl:w-5 xl:h-5 text-indigo-500" /></button>
+              <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors">
                 {isDarkMode ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
               </button>
-              {user && <NotificationBell iconClassName="text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" />}
+              {user && <NotificationBell iconClassName="text-on-surface-variant hover:text-primary transition-colors" />}
               {user ? (
                 <DropdownMenu align="right" width="w-64" trigger={
-                  <button className="flex items-center gap-2 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 pl-2 pr-4 py-1.5 rounded-full transition-all shadow-sm">
-                    <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
-                    <span className="text-sm font-bold truncate max-w-[100px] text-slate-700 dark:text-slate-200">{user.name.split(' ')[0]}</span>
-                  </button>
+                  <div className="flex items-center gap-xs cursor-pointer group">
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-primary overflow-hidden group-hover:shadow-[0_0_15px_rgba(208,188,255,0.3)] transition-all">
+                      <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="hidden md:flex flex-col ml-2">
+                      <span className="font-label-caps text-on-surface">{user.name.split(' ')[0]}</span>
+                    </div>
+                  </div>
                 }>
                   <div className="p-4 text-center border-b border-slate-100 dark:border-slate-800 mb-2">
                     <FallbackImage src={user.profileImage} fallbackType="avatar" className="w-16 h-16 rounded-full object-cover mx-auto mb-2 border-2 border-primary" alt="Profile" />
@@ -398,7 +402,6 @@ const Navbar = () => {
             onSuccess={() => dispatch(toggleKidsMode())}
           />
         </nav>
-      </div>
       <div className="h-24"></div>
       <BottomNavigation onMenuClick={() => setIsMobileMenuOpen(true)} />
     </>

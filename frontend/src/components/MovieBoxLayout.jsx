@@ -1,29 +1,14 @@
 import CustomSearchBar from './CustomSearchBar';
 import ParentalGateModal from './ParentalGateModal';
-import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGetMovieSettingsQuery } from '../features/settings/movieSettingsApiSlice';
 import { useGetSettingsQuery } from '../features/settings/settingsApiSlice';
 import { logout, toggleKidsMode } from '../features/auth/authSlice';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Home,
-  Tv,
-  Film,
-  PlaySquare,
-  TrendingUp,
-  Smartphone,
-  Download,
-  Gamepad2,
-  MonitorPlay,
-  Search,
-  Menu,
-  X,
-  User as UserIcon,
-  LogOut,
-  Settings,
-  Music
+  Home, Search, Bell, Menu, X, User as UserIcon, LogOut, Settings, Music, Compass, Download, PlaySquare, Gamepad2
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
@@ -31,17 +16,22 @@ const MovieBoxLayout = () => {
   const { data: movieSettingsRes } = useGetMovieSettingsQuery();
   const movieSettings = movieSettingsRes?.data || {};
   
-  const { data: settingsRes } = useGetSettingsQuery();
-  const settings = settingsRes?.data || {};
-
   const { user, isKidsMode } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isParentalModalOpen, setIsParentalModalOpen] = useState(false);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -52,269 +42,163 @@ const MovieBoxLayout = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/moviebox/search?q=${searchQuery}`);
+      setIsMobileMenuOpen(false);
     }
   };
 
-  const menuItems = [
-    { name: 'Movies & TV', path: '/moviebox', icon: Home },
-    { name: 'Nexoria Arcade', path: '/moviebox/games', icon: Gamepad2 },
-    { name: 'Nexoria Music', path: '/sound', icon: Music },
-  ];
-
-  const appItems = [
-    { name: 'Requests', path: '/requests', icon: PlaySquare },
-  ];
-
-  const renderSidebarContent = () => (
-    <div className="flex flex-col h-full bg-[#0d0d0f] border-r border-white/5 text-slate-300">
-      {/* Logo Area */}
-      <div className="h-20 flex items-center px-6 mb-4">
-        <Link to="/moviebox" className="flex items-center gap-3">
-          <img src={movieSettings.movieBoxLogo || '/logo.png'} alt={movieSettings.movieBoxName || 'MovieBox'} className="h-8 object-contain" />
-          <span className="text-xl font-bold text-white tracking-wide">{movieSettings.movieBoxName || 'MovieBox'}</span>
-        </Link>
-      </div>
-
-      <div className="px-6 mb-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-        Menu
-      </div>
-
-      {/* Navigation Links */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar pb-6">
-        {menuItems.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            end={item.path === '/moviebox'}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                isActive
-                  ? 'bg-purple-600/10 text-purple-400 font-medium'
-                  : 'hover:bg-white/5 hover:text-white'
-              }`
-            }
-          >
-            <item.icon className="w-5 h-5 opacity-80 group-hover:opacity-100" />
-            <span className="text-sm">{item.name}</span>
-          </NavLink>
-        ))}
-
-        {/* App Items (Games, Apps, etc.) - Only visible in Adult mode */}
-        {!isKidsMode && (
-          <>
-            <div className="px-2 mt-8 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              More Apps & Games
-            </div>
-            
-            {appItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                    isActive
-                      ? 'bg-purple-600/10 text-purple-400 font-medium'
-                      : 'hover:bg-white/5 hover:text-white'
-                  }`
-                }
-              >
-                <item.icon className="w-5 h-5 opacity-80 group-hover:opacity-100" />
-                <span className="text-sm">{item.name}</span>
-              </NavLink>
-            ))}
-          </>
-        )}
-
-        <div className="mt-8 px-4 border-t border-white/5 pt-6">
-          <Link to="/" className="flex items-center gap-4 py-3 text-slate-500 hover:text-slate-300 transition-colors text-sm">
-            <span>&larr; Back to App Store</span>
-          </Link>
-        </div>
-      </nav>
-      
-      {/* Footer Area for sidebar */}
-      <div className="p-6 border-t border-white/5 mt-auto">
-        <div className="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-purple-500/20 rounded-2xl p-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-2 opacity-10">
-            <Smartphone className="w-16 h-16" />
-          </div>
-          <p className="text-xs text-purple-200 mb-1 font-medium">Get {movieSettings.movieBoxName || 'Nexoria Play'}</p>
-          <p className="text-[10px] text-slate-400 mb-3">Watch movies free everywhere</p>
-          <button className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg transition-colors shadow-lg shadow-purple-600/20">
-            Download App
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="flex h-screen bg-[#050505] text-white font-sans overflow-hidden">
+    <div className="bg-background text-on-surface font-body-lg antialiased selection:bg-primary/30 selection:text-primary relative overflow-x-hidden">
       <Helmet>
         <title>{movieSettings.movieBoxName || 'MovieBox'} - Watch Movies Free</title>
-        <meta name="theme-color" content="#050505" />
+        <meta name="theme-color" content="#131313" />
         {movieSettings.movieBoxFavicon && <link rel="icon" href={movieSettings.movieBoxFavicon} />}
       </Helmet>
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-64 h-full shrink-0 z-40 relative">
-        {renderSidebarContent()}
-      </aside>
+      {/* Top Navigation (Mobile & Desktop) */}
+      <nav id="main-nav" className={`fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 transition-all duration-300 ${scrolled ? 'bg-background/80' : 'bg-transparent'}`}>
+        <div className="flex items-center gap-12">
+          <Link to="/moviebox" className="font-display-lg text-display-lg-mobile md:text-display-lg font-extrabold text-primary tracking-tighter hover:scale-95 transition-transform duration-200">
+            {movieSettings.movieBoxName || 'Nexoria'}
+          </Link>
+          <div className="hidden md:flex gap-8 items-center">
+            <NavLink to="/moviebox" end className={({ isActive }) => `font-body-lg text-body-lg hover:text-on-surface transition-colors duration-300 ${isActive ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant'}`}>Home</NavLink>
+            <NavLink to="/moviebox/movies" className={({ isActive }) => `font-body-lg text-body-lg hover:text-on-surface transition-colors duration-300 ${isActive ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant'}`}>Movies</NavLink>
+            <NavLink to="/moviebox/tv" className={({ isActive }) => `font-body-lg text-body-lg hover:text-on-surface transition-colors duration-300 ${isActive ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant'}`}>TV Shows</NavLink>
+            <NavLink to="/requests" className={({ isActive }) => `font-body-lg text-body-lg hover:text-on-surface transition-colors duration-300 ${isActive ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant'}`}>Requests</NavLink>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 md:gap-6">
+          <form onSubmit={handleSearch} className="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-surface-variant focus-within:border-primary transition-colors">
+            <Search className="w-5 h-5 text-on-surface-variant mr-2" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search..." className="bg-transparent border-none text-on-surface focus:ring-0 placeholder:text-on-surface-variant/50 w-48 font-label-caps text-label-caps outline-none" />
+          </form>
 
-      {/* Mobile Sidebar Overlay */}
+          {/* Parental Gate Toggle */}
+          <button
+            onClick={() => setIsParentalModalOpen(true)}
+            className="hidden sm:flex items-center bg-surface-container-low rounded-full p-1 border border-surface-variant transition-colors cursor-pointer group"
+            title="Change Content Mode"
+          >
+            <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-error text-on-error shadow-[0_0_10px_rgba(255,180,171,0.3)]' : 'text-on-surface-variant hover:text-on-surface'}`}>
+              ADULT
+            </div>
+            <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-primary text-on-primary shadow-[0_0_10px_rgba(255,211,137,0.3)]' : 'text-on-surface-variant hover:text-on-surface'}`}>
+              KIDS
+            </div>
+          </button>
+          
+          <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden text-on-surface-variant hover:text-primary transition-colors hover:backdrop-brightness-125">
+            <Search className="w-6 h-6" />
+          </button>
+          
+          <button className="hidden md:block text-on-surface-variant hover:text-primary transition-colors hover:backdrop-brightness-125">
+            <Bell className="w-6 h-6" />
+          </button>
+
+          {user ? (
+            <div className="relative z-50">
+              <button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} className="w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-surface-variant cursor-pointer hover:border-primary transition-colors">
+                <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+              </button>
+              <AnimatePresence>
+                {isProfileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-3 w-56 bg-surface-container-highest border border-outline-variant/30 rounded-2xl shadow-2xl overflow-hidden py-2"
+                  >
+                    <div className="px-4 py-3 border-b border-white/5 mb-2">
+                      <p className="text-sm font-bold text-on-surface truncate">{user.name}</p>
+                      <p className="text-xs text-on-surface-variant truncate">{user.email}</p>
+                    </div>
+                    <Link to="/dashboard" onClick={() => setIsProfileDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors">
+                      <UserIcon className="w-4 h-4" /> My Account
+                    </Link>
+                    {(user.role === 'admin' || user.role === 'superadmin') && (
+                      <Link to="/superadmin" onClick={() => setIsProfileDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors">
+                        <Settings className="w-4 h-4" /> Admin Panel
+                      </Link>
+                    )}
+                    <button onClick={() => { setIsProfileDropdownOpen(false); handleLogout(); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:text-error hover:bg-error/10 transition-colors text-left">
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Link to="/login" className="px-4 py-2 bg-primary text-on-primary font-bold rounded-lg text-sm transition-colors hover:bg-primary-fixed shadow-[0_0_15px_rgba(255,211,137,0.2)]">Log In</Link>
+          )}
+        </div>
+      </nav>
+
+      {/* Main Content Canvas */}
+      <main className="w-full relative min-h-screen">
+        <Outlet />
+        
+        {/* Footer */}
+        <footer className="bg-surface-container-lowest/80 backdrop-blur-2xl border-t border-white/5 w-full py-12 mt-16 md:mt-24 pb-32 md:pb-12">
+          <div className="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-gutter">
+            <div className="font-display-lg text-headline-md text-primary">
+              {movieSettings.movieBoxName || 'Nexoria'}
+            </div>
+            <div className="flex gap-6 flex-wrap justify-center font-label-caps text-label-caps text-on-surface-variant mt-4 md:mt-0">
+              <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link to="/support" className="hover:text-primary transition-colors">Help Center</Link>
+            </div>
+            <div className="font-label-caps text-label-caps text-on-surface-variant mt-4 md:mt-0">
+              © {new Date().getFullYear()} Nexoria MovieBox. Cinematic Excellence.
+            </div>
+          </div>
+        </footer>
+      </main>
+
+      {/* Bottom Navigation (Mobile Only) */}
+      <nav className="fixed bottom-0 w-full z-50 md:hidden bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 flex justify-around items-center h-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <NavLink to="/moviebox" end className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>
+          <Home className="w-6 h-6" />
+          <span className="font-label-caps text-[10px]">Home</span>
+        </NavLink>
+        <button onClick={() => setIsMobileMenuOpen(true)} className="flex flex-col items-center gap-1 p-2 text-on-surface-variant hover:text-on-surface">
+          <Search className="w-6 h-6" />
+          <span className="font-label-caps text-[10px]">Search</span>
+        </button>
+        <NavLink to="/moviebox/games" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>
+          <Gamepad2 className="w-6 h-6" />
+          <span className="font-label-caps text-[10px]">Arcade</span>
+        </NavLink>
+        {user ? (
+          <Link to="/dashboard" className="flex flex-col items-center gap-1 p-2 text-on-surface-variant hover:text-on-surface">
+            <UserIcon className="w-6 h-6" />
+            <span className="font-label-caps text-[10px]">Profile</span>
+          </Link>
+        ) : (
+          <Link to="/login" className="flex flex-col items-center gap-1 p-2 text-on-surface-variant hover:text-on-surface">
+            <UserIcon className="w-6 h-6" />
+            <span className="font-label-caps text-[10px]">Login</span>
+          </Link>
+        )}
+      </nav>
+
+      {/* Mobile Search Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-            />
-            <motion.aside
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
-              className="fixed inset-y-0 left-0 w-72 h-full z-50 lg:hidden shadow-2xl"
-            >
-              {renderSidebarContent()}
-            </motion.aside>
-          </>
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-3xl px-4 py-8 flex flex-col">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="font-headline-md text-on-surface">Search</h2>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-on-surface-variant hover:text-on-surface"><X className="w-6 h-6" /></button>
+            </div>
+            <form onSubmit={handleSearch} className="relative w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" />
+              <input autoFocus type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search movies, TV shows..." className="w-full bg-surface-container rounded-2xl py-4 pl-12 pr-4 text-on-surface outline-none border border-outline-variant/30 focus:border-primary transition-colors font-body-lg" />
+            </form>
+          </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full relative overflow-hidden">
-        
-        {/* Top Header */}
-        <header className="h-20 shrink-0 flex items-center justify-between px-4 sm:px-8 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl z-30 sticky top-0">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-slate-400 hover:text-white lg:hidden transition-colors"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-            
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="hidden sm:flex relative items-center">
-              <Search className="absolute left-4 w-4 h-4 text-slate-500" />
-              <CustomSearchBar value={searchQuery} placeholder="Search movies, TV shows..." name="text"  onChange={(e) => setSearchQuery(e.target.value)} />
-            </form>
-          </div>
-
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button
-              onClick={() => setIsParentalModalOpen(true)}
-              className="flex items-center bg-slate-800/50 rounded-full p-1 shadow-inner border border-white/10 transition-colors cursor-pointer group backdrop-blur-md"
-              title="Change Content Mode"
-            >
-              <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] sm:text-xs font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30' : 'text-slate-500 hover:text-slate-300'}`}>
-                🔞 ADULT
-              </div>
-              <div className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-[10px] sm:text-xs font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'text-slate-500 hover:text-slate-300'}`}>
-                🧸 KIDS
-              </div>
-            </button>
-
-            <Link to="/premium" className="hidden sm:block">
-              <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-bold rounded-full shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all transform hover:-translate-y-0.5">
-                Go Premium
-              </span>
-            </Link>
-
-            {user && (
-              <div className="flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/30 px-3 py-1.5 rounded-full">
-                <span className="text-amber-400 text-sm">🪙</span>
-                <span className="font-bold text-amber-400 text-sm">{user.rewardPoints || 0}</span>
-              </div>
-            )}
-
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 hover:border-purple-500 transition-colors focus:outline-none"
-                >
-                  <img
-                    src={user.profileImage}
-                    alt={user.name}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-
-                <AnimatePresence>
-                  {isProfileDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-3 w-56 bg-[#1a1a1f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-50"
-                    >
-                      <div className="px-4 py-3 border-b border-white/5 mb-2">
-                        <p className="text-sm font-bold text-white truncate">{user.name}</p>
-                        <p className="text-xs text-slate-400 truncate">{user.email}</p>
-                      </div>
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                      >
-                        <UserIcon className="w-4 h-4" /> My Account
-                      </Link>
-                      {(user.role === 'admin' || user.role === 'superadmin') && (
-                        <Link
-                          to="/superadmin"
-                          onClick={() => setIsProfileDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                        >
-                          <Settings className="w-4 h-4" /> Admin Panel
-                        </Link>
-                      )}
-                      <button
-                        onClick={() => {
-                          setIsProfileDropdownOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-colors text-left"
-                      >
-                        <LogOut className="w-4 h-4" /> Sign Out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-                Log In
-              </Link>
-            )}
-          </div>
-        </header>
-
-        {/* Mobile Search Bar (Visible only on very small screens) */}
-        <div className="sm:hidden px-4 py-3 bg-[#050505] border-b border-white/5 z-20">
-           <form onSubmit={handleSearch} className="relative items-center">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-              <CustomSearchBar value={searchQuery} placeholder="Search movies..." name="text"  onChange={(e) => setSearchQuery(e.target.value)} />
-            </form>
-        </div>
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar relative">
-          <Outlet />
-          
-          {/* Simple footer for MovieBox */}
-          <footer className="mt-20 py-8 border-t border-white/5 text-center">
-             <p className="text-sm text-slate-500">© {new Date().getFullYear()} {movieSettings.movieBoxName || 'MovieBox'}. A part of Nexoria.</p>
-          </footer>
-        </main>
-      </div>
 
       <ParentalGateModal
         isOpen={isParentalModalOpen}
