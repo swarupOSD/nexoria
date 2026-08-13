@@ -41,6 +41,7 @@ const LudoWrapper = lazy(() => import('./pages/LudoWrapper'));
 
 // MovieBox (lazy)
 const MovieBoxLayout = lazy(() => import('./components/MovieBoxLayout'));
+const TMDBMovieSection = lazy(() => import('./pages/TMDBMovieSection'));
 const MovieDetail = lazy(() => import('./pages/MovieDetail'));
 const MovieCategory = lazy(() => import('./pages/MovieCategory'));
 const MovieSearch = lazy(() => import('./pages/MovieSearch'));
@@ -346,7 +347,7 @@ function App() {
             {/* MovieBox Public Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="moviebox" element={<MovieBoxLayout />}>
-                <Route index element={<Navigate to="games" replace />} />
+                <Route index element={<TMDBMovieSection />} />
                 <Route path="movie/:slug" element={<MovieDetail />} />
                 <Route path="category/:slug" element={<MovieCategory />} />
                 <Route path="search" element={<MovieSearch />} />

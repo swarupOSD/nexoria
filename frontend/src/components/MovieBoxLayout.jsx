@@ -56,6 +56,7 @@ const MovieBoxLayout = () => {
   };
 
   const menuItems = [
+    { name: 'Movies & TV', path: '/moviebox', icon: Home },
     { name: 'Nexoria Arcade', path: '/moviebox/games', icon: Gamepad2 },
     { name: 'Nexoria Music', path: '/sound', icon: Music },
   ];
