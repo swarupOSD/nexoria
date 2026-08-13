@@ -77,14 +77,14 @@ export default {
       },
       spacing: {
         "gutter": "24px",
-        "sm": "8px",
-        "xl": "48px",
-        "lg": "24px",
+        "stitch-sm": "8px",
+        "stitch-xl": "48px",
+        "stitch-lg": "24px",
         "unit": "4px",
-        "md": "16px",
+        "stitch-md": "16px",
         "margin-mobile": "16px",
         "margin-desktop": "64px",
-        "xs": "4px",
+        "stitch-xs": "4px",
         "container-max": "1440px"
       },
       boxShadow: {

@@ -124,10 +124,10 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_0_40px_rgba(208,188,255,0.05)]">
-        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md max-w-container-max mx-auto">
+        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-stitch-md max-w-container-max mx-auto">
 
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-sm group hover:scale-105 transition-transform duration-300">
+          <Link to="/" className="flex items-center gap-stitch-sm group hover:scale-105 transition-transform duration-300">
             <div className="h-8 w-8 rounded-full overflow-hidden shadow-[0_0_15px_rgba(208,188,255,0.3)]">
               <Logo src={settings.logo} />
             </div>
@@ -137,7 +137,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-lg whitespace-nowrap">
+          <div className="hidden lg:flex items-center gap-stitch-lg whitespace-nowrap">
             <Link to="/apps" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Apps</Link>
             <Link to="/moviebox" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Movies</Link>
             <Link to="/nexoria-music" className="text-on-surface-variant font-label-caps hover:text-primary transition-all duration-300">Music</Link>
@@ -243,7 +243,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center gap-md">
+            <div className="hidden lg:flex items-center gap-stitch-md">
               <button onClick={() => setIsParentalModalOpen(true)} className="hidden xl:flex items-center bg-surface-container-highest rounded-full p-0.5 border border-outline-variant/30 cursor-pointer" title="Content Mode">
                 <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${!isKidsMode ? 'bg-rose-500 text-white' : 'text-on-surface-variant'}`}>18+</div>
                 <div className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${isKidsMode ? 'bg-emerald-500 text-white' : 'text-on-surface-variant'}`}>Kids</div>
@@ -256,7 +256,7 @@ const Navbar = () => {
               {user && <NotificationBell iconClassName="text-on-surface-variant hover:text-primary transition-colors" />}
               {user ? (
                 <DropdownMenu align="right" width="w-64" trigger={
-                  <div className="flex items-center gap-xs cursor-pointer group">
+                  <div className="flex items-center gap-stitch-xs cursor-pointer group">
                     <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-primary overflow-hidden group-hover:shadow-[0_0_15px_rgba(208,188,255,0.3)] transition-all">
                       <FallbackImage src={user.profileImage} fallbackType="avatar" alt="avatar" className="w-full h-full object-cover" />
                     </div>

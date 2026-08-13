@@ -38,15 +38,15 @@ const AppCard = React.memo(({ app }) => {
           </div>
         )}
       </div>
-      <div className="p-md flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-xs">
+      <div className="p-stitch-md flex flex-col flex-grow">
+        <div className="flex justify-between items-start mb-stitch-xs">
           <h3 className="font-headline-sm text-on-surface truncate flex-1 pr-2">{app.title}</h3>
-          <span className="flex items-center gap-xs font-label-sm text-secondary bg-secondary/10 px-sm py-0.5 rounded-full shrink-0">
+          <span className="flex items-center gap-stitch-xs font-label-sm text-secondary bg-secondary/10 px-stitch-sm py-0.5 rounded-full shrink-0">
             <Star className="w-3 h-3 fill-secondary text-secondary" />
             {app.averageRating || '4.5'}
           </span>
         </div>
-        <p className="font-body-sm text-on-surface-variant line-clamp-2 mb-md flex-grow">{app.description || app.title}</p>
+        <p className="font-body-sm text-on-surface-variant line-clamp-2 mb-stitch-md flex-grow">{app.description || app.title}</p>
         <div className="flex items-center justify-between mt-auto">
           <span className="font-label-caps text-primary tracking-wider border-b border-primary/30 pb-0.5">{app.categoryObj?.name || 'App'}</span>
           <button className="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 transform group-hover:rotate-12 group-hover:scale-110 shadow-sm">
@@ -79,21 +79,21 @@ const Home = () => {
           <div className="w-full h-full bg-cover bg-center bg-no-repeat opacity-60" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBpon9Ou1srDve1SKBkHx95ehx1TIaFSsLgErxNuy9ZmIPKJ18jFMc4Zcvnf15FjtQ1vItZqAj_wG-hBhr5ZUHka4rj4dQ5kZPodUM-aLYZsywubx-sGo8-3Y5MJkcDKmUEcoWyZQz27T4Tyrk_50_toue-Q_VcEGxk4ndj_6vN0qtKqWw3bhZoY5muQKlzuv6bjKL0J_qTPHyFg1JvjiPjk91gzhtaApxhFz8i5HUgrYVvSxhDZYD5')" }}></div>
         </div>
         <div className="relative z-20 text-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto flex flex-col items-center">
-          <span className="font-label-caps text-tertiary mb-sm tracking-widest uppercase">Beyond Entertainment</span>
-          <h1 className="font-display-lg text-[48px] md:text-display-lg font-bold mb-md text-gradient tracking-tight">EXPLORE THE NEXUS</h1>
-          <p className="font-body-lg text-on-surface-variant max-w-2xl mb-xl">The ultimate hub for gaming, technology, and cinema. Immerse yourself in a curated digital luxury experience.</p>
-          <div className="flex flex-col sm:flex-row gap-md">
+          <span className="font-label-caps text-tertiary mb-stitch-sm tracking-widest uppercase">Beyond Entertainment</span>
+          <h1 className="font-display-lg text-[48px] md:text-display-lg font-bold mb-stitch-md text-gradient tracking-tight">EXPLORE THE NEXUS</h1>
+          <p className="font-body-lg text-on-surface-variant max-w-2xl mb-stitch-xl">The ultimate hub for gaming, technology, and cinema. Immerse yourself in a curated digital luxury experience.</p>
+          <div className="flex flex-col sm:flex-row gap-stitch-md">
             <Link to="/category/apps" className="px-8 py-3 rounded-xl bg-primary text-on-primary font-label-caps shadow-[0_0_20px_rgba(208,188,255,0.3)] hover:shadow-[0_0_30px_rgba(208,188,255,0.5)] transition-all duration-300 transform hover:scale-105">
               Browse Store
             </Link>
-            <Link to="/premium" className="px-8 py-3 rounded-xl bg-surface/50 backdrop-blur-md border border-outline-variant/30 text-on-surface font-label-caps hover:bg-surface-container transition-all duration-300 flex items-center justify-center gap-sm">
+            <Link to="/premium" className="px-8 py-3 rounded-xl bg-surface/50 backdrop-blur-md border border-outline-variant/30 text-on-surface font-label-caps hover:bg-surface-container transition-all duration-300 flex items-center justify-center gap-stitch-sm">
               <ShieldCheck className="w-4 h-4" /> Unlock Premium
             </Link>
           </div>
         </div>
       </header>
       
-      <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto py-xl space-y-12 md:space-y-24 relative z-10">
+      <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto py-stitch-xl space-y-12 md:space-y-24 relative z-10">
         <ForYouCarousel />
         
         <Leaderboard />
@@ -102,12 +102,12 @@ const Home = () => {
         <section>
           <div className="flex items-end justify-between mb-4 md:mb-8">
             <div>
-              <h2 className="font-headline-md text-on-surface flex items-center gap-sm">
-                <div className="p-sm bg-primary/10 rounded-xl border border-primary/20"><Compass className="w-6 h-6 text-primary" /></div> Categories
+              <h2 className="font-headline-md text-on-surface flex items-center gap-stitch-sm">
+                <div className="p-stitch-sm bg-primary/10 rounded-xl border border-primary/20"><Compass className="w-6 h-6 text-primary" /></div> Categories
               </h2>
               <p className="font-body-sm text-on-surface-variant mt-2">Discover by genres</p>
             </div>
-            <Link to="/category/apps" className="font-label-caps text-primary hover:text-primary-fixed-dim flex items-center gap-1 group bg-primary/10 px-md py-sm rounded-xl transition-all border border-primary/20 hover:border-primary/40 active:scale-95">
+            <Link to="/category/apps" className="font-label-caps text-primary hover:text-primary-fixed-dim flex items-center gap-1 group bg-primary/10 px-stitch-md py-stitch-sm rounded-xl transition-all border border-primary/20 hover:border-primary/40 active:scale-95">
               View All <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -117,7 +117,7 @@ const Home = () => {
           ) : (
             <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-6 pt-2 snap-x hide-scrollbar px-2 -mx-2 md:px-0 md:mx-0">
               {categories.map(cat => (
-                <Link key={cat._id} to={`/category/${cat.slug}`} className="snap-start shrink-0 w-[240px] md:w-auto relative p-xl rounded-[2.5rem] bg-surface-container-lowest border border-outline-variant/20 hover:border-outline-variant/40 flex flex-col items-start transition-all duration-300 group overflow-hidden active:scale-95 md:active:scale-100 md:hover:-translate-y-2 card-hover">
+                <Link key={cat._id} to={`/category/${cat.slug}`} className="snap-start shrink-0 w-[240px] md:w-auto relative p-stitch-xl rounded-[2.5rem] bg-surface-container-lowest border border-outline-variant/20 hover:border-outline-variant/40 flex flex-col items-start transition-all duration-300 group overflow-hidden active:scale-95 md:active:scale-100 md:hover:-translate-y-2 card-hover">
                   
                   {/* Subtle hover gradient bloom */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-tertiary/20 transition-colors duration-500 -mr-10 -mt-10"></div>
@@ -131,7 +131,7 @@ const Home = () => {
                   </div>
                   
                   <div className="relative z-10 w-full">
-                    <h3 className="font-headline-sm text-on-surface mb-xs group-hover:text-primary transition-colors">{cat.name}</h3>
+                    <h3 className="font-headline-sm text-on-surface mb-stitch-xs group-hover:text-primary transition-colors">{cat.name}</h3>
                     <p className="font-body-sm text-on-surface-variant line-clamp-2 transition-colors">
                       {cat.description || `Explore the best applications, games, and tools in ${cat.name}.`}
                     </p>
@@ -154,8 +154,8 @@ const Home = () => {
         {featuredRes?.data?.length > 0 && (
           <section className="relative">
             <div className="flex items-end justify-between mb-4 md:mb-8">
-              <h2 className="font-headline-md text-on-surface flex items-center gap-sm">
-                <div className="p-sm bg-primary/10 rounded-xl border border-primary/20"><Sparkles className="w-6 h-6 text-primary" /></div> Featured Picks
+              <h2 className="font-headline-md text-on-surface flex items-center gap-stitch-sm">
+                <div className="p-stitch-sm bg-primary/10 rounded-xl border border-primary/20"><Sparkles className="w-6 h-6 text-primary" /></div> Featured Picks
               </h2>
             </div>
             <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 pt-4 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">
@@ -168,8 +168,8 @@ const Home = () => {
         {trendingRes?.data?.length > 0 && (
           <section className="relative mt-4 md:mt-8">
             <div className="flex items-end justify-between mb-4 md:mb-8">
-              <h2 className="font-headline-md text-on-surface flex items-center gap-sm">
-                <div className="p-sm bg-secondary/10 rounded-xl border border-secondary/20"><Flame className="w-6 h-6 text-secondary" /></div> Trending Now
+              <h2 className="font-headline-md text-on-surface flex items-center gap-stitch-sm">
+                <div className="p-stitch-sm bg-secondary/10 rounded-xl border border-secondary/20"><Flame className="w-6 h-6 text-secondary" /></div> Trending Now
               </h2>
             </div>
             <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 pt-4 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">
@@ -182,8 +182,8 @@ const Home = () => {
         {editorChoiceRes?.data?.length > 0 && (
           <section className="relative mt-4 md:mt-8">
             <div className="flex items-end justify-between mb-4 md:mb-8">
-              <h2 className="font-headline-md text-on-surface flex items-center gap-sm">
-                <div className="p-sm bg-tertiary/10 rounded-xl border border-tertiary/20"><Award className="w-6 h-6 text-tertiary" /></div> Editor's Choice
+              <h2 className="font-headline-md text-on-surface flex items-center gap-stitch-sm">
+                <div className="p-stitch-sm bg-tertiary/10 rounded-xl border border-tertiary/20"><Award className="w-6 h-6 text-tertiary" /></div> Editor's Choice
               </h2>
             </div>
             <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 pt-4 md:pt-4 snap-x hide-scrollbar px-2 -mx-2">

@@ -209,7 +209,7 @@ const NexoriaMusicLayout = () => {
       </aside>
 
       {/* Main Content Wrapper */}
-      <div className="flex-1 flex flex-col md:ml-64 w-full relative h-screen">
+      <div className="flex-1 flex flex-col md:pl-64 w-full relative h-screen">
         {/* Top App Bar (Mobile & Desktop) */}
         <nav className="bg-background/80 backdrop-blur-xl docked full-width top-0 sticky z-40 bg-transparent flex justify-between items-center h-20 px-4 md:px-margin-desktop transition-colors border-b border-transparent md:border-outline-variant/10">
           <div className="flex items-center gap-8">

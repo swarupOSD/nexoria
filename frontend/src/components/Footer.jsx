@@ -34,9 +34,9 @@ const Footer = () => {
   const quickLinks = settings.quickLinks || [];
 
   return (
-    <footer className="bg-surface-container-lowest border-t border-outline-variant/10 pt-xl pb-lg mt-xl">
+    <footer className="bg-surface-container-lowest border-t border-outline-variant/10 pt-stitch-xl pb-stitch-lg mt-stitch-xl">
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-        <div className="col-span-2 lg:col-span-2 flex flex-col gap-md">
+        <div className="col-span-2 lg:col-span-2 flex flex-col gap-stitch-md">
           <span className="font-headline-md text-on-surface">{settings?.siteName || 'Nexoria'}</span>
           <p className="font-body-md text-on-surface-variant max-w-xs">{settings.footerText || 'Digital Luxury Defined. The premier hub for curated digital experiences.'}</p>
           <div className="flex flex-wrap gap-3 mt-4">
@@ -51,26 +51,26 @@ const Footer = () => {
               );
             })}
           </div>
-          <p className="font-label-caps text-on-surface-variant mt-auto pt-md border-t border-outline-variant/10">© {currentYear} {settings?.siteName || 'Nexoria Hub'}. {settings.copyrightText || 'Digital Luxury Defined.'}</p>
+          <p className="font-label-caps text-on-surface-variant mt-auto pt-stitch-md border-t border-outline-variant/10">© {currentYear} {settings?.siteName || 'Nexoria Hub'}. {settings.copyrightText || 'Digital Luxury Defined.'}</p>
         </div>
         
-        <div className="flex flex-col gap-sm">
-          <h4 className="font-label-caps text-on-surface mb-sm">Platform</h4>
+        <div className="flex flex-col gap-stitch-sm">
+          <h4 className="font-label-caps text-on-surface mb-stitch-sm">Platform</h4>
           <Link to="/apps" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Apps</Link>
           <Link to="/moviebox" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Movies</Link>
           <Link to="/nexoria-music" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Music</Link>
           <Link to="/moviebox/games" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Games</Link>
         </div>
         
-        <div className="flex flex-col gap-sm">
-          <h4 className="font-label-caps text-on-surface mb-sm">Legal</h4>
+        <div className="flex flex-col gap-stitch-sm">
+          <h4 className="font-label-caps text-on-surface mb-stitch-sm">Legal</h4>
           <Link to="/privacy-policy" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</Link>
           <Link to="/terms-of-service" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Terms of Service</Link>
           <Link to="/dmca" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">DMCA</Link>
         </div>
         
-        <div className="flex flex-col gap-sm">
-          <h4 className="font-label-caps text-on-surface mb-sm">Support</h4>
+        <div className="flex flex-col gap-stitch-sm">
+          <h4 className="font-label-caps text-on-surface mb-stitch-sm">Support</h4>
           <Link to="/support" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Help Center</Link>
           <span className="font-body-md text-on-surface-variant/50 cursor-not-allowed">Career</span>
           <Link to="/premium" className="font-body-md text-on-surface-variant hover:text-primary transition-colors">Premium</Link>

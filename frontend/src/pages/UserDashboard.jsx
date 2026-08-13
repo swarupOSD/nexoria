@@ -1,8 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
-import { LayoutDashboard, UserCircle, ShoppingBag, Settings, Loader2, Menu, X, ArrowLeft, Heart, Download, HelpCircle, Music } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  UserCircle,
+  ShoppingBag,
+  Settings,
+  Loader2,
+  X,
+  Heart,
+  Download,
+  HelpCircle,
+  Music,
+  Flame,
+  Menu,
+  ArrowLeft,
+  Zap,
+} from 'lucide-react';
 
 import { useGetMeQuery } from '../features/auth/authApiSlice';
 import { useGetMyRequestsQuery } from '../features/api/paymentApiSlice';
@@ -19,20 +35,39 @@ import DownloadsTab from '../components/DashboardTabs/DownloadsTab';
 import AppRequestsTab from '../components/DashboardTabs/AppRequestsTab';
 import MusicAnalyticsTab from '../components/DashboardTabs/MusicAnalyticsTab';
 import SupportTicketTab from '../components/DashboardTabs/SupportTicketTab';
-import { useNavigate } from 'react-router-dom';
+import AuraMasteryTab from '../components/DashboardTabs/AuraMasteryTab';
+import FallbackImage from '../components/FallbackImage';
 
+// ─── Sidebar Tabs ─────────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'profile', label: 'Profile', icon: UserCircle },
-  { id: 'purchases', label: 'Purchases', icon: ShoppingBag },
-  { id: 'wishlist', label: 'Wishlist', icon: Heart },
-  { id: 'music', label: 'Music Analytics', icon: Music },
-  { id: 'downloads', label: 'Downloads', icon: Download },
-  { id: 'requests', label: 'App Requests', icon: HelpCircle },
-  { id: 'support', label: 'Support Tickets', icon: HelpCircle },
-  { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'overview',   label: 'Overview',        icon: LayoutDashboard },
+  { id: 'profile',    label: 'Profile',          icon: UserCircle },
+  { id: 'aura',       label: 'Aura & Mastery',   icon: Flame },
+  { id: 'purchases',  label: 'Purchases',        icon: ShoppingBag },
+  { id: 'wishlist',   label: 'Wishlist',         icon: Heart },
+  { id: 'music',      label: 'Music Analytics',  icon: Music },
+  { id: 'downloads',  label: 'Downloads',        icon: Download },
+  { id: 'requests',   label: 'App Requests',     icon: HelpCircle },
+  { id: 'support',    label: 'Support Tickets',  icon: HelpCircle },
+  { id: 'settings',   label: 'Settings',         icon: Settings },
 ];
 
+// ─── Stitch Sidebar Nav Item ──────────────────────────────────────────────────
+const NavItem = ({ tab, active, onClick }) => (
+  <button
+    onClick={() => onClick(tab.id)}
+    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 active:scale-[0.98] text-left ${
+      active
+        ? 'text-[#e9c349] bg-white/5 border-r-2 border-[#e9c349] font-bold'
+        : 'text-white/40 hover:bg-white/5 hover:text-white/80 border-r-2 border-transparent'
+    }`}
+  >
+    <tab.icon className={`w-4 h-4 shrink-0 ${active ? 'text-[#e9c349]' : ''}`} />
+    <span>{tab.label}</span>
+  </button>
+);
+
+// ─── UserDashboard ────────────────────────────────────────────────────────────
 const UserDashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -41,7 +76,9 @@ const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const { data: meData, isLoading: meLoading, refetch: refetchUser } = useGetMeQuery(undefined, { refetchOnMountOrArgChange: true });
+  const { data: meData, isLoading: meLoading, refetch: refetchUser } = useGetMeQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const { data: requestsRes, isLoading: requestsLoading } = useGetMyRequestsQuery();
   const { data: activityRes, isLoading: activityLoading } = useGetMyActivityQuery({ limit: 10 });
   const { data: unreadRes } = useGetUnreadCountQuery(undefined, { pollingInterval: 60000 });
@@ -56,8 +93,11 @@ const UserDashboard = () => {
 
   if (isLoading && !user) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-screen bg-[#131313]">
+        <div className="flex flex-col items-center gap-3 text-white/30">
+          <Loader2 className="w-8 h-8 animate-spin" />
+          <p className="text-sm font-mono">Loading Dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -70,9 +110,19 @@ const UserDashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab user={user} purchases={purchases} notificationsCount={unreadCount} premiumRequests={premiumRequests} recentActivity={recentActivity} />;
+        return (
+          <OverviewTab
+            user={user}
+            purchases={purchases}
+            notificationsCount={unreadCount}
+            premiumRequests={premiumRequests}
+            recentActivity={recentActivity}
+          />
+        );
       case 'profile':
         return <ProfileTab user={user} token={token} refetchUser={refetchUser} />;
+      case 'aura':
+        return <AuraMasteryTab user={user} />;
       case 'purchases':
         return <PurchasesTab purchases={purchases} premiumRequests={premiumRequests} />;
       case 'wishlist':
@@ -88,142 +138,188 @@ const UserDashboard = () => {
       case 'settings':
         return <SettingsTab user={user} />;
       default:
-        return <OverviewTab user={user} purchases={purchases} notificationsCount={unreadCount} premiumRequests={premiumRequests} recentActivity={recentActivity} />;
+        return (
+          <OverviewTab
+            user={user}
+            purchases={purchases}
+            notificationsCount={unreadCount}
+            premiumRequests={premiumRequests}
+            recentActivity={recentActivity}
+          />
+        );
     }
   };
 
-  const getThemeClass = (theme) => {
-    switch(theme) {
-      case 'cyberpunk': return 'bg-gradient-to-br from-[#2b044d] via-[#10194a] to-[#240b36] text-white selection:bg-fuchsia-500/30';
-      case 'synthwave': return 'bg-gradient-to-r from-[#fc00ff] to-[#00dbde] text-white selection:bg-cyan-500/30';
-      case 'neon': return 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-rose-900 via-purple-900 to-indigo-900 text-white selection:bg-rose-500/30';
-      default: return 'bg-[#030303] text-white selection:bg-blue-500/30';
-    }
-  };
-
-  const themeClass = getThemeClass(user?.profileTheme || 'default');
-
-  return (
-    <div className={`font-jakarta min-h-screen pb-12 transition-colors duration-500 ${themeClass} relative overflow-x-hidden`}>
-      
-      {/* Global Background Glows if default theme */}
-      {(!user?.profileTheme || user?.profileTheme === 'default') && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-           <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[150px]"></div>
-           <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[150px]"></div>
-        </div>
-      )}
-      <Helmet>
-        <title>Dashboard - {user?.name}</title>
-      </Helmet>
-
-      {/* Top Navigation Bar for Dashboard */}
-      <div className="sticky top-0 z-30 bg-white/5 backdrop-blur-3xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 md:gap-4">
-            <button onClick={() => navigate('/')} className="p-2 md:p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/70 hover:text-white transition-all backdrop-blur-md active:scale-95">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-black text-white flex items-center gap-2 tracking-tight">
-              Dashboard
-            </h1>
-          </div>
-          <button 
-            onClick={() => setIsSidebarOpen(true)}
-            className="lg:hidden p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-white transition-colors backdrop-blur-md"
+  const SidebarContent = ({ onTabClick }) => (
+    <div className="flex flex-col h-full">
+      {/* Brand */}
+      <div className="mb-10 px-2">
+        <div className="flex items-center gap-3 mb-1">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: '#e9c349', color: '#3c2f00' }}
           >
-            <Menu className="w-5 h-5" />
-          </button>
+            <Zap className="w-4 h-4" />
+          </div>
+          <span className="text-xl font-bold text-white tracking-tight">Nexoria</span>
+        </div>
+        <p className="text-[11px] font-mono text-white/20 uppercase tracking-widest pl-12">
+          Elite Identity
+        </p>
+      </div>
+
+      {/* User mini profile */}
+      <div
+        className="mx-2 mb-6 p-3 rounded-xl border border-white/5 flex items-center gap-3"
+        style={{ background: 'rgba(255,255,255,0.03)' }}
+      >
+        <FallbackImage
+          src={user?.profileImage}
+          fallbackType="avatar"
+          alt={user?.name}
+          className="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0"
+        />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-white truncate leading-none mb-0.5">{user?.name || 'User'}</p>
+          <p className="text-[11px] font-mono text-white/30 truncate">@{user?.username || 'username'}</p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:block w-72 shrink-0 relative z-10">
-            <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-4 rounded-3xl space-y-2 sticky top-24 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)] translate-x-1'
-                      : 'text-white/50 hover:text-white hover:bg-white/10 hover:translate-x-1'
-                  }`}
-                >
-                  <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'animate-pulse' : ''}`} />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Nav tabs */}
+      <nav className="flex-1 flex flex-col gap-1 overflow-y-auto">
+        {TABS.map((tab) => (
+          <NavItem
+            key={tab.id}
+            tab={tab}
+            active={activeTab === tab.id}
+            onClick={(id) => {
+              onTabClick(id);
+              setIsSidebarOpen(false);
+            }}
+          />
+        ))}
+      </nav>
 
-          {/* Mobile Sidebar Overlay */}
-          <AnimatePresence>
-            {isSidebarOpen && (
-              <>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-md"
-                />
-                <motion.div
-                  initial={{ x: '-100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '-100%' }}
-                  transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                  className="fixed top-0 left-0 bottom-0 w-[280px] bg-[#030303]/95 backdrop-blur-3xl z-50 p-4 lg:hidden shadow-[20px_0_40px_rgba(0,0,0,0.5)] border-r border-white/10 overflow-y-auto"
-                >
-                  <div className="flex items-center justify-between mb-5 px-1">
-                    <h2 className="text-xl font-black text-white tracking-tight">Menu</h2>
-                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors active:scale-95">
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="space-y-1.5">
-                    {TABS.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => {
-                          setActiveTab(tab.id);
-                          setIsSidebarOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-[14px] ${
-                          activeTab === tab.id
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_5px_15px_rgba(59,130,246,0.3)]'
-                            : 'text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10'
-                        }`}
-                      >
-                        <tab.icon className="w-5 h-5" />
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
+      {/* Bottom CTA */}
+      <div className="mt-auto pt-6 px-2">
+        <button
+          onClick={() => navigate('/')}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-mono text-white/40 border border-white/10 hover:bg-white/5 hover:text-white/70 transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Nexoria
+        </button>
+      </div>
+    </div>
+  );
 
-          {/* Content Area */}
-          <div className="flex-1 min-w-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
+  return (
+    <div
+      className="min-h-screen flex relative overflow-x-hidden"
+      style={{ background: '#131313', color: '#e5e2e1' }}
+    >
+      {/* Ambient background glows */}
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          width: '50vw',
+          height: '50vw',
+          top: '-20%',
+          left: '-10%',
+          background: 'radial-gradient(circle, rgba(192,193,255,0.025) 0%, transparent 70%)',
+        }}
+      />
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          width: '60vw',
+          height: '60vw',
+          bottom: '-20%',
+          right: '-10%',
+          background: 'radial-gradient(circle, rgba(233,195,73,0.015) 0%, transparent 70%)',
+        }}
+      />
+
+      <Helmet>
+        <title>Dashboard — {user?.name || 'Nexoria'}</title>
+      </Helmet>
+
+      {/* ── Desktop Sidebar ── */}
+      <aside
+        className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 z-40 py-6 px-4 border-r border-white/5"
+        style={{ background: 'rgba(19,19,19,0.8)', backdropFilter: 'blur(24px)' }}
+      >
+        <SidebarContent onTabClick={setActiveTab} />
+      </aside>
+
+      {/* ── Mobile Sidebar Overlay ── */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/70 z-40 md:hidden backdrop-blur-sm"
+            />
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
+              className="fixed top-0 left-0 bottom-0 w-[280px] z-50 md:hidden py-6 px-4 border-r border-white/5"
+              style={{ background: 'rgba(13,13,13,0.97)', backdropFilter: 'blur(32px)' }}
+            >
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition"
               >
-                {renderContent()}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                <X className="w-4 h-4" />
+              </button>
+              <SidebarContent onTabClick={setActiveTab} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
-        </div>
+      {/* ── Main Content ── */}
+      <div className="flex-1 md:pl-64 flex flex-col min-h-screen relative z-10">
+        {/* Top bar — mobile only */}
+        <header
+          className="md:hidden sticky top-0 z-30 h-14 flex items-center justify-between px-4 border-b border-white/5"
+          style={{ background: 'rgba(19,19,19,0.9)', backdropFilter: 'blur(20px)' }}
+        >
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <span className="text-base font-bold text-white">Dashboard</span>
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 px-4 md:px-8 py-8 max-w-[1280px] w-full mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
       </div>
     </div>
   );
