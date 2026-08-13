@@ -345,8 +345,7 @@ function App() {
 
 
             {/* MovieBox Public Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="moviebox" element={<MovieBoxLayout />}>
+            <Route path="moviebox" element={<MovieBoxLayout />}>
                 <Route index element={<TMDBMovieSection />} />
                 <Route path="movie/:slug" element={<MovieDetail />} />
                 <Route path="category/:slug" element={<MovieCategory />} />
@@ -361,7 +360,6 @@ function App() {
                 <Route path="app" element={<ComingSoonPage title="Nexoria Play App" description="Experience the ultimate streaming on your mobile device. Download our official app for seamless entertainment." emoji="📱" />} />
                 <Route path="tv-apk" element={<ComingSoonPage title="Nexoria Play TV" description="Bring the cinema to your living room. Install our optimized TV APK for Android TV and Firestick." emoji="📺" />} />
                 <Route path="fm-download" element={<Navigate to="/sound" replace />} />
-              </Route>
             </Route>
             
             <Route path="nexoria-arena" element={<NexoriaArena />} />
