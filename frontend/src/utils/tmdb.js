@@ -8,7 +8,7 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p';
 
 // ⚠️ Put this in your .env file: VITE_TMDB_API_KEY=your_api_key_here
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '8d6d91941230817f7807d643736e8a49'; // Added fallback key so it works immediately
 
 // --- Image URL helpers ---
 export const tmdbImage = (path, size = 'w500') => {
