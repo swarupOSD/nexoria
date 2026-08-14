@@ -4,7 +4,7 @@ import { useGetMyRequestsQuery, useSubmitPurchaseRequestMutation, useBuyItemWith
 import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Star, Play, Lock, ArrowLeft, Gamepad2, Info, ArrowRight } from 'lucide-react';
+import { ExternalLink, Star, Play, Lock, ArrowLeft, Gamepad2, Info, ArrowRight, X } from 'lucide-react';
 import QRPaymentModal from '../components/QRPaymentModal';
 import PurchaseErrorBoundary from '../components/ErrorBoundaries/PurchaseErrorBoundary';
 import toast from 'react-hot-toast';

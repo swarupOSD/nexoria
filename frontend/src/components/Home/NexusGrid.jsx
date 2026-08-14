@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Gamepad2, PlaySquare, Music, Smartphone, Flame, Star } from 'lucide-react';
+import { Gamepad2, PlaySquare, Music, Smartphone, Flame, Star, ArrowRight } from 'lucide-react';
 
 const NexusGrid = () => {
   return (
@@ -8,135 +8,167 @@ const NexusGrid = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[250px]">
         
         {/* Gaming - Large Feature */}
-        <Link to="/moviebox/games" className="md:col-span-2 lg:col-span-2 md:row-span-2 rounded-3xl p-8 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-2xl bg-surface-container-lowest">
+        <Link to="/moviebox/games" className="md:col-span-2 lg:col-span-2 md:row-span-2 rounded-3xl p-8 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 hover:shadow-[0_8px_40px_rgba(76,215,246,0.15)] hover:-translate-y-1 transition-all duration-500 bg-[#06080a]">
           <div 
-            className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-700 mix-blend-luminosity" 
+            className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-60 transition-all duration-700 mix-blend-luminosity group-hover:scale-[1.05]" 
             style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB02IsfmKCdfNZagFUwWZ4xImqygKLln994vqkjkzvAq3GvGyZFIkvkg-gQfPGkYM_eFafuPZ7v33FpIFfq928ow60iy2QJy1YooQKUBkS76g176Dth5QNJLMMgweI__-bB2OCUoDk33y3wiw4-cWNG3hEtL4yQz0PsQ0IT8N93ohRRGo3EzimbHgz1ZpPrvUJKkFOyvPWxxwaOHUPb6t5hMUlYD8nNUzIJubT0vf_qLgSsCwJeJeCX')" }}
           ></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+          
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-tertiary">
-              <div className="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#4cd7f6]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">GAMING</span>
+              <div className="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_12px_#4cd7f6] group-hover:shadow-[0_0_20px_#4cd7f6] transition-shadow duration-500"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">GAMING</span>
             </div>
             <div>
-              <h2 className="font-headline-lg text-4xl text-on-surface mb-2 font-bold tracking-tight">Immersive Worlds Await</h2>
-              <div className="flex items-center gap-2 text-tertiary font-body-md group-hover:translate-x-2 transition-transform">
+              <h2 className="font-headline-lg text-4xl text-white mb-3 font-bold tracking-tight drop-shadow-md">Immersive Worlds Await</h2>
+              <div className="flex items-center gap-2 text-tertiary font-body-md group-hover:translate-x-2 transition-transform duration-500 font-semibold tracking-wide">
                 <span>ENTER ARENA</span>
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                <ArrowRight className="w-4 h-4" />
               </div>
             </div>
           </div>
         </Link>
 
         {/* MovieBox */}
-        <Link to="/moviebox" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-lowest">
-          <div className="absolute -right-12 -top-12 w-48 h-48 bg-primary-container/20 rounded-full blur-3xl group-hover:bg-primary-container/30 transition-colors"></div>
+        <Link to="/moviebox" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-primary-container/60 hover:shadow-[0_8px_30px_rgba(160,120,255,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#0a0614]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('/assets/nexus/nexus-moviebox.png')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0614]/90 via-[#0a0614]/60 to-transparent"></div>
+          
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-primary-container">
-              <div className="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_#a078ff]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">MOVIEBOX</span>
+              <div className="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_#a078ff] group-hover:shadow-[0_0_15px_#a078ff] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">MOVIEBOX</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Cinema</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Cinema</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                 <PlaySquare className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-primary-container/10 border border-primary-container/20 flex items-center justify-center text-primary-container group-hover:bg-primary-container group-hover:text-on-primary-container group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <PlaySquare className="w-4 h-4 fill-current opacity-80 group-hover:opacity-100" />
                </div>
             </div>
           </div>
         </Link>
 
         {/* Apps */}
-        <Link to="/apps" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-lowest">
-          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-colors"></div>
+        <Link to="/apps" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-indigo-500/50 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#060814]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('/assets/nexus/nexus-appstore.png')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060814]/90 via-[#060814]/60 to-transparent"></div>
+          
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-indigo-400">
-              <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">APP STORE</span>
+              <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8] group-hover:shadow-[0_0_15px_#818cf8] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">APP STORE</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Tools & Utility</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Tools & Utility</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                 <Smartphone className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <Smartphone className="w-4 h-4" />
                </div>
             </div>
           </div>
         </Link>
 
         {/* Music */}
-        <Link to="/nexoria-music" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-lowest">
-          <div className="absolute -right-12 -top-12 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl group-hover:bg-rose-500/20 transition-colors"></div>
+        <Link to="/nexoria-music" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-rose-500/50 hover:shadow-[0_8px_30px_rgba(244,63,94,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#120508]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('/assets/nexus/nexus-music.png')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#120508]/90 via-[#120508]/50 to-transparent"></div>
+            
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-rose-400">
-              <div className="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_#fb7185]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">MUSIC</span>
+              <div className="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_#fb7185] group-hover:shadow-[0_0_15px_#fb7185] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">MUSIC</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Rhythm</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Rhythm</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-colors">
-                 <Music className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:bg-rose-500 group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <Music className="w-4 h-4 fill-current opacity-80 group-hover:opacity-100" />
                </div>
             </div>
           </div>
         </Link>
         
         {/* Arena */}
-        <Link to="/nexoria-arena" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-lowest">
-          <div className="absolute -right-12 -top-12 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-colors"></div>
+        <Link to="/nexoria-arena" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-amber-500/50 hover:shadow-[0_8px_30px_rgba(245,158,11,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#140a02]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('/assets/nexus/nexus-arena.png')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140a02]/90 via-[#140a02]/50 to-transparent"></div>
+            
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-amber-400">
-              <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">ARENA</span>
+              <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24] group-hover:shadow-[0_0_15px_#fbbf24] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">ARENA</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Compete</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Compete</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                 <Gamepad2 className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <Gamepad2 className="w-4 h-4 fill-current opacity-80 group-hover:opacity-100" />
                </div>
             </div>
           </div>
         </Link>
 
         {/* Aura & Community */}
-        <Link to="/aura" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-lowest">
-          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-colors"></div>
+        <Link to="/aura" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-orange-500/50 hover:shadow-[0_8px_30px_rgba(249,115,22,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#140804]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('/assets/nexus/nexus-aura.png')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140804]/90 via-[#140804]/50 to-transparent"></div>
+            
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-orange-400">
-              <div className="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_#fb923c]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest">AURA</span>
+              <div className="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_#fb923c] group-hover:shadow-[0_0_15px_#fb923c] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">AURA</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Community</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Community</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 group-hover:bg-orange-500 group-hover:text-white transition-colors">
-                 <Flame className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:bg-orange-500 group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <Flame className="w-4 h-4 fill-current opacity-80 group-hover:opacity-100" />
                </div>
             </div>
           </div>
         </Link>
 
         {/* Premium */}
-        <Link to="/premium" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 transition-colors shadow-lg bg-surface-container-highest">
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent"></div>
+        <Link to="/premium" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-yellow-500/20 hover:border-yellow-400/50 hover:shadow-[0_8px_30px_rgba(250,204,21,0.15)] hover:-translate-y-1 transition-all duration-500 bg-[#121004]">
+          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop')`
+            }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121004]/90 via-[#121004]/50 to-transparent"></div>
+          
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-yellow-400">
-              <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_8px_#facc15]"></div>
-              <span className="font-label-caps text-label-caps tracking-widest text-yellow-400">PREMIUM</span>
+              <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_8px_#facc15] group-hover:shadow-[0_0_15px_#facc15] transition-shadow"></div>
+              <span className="font-label-caps text-label-caps tracking-widest text-shadow-sm">PREMIUM</span>
             </div>
-            <div className="mt-auto flex justify-between items-end">
+            <div className="mt-auto flex justify-between items-end group-hover:translate-y-[-2px] transition-transform duration-500">
                <div>
-                  <h3 className="font-headline-md text-on-surface mb-1 font-bold">Unlock All</h3>
+                  <h3 className="font-headline-md text-white mb-1 font-bold tracking-tight drop-shadow-md">Unlock All</h3>
                </div>
-               <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                 <Star className="w-5 h-5" />
+               <div className="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500 group-hover:text-[#121004] group-hover:scale-110 transition-all duration-500 shadow-lg">
+                 <Star className="w-4 h-4 fill-current opacity-80 group-hover:opacity-100" />
                </div>
             </div>
           </div>

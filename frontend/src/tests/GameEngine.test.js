@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 import GameEngine from '../game/GameEngine';
 
 describe('Game Engine Tests', () => {
