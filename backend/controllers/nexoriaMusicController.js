@@ -18,10 +18,7 @@ import cloudinary from '../config/cloudinary.js';
 import youtubedl from 'youtube-dl-exec';
 import fs from 'fs';
 import os from 'os';
-
-// ==========================================
-// ADMIN: ARTIST MANAGEMENT
-// ==========================================
+import musicUploadQueue from '../queues/musicUploadQueue.js';
 
 export const createArtist = async (req, res) => {
   try {
@@ -199,74 +196,57 @@ export const deleteAlbum = async (req, res) => {
 // ==========================================
 
 // Background Cloudinary Upload Helper with Fallback
+// Replaced by BullMQ worker in backend/workers/musicUploadWorker.js
 const uploadToCloudinaryInBackground = async (trackId, fileBuffer, fileObj, bodyObj) => {
-  try {
-    const { Readable } = await import('stream');
-    
-    const startUpload = (useFallback = false) => {
-      const options = {
-        resource_type: 'video', // Cloudinary treats audio as video resource type
-        folder: 'nexoria_music/tracks',
-        public_id: `track_${trackId}`,
-      };
-
-      if (useFallback && process.env.CLOUDINARY_CLOUD_NAME_2) {
-        options.cloud_name = process.env.CLOUDINARY_CLOUD_NAME_2;
-        options.api_key = process.env.CLOUDINARY_API_KEY_2;
-        options.api_secret = process.env.CLOUDINARY_API_SECRET_2;
-      }
-
-      const uploadStream = cloudinary.uploader.upload_stream(
-        options,
-        async (error, result) => {
-          if (error) {
-            if (!useFallback && process.env.CLOUDINARY_CLOUD_NAME_2) {
-              logger.warn(`Cloudinary Primary Account Failed (${error.message}). Falling back to Secondary Account...`);
-              startUpload(true); // Retry with fallback
-            } else {
-              logger.error(`Cloudinary Upload Failed completely for Track ${trackId}: ${error.message}`);
-            }
-            return;
-          }
-          
-          await NexoriaTrack.findByIdAndUpdate(trackId, {
-            audioUrl: result.secure_url,
-            duration: Math.round(result.duration || bodyObj.duration || 0),
-            fileSizeBytes: result.bytes || 0
-          });
-          logger.info(`Cloudinary Upload Success for Track: ${trackId} (Fallback: ${useFallback})`);
-        }
-      );
-
-      const readable = new Readable({
-        read() {
-          this.push(fileBuffer);
-          this.push(null);
-        }
-      });
-      readable.pipe(uploadStream);
-    };
-
-    startUpload(false); // Start with primary account
-
-  } catch (error) {
-    logger.error(`Background Cloudinary Upload Error for Track ${trackId}: ${error.message}`);
-  }
+  // Retained for backward compatibility if needed, but unused now.
 };
 
 export const createTrack = async (req, res) => {
+  let tempFilePath = null;
   try {
     const trackData = { ...req.body, addedBy: req.user._id };
+    
+    // Default new tracks to pending if a file is attached
+    if (req.file) {
+      trackData.processingStatus = 'pending';
+    }
+
+    // Save temp file FIRST if file is present
+    if (req.file) {
+      if (!musicUploadQueue) {
+        return res.status(503).json({ success: false, message: 'Upload queue (Redis) is currently unavailable. Please try again later.' });
+      }
+      tempFilePath = path.join(os.tmpdir(), `nexoria_audio_temp_${Date.now()}.tmp`);
+      fs.writeFileSync(tempFilePath, req.file.buffer);
+    }
+
     const track = await NexoriaTrack.create(trackData);
     
-    // If a file is attached, trigger upload in background and return immediately
     if (req.file) {
-      uploadToCloudinaryInBackground(track._id, req.file.buffer, req.file, req.body);
-      return res.status(201).json({ success: true, data: track });
+      try {
+        await musicUploadQueue.add('uploadTrackAudio', {
+          trackId: track._id,
+          filePath: tempFilePath,
+          title: req.body.title,
+          artistName: req.body.artistName,
+          mimetype: req.file.mimetype,
+          originalname: req.file.originalname,
+          duration: req.body.duration || 0,
+          isPremium: req.body.isPremium === 'true' || req.body.isPremium === true
+        });
+      } catch (queueErr) {
+        // Rollback track creation
+        await NexoriaTrack.findByIdAndDelete(track._id);
+        throw new Error(`Failed to enqueue upload job: ${queueErr.message}`);
+      }
+      return res.status(201).json({ success: true, data: track, message: 'Track created. Audio is being processed in background.' });
     }
 
     res.status(201).json({ success: true, data: track });
   } catch (error) {
+    if (tempFilePath && fs.existsSync(tempFilePath)) {
+      fs.unlinkSync(tempFilePath);
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -285,18 +265,53 @@ export const getTracksAdmin = async (req, res) => {
 };
 
 export const updateTrack = async (req, res) => {
+  let tempFilePath = null;
   try {
-    const track = await NexoriaTrack.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const track = await NexoriaTrack.findById(req.params.id);
     if (!track) return res.status(404).json({ success: false, message: 'Track not found' });
     
-    // If a new file is attached during update, trigger upload in background (do NOT await)
     if (req.file) {
-      uploadToCloudinaryInBackground(track._id, req.file.buffer, req.file, req.body);
-      return res.status(200).json({ success: true, data: track, message: 'Track updated. Audio is being uploaded to Cloudinary in the background.' });
+      if (!musicUploadQueue) {
+        return res.status(503).json({ success: false, message: 'Upload queue (Redis) is currently unavailable. Please try again later.' });
+      }
+      tempFilePath = path.join(os.tmpdir(), `nexoria_audio_temp_${track._id}_${Date.now()}.tmp`);
+      fs.writeFileSync(tempFilePath, req.file.buffer);
+    }
+
+    Object.assign(track, req.body);
+    
+    if (req.file) {
+      track.processingStatus = 'pending';
+    }
+    
+    await track.save();
+
+    if (req.file) {
+      try {
+        await musicUploadQueue.add('uploadTrackAudio', {
+          trackId: track._id,
+          filePath: tempFilePath,
+          title: req.body.title,
+          artistName: req.body.artistName,
+          mimetype: req.file.mimetype,
+          originalname: req.file.originalname,
+          duration: req.body.duration || 0,
+          isPremium: req.body.isPremium === 'true' || req.body.isPremium === true
+        });
+      } catch (queueErr) {
+        // If queue fails, revert the track's processingStatus so it isn't stuck as pending forever
+        track.processingStatus = 'completed'; // revert to safe state
+        await track.save();
+        throw new Error(`Failed to enqueue upload job: ${queueErr.message}`);
+      }
+      return res.status(200).json({ success: true, data: track, message: 'Track updated. Audio is being uploaded in the background.' });
     }
     
     res.status(200).json({ success: true, data: track });
   } catch (error) {
+    if (tempFilePath && fs.existsSync(tempFilePath)) {
+      fs.unlinkSync(tempFilePath);
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };

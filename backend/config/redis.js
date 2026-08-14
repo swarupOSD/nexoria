@@ -32,6 +32,16 @@ if (!shouldBypassRedis) {
   logger.info('Bypassing Redis connection (Render environment with localhost REDIS_URL detected)');
 }
 
+export const bullMQConnection = shouldBypassRedis ? null : new Redis(process.env.REDIS_URL, {
+  maxRetriesPerRequest: null, // Required by BullMQ
+  enableOfflineQueue: false,
+  retryStrategy(times) {
+    if (times > 3) return null;
+    return Math.min(times * 50, 2000);
+  }
+});
+
+
 const redis = {
   async get(key) {
     if (!redisClient) return null;

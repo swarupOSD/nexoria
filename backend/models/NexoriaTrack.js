@@ -74,6 +74,15 @@ const nexoriaTrackSchema = new mongoose.Schema(
     algorithmicBoost: {
       type: Number,
       default: 0
+    },
+    processingStatus: {
+      type: String,
+      enum: ['pending', 'processing', 'completed', 'failed'],
+      default: 'completed'
+    },
+    processingError: {
+      type: String,
+      default: null
     }
   },
   {
