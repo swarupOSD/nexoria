@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import * as THREE from 'three';
 import { ShieldCheck } from 'lucide-react';
@@ -9,11 +9,17 @@ const NexoriaHero = () => {
   const threeContainerRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
 
-  // Intersection Observer to pause animations
+  // Animation control refs
+  const shaderLoopRef = useRef(null);
+  const threeLoopRef = useRef(null);
+  const isVisibleRef = useRef(true);
+
+  // Intersection Observer to track visibility
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
+        isVisibleRef.current = entry.isIntersecting;
       },
       { threshold: 0 }
     );
@@ -23,7 +29,7 @@ const NexoriaHero = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Shader Animation Logic
+  // Shader Animation Logic (Init once)
   useEffect(() => {
     const canvas = shaderCanvasRef.current;
     if (!canvas) return;
@@ -137,7 +143,13 @@ void main() {
 
     let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
     
+    // Throttled mouse move
+    let lastMouseMove = 0;
     const handleMouseMove = (event) => {
+      const now = Date.now();
+      if (now - lastMouseMove < 16) return; // ~60fps throttle
+      lastMouseMove = now;
+      
       const rect = canvas.getBoundingClientRect();
       if (rect.width && rect.height) {
         const nx = (event.clientX - rect.left) / rect.width;
@@ -147,36 +159,51 @@ void main() {
       }
     };
     
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     const startTime = Date.now();
+    let isRendering = false;
 
     const render = () => {
-      if (isVisible) {
-        if (typeof ResizeObserver === 'undefined') syncSize();
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        const t = Date.now() - startTime;
-        if (uTime) gl.uniform1f(uTime, t * 0.001);
-        if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
-        if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      }
+      if (!isRendering) return;
+      if (typeof ResizeObserver === 'undefined') syncSize();
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      const t = Date.now() - startTime;
+      if (uTime) gl.uniform1f(uTime, t * 0.001);
+      if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+      if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       animationFrameId = requestAnimationFrame(render);
     };
-    render();
+
+    shaderLoopRef.current = {
+      start: () => {
+        if (!isRendering) {
+          isRendering = true;
+          render();
+        }
+      },
+      stop: () => {
+        isRendering = false;
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+
+    // Initial start if visible
+    if (isVisibleRef.current) {
+      shaderLoopRef.current.start();
+    }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      shaderLoopRef.current.stop();
       window.removeEventListener('mousemove', handleMouseMove);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
+      if (resizeObserver) resizeObserver.disconnect();
       const ext = gl.getExtension('WEBGL_lose_context');
       if (ext) ext.loseContext();
     };
-  }, [isVisible]);
+  }, []); // Run only once
 
-  // Three.js Animation Logic
+  // Three.js Animation Logic (Init once)
   useEffect(() => {
     const container = threeContainerRef.current;
     if (!container) return;
@@ -227,7 +254,7 @@ void main() {
     let particleMesh = null;
     if (!prefersReducedMotion) {
       const particlesGeom = new THREE.BufferGeometry();
-      const particlesCount = isMobile ? 200 : 500;
+      const particlesCount = isMobile ? 100 : 300; // Reduced for performance
       const posArray = new Float32Array(particlesCount * 3);
       for(let i=0; i < particlesCount * 3; i++) {
         posArray[i] = (Math.random() - 0.5) * 15;
@@ -241,13 +268,19 @@ void main() {
     camera.position.z = 8;
     const mouse = new THREE.Vector2();
 
+    // Throttled mouse move for Three.js
+    let lastMouseMove = 0;
     const handleMouseMove = (event) => {
+      const now = Date.now();
+      if (now - lastMouseMove < 16) return;
+      lastMouseMove = now;
+      
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
     
     if (!prefersReducedMotion && !isMobile) {
-      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
     }
 
     const handleResize = () => {
@@ -258,40 +291,59 @@ void main() {
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
     let animationFrameId;
+    let isRendering = false;
 
     const animate = () => {
+      if (!isRendering) return;
       animationFrameId = requestAnimationFrame(animate);
-      if (isVisible) {
-        if (!prefersReducedMotion) {
-          coreGroup.rotation.y += 0.005;
-          coreGroup.rotation.x += 0.002;
-          ring1.rotation.z += 0.01;
-          ring2.rotation.y += 0.01;
-          
-          if (particleMesh) {
-            particleMesh.rotation.y += 0.001;
-          }
-          
-          if (!isMobile) {
-            coreGroup.position.x += (mouse.x * 0.5 - coreGroup.position.x) * 0.05;
-            coreGroup.position.y += (mouse.y * 0.5 - coreGroup.position.y) * 0.05;
-          }
+      
+      if (!prefersReducedMotion) {
+        coreGroup.rotation.y += 0.005;
+        coreGroup.rotation.x += 0.002;
+        ring1.rotation.z += 0.01;
+        ring2.rotation.y += 0.01;
+        
+        if (particleMesh) {
+          particleMesh.rotation.y += 0.001;
         }
-        renderer.render(scene, camera);
+        
+        if (!isMobile) {
+          coreGroup.position.x += (mouse.x * 0.5 - coreGroup.position.x) * 0.05;
+          coreGroup.position.y += (mouse.y * 0.5 - coreGroup.position.y) * 0.05;
+        }
+      }
+      renderer.render(scene, camera);
+    };
+
+    threeLoopRef.current = {
+      start: () => {
+        if (!isRendering) {
+          isRendering = true;
+          animate();
+        }
+      },
+      stop: () => {
+        isRendering = false;
+        cancelAnimationFrame(animationFrameId);
       }
     };
-    animate();
+
+    // Initial start if visible
+    if (isVisibleRef.current) {
+      threeLoopRef.current.start();
+    }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      threeLoopRef.current.stop();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
+      // Proper disposal
       renderer.dispose();
       sphereGeom.dispose();
       sphereMat.dispose();
@@ -302,6 +354,17 @@ void main() {
         particleMesh.material.dispose();
       }
     };
+  }, []); // Run only once
+
+  // React to visibility changes
+  useEffect(() => {
+    if (isVisible) {
+      shaderLoopRef.current?.start();
+      threeLoopRef.current?.start();
+    } else {
+      shaderLoopRef.current?.stop();
+      threeLoopRef.current?.stop();
+    }
   }, [isVisible]);
 
   const handleScrollToGrid = () => {

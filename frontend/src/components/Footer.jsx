@@ -11,7 +11,7 @@ const Footer = () => {
   return (
     <footer className="mt-24 border-t border-outline-variant/10 bg-background pt-16 pb-8 relative overflow-hidden">
       {/* Subtle bottom glow */}
-      <div className="absolute bottom-0 w-full h-[500px] bg-primary/5 blur-[120px] rounded-t-full pointer-events-none"></div>
+      <div className="absolute bottom-0 w-full h-[500px] bg-primary/10 blur-[140px] rounded-t-full pointer-events-none"></div>
       
       <div className="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
@@ -73,7 +73,7 @@ const Footer = () => {
           <p className="font-body-sm text-on-surface-variant">© {currentYear} {settings?.siteName || 'Nexoria Hub'}. {settings.copyrightText || 'All rights reserved.'}</p>
         </div>
         
-        <h1 className="text-4xl md:text-8xl font-black text-center text-on-surface-variant/5 tracking-tighter uppercase pointer-events-none mt-12 mb-4">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-center text-on-surface-variant/5 tracking-tighter uppercase pointer-events-none mt-12 mb-4 max-w-full break-words">
           THE NEXUS OF YOUR DIGITAL WORLD
         </h1>
       </div>

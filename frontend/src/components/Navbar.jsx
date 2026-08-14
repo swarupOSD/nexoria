@@ -123,7 +123,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_0_40px_rgba(208,188,255,0.05)]">
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-[0_0_40px_rgba(208,188,255,0.05)]' : 'bg-transparent border-transparent shadow-none'}`}>
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-stitch-md max-w-container-max mx-auto">
 
           {/* Brand */}

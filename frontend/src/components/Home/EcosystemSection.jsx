@@ -62,7 +62,7 @@ const EcosystemSection = () => {
   const { data: editorChoiceRes } = useGetPostsQuery({ editorChoice: true, limit: 12 });
 
   return (
-    <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto py-stitch-xl space-y-12 md:space-y-24 relative z-10">
+    <div className="max-w-full overflow-hidden px-margin-mobile md:px-margin-desktop w-full mx-auto py-stitch-xl space-y-12 md:space-y-24 relative z-10">
       <ForYouCarousel />
       
       <Leaderboard />
@@ -86,7 +86,7 @@ const EcosystemSection = () => {
         ) : (
           <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-6 pt-2 snap-x hide-scrollbar px-2 -mx-2 md:px-0 md:mx-0">
             {categories.map(cat => (
-              <Link key={cat._id} to={`/category/${cat.slug}`} className="snap-start shrink-0 w-[240px] md:w-auto relative p-stitch-xl rounded-[2.5rem] bg-surface-container-lowest border border-outline-variant/20 hover:border-outline-variant/40 flex flex-col items-start transition-all duration-300 group overflow-hidden active:scale-95 md:active:scale-100 md:hover:-translate-y-2 card-hover">
+              <Link key={cat._id} to={`/category/${cat.slug}`} className="snap-start shrink-0 w-[240px] md:w-auto relative p-stitch-xl rounded-[2.5rem] bg-surface-container-lowest border border-outline-variant/20 hover:border-primary/30 hover:shadow-[inset_0_0_20px_rgba(160,120,255,0.05)] flex flex-col items-start transition-all duration-300 group overflow-hidden active:scale-95 md:active:scale-100 md:hover:-translate-y-2 card-hover">
                 
                 {/* Subtle hover gradient bloom */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-tertiary/20 transition-colors duration-500 -mr-10 -mt-10"></div>
