@@ -9,11 +9,8 @@ const NexusGrid = () => {
         
         {/* Gaming - Large Feature */}
         <Link to="/moviebox/games" className="md:col-span-2 lg:col-span-2 md:row-span-2 rounded-3xl p-8 relative overflow-hidden group border border-outline-variant/30 hover:border-outline-variant/60 hover:shadow-[0_8px_40px_rgba(76,215,246,0.15)] hover:-translate-y-1 transition-all duration-500 bg-[#06080a]">
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-60 transition-all duration-700 mix-blend-luminosity group-hover:scale-[1.05]" 
-            style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB02IsfmKCdfNZagFUwWZ4xImqygKLln994vqkjkzvAq3GvGyZFIkvkg-gQfPGkYM_eFafuPZ7v33FpIFfq928ow60iy2QJy1YooQKUBkS76g176Dth5QNJLMMgweI__-bB2OCUoDk33y3wiw4-cWNG3hEtL4yQz0PsQ0IT8N93ohRRGo3EzimbHgz1ZpPrvUJKkFOyvPWxxwaOHUPb6t5hMUlYD8nNUzIJubT0vf_qLgSsCwJeJeCX')" }}
-          ></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+          <img src="/assets/nexus/nexus-gaming.png" alt="Gaming Arena" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.05] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-[2]"></div>
           
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-tertiary">
@@ -137,7 +134,7 @@ const NexusGrid = () => {
 
         {/* Premium */}
         <Link to="/premium" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-yellow-500/20 hover:border-yellow-400/50 hover:shadow-[0_8px_30px_rgba(250,204,21,0.15)] hover:-translate-y-1 transition-all duration-500 bg-[#121004]">
-          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Premium" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <img src="/assets/nexus/nexus-premium.png" alt="Premium" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#121004] via-[#121004]/40 to-transparent z-[2]"></div>
           
           <div className="relative z-10 h-full flex flex-col justify-between">
