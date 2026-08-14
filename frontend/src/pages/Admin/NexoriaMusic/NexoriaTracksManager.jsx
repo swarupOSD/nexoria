@@ -336,9 +336,11 @@ const NexoriaTracksManager = () => {
                     <span className="text-[#b3b3b3] text-sm truncate hover:underline cursor-pointer">
                       {track.artist?.name || 'Unknown Artist'}
                     </span>
-                    {!track.telegramFileId && !track.audioUrl && (
+                    {track.processingStatus === 'failed' ? (
+                      <span className="text-[10px] text-red-500 font-semibold" title={track.processingError}>❌ Upload Failed</span>
+                    ) : track.processingStatus === 'pending' || track.processingStatus === 'processing' || (!track.telegramFileId && !track.audioUrl) ? (
                       <span className="text-[10px] text-yellow-400/80 font-semibold animate-pulse">⏳ Processing...</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
 

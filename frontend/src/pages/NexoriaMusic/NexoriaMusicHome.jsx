@@ -8,7 +8,8 @@ import {
   useGetDiscoverWeeklyQuery,
   useGetReleaseRadarQuery,
   useGetDailyMixQuery,
-  useGetPublicPlaylistsQuery
+  useGetPublicPlaylistsQuery,
+  useGetNexoriaGenresQuery
 } from '../../features/api/nexoriaMusicApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,6 +36,7 @@ const NexoriaMusicHome = () => {
   const { data: radarData, isLoading: loadingRadar } = useGetReleaseRadarQuery(undefined, { skip: !user });
   const { data: mixData, isLoading: loadingMix } = useGetDailyMixQuery(undefined, { skip: !user });
   const { data: publicPlaylistsRes, isLoading: loadingPublicPlaylists } = useGetPublicPlaylistsQuery();
+  const { data: genresRes, isLoading: loadingGenres } = useGetNexoriaGenresQuery();
 
   const artists = artistsRes?.data || [];
   const allTracks = tracksRes?.data || [];
@@ -383,6 +385,37 @@ const NexoriaMusicHome = () => {
             </div>
           </section>
         )}
+
+        {/* Section: Browse by Genre */}
+        <section className="mb-16">
+          <h2 className="font-display-lg text-headline-sm text-on-surface mb-6 font-bold tracking-tight hover:text-primary cursor-pointer transition-colors">Browse by Genre</h2>
+          
+          <div className="flex overflow-x-auto no-scrollbar gap-6 pb-6 -mx-4 px-4 md:mx-0 md:px-0">
+            {loadingGenres ? (
+              [1,2,3,4,5].map(i => <div key={i} className="min-w-[180px] w-[180px] h-[100px] shrink-0 bg-surface-container-low rounded-xl animate-pulse" />)
+            ) : (
+              (genresRes?.data || []).map((genre) => (
+                <div 
+                  key={genre._id}
+                  onClick={() => navigate('/nexoria-music/genre/' + genre._id)}
+                  className="min-w-[180px] w-[180px] h-[100px] group cursor-pointer shrink-0 rounded-xl overflow-hidden relative border border-outline-variant/30 shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(210,187,255,0.2) 0%, rgba(20,20,30,0.8) 100%)',
+                    backgroundColor: '#1f1f2e'
+                  }}
+                >
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="p-4 h-full flex flex-col justify-end">
+                    <h3 className="font-body-md font-bold text-on-surface text-lg group-hover:text-primary transition-colors">{genre.name}</h3>
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 opacity-30 group-hover:opacity-60 transition-opacity group-hover:scale-110 transform duration-500">
+                    <Music className="w-20 h-20 text-white mix-blend-overlay" />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
 
         {/* Section: Popular Artists */}
         <section className="mb-16">

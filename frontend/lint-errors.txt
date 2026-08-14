@@ -1,0 +1,18 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+(node:11240) ESLintIgnoreWarning: The ".eslintignore" file is no longer supported. Switch to using the "ignores" property in "eslint.config.js": https://eslint.org/docs/latest/use/configure/migration-guide#ignore-files
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+d:\mods apps\frontend\src\components\NexoriaPlayer.jsx
+  274:5   warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/immutability')
+  305:28  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+  431:28  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+
+d:\mods apps\frontend\src\tests\GameEngine.test.js
+  7:3  error  'beforeEach' is not defined  no-undef
+
+✖ 4 problems (1 error, 3 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+

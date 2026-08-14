@@ -71,6 +71,7 @@ const NexoriaMusicAlbum = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicAl
 const NexoriaMusicLyrics = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicLyrics'));
 const NexoriaMusicQueue = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicQueue'));
 const NexoriaMusicUserProfile = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicUserProfile'));
+const NexoriaMusicGenre = lazy(() => import('./pages/NexoriaMusic/NexoriaMusicGenre'));
 
 import { useGetSettingsQuery } from './features/settings/settingsApiSlice';
 import usePushNotifications from './hooks/usePushNotifications';
@@ -353,6 +354,7 @@ function App() {
                 <Route path="lyrics/:trackId" element={<NexoriaMusicLyrics />} />
                 <Route path="queue" element={<NexoriaMusicQueue />} />
                 <Route path="user/:id" element={<NexoriaMusicUserProfile />} />
+                <Route path="genre/:id" element={<NexoriaMusicGenre />} />
               </Route>
             </Route>
 
