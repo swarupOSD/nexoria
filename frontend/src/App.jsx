@@ -177,6 +177,7 @@ import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import SuperAdminRoute from './components/SuperAdminRoute';
 import AdBlockDetector from './components/AdBlockDetector';
+import SecurityGuard from './components/SecurityGuard';
 
 // Loader component for suspense fallback
 const PageLoader = () => (
@@ -277,6 +278,7 @@ function App() {
   }, [settings.favicon]);
 
   return (
+    <SecurityGuard>
     <PermissionProvider>
       <Router>
         <PwaUpdatePrompt />
@@ -541,6 +543,7 @@ function App() {
     </KidsModeGuard>
       </Router>
     </PermissionProvider>
+    </SecurityGuard>
   );
 }
 
