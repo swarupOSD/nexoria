@@ -32,11 +32,8 @@ const NexusGrid = () => {
 
         {/* MovieBox */}
         <Link to="/moviebox" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-primary-container/60 hover:shadow-[0_8px_30px_rgba(160,120,255,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#0a0614]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('/assets/nexus/nexus-moviebox.png')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0614]/90 via-[#0a0614]/60 to-transparent"></div>
+          <img src="/assets/nexus/nexus-moviebox.png" alt="MovieBox" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0614] via-[#0a0614]/40 to-transparent z-[2]"></div>
           
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-primary-container">
@@ -56,11 +53,8 @@ const NexusGrid = () => {
 
         {/* Apps */}
         <Link to="/apps" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-indigo-500/50 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#060814]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('/assets/nexus/nexus-appstore.png')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060814]/90 via-[#060814]/60 to-transparent"></div>
+          <img src="/assets/nexus/nexus-appstore.png" alt="App Store" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060814] via-[#060814]/40 to-transparent z-[2]"></div>
           
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-indigo-400">
@@ -80,11 +74,8 @@ const NexusGrid = () => {
 
         {/* Music */}
         <Link to="/nexoria-music" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-rose-500/50 hover:shadow-[0_8px_30px_rgba(244,63,94,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#120508]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('/assets/nexus/nexus-music.png')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#120508]/90 via-[#120508]/50 to-transparent"></div>
+          <img src="/assets/nexus/nexus-music.png" alt="Music" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#120508] via-[#120508]/40 to-transparent z-[2]"></div>
             
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-rose-400">
@@ -104,11 +95,8 @@ const NexusGrid = () => {
         
         {/* Arena */}
         <Link to="/nexoria-arena" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-amber-500/50 hover:shadow-[0_8px_30px_rgba(245,158,11,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#140a02]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('/assets/nexus/nexus-arena.png')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#140a02]/90 via-[#140a02]/50 to-transparent"></div>
+          <img src="/assets/nexus/nexus-arena.png" alt="Arena" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140a02] via-[#140a02]/40 to-transparent z-[2]"></div>
             
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-amber-400">
@@ -128,11 +116,8 @@ const NexusGrid = () => {
 
         {/* Aura & Community */}
         <Link to="/aura" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-outline-variant/30 hover:border-orange-500/50 hover:shadow-[0_8px_30px_rgba(249,115,22,0.12)] hover:-translate-y-1 transition-all duration-500 bg-[#140804]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('/assets/nexus/nexus-aura.png')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#140804]/90 via-[#140804]/50 to-transparent"></div>
+          <img src="/assets/nexus/nexus-aura.png" alt="Aura" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140804] via-[#140804]/40 to-transparent z-[2]"></div>
             
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-orange-400">
@@ -152,11 +137,8 @@ const NexusGrid = () => {
 
         {/* Premium */}
         <Link to="/premium" className="md:col-span-1 lg:col-span-1 rounded-3xl p-6 relative overflow-hidden group border border-yellow-500/20 hover:border-yellow-400/50 hover:shadow-[0_8px_30px_rgba(250,204,21,0.15)] hover:-translate-y-1 transition-all duration-500 bg-[#121004]">
-          <div className="absolute inset-0 transition-all duration-700 group-hover:scale-[1.06] opacity-40 group-hover:opacity-60 bg-cover bg-center mix-blend-luminosity"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop')`
-            }}></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#121004]/90 via-[#121004]/50 to-transparent"></div>
+          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Premium" className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-[1.06] z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121004] via-[#121004]/40 to-transparent z-[2]"></div>
           
           <div className="relative z-10 h-full flex flex-col justify-between">
             <div className="flex items-center gap-2 text-yellow-400">
